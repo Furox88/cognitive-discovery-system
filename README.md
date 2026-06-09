@@ -22,14 +22,9 @@ CDS aims to augment researchers (especially in physics, mathematics, and complex
 | 1     | Structured research planning   | Break research goals into actionable steps       | Planned    |
 | 2     | Concept relationship mapping   | Knowledge graph / concept network builder        | Planned    |
 | 2     | Scientific note management     | Structured notes + provenance + search           | Planned    |
-| 3     | Mathematical reasoning support | SymPy integration, model templates, derivation   | **Added** (RBA example) |
-| 3     | Workflow automation            | Reproducible experiment runners + reporting      | **Added** (model comparison + verification) |
+| 3     | Mathematical reasoning support | SymPy integration, model templates, derivation   | Planned    |
+| 3     | Workflow automation            | Reproducible experiment runners + reporting      | Planned    |
 | Later | Multi-agent collaboration      | Specialized agents (theorist, critic, coder, reviewer) | Future |
-
-**Real research-grade additions (non-trivial):**
-- `cds.physics.rba` — full RBA acceleration law used on real SPARC galaxy data
-- `cds.evaluation` — BIC-based model comparison + ΔBIC evidence strength (exact machinery from systematic galaxy model discrimination)
-- `cds.verification` — symbolic consistency, path-independence, degeneracy detection (inspired by automated checks that found definition conflicts, missing Itô terms, 5-order calc errors, etc.)
 
 ## Architecture (Early Vision)
 
@@ -81,7 +76,7 @@ Modern research involves massive literature, complex models, and repetitive reas
 
 This is early stage — perfect time to shape the direction.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) (to be added) and open issues/discussions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and open issues/discussions.
 
 Especially looking for:
 
