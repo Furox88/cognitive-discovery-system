@@ -1,73 +1,73 @@
 # Contributing to Cognitive Discovery System
 
-Thank you for your interest! CDS is still in the very early stages. Your input — whether as a researcher, engineer, or domain expert — is extremely valuable.
+Thank you for your interest! CDS is an open-source computational science toolkit. Your input — whether as a researcher, engineer, or domain expert — is valuable.
 
 ## How to Contribute
 
 1. **Open an Issue** for:
    - Bugs
    - Feature requests
-   - Research use cases / domain pain points
-   - Architecture discussions
+   - New module ideas
+   - Research use cases
 
 2. **Pull Requests**:
    - Fork the repo
    - Create a feature branch (`git checkout -b feature/amazing-idea`)
    - Make focused changes with clear commit messages
    - Add or update tests where applicable
-   - Open a PR with a good description (what, why, how it was tested)
+   - Run `ruff check` and `pytest` before submitting
+   - Open a PR with a good description
 
 3. **Discussions**:
-   - Use GitHub Discussions for broader ideas (e.g. "Should we integrate with SymPy deeply?" or "Best way to represent concept graphs?")
+   - Use GitHub Discussions for broader ideas
 
-## Development Setup (Early)
+## Development Setup
 
 ```bash
 git clone https://github.com/Furox88/cognitive-discovery-system.git
 cd cognitive-discovery-system
-
-# Recommended: use uv or a venv
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run the CLI
-cds --help
-cds hypothesize "what drives the Hubble tension?" --domain cosmology -n 2 --show-prompt
-
-# Run tests (when we have them)
+# Run tests (162 tests)
 pytest
+
+# Run linter
+ruff check src/ tests/
+
+# Try the CLI
+cds --help
+cds constants
 ```
 
 ## Code Style
 
-- Ruff + mypy (configured in pyproject.toml)
+- Ruff for linting (configured in `pyproject.toml`)
+- Line length: 100 characters
 - Prefer clarity and explicitness over cleverness
-- All scientific claims or assumptions in code should be documented
+- All modules are **pure Python** — avoid adding heavy dependencies (NumPy, SciPy)
+- Include docstrings with Args/Returns/Raises sections
+- Add tests for new functionality
 
-## Research Contributions
+## Module Ideas
 
-If you are a physicist, cosmologist, mathematician, etc.:
+Looking for contributions in:
+- Graph theory algorithms
+- Machine learning basics (k-means, kNN, decision trees)
+- Symbolic math
+- Differential equations solvers
+- Monte Carlo methods
+- Information theory (entropy, mutual information)
 
-- Share real research questions you face
-- Provide examples of good vs. bad hypotheses
-- Suggest literature, datasets, or existing tools we should integrate with
-- Help define evaluation criteria for generated hypotheses (what makes one "good"?)
+## Running Examples
 
-## LLM / Agent Integration
-
-We want to be **provider agnostic**.
-
-Priority order for early integrations:
-1. xAI Grok (since this is built by someone talking to Grok daily)
-2. OpenAI (especially relevant for Codex for OSS program participants)
-3. Local models (Ollama, llama.cpp, etc.)
-4. Anthropic, Google, etc.
-
-When adding LLM support, always support:
-- Dry-run / prompt-only mode
-- Structured output (JSON mode or strict schemas)
-- Full traceability (log the exact prompt + model + params used)
+```bash
+python examples/quantum_demo.py
+python examples/optimization_demo.py
+python examples/signals_demo.py
+python examples/stats_demo.py
+```
 
 ## License
 
@@ -75,6 +75,6 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 ## Questions?
 
-Open an issue or discussion. We're figuring this out together.
+Open an issue or discussion.
 
 — Furox88 + contributors

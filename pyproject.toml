@@ -1,16 +1,16 @@
 [project]
 name = "cognitive-discovery-system"
 version = "0.1.0"
-description = "Open-source research assistant for scientific discovery, mathematical modeling, and structured reasoning."
+description = "Pure Python computational science toolkit — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
     {name = "Furox88", email = "alexxalxz617@gmail.com"}
 ]
-keywords = ["science", "research", "ai", "hypothesis", "physics", "mathematics", "agents", "reasoning"]
+keywords = ["quantum", "fft", "optimization", "probability", "statistics", "scientific-computing", "signal-processing", "pure-python"]
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -35,7 +35,6 @@ llm = [
 ]
 physics = [
     "sympy>=1.12",
-    "numpy>=1.24",
 ]
 dev = [
     "pytest>=8.0",
