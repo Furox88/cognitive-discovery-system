@@ -1,7 +1,7 @@
 """Core data models for CDS."""
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
@@ -39,7 +39,7 @@ class Hypothesis(BaseModel):
     predictions: list[str] = Field(default_factory=list)
     status: HypothesisStatus = HypothesisStatus.NEW
     confidence: float = Field(0.5, ge=0.0, le=1.0)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     tags: list[str] = Field(default_factory=list)
     sources: list[str] = Field(default_factory=list, description="References or retrieval sources")
     metadata: dict[str, Any] = Field(default_factory=dict)
