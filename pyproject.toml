@@ -1,0 +1,73 @@
+[project]
+name = "cognitive-discovery-system"
+version = "0.1.0"
+description = "Open-source research assistant for scientific discovery, mathematical modeling, and structured reasoning."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Furox88", email = "furox88@example.com"}
+]
+keywords = ["science", "research", "ai", "hypothesis", "physics", "mathematics", "agents", "reasoning"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "typer[all]>=0.9.0",
+    "pydantic>=2.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+llm = [
+    # Add when ready:
+    # "openai>=1.0",
+    # "httpx",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "pre-commit",
+]
+
+[project.scripts]
+cds = "cds.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/Furox88/cognitive-discovery-system"
+Repository = "https://github.com/Furox88/cognitive-discovery-system"
+Issues = "https://github.com/Furox88/cognitive-discovery-system/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cds"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+strict = true
