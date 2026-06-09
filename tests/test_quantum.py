@@ -78,3 +78,44 @@ def test_qubit_normalize():
     q.normalize()
     p0, p1 = q.probabilities()
     assert abs(p0 + p1 - 1.0) < 1e-9
+
+
+def test_double_pauli_x_is_identity():
+    circuit = QuantumCircuit().add(pauli_x()).add(pauli_x())
+    q = circuit.run()
+    p0, p1 = q.probabilities()
+    assert abs(p0 - 1.0) < 1e-9
+
+
+def test_pauli_z_on_one():
+    q = pauli_z().apply(pauli_x().apply(Qubit()))
+    # Z|1> = -|1>
+    assert abs(abs(q.beta) - 1) < 1e-9
+
+
+def test_circuit_empty():
+    c = QuantumCircuit()
+    q = c.run()
+    p0, p1 = q.probabilities()
+    assert abs(p0 - 1.0) < 1e-9
+
+
+def test_simulate_pauli_x_always_one():
+    c = QuantumCircuit().add(pauli_x())
+    counts = simulate(c, shots=100, seed=42)
+    assert counts.get(1, 0) == 100
+
+
+def test_phase_gate_zero():
+    g = phase_gate(0)
+    q = g.apply(Qubit(alpha=0, beta=1))
+    assert abs(q.beta - 1) < 1e-9
+
+
+def test_circuit_three_gates():
+    c = QuantumCircuit().add(hadamard()).add(pauli_x()).add(hadamard())
+    assert len(c) == 3
+    q = c.run()
+    # H X H = Z, so |0> -> Z|0> = |0>
+    p0, p1 = q.probabilities()
+    assert abs(p0 - 1.0) < 1e-6

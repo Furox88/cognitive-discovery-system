@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-162%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-200%2B%20passing-brightgreen.svg)]()
 
 **Open-source computational science toolkit for research, simulation, and discovery.**
 
@@ -15,7 +15,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Broad scope** — 9 modules covering math, physics, stats, signals, optimization
-- **162 tests** — thoroughly tested with pytest
+- **200+ tests** — thoroughly tested with pytest
 - **CLI included** — interactive physics calculator from your terminal
 
 ## Modules
@@ -163,8 +163,8 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 162 tests (pytest)
-docs/               # Documentation
+tests/              # 200+ tests (pytest)
+docs/               # Documentation (getting started, API reference, benchmarks)
 ```
 
 ## Contributing

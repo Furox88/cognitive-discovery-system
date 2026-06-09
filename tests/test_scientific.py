@@ -102,3 +102,30 @@ def test_constants_have_descriptions():
     for name, (val, desc) in CONSTANTS.items():
         assert isinstance(desc, str)
         assert len(desc) > 0
+
+
+def test_escape_velocity():
+    from cds.scientific.formulas import escape_velocity
+    v = escape_velocity(5.972e24, 6.371e6)
+    assert abs(v - 11186) < 50  # ~11.2 km/s
+
+
+def test_photon_energy_visible_light():
+    e = photon_energy(5e14)  # green light ~500 THz
+    assert e > 0
+    assert e < 1e-18
+
+
+def test_schwarzschild_radius_sun_km():
+    r = schwarzschild_radius(1.989e30)
+    assert abs(r - 2953) < 10  # ~2953 meters
+
+
+def test_ideal_gas_room_conditions():
+    p = ideal_gas_pressure(1.0, 300.0, 0.0245)
+    assert abs(p - 101660) < 500  # ~1 atm
+
+
+def test_wave_frequency_radio():
+    f = wave_frequency(1.0)  # 1 meter wavelength
+    assert abs(f - 299792458.0) < 1.0

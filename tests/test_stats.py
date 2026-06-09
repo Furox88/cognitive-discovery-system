@@ -97,3 +97,31 @@ def test_regression_negative_slope():
 def test_variance_needs_two_values():
     with pytest.raises(ValueError):
         variance([5.0])
+
+
+def test_mean_negative():
+    assert mean([-1, -2, -3]) == -2.0
+
+
+def test_median_large():
+    data = list(range(100))
+    assert median(data) == 49.5
+
+
+def test_stdev_population():
+    s = stdev([2, 4, 4, 4, 5, 5, 7, 9], ddof=0)
+    assert abs(s - 2.0) < 0.01
+
+
+def test_correlation_weak():
+    x = [1.0, 2.0, 3.0, 4.0, 5.0]
+    y = [2.0, 1.0, 4.0, 3.0, 5.0]
+    r = correlation(x, y)
+    assert 0.0 < r < 1.0
+
+
+def test_regression_r_squared_range():
+    x = [1.0, 2.0, 3.0, 4.0, 5.0]
+    y = [2.0, 3.5, 3.0, 5.5, 5.0]
+    r = linear_regression(x, y)
+    assert 0.0 <= r.r_squared <= 1.0

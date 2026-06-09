@@ -98,3 +98,31 @@ def test_mat_mul_identity():
 def test_determinant_singular():
     m = [[1, 2], [2, 4]]
     assert abs(determinant(m)) < 1e-9
+
+
+def test_integral_sin_half_period():
+    result = integral(math.sin, 0, math.pi)
+    assert abs(result - 2.0) < 1e-6
+
+
+def test_derivative_of_constant():
+    result = derivative(lambda x: 5.0, 3.0)
+    assert abs(result) < 1e-6
+
+
+def test_transpose_rect():
+    m = [[1, 2, 3], [4, 5, 6]]
+    t = transpose(m)
+    assert len(t) == 3
+    assert len(t[0]) == 2
+    assert t[0] == [1, 4]
+
+
+def test_determinant_3x3_unit():
+    m = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
+    d = determinant(m)
+    assert abs(d - 1.0) < 1e-9
+
+
+def test_dot_parallel():
+    assert dot([2, 0], [3, 0]) == 6

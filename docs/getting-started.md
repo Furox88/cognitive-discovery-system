@@ -66,7 +66,7 @@ print(kinetic_energy(10, 5))  # 125.0
 ## Running Tests
 
 ```bash
-pytest           # run all 162 tests
+pytest           # run all 200+ tests
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -97,5 +97,6 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 162 tests (pytest)
+tests/              # 200+ tests (pytest)
+docs/               # Documentation, API reference, benchmarks
 ```

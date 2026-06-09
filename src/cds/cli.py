@@ -17,7 +17,7 @@ from cds.hypothesis.generator import PromptTemplate, generate_hypotheses
 
 app = typer.Typer(
     name="cds",
-    help="Cognitive Discovery System — AI-assisted scientific research tooling.",
+    help="Cognitive Discovery System — computational science toolkit.",
     add_completion=False,
 )
 console = Console()
@@ -120,9 +120,10 @@ def info() -> None:
     """Show project info and status."""
     console.print(Panel.fit(
         "[bold]Cognitive Discovery System (CDS)[/]\n\n"
-        "Open-source research assistant for scientific discovery.\n"
-        "Modules: quantum, stats, math_utils, data_analysis, scientific\n\n"
-        "Status: Early development / Alpha v0.1.0",
+        "Pure Python computational science toolkit.\n"
+        "Modules: quantum, optimization, signals, probability,\n"
+        "  stats, math_utils, data_analysis, scientific, hypothesis\n\n"
+        "Status: Alpha v0.1.0 | Tests: 200+ | Dependencies: pure Python",
         title="CDS",
         border_style="magenta",
     ))

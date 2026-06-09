@@ -18,7 +18,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
 ]
 
 dependencies = [
@@ -28,14 +29,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-llm = [
-    # Add when ready:
-    # "openai>=1.0",
-    # "httpx",
-]
-physics = [
-    "sympy>=1.12",
-]
+
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",

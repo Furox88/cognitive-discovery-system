@@ -1,8 +1,8 @@
 """
 Cognitive Discovery System (CDS)
 
-Open-source research assistant for scientific discovery,
-mathematical modeling, and structured reasoning.
+Pure Python computational science toolkit — quantum simulation,
+FFT, optimization, probability, statistics, and more.
 """
 
 __version__ = "0.1.0"

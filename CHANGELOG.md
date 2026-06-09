@@ -54,8 +54,10 @@ All notable changes to this project will be documented in this file.
   - `cds calc` — interactive physics calculator
   - `cds hypothesize` — generate hypotheses
 - Core data models (`cds.core.models`)
-- 162 tests with pytest
+- 200+ tests with pytest
 - Example scripts in `examples/`
+- API reference documentation (`docs/api-reference.md`)
+- Performance benchmarks (`docs/benchmarks.md`)
 - Contributing guidelines, Code of Conduct, Security policy
 - Issue and PR templates
 - Getting started documentation
