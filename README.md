@@ -1,101 +1,74 @@
 # Cognitive Discovery System (CDS)
 
-**Open-source research assistant for scientific discovery, mathematical modeling, and structured reasoning.**
+[![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 
-CDS aims to augment researchers (especially in physics, mathematics, and complex systems) with AI-powered tools for hypothesis generation, modeling, knowledge organization, and workflow automation.
+**Open-source research assistant for scientific discovery, structured reasoning, and workflow automation.**
 
-> Currently in **planning and early architecture phase**. Contributions welcome!
+CDS helps researchers with AI-powered tools for hypothesis generation, knowledge organization, and reproducible research workflows.
+
+> Currently in **early development**. Contributions welcome!
 
 ## Goals
 
-- **Scientific hypothesis generation** — Generate, critique, and refine research hypotheses grounded in existing knowledge
-- **Mathematical modeling** — Assist in symbolic manipulation, model construction, and fitting workflows
-- **Physics-oriented reasoning** — Strong support for physics, cosmology, and related domains (user background friendly)
+- **Hypothesis generation** — Generate, critique, and refine research hypotheses grounded in existing knowledge
 - **Knowledge organization** — Concept graphs, note management, literature linking, and traceable reasoning
-- **Research workflow automation** — Reproducible pipelines from idea → experiment design → analysis → reporting
+- **Research workflow automation** — Reproducible pipelines from idea to analysis to reporting
+- **LLM provider agnostic** — Support for OpenAI, xAI, Anthropic, local models, etc.
 
-## Planned Features (MVP Roadmap)
+## Planned Features
 
-| Phase | Feature                        | Description                                      | Status     |
-|-------|--------------------------------|--------------------------------------------------|------------|
-| 1     | AI-assisted idea generation    | Prompt + retrieval based hypothesis proposals    | In design  |
-| 1     | Structured research planning   | Break research goals into actionable steps       | Planned    |
-| 2     | Concept relationship mapping   | Knowledge graph / concept network builder        | Planned    |
-| 2     | Scientific note management     | Structured notes + provenance + search           | Planned    |
-| 3     | Mathematical reasoning support | SymPy integration, model templates, derivation   | Planned    |
-| 3     | Workflow automation            | Reproducible experiment runners + reporting      | Planned    |
-| Later | Multi-agent collaboration      | Specialized agents (theorist, critic, coder, reviewer) | Future |
+| Phase | Feature                      | Status    |
+|-------|------------------------------|-----------|
+| 1     | AI-assisted idea generation  | In design |
+| 1     | Structured research planning | Planned   |
+| 2     | Concept relationship mapping | Planned   |
+| 2     | Scientific note management   | Planned   |
+| 3     | Workflow automation          | Planned   |
+| Later | Multi-agent collaboration    | Future    |
 
-## Architecture (Early Vision)
-
-```
-cds/
-├── core/               # Shared models, tracing, config
-├── hypothesis/         # Hypothesis generation & evaluation
-├── knowledge/          # Notes, concepts, graphs, retrieval
-├── modeling/           # Symbolic math, model templates, simulation hooks
-├── reasoning/          # Structured reasoning engines, critics
-├── agents/             # LLM agent abstractions + tool use
-├── cli/                # Command-line interface
-└── integrations/       # SymPy, external APIs, data sources
-```
-
-- **LLM Provider Agnostic**: First-class support for xAI (Grok), OpenAI (via Codex credits if applicable), Anthropic, local (Ollama, vLLM), etc.
-- **Traceability**: Every output should be auditable (prompts, sources, reasoning steps).
-- **Domain-first**: Physics/math examples and templates from day one.
-
-## Getting Started (Planned)
-
-```bash
-# After MVP
-pip install cognitive-discovery-system
-cds --help
-
-# Example (future)
-cds hypothesize "dark energy equation of state evolution" --domain cosmology
-```
-
-**For developers (current):**
+## Quick Start
 
 ```bash
 git clone https://github.com/Furox88/cognitive-discovery-system.git
 cd cognitive-discovery-system
-# (setup instructions will appear here once we have a package)
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+# Run CLI
+cds --help
+
+# Run tests
+pytest
 ```
 
-## Why CDS?
+## Architecture
 
-Modern research involves massive literature, complex models, and repetitive reasoning tasks. CDS exists to:
-
-- Accelerate the "idea → test" loop
-- Make reasoning explicit and shareable
-- Lower the barrier for deep, rigorous scientific exploration
-- Be a platform that actual researchers (not just prompt engineers) love using
+```
+src/cds/
+├── core/           # Shared models, config
+├── hypothesis/     # Hypothesis generation & evaluation
+├── knowledge/      # Notes, concepts, retrieval
+├── agents/         # LLM agent abstractions
+└── cli.py          # Command-line interface
+```
 
 ## Contributing
 
-This is early stage — perfect time to shape the direction.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and open issues/discussions.
-
-Especially looking for:
-
-- Researchers with physics/math background (domain expertise + test cases)
+Looking for:
+- Researchers with domain expertise
 - LLM/agent engineers
-- People building similar tools (let's collaborate, not duplicate)
+- People building similar tools
 
 ## License
 
-MIT License — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
 
-## Status & Contact
+## Contact
 
-- **Status**: Planning / Architecture
 - Maintainer: [@Furox88](https://github.com/Furox88)
-- Discussions: Use GitHub Discussions / Issues
-
-Built with the goal of being genuinely useful for real scientific work.
-
----
-
-*Part of the broader effort to bring powerful AI tooling to open scientific research (proud participant in programs supporting OSS maintainers).*
+- Issues & Discussions: [GitHub](https://github.com/Furox88/cognitive-discovery-system/issues)

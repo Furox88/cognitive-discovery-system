@@ -6,7 +6,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Furox88", email = "furox88@example.com"}
+    {name = "Furox88", email = "alexxalxz617@gmail.com"}
 ]
 keywords = ["science", "research", "ai", "hypothesis", "physics", "mathematics", "agents", "reasoning"]
 classifiers = [
@@ -36,8 +36,6 @@ llm = [
 physics = [
     "sympy>=1.12",
     "numpy>=1.24",
-    "pandas>=2.0",
-    # "z3-solver>=4.12",  # optional for SMT-based theory checking (rba_kontrol style)
 ]
 dev = [
     "pytest>=8.0",
