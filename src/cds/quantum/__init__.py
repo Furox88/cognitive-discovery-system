@@ -1,5 +1,24 @@
 """Quantum computing simulation tools."""
 from cds.quantum.circuit import QuantumCircuit, QuantumGate, Qubit
+from cds.quantum.multi_qubit import (
+    QuantumRegister,
+    bell_state,
+    cnot,
+    cz,
+    ghz_state,
+    h_gate,
+    is_entangled,
+    swap,
+    toffoli,
+    x_gate,
+    y_gate,
+    z_gate,
+)
 from cds.quantum.simulator import simulate
 
-__all__ = ["QuantumCircuit", "QuantumGate", "Qubit", "simulate"]
+__all__ = [
+    "QuantumCircuit", "QuantumGate", "Qubit", "simulate",
+    "QuantumRegister", "bell_state", "cnot", "cz",
+    "ghz_state", "h_gate", "is_entangled", "swap",
+    "toffoli", "x_gate", "y_gate", "z_gate",
+]

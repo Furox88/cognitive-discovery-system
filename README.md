@@ -13,7 +13,7 @@ CDS provides tools for hypothesis generation, quantum circuit simulation, statis
 
 | Module | Description |
 |--------|-------------|
-| `cds.quantum` | Quantum gate simulation — Hadamard, Pauli-X/Z, phase gates, measurement |
+| `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli gates, CNOT, SWAP, Toffoli, Bell states, GHZ, entanglement detection |
 | `cds.stats` | Descriptive stats, correlation, linear regression |
 | `cds.math_utils` | Numerical derivatives, integrals (Simpson's rule), matrix ops, determinants |
 | `cds.data_analysis` | CSV loader, normalization, z-score, moving average |
@@ -40,7 +40,7 @@ pytest
 
 ## Examples
 
-### Quantum Circuit
+### Quantum Circuit (single qubit)
 ```python
 from cds.quantum import QuantumCircuit, hadamard, pauli_x, simulate
 
@@ -50,6 +50,23 @@ print(result.probabilities())
 
 counts = simulate(circuit, shots=1000)
 print(counts)  # {0: ~500, 1: ~500}
+```
+
+### Multi-Qubit & Entanglement
+```python
+from cds.quantum import (
+    QuantumRegister, h_gate, cnot, bell_state,
+    ghz_state, is_entangled,
+)
+
+# Create a Bell state (|00> + |11>) / sqrt(2)
+reg = bell_state(0)
+print(is_entangled(reg))  # True
+print(reg.measure_shots(shots=1000))  # {'00': ~500, '11': ~500}
+
+# 3-qubit GHZ state
+ghz = ghz_state(3)
+print(ghz.probabilities())  # [0.5, 0, 0, 0, 0, 0, 0, 0.5]
 ```
 
 ### Statistics

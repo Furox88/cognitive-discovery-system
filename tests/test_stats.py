@@ -60,3 +60,40 @@ def test_regression_predict():
     y = [2.0, 4.0, 6.0]
     r = linear_regression(x, y)
     assert abs(r.predict(10) - 20.0) < 1e-6
+
+
+def test_mean_single():
+    assert mean([42.0]) == 42.0
+
+
+def test_median_single():
+    assert median([7]) == 7
+
+
+def test_variance_population():
+    v = variance([2, 4, 4, 4, 5, 5, 7, 9], ddof=0)
+    assert abs(v - 4.0) < 0.01
+
+
+def test_correlation_zero():
+    x = [1.0, 2.0, 3.0, 4.0]
+    y = [1.0, 1.0, 1.0, 1.0]  # constant
+    assert correlation(x, y) == 0.0
+
+
+def test_correlation_length_mismatch():
+    with pytest.raises(ValueError):
+        correlation([1.0], [1.0, 2.0])
+
+
+def test_regression_negative_slope():
+    x = [1.0, 2.0, 3.0, 4.0]
+    y = [10.0, 8.0, 6.0, 4.0]  # y = -2x + 12
+    r = linear_regression(x, y)
+    assert abs(r.slope - (-2.0)) < 1e-9
+    assert abs(r.intercept - 12.0) < 1e-9
+
+
+def test_variance_needs_two_values():
+    with pytest.raises(ValueError):
+        variance([5.0])

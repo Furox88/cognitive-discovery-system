@@ -72,3 +72,33 @@ def test_de_broglie():
 def test_escape_velocity_earth():
     v = escape_velocity(5.972e24, 6.371e6)
     assert abs(v - 11186) < 50  # ~11.2 km/s
+
+
+def test_kinetic_energy_zero_velocity():
+    assert kinetic_energy(100.0, 0.0) == 0.0
+
+
+def test_gravitational_force_zero_distance():
+    with pytest.raises(ValueError):
+        gravitational_force(1.0, 1.0, 0.0)
+
+
+def test_wave_frequency_negative():
+    with pytest.raises(ValueError):
+        wave_frequency(-1.0)
+
+
+def test_ideal_gas_zero_volume():
+    with pytest.raises(ValueError):
+        ideal_gas_pressure(1.0, 300.0, 0.0)
+
+
+def test_de_broglie_zero_momentum():
+    with pytest.raises(ValueError):
+        de_broglie_wavelength(0.0, 0.0)
+
+
+def test_constants_have_descriptions():
+    for name, (val, desc) in CONSTANTS.items():
+        assert isinstance(desc, str)
+        assert len(desc) > 0

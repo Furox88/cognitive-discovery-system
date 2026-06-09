@@ -61,3 +61,40 @@ def test_determinant_2x2():
 def test_determinant_3x3():
     m = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
     assert abs(determinant(m) - 1.0) < 1e-9
+
+
+def test_derivative_of_exp():
+    # d/dx(e^x) = e^x, at x=1
+    result = derivative(math.exp, 1.0)
+    assert abs(result - math.e) < 1e-4
+
+
+def test_integral_constant():
+    # integral of 5 from 0 to 3 = 15
+    result = integral(lambda x: 5.0, 0, 3)
+    assert abs(result - 15.0) < 0.01
+
+
+def test_determinant_identity():
+    m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    assert abs(determinant(m) - 1.0) < 1e-9
+
+
+def test_transpose_square():
+    m = [[1, 2], [3, 4]]
+    assert transpose(m) == [[1, 3], [2, 4]]
+
+
+def test_dot_orthogonal():
+    assert dot([1, 0, 0], [0, 1, 0]) == 0
+
+
+def test_mat_mul_identity():
+    I = [[1, 0], [0, 1]]  # noqa: E741
+    a = [[5, 6], [7, 8]]
+    assert mat_mul(I, a) == a
+
+
+def test_determinant_singular():
+    m = [[1, 2], [2, 4]]
+    assert abs(determinant(m)) < 1e-9
