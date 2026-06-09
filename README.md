@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-200%2B%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-267%20passing-brightgreen.svg)]()
 
 **Open-source computational science toolkit for research, simulation, and discovery.**
 
@@ -14,8 +14,8 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
-- **Broad scope** — 9 modules covering math, physics, stats, signals, optimization
-- **200+ tests** — thoroughly tested with pytest
+- **Broad scope** — 12 modules covering math, physics, stats, signals, optimization, graph theory, ODEs, Monte Carlo
+- **267 tests** — thoroughly tested with pytest
 - **CLI included** — interactive physics calculator from your terminal
 
 ## Modules
@@ -27,9 +27,12 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 | `cds.signals` | DFT, FFT (radix-2), convolution, power spectrum, low-pass filter |
 | `cds.probability` | Gaussian, uniform, exponential, binomial, Poisson distributions |
 | `cds.stats` | Descriptive stats, Pearson correlation, linear regression |
-| `cds.math_utils` | Numerical derivatives, integrals (Simpson's rule), matrix ops, determinants |
+| `cds.math_utils` | Numerical calculus, LU decomposition, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
 | `cds.data_analysis` | CSV loader, normalization, z-score, moving average |
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
+| `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
+| `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
+| `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
 | `cds.hypothesis` | Hypothesis generation with LLM-ready prompt templates |
 
 ## Quick Start
@@ -146,6 +149,51 @@ print(kinetic_energy(10, 5))      # 125.0 J
 print(escape_velocity(5.972e24, 6.371e6))  # ~11186 m/s
 ```
 
+### Graph Theory
+```python
+from cds.graph import Graph, dijkstra, kruskal_mst, bfs
+
+g = Graph(n_vertices=4, directed=False)
+g.add_edge(0, 1, 1.0)
+g.add_edge(1, 2, 2.0)
+g.add_edge(2, 3, 3.0)
+g.add_edge(0, 3, 10.0)
+
+dist, prev = dijkstra(g, 0)
+print(dist)  # {0: 0.0, 1: 1.0, 2: 3.0, 3: 6.0}
+
+edges, total = kruskal_mst(g)
+print(f"MST weight: {total}")  # 6.0
+```
+
+### Monte Carlo Simulation
+```python
+from cds.montecarlo import estimate_pi, mc_integrate
+import math
+
+result = estimate_pi(n_samples=100_000, seed=42)
+print(f"π ≈ {result.estimate:.4f}")  # ~3.1416
+
+area = mc_integrate(math.sin, 0, math.pi, n_samples=100_000)
+print(f"∫sin(x)dx = {area.estimate:.4f}")  # ~2.0
+```
+
+### Differential Equations
+```python
+from cds.diffeq import rk4, solve_system
+import math
+
+# dy/dt = -y, y(0)=1  =>  y(t) = e^(-t)
+sol = rk4(lambda t, y: -y, t0=0, y0=1.0, t_end=2.0)
+print(f"y(2) = {sol.y[-1]:.6f}")  # ~0.135335 (e^-2)
+
+# Harmonic oscillator: x'' = -x
+def harmonic(t, y):
+    return [y[1], -y[0]]
+t_vals, y_vals = solve_system(harmonic, 0, [1.0, 0.0], math.pi)
+print(f"x(π) = {y_vals[-1][0]:.4f}")  # ~-1.0
+```
+
 ## Architecture
 
 ```
@@ -155,15 +203,18 @@ src/cds/
 ├── signals/        # DFT, FFT, convolution, filtering
 ├── probability/    # Probability distributions & sampling
 ├── stats/          # Statistical analysis & regression
-├── math_utils/     # Numerical calculus & linear algebra
+├── math_utils/     # Calculus, linear algebra, eigenvalues, Gram-Schmidt
 ├── data_analysis/  # CSV loading & data transforms
 ├── scientific/     # Physical constants & formulas
+├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal MST)
+├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
+├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
 ├── hypothesis/     # Hypothesis generation
 ├── core/           # Shared models, config
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 200+ tests (pytest)
+tests/              # 267 tests (pytest)
 docs/               # Documentation (getting started, API reference, benchmarks)
 ```
 
@@ -174,7 +225,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
 Looking for:
 - Researchers with domain expertise
 - People interested in pure-Python scientific computing
-- Contributors for new modules (graph theory, ML basics, etc.)
+- Contributors for new modules (ML basics, PDE solvers, etc.)
 
 ## License
 

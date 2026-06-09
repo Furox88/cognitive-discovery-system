@@ -61,12 +61,36 @@ print(mean([1, 2, 3, 4, 5]))  # 3.0
 from cds.scientific import kinetic_energy, get_constant
 print(get_constant("c"))  # 299792458.0
 print(kinetic_energy(10, 5))  # 125.0
+
+# Graph theory
+from cds.graph import Graph, dijkstra
+g = Graph(n_vertices=3, directed=False)
+g.add_edge(0, 1, 1.0)
+g.add_edge(1, 2, 2.0)
+dist, _ = dijkstra(g, 0)
+print(dist)  # {0: 0.0, 1: 1.0, 2: 3.0}
+
+# Monte Carlo
+from cds.montecarlo import estimate_pi
+result = estimate_pi(n_samples=50_000, seed=42)
+print(f"π ≈ {result.estimate:.4f}")
+
+# Differential equations
+from cds.diffeq import rk4
+import math
+sol = rk4(lambda t, y: -y, 0, 1.0, 1.0)
+print(f"e^-1 ≈ {sol.y[-1]:.6f}")  # 0.367879
+
+# Linear algebra
+from cds.math_utils import solve_linear, power_iteration
+x = solve_linear([[2, 1], [4, 3]], [5, 11])
+print(x)  # [2.0, 1.0]
 ```
 
 ## Running Tests
 
 ```bash
-pytest           # run all 200+ tests
+pytest           # run all 267 tests
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -89,14 +113,17 @@ src/cds/
 ├── signals/        # DFT, FFT, convolution, filtering
 ├── probability/    # Probability distributions & sampling
 ├── stats/          # Statistical analysis & regression
-├── math_utils/     # Numerical calculus & linear algebra
+├── math_utils/     # Calculus, linear algebra, eigenvalues
 ├── data_analysis/  # CSV loading & data transforms
 ├── scientific/     # Physical constants & formulas
+├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal)
+├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
+├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
 ├── hypothesis/     # Hypothesis generation
 ├── core/           # Shared models, config
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 200+ tests (pytest)
+tests/              # 267 tests (pytest)
 docs/               # Documentation, API reference, benchmarks
 ```

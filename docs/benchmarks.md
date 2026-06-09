@@ -44,10 +44,48 @@ FFT is ~60× faster than direct DFT at N=1024 (O(N log N) vs O(N²)).
 | binomial_pmf (n=100) | 1 | ~0.01 ms |
 | 10k uniform samples | 10000 | ~2 ms |
 
+## Graph Theory
+
+| Algorithm | V | E | Time |
+|-----------|---|---|------|
+| BFS | 1000 | 3000 | ~2 ms |
+| DFS | 1000 | 3000 | ~2 ms |
+| Dijkstra | 1000 | 3000 | ~5 ms |
+| Kruskal MST | 1000 | 3000 | ~4 ms |
+| Topological sort | 1000 | 2000 | ~1.5 ms |
+
+## Monte Carlo
+
+| Method | Samples | Estimate | Error |
+|--------|---------|----------|-------|
+| π estimation (circle) | 100K | ~3.1416 | ~0.005 |
+| Buffon's needle | 100K | ~3.14 | ~0.02 |
+| Integration (∫sin dx) | 100K | ~2.000 | ~0.003 |
+
+## Differential Equations
+
+| Method | ODE | dt | Error at t=1 |
+|--------|-----|----|----|
+| Euler | dy/dt=-y | 0.01 | ~5×10⁻³ |
+| Midpoint (RK2) | dy/dt=-y | 0.01 | ~2×10⁻⁵ |
+| RK4 | dy/dt=-y | 0.01 | ~3×10⁻⁹ |
+
+RK4 is ~10⁶× more accurate than Euler for the same step size.
+
+## Linear Algebra
+
+| Operation | Size | Time |
+|-----------|------|------|
+| LU decomposition | 100×100 | ~30 ms |
+| Linear solve (Ax=b) | 100×100 | ~35 ms |
+| Matrix inverse | 50×50 | ~40 ms |
+| Power iteration (eigenvalue) | 100×100 | ~15 ms |
+| Gram-Schmidt | 50 vectors (dim 50) | ~5 ms |
+
 ## Test Suite
 
 ```
-162+ tests in ~0.2 seconds
+267 tests in ~0.3 seconds
 ```
 
 All benchmarks are approximate and depend on hardware. Run `pytest --durations=10` to see test timing on your machine.

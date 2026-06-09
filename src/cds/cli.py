@@ -121,9 +121,10 @@ def info() -> None:
     console.print(Panel.fit(
         "[bold]Cognitive Discovery System (CDS)[/]\n\n"
         "Pure Python computational science toolkit.\n"
-        "Modules: quantum, optimization, signals, probability,\n"
-        "  stats, math_utils, data_analysis, scientific, hypothesis\n\n"
-        "Status: Alpha v0.1.0 | Tests: 200+ | Dependencies: pure Python",
+        "Modules: quantum, optimization, signals, probability, stats,\n"
+        "  math_utils, data_analysis, scientific, graph, montecarlo,\n"
+        "  diffeq, hypothesis\n\n"
+        "Status: Alpha v0.1.0 | Tests: 267 | Dependencies: pure Python",
         title="CDS",
         border_style="magenta",
     ))

@@ -37,6 +37,28 @@ All notable changes to this project will be documented in this file.
   - Integrals (Simpson's rule)
   - Gradient computation
   - Matrix multiplication, transpose, determinant
+  - LU decomposition (Doolittle's method)
+  - Linear system solver (forward/back substitution)
+  - Matrix inverse
+  - Eigenvalue computation (power iteration — Von Mises 1929)
+  - Gram-Schmidt orthonormalization
+- **Graph theory** (`cds.graph`)
+  - Breadth-first search (BFS)
+  - Depth-first search (DFS)
+  - Dijkstra's shortest path algorithm (1959)
+  - Kruskal's minimum spanning tree (1956)
+  - Topological sort (Kahn's algorithm)
+  - Cycle detection (DFS coloring)
+- **Monte Carlo methods** (`cds.montecarlo`)
+  - π estimation (unit-circle method)
+  - Monte Carlo integration
+  - Buffon's needle experiment (1777)
+  - 1D and 2D random walks
+- **Differential equations** (`cds.diffeq`)
+  - Euler's method (1768)
+  - Classical 4th-order Runge-Kutta (RK4)
+  - Explicit midpoint method (2nd-order RK)
+  - System solver for coupled ODEs
 - **Data analysis** (`cds.data_analysis`)
   - CSV file loader
   - Normalization, z-score standardization
@@ -54,7 +76,7 @@ All notable changes to this project will be documented in this file.
   - `cds calc` — interactive physics calculator
   - `cds hypothesize` — generate hypotheses
 - Core data models (`cds.core.models`)
-- 200+ tests with pytest
+- 267 tests with pytest
 - Example scripts in `examples/`
 - API reference documentation (`docs/api-reference.md`)
 - Performance benchmarks (`docs/benchmarks.md`)

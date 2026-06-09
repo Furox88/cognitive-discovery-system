@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests (200+ tests)
+# Run tests (267 tests)
 pytest
 
 # Run linter
@@ -53,12 +53,12 @@ cds constants
 ## Module Ideas
 
 Looking for contributions in:
-- Graph theory algorithms
 - Machine learning basics (k-means, kNN, decision trees)
 - Symbolic math
-- Differential equations solvers
-- Monte Carlo methods
+- Partial differential equations (PDE) solvers
 - Information theory (entropy, mutual information)
+- Numerical interpolation (Lagrange, splines)
+- Combinatorics and number theory
 
 ## Running Examples
 

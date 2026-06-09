@@ -92,6 +92,12 @@ All return `OptResult(x, value, iterations, converged)`.
 | `mat_mul(a, b)` | Matrix multiplication |
 | `transpose(m)` | Matrix transpose |
 | `determinant(m)` | Matrix determinant (recursive) |
+| `identity(n)` | n×n identity matrix |
+| `lu_decomposition(m)` | LU decomposition (Doolittle) → (L, U) |
+| `solve_linear(A, b)` | Solve Ax=b via LU |
+| `matrix_inverse(m)` | Matrix inverse via LU |
+| `power_iteration(m, max_iter, tol)` | Dominant eigenvalue & eigenvector (Von Mises) |
+| `gram_schmidt(vectors)` | Gram-Schmidt orthonormalization |
 
 ## cds.data_analysis
 
@@ -125,6 +131,49 @@ Access via `get_constant(name)`: `c`, `G`, `h`, `k_B`, `N_A`, `R`, `epsilon_0`, 
 | `schwarzschild_radius(mass)` | r_s = 2GM/c² |
 | `de_broglie_wavelength(mass, velocity)` | λ = h/(mv) |
 | `escape_velocity(mass, radius)` | v = √(2GM/r) |
+
+## cds.graph
+
+| Function | Description |
+|----------|-------------|
+| `Graph(n_vertices, directed)` | Create a graph (adjacency list) |
+| `Graph.add_edge(u, v, weight)` | Add an edge |
+| `bfs(graph, start)` | Breadth-first search → vertex order |
+| `dfs(graph, start)` | Depth-first search → vertex order |
+| `dijkstra(graph, start)` | Shortest paths → (distances, predecessors) |
+| `kruskal_mst(graph)` | Minimum spanning tree → (edges, total_weight) |
+| `topological_sort(graph)` | Topological order (DAG only) |
+| `has_cycle(graph)` | Detect cycles in directed graph |
+
+**References:** Dijkstra (1959), Kruskal (1956), CLRS §22-23
+
+## cds.montecarlo
+
+| Function | Description |
+|----------|-------------|
+| `estimate_pi(n_samples, seed)` | Estimate π via unit-circle method |
+| `mc_integrate(f, a, b, n_samples, seed)` | Monte Carlo integration over [a,b] |
+| `random_walk_1d(steps, step_size, seed)` | 1D symmetric random walk |
+| `random_walk_2d(steps, step_size, seed)` | 2D random walk (uniform angle) |
+| `buffon_needle(needle_length, line_spacing, n_throws, seed)` | Buffon's needle π estimation |
+
+All return `MCResult(estimate, samples, std_error)` (except random walks → position lists).
+
+**References:** Metropolis & Ulam (1949), Buffon (1777)
+
+## cds.diffeq
+
+| Function | Description |
+|----------|-------------|
+| `euler_method(f, t0, y0, t_end, dt)` | Euler's method — O(dt) global error |
+| `rk4(f, t0, y0, t_end, dt)` | Classical 4th-order Runge-Kutta — O(dt⁴) |
+| `midpoint_method(f, t0, y0, t_end, dt)` | Explicit midpoint — O(dt²) |
+| `solve_system(f, t0, y0, t_end, dt)` | RK4 for ODE systems (vector y) |
+
+Scalar solvers return `ODESolution(t, y, method, steps)`.
+System solver returns `(t_values, y_values)`.
+
+**References:** Euler (1768), Runge (1895), Kutta (1901), Butcher (Numerical Methods for ODEs)
 
 ## cds.hypothesis
 
