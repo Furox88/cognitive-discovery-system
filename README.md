@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Cognitive Discovery System" width="640">
+</p>
+
 # Cognitive Discovery System (CDS)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-267%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-309%20passing-brightgreen.svg)]()
 
 **Open-source computational science toolkit for research, simulation, and discovery.**
 
@@ -15,7 +19,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Broad scope** — 12 modules covering math, physics, stats, signals, optimization, graph theory, ODEs, Monte Carlo
-- **267 tests** — thoroughly tested with pytest
+- **309 tests** — thoroughly tested with pytest
 - **CLI included** — interactive physics calculator from your terminal
 
 ## Modules
@@ -24,10 +28,10 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 |--------|-------------|
 | `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli, CNOT, SWAP, Toffoli, Bell/GHZ states, entanglement detection |
 | `cds.optimization` | Gradient descent, Newton's method, Adam optimizer, golden section search |
-| `cds.signals` | DFT, FFT (radix-2), convolution, power spectrum, low-pass filter |
+| `cds.signals` | DFT, FFT (radix-2), 2-D FFT, convolution, power spectrum, low-pass filter |
 | `cds.probability` | Gaussian, uniform, exponential, binomial, Poisson distributions |
-| `cds.stats` | Descriptive stats, Pearson correlation, linear regression |
-| `cds.math_utils` | Numerical calculus, LU decomposition, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
+| `cds.stats` | Descriptive stats, Pearson correlation, linear regression, t-test, chi-square, ANOVA |
+| `cds.math_utils` | Numerical calculus, LU / QR / Cholesky decomposition, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
 | `cds.data_analysis` | CSV loader, normalization, z-score, moving average |
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
@@ -214,7 +218,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 267 tests (pytest)
+tests/              # 309 tests (pytest)
 docs/               # Documentation (getting started, API reference, benchmarks)
 ```
 

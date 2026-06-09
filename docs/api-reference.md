@@ -55,6 +55,8 @@ All return `OptResult(x, value, iterations, converged)`.
 | `dft(signal)` | Discrete Fourier Transform |
 | `idft(spectrum)` | Inverse DFT |
 | `fft_radix2(signal)` | Cooley-Tukey radix-2 FFT (len must be power of 2) |
+| `fft2(matrix)` | 2-D FFT via row-column decomposition |
+| `ifft2(spectrum)` | Inverse 2-D FFT |
 | `convolve(a, b)` | Linear convolution |
 | `power_spectrum(signal)` | |X[k]|² / N |
 | `low_pass_filter(signal, cutoff)` | Zero high-frequency components |
@@ -80,6 +82,14 @@ All return `OptResult(x, value, iterations, converged)`.
 | `stdev(data, ddof=1)` | Standard deviation |
 | `correlation(x, y)` | Pearson correlation coefficient |
 | `linear_regression(x, y)` | Returns `RegressionResult(slope, intercept, r_squared, predict)` |
+| `one_sample_ttest(sample, popmean)` | One-sample Student t-test |
+| `two_sample_ttest(a, b, equal_var=True)` | Two-sample t-test (pooled or Welch) |
+| `chi_square_gof(observed, expected)` | Chi-square goodness-of-fit test |
+| `chi_square_independence(table)` | Chi-square test of independence |
+| `one_way_anova(*groups)` | One-way ANOVA (F-test) |
+| `t_sf`, `chi2_sf`, `f_sf` | Distribution survival (tail) functions |
+
+Test functions return `TestResult(statistic, df, p_value)`.
 
 ## cds.math_utils
 
@@ -98,6 +108,8 @@ All return `OptResult(x, value, iterations, converged)`.
 | `matrix_inverse(m)` | Matrix inverse via LU |
 | `power_iteration(m, max_iter, tol)` | Dominant eigenvalue & eigenvector (Von Mises) |
 | `gram_schmidt(vectors)` | Gram-Schmidt orthonormalization |
+| `qr_decomposition(m)` | QR factorization via Householder reflections → (Q, R) |
+| `cholesky(m)` | Cholesky factorization of symmetric positive-definite matrix → L |
 
 ## cds.data_analysis
 

@@ -90,7 +90,7 @@ print(x)  # [2.0, 1.0]
 ## Running Tests
 
 ```bash
-pytest           # run all 267 tests
+pytest           # run all 309 tests
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -102,6 +102,9 @@ python examples/quantum_demo.py
 python examples/optimization_demo.py
 python examples/signals_demo.py
 python examples/stats_demo.py
+python examples/fft2_demo.py
+python examples/hypothesis_tests_demo.py
+python examples/linalg_demo.py
 ```
 
 ## Project Structure
@@ -124,6 +127,6 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 267 tests (pytest)
+tests/              # 309 tests (pytest)
 docs/               # Documentation, API reference, benchmarks
 ```

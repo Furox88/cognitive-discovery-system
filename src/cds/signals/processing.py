@@ -76,6 +76,84 @@ def fft_radix2(signal: list[complex]) -> list[complex]:
     return result
 
 
+def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
+    """2-D Discrete Fourier Transform via the row-column algorithm.
+
+    Applies a 1-D FFT to each row, then a 1-D FFT to each column of the
+    result. Both dimensions must be powers of two so the radix-2 FFT applies.
+
+    Reference:
+        Cooley, J. W., & Tukey, J. W. (1965). "An algorithm for the machine
+        calculation of complex Fourier series." Mathematics of Computation,
+        19(90), 297-301. The separability of the multidimensional DFT into
+        successive 1-D transforms is the standard row-column method (see also
+        Gonzalez & Woods, Digital Image Processing, §4).
+
+    Args:
+        matrix: 2-D input (rows x cols), each dimension a power of two
+
+    Returns:
+        2-D list of complex frequency components
+
+    Raises:
+        ValueError: if the matrix is empty or rows have unequal length
+    """
+    rows = len(matrix)
+    if rows == 0:
+        raise ValueError("matrix must be non-empty")
+    cols = len(matrix[0])
+    if any(len(row) != cols for row in matrix):
+        raise ValueError("all rows must have equal length")
+
+    row_fft = [fft_radix2(list(row)) for row in matrix]
+
+    result = [[0 + 0j] * cols for _ in range(rows)]
+    for j in range(cols):
+        column = [row_fft[i][j] for i in range(rows)]
+        col_fft = fft_radix2(column)
+        for i in range(rows):
+            result[i][j] = col_fft[i]
+    return result
+
+
+def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
+    """Inverse 2-D DFT via the row-column algorithm.
+
+    Inverts :func:`fft2` by applying the inverse 1-D DFT along columns then
+    rows. Uses the separability of the multidimensional inverse transform.
+
+    Reference:
+        Cooley, J. W., & Tukey, J. W. (1965). Mathematics of Computation,
+        19(90), 297-301; row-column decomposition per Gonzalez & Woods,
+        Digital Image Processing, §4.
+
+    Args:
+        spectrum: 2-D frequency-domain input (rows x cols)
+
+    Returns:
+        2-D list of complex time/space-domain samples
+
+    Raises:
+        ValueError: if the matrix is empty or rows have unequal length
+    """
+    rows = len(spectrum)
+    if rows == 0:
+        raise ValueError("matrix must be non-empty")
+    cols = len(spectrum[0])
+    if any(len(row) != cols for row in spectrum):
+        raise ValueError("all rows must have equal length")
+
+    col_inv = [[0 + 0j] * cols for _ in range(rows)]
+    for j in range(cols):
+        column = [spectrum[i][j] for i in range(rows)]
+        inv = idft(column)
+        for i in range(rows):
+            col_inv[i][j] = inv[i]
+
+    result = [idft(col_inv[i]) for i in range(rows)]
+    return result
+
+
 def convolve(a: list[float], b: list[float]) -> list[float]:
     """Linear convolution of two real sequences.
 

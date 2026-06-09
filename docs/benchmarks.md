@@ -85,7 +85,7 @@ RK4 is ~10⁶× more accurate than Euler for the same step size.
 ## Test Suite
 
 ```
-267 tests in ~0.3 seconds
+309 tests in ~0.3 seconds
 ```
 
 All benchmarks are approximate and depend on hardware. Run `pytest --durations=10` to see test timing on your machine.

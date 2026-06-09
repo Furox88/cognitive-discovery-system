@@ -4,6 +4,10 @@ References:
     - Golub, G.H. & Van Loan, C.F. Matrix Computations (4th ed.)
     - Trefethen, L.N. & Bau, D. Numerical Linear Algebra.
     - Von Mises, R. (1929). Praktische Verfahren der Gleichungsauflösung (power iteration).
+    - Householder, A.S. (1958). Unitary triangularization of a nonsymmetric
+      matrix. JACM 5(4), 339-342.
+    - Cholesky, A.-L. / Benoît (1924). Méthode de résolution des équations
+      normales (Bulletin Géodésique, 2, 67-77).
 """
 from __future__ import annotations
 
@@ -189,3 +193,90 @@ def gram_schmidt(vectors: list[Vector]) -> list[Vector]:
             continue
         ortho.append([x / norm for x in u])
     return ortho
+
+
+def qr_decomposition(m: Matrix) -> tuple[Matrix, Matrix]:
+    """QR decomposition via Householder reflections.
+
+    Factorizes A (n×n) into an orthogonal matrix Q and upper-triangular R
+    such that A = Q R. Householder triangularization is backward stable and
+    preferred over classical Gram-Schmidt for numerical work.
+
+    Reference:
+        Householder, A. S. (1958). "Unitary triangularization of a
+        nonsymmetric matrix." Journal of the ACM, 5(4), 339-342.
+        See also Golub & Van Loan, §5.2; Trefethen & Bau, Lecture 10.
+
+    Args:
+        m: square matrix
+
+    Returns:
+        (Q, R) with Q orthogonal and R upper triangular
+    """
+    n = len(m)
+    R = [row[:] for row in m]
+    Q = identity(n)
+
+    for k in range(n - 1):
+        # column vector x = R[k:, k]
+        x = [R[i][k] for i in range(k, n)]
+        norm_x = math.sqrt(sum(xi * xi for xi in x))
+        if norm_x < 1e-15:
+            continue
+        # Householder vector v
+        alpha = -norm_x if x[0] >= 0 else norm_x
+        v = x[:]
+        v[0] -= alpha
+        norm_v = math.sqrt(sum(vi * vi for vi in v))
+        if norm_v < 1e-15:
+            continue
+        v = [vi / norm_v for vi in v]
+
+        # apply H = I - 2 v v^T to R (rows k..n-1)
+        for j in range(n):
+            dot_vr = sum(v[i] * R[k + i][j] for i in range(n - k))
+            for i in range(n - k):
+                R[k + i][j] -= 2.0 * v[i] * dot_vr
+
+        # accumulate Q = Q H (columns k..n-1)
+        for i in range(n):
+            dot_qv = sum(Q[i][k + j] * v[j] for j in range(n - k))
+            for j in range(n - k):
+                Q[i][k + j] -= 2.0 * dot_qv * v[j]
+
+    return Q, R
+
+
+def cholesky(m: Matrix) -> Matrix:
+    """Cholesky decomposition of a symmetric positive-definite matrix.
+
+    Returns the lower-triangular L such that A = L L^T. Roughly twice as
+    efficient as LU for SPD systems and numerically stable.
+
+    Reference:
+        Benoît, C. (1924). "Note sur une méthode de résolution des équations
+        normales... (Procédé du Commandant Cholesky)." Bulletin Géodésique,
+        2, 67-77. See also Golub & Van Loan, §4.2.
+
+    Args:
+        m: symmetric positive-definite matrix
+
+    Returns:
+        lower-triangular matrix L with A = L L^T
+
+    Raises:
+        ValueError: if the matrix is not positive definite
+    """
+    n = len(m)
+    L = [[0.0] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(i + 1):
+            s = sum(L[i][k] * L[j][k] for k in range(j))
+            if i == j:
+                diag = m[i][i] - s
+                if diag <= 0.0:
+                    raise ValueError("matrix is not positive definite")
+                L[i][j] = math.sqrt(diag)
+            else:
+                L[i][j] = (m[i][j] - s) / L[j][j]
+    return L

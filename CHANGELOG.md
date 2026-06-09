@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **2-D FFT** (`cds.signals`): `fft2` / `ifft2` via row-column decomposition (Cooley-Tukey 1965)
+- **Hypothesis testing** (`cds.stats`): one-sample & two-sample t-tests (pooled / Welch),
+  chi-square goodness-of-fit and independence, one-way ANOVA, with exact distribution
+  tail functions (`t_sf`, `chi2_sf`, `f_sf`) built on regularized incomplete gamma/beta
+  functions (Student 1908, Pearson 1900, Fisher 1925; Numerical Recipes §6.1–6.4)
+- **Linear algebra** (`cds.math_utils`): QR decomposition via Householder reflections
+  (Householder 1958) and Cholesky decomposition (Benoît/Cholesky 1924)
+- New runnable demos: `examples/fft2_demo.py`, `examples/hypothesis_tests_demo.py`,
+  `examples/linalg_demo.py`
+- Project logo/banner (`assets/logo.svg`)
+- Test suite expanded to **309 tests**
+
 ## [0.1.0] - 2026-06-09
 
 ### Added
@@ -76,7 +91,7 @@ All notable changes to this project will be documented in this file.
   - `cds calc` — interactive physics calculator
   - `cds hypothesize` — generate hypotheses
 - Core data models (`cds.core.models`)
-- 267 tests with pytest
+- 309 tests with pytest
 - Example scripts in `examples/`
 - API reference documentation (`docs/api-reference.md`)
 - Performance benchmarks (`docs/benchmarks.md`)
