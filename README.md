@@ -2,23 +2,35 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-162%20passing-brightgreen.svg)]()
 
-**Open-source research assistant for scientific discovery, structured reasoning, and computational science.**
+**Open-source computational science toolkit for research, simulation, and discovery.**
 
-CDS provides tools for hypothesis generation, quantum circuit simulation, statistical analysis, numerical math, and scientific computing — all in one Python package.
+CDS brings together quantum computing simulation, statistical analysis, signal processing, optimization, probability, and scientific computing in a single, dependency-light Python package. Every module is pure Python — no NumPy or SciPy required.
 
 > Currently in **alpha (v0.1.0)**. Contributions welcome!
+
+## Why CDS?
+
+- **Zero heavy dependencies** — pure Python implementations you can read and learn from
+- **Quantum simulation** — single & multi-qubit circuits with entanglement
+- **Broad scope** — 9 modules covering math, physics, stats, signals, optimization
+- **162 tests** — thoroughly tested with pytest
+- **CLI included** — interactive physics calculator from your terminal
 
 ## Modules
 
 | Module | Description |
 |--------|-------------|
-| `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli gates, CNOT, SWAP, Toffoli, Bell states, GHZ, entanglement detection |
-| `cds.stats` | Descriptive stats, correlation, linear regression |
+| `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli, CNOT, SWAP, Toffoli, Bell/GHZ states, entanglement detection |
+| `cds.optimization` | Gradient descent, Newton's method, Adam optimizer, golden section search |
+| `cds.signals` | DFT, FFT (radix-2), convolution, power spectrum, low-pass filter |
+| `cds.probability` | Gaussian, uniform, exponential, binomial, Poisson distributions |
+| `cds.stats` | Descriptive stats, Pearson correlation, linear regression |
 | `cds.math_utils` | Numerical derivatives, integrals (Simpson's rule), matrix ops, determinants |
 | `cds.data_analysis` | CSV loader, normalization, z-score, moving average |
-| `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild radius, de Broglie) |
-| `cds.hypothesis` | AI-assisted hypothesis generation (LLM-ready prompt templates) |
+| `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
+| `cds.hypothesis` | Hypothesis generation with LLM-ready prompt templates |
 
 ## Quick Start
 
@@ -29,16 +41,18 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
+# Run tests
+pytest
+
 # Run CLI
 cds --help
 cds constants
 cds calc ke
-
-# Run tests
-pytest
 ```
 
 ## Examples
+
+See the [`examples/`](examples/) directory for runnable demos.
 
 ### Quantum Circuit (single qubit)
 ```python
@@ -59,14 +73,55 @@ from cds.quantum import (
     ghz_state, is_entangled,
 )
 
-# Create a Bell state (|00> + |11>) / sqrt(2)
+# Bell state (|00⟩ + |11⟩) / √2
 reg = bell_state(0)
 print(is_entangled(reg))  # True
 print(reg.measure_shots(shots=1000))  # {'00': ~500, '11': ~500}
 
-# 3-qubit GHZ state
-ghz = ghz_state(3)
-print(ghz.probabilities())  # [0.5, 0, 0, 0, 0, 0, 0, 0.5]
+# 4-qubit GHZ state
+ghz = ghz_state(4)
+counts = ghz.measure_shots(shots=1000)
+print(counts)  # {'0000': ~500, '1111': ~500}
+```
+
+### Optimization
+```python
+from cds.optimization import gradient_descent, newton_method
+
+# Find minimum of (x-3)²
+result = gradient_descent(lambda x: (x - 3) ** 2, x0=10.0, lr=0.1)
+print(f"x = {result.x:.6f}")  # ~3.0
+
+# Find √2 using Newton's method
+result = newton_method(lambda x: x ** 2 - 2, x0=1.5)
+print(f"√2 = {result.x:.10f}")  # 1.4142135624
+```
+
+### Signal Processing
+```python
+from cds.signals import dft, fft_radix2, convolve, low_pass_filter
+
+# FFT of a signal
+signal = [complex(i) for i in range(8)]
+spectrum = fft_radix2(signal)
+
+# Convolution
+result = convolve([1.0, 2.0, 3.0], [0.5, 0.5])
+print(result)  # [0.5, 1.5, 2.5, 1.5]
+```
+
+### Probability Distributions
+```python
+from cds.probability import gaussian_pdf, binomial_pmf, poisson_pmf
+
+# Gaussian PDF at x=0
+print(gaussian_pdf(0.0, mu=0, sigma=1))  # 0.3989...
+
+# Binomial: P(3 heads in 5 fair flips)
+print(binomial_pmf(3, 5, 0.5))  # 0.3125
+
+# Poisson: P(k=2, λ=3)
+print(poisson_pmf(2, 3.0))  # 0.2240...
 ```
 
 ### Statistics
@@ -79,44 +134,37 @@ print(f"mean={mean(data):.2f}, std={stdev(data):.2f}")
 x = [1, 2, 3, 4, 5]
 y = [2.1, 3.9, 6.2, 7.8, 10.1]
 reg = linear_regression(x, y)
-print(f"slope={reg.slope:.2f}, R²={reg.r_squared:.3f}")
-```
-
-### Numerical Calculus
-```python
-from cds.math_utils import derivative, integral
-import math
-
-# d/dx(sin(x)) at x=0
-print(derivative(math.sin, 0))  # ~1.0
-
-# integral of x^2 from 0 to 3
-print(integral(lambda x: x**2, 0, 3))  # ~9.0
+print(f"y = {reg.slope:.2f}x + {reg.intercept:.2f}, R²={reg.r_squared:.3f}")
 ```
 
 ### Scientific Computing
 ```python
-from cds.scientific import kinetic_energy, gravitational_force, get_constant
+from cds.scientific import kinetic_energy, escape_velocity, get_constant
 
-print(get_constant("c"))  # speed of light
-print(kinetic_energy(mass=10, velocity=5))  # 125 J
-print(gravitational_force(5.972e24, 70, 6.371e6))  # ~686 N (your weight)
+print(get_constant("c"))          # speed of light
+print(kinetic_energy(10, 5))      # 125.0 J
+print(escape_velocity(5.972e24, 6.371e6))  # ~11186 m/s
 ```
 
 ## Architecture
 
 ```
 src/cds/
-├── quantum/        # Quantum circuit simulation
-├── stats/          # Statistical analysis
+├── quantum/        # Quantum circuit simulation (single & multi-qubit)
+├── optimization/   # Gradient descent, Newton, Adam, line search
+├── signals/        # DFT, FFT, convolution, filtering
+├── probability/    # Probability distributions & sampling
+├── stats/          # Statistical analysis & regression
 ├── math_utils/     # Numerical calculus & linear algebra
 ├── data_analysis/  # CSV loading & data transforms
 ├── scientific/     # Physical constants & formulas
 ├── hypothesis/     # Hypothesis generation
 ├── core/           # Shared models, config
-├── agents/         # LLM agent abstractions (planned)
-├── knowledge/      # Notes, concepts (planned)
 └── cli.py          # Command-line interface
+
+examples/           # Runnable demo scripts
+tests/              # 162 tests (pytest)
+docs/               # Documentation
 ```
 
 ## Contributing
@@ -125,8 +173,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
 
 Looking for:
 - Researchers with domain expertise
-- LLM/agent engineers
-- People building similar tools
+- People interested in pure-Python scientific computing
+- Contributors for new modules (graph theory, ML basics, etc.)
 
 ## License
 
