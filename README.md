@@ -1,6 +1,5 @@
 # Cognitive Discovery System (CDS)
 
-[![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 
