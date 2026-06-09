@@ -56,11 +56,12 @@ class Hypothesis(BaseModel):
             "",
         ]
         if self.rationale:
-            lines += [f"## Rationale", self.rationale, ""]
+            lines += ["## Rationale", self.rationale, ""]
         if self.assumptions:
             lines += ["## Assumptions"] + [f"- {a}" for a in self.assumptions] + [""]
         if self.predictions:
-            lines += ["## Predictions / Testable Consequences"] + [f"- {p}" for p in self.predictions] + [""]
+            preds = [f"- {p}" for p in self.predictions]
+            lines += ["## Predictions / Testable Consequences"] + preds + [""]
         if self.tags:
             lines += [f"**Tags**: {', '.join(self.tags)}"]
         return "\n".join(lines)

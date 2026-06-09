@@ -3,29 +3,22 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 
-**Open-source research assistant for scientific discovery, structured reasoning, and workflow automation.**
+**Open-source research assistant for scientific discovery, structured reasoning, and computational science.**
 
-CDS helps researchers with AI-powered tools for hypothesis generation, knowledge organization, and reproducible research workflows.
+CDS provides tools for hypothesis generation, quantum circuit simulation, statistical analysis, numerical math, and scientific computing — all in one Python package.
 
-> Currently in **early development**. Contributions welcome!
+> Currently in **alpha (v0.1.0)**. Contributions welcome!
 
-## Goals
+## Modules
 
-- **Hypothesis generation** — Generate, critique, and refine research hypotheses grounded in existing knowledge
-- **Knowledge organization** — Concept graphs, note management, literature linking, and traceable reasoning
-- **Research workflow automation** — Reproducible pipelines from idea to analysis to reporting
-- **LLM provider agnostic** — Support for OpenAI, xAI, Anthropic, local models, etc.
-
-## Planned Features
-
-| Phase | Feature                      | Status    |
-|-------|------------------------------|-----------|
-| 1     | AI-assisted idea generation  | In design |
-| 1     | Structured research planning | Planned   |
-| 2     | Concept relationship mapping | Planned   |
-| 2     | Scientific note management   | Planned   |
-| 3     | Workflow automation          | Planned   |
-| Later | Multi-agent collaboration    | Future    |
+| Module | Description |
+|--------|-------------|
+| `cds.quantum` | Quantum gate simulation — Hadamard, Pauli-X/Z, phase gates, measurement |
+| `cds.stats` | Descriptive stats, correlation, linear regression |
+| `cds.math_utils` | Numerical derivatives, integrals (Simpson's rule), matrix ops, determinants |
+| `cds.data_analysis` | CSV loader, normalization, z-score, moving average |
+| `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild radius, de Broglie) |
+| `cds.hypothesis` | AI-assisted hypothesis generation (LLM-ready prompt templates) |
 
 ## Quick Start
 
@@ -38,19 +31,74 @@ pip install -e ".[dev]"
 
 # Run CLI
 cds --help
+cds constants
+cds calc ke
 
 # Run tests
 pytest
+```
+
+## Examples
+
+### Quantum Circuit
+```python
+from cds.quantum import QuantumCircuit, hadamard, pauli_x, simulate
+
+circuit = QuantumCircuit().add(hadamard()).add(pauli_x())
+result = circuit.run()
+print(result.probabilities())
+
+counts = simulate(circuit, shots=1000)
+print(counts)  # {0: ~500, 1: ~500}
+```
+
+### Statistics
+```python
+from cds.stats import mean, stdev, correlation, linear_regression
+
+data = [12.5, 14.3, 11.8, 15.1, 13.7]
+print(f"mean={mean(data):.2f}, std={stdev(data):.2f}")
+
+x = [1, 2, 3, 4, 5]
+y = [2.1, 3.9, 6.2, 7.8, 10.1]
+reg = linear_regression(x, y)
+print(f"slope={reg.slope:.2f}, R²={reg.r_squared:.3f}")
+```
+
+### Numerical Calculus
+```python
+from cds.math_utils import derivative, integral
+import math
+
+# d/dx(sin(x)) at x=0
+print(derivative(math.sin, 0))  # ~1.0
+
+# integral of x^2 from 0 to 3
+print(integral(lambda x: x**2, 0, 3))  # ~9.0
+```
+
+### Scientific Computing
+```python
+from cds.scientific import kinetic_energy, gravitational_force, get_constant
+
+print(get_constant("c"))  # speed of light
+print(kinetic_energy(mass=10, velocity=5))  # 125 J
+print(gravitational_force(5.972e24, 70, 6.371e6))  # ~686 N (your weight)
 ```
 
 ## Architecture
 
 ```
 src/cds/
+├── quantum/        # Quantum circuit simulation
+├── stats/          # Statistical analysis
+├── math_utils/     # Numerical calculus & linear algebra
+├── data_analysis/  # CSV loading & data transforms
+├── scientific/     # Physical constants & formulas
+├── hypothesis/     # Hypothesis generation
 ├── core/           # Shared models, config
-├── hypothesis/     # Hypothesis generation & evaluation
-├── knowledge/      # Notes, concepts, retrieval
-├── agents/         # LLM agent abstractions
+├── agents/         # LLM agent abstractions (planned)
+├── knowledge/      # Notes, concepts (planned)
 └── cli.py          # Command-line interface
 ```
 

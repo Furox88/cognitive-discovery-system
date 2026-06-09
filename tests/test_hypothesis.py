@@ -8,7 +8,10 @@ from cds.hypothesis.generator import (
 
 
 def test_generate_hypotheses_returns_list():
-    hypos = generate_hypotheses("Hubble tension resolution mechanisms", domain=Domain.COSMOLOGY, n=2)
+    hypos = generate_hypotheses(
+        "Hubble tension resolution mechanisms",
+        domain=Domain.COSMOLOGY, n=2,
+    )
     assert len(hypos) == 2
     for h in hypos:
         assert isinstance(h, Hypothesis)

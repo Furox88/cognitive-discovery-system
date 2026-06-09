@@ -32,7 +32,8 @@ class PromptTemplate:
 
     SYSTEM = (
         "You are an expert research scientist and rigorous thinker. "
-        "Your goal is to propose high-quality, falsifiable, novel-yet-grounded scientific hypotheses. "
+        "Your goal is to propose high-quality, falsifiable, "
+        "novel-yet-grounded scientific hypotheses. "
         "Always make assumptions explicit. Prioritize testability and clarity. "
         "Respond ONLY in the requested structured format."
     )
@@ -81,16 +82,27 @@ class SimpleOfflineGenerator:
     def __init__(self) -> None:
         self.templates = {
             Domain.COSMOLOGY: [
-                "Late-time modifications to gravity can mimic dark energy while altering structure growth.",
-                "A time-varying dark energy equation of state w(a) with a sharp transition at z~0.5 explains current tensions.",
-                "Primordial non-Gaussianity of local type at f_NL ~ 5-10 is detectable with next-generation surveys and resolves sigma8 tension.",
+                ("Late-time modifications to gravity can mimic "
+                 "dark energy while altering structure growth."),
+                ("A time-varying dark energy equation of state "
+                 "w(a) with a sharp transition at z~0.5 "
+                 "explains current tensions."),
+                ("Primordial non-Gaussianity of local type at "
+                 "f_NL ~ 5-10 is detectable with next-gen "
+                 "surveys and resolves sigma8 tension."),
             ],
             Domain.PHYSICS: [
-                "A hidden sector with light mediators can resolve the muon g-2 anomaly without conflicting with collider bounds.",
-                "Modified dispersion relations at Planck scale suppress high-energy cosmic rays in a characteristic energy-dependent way.",
+                ("A hidden sector with light mediators can "
+                 "resolve the muon g-2 anomaly without "
+                 "conflicting with collider bounds."),
+                ("Modified dispersion relations at Planck scale "
+                 "suppress high-energy cosmic rays in a "
+                 "characteristic energy-dependent way."),
             ],
             Domain.MATHEMATICS: [
-                "A new family of special functions interpolating between hypergeometric and q-hypergeometric satisfies a novel functional equation with physical applications.",
+                ("A new family of special functions between "
+                 "hypergeometric and q-hypergeometric satisfies "
+                 "a novel functional equation."),
             ],
         }
 
@@ -105,7 +117,8 @@ class SimpleOfflineGenerator:
         if len(ideas) < n:
             # Pad with generic
             ideas += [
-                f"Variant of established mechanism X applied to {research_question} yields new observable Y.",
+                f"Variant of mechanism X applied to "
+                f"{research_question} yields new observable Y.",
             ] * (n - len(ideas))
 
         hypos: list[Hypothesis] = []
@@ -115,10 +128,13 @@ class SimpleOfflineGenerator:
                 statement=idea,
                 domain=domain,
                 research_question=research_question,
-                rationale="This idea builds on known tensions or extensions in the literature and proposes a concrete deviation that is in principle falsifiable.",
+                rationale=(
+                    "Builds on known tensions in the literature "
+                    "and proposes a falsifiable deviation."
+                ),
                 assumptions=[
-                    "The background model (e.g. LCDM or standard QFT) is approximately correct at low energies.",
-                    "New physics appears at observable scales without violating existing precision constraints.",
+                    "Background model is approximately correct at low energies.",
+                    "New physics at observable scales doesn't violate existing constraints.",
                 ],
                 predictions=[
                     "A measurable deviation in observable O at scale S with amplitude A.",
