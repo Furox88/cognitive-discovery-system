@@ -174,5 +174,37 @@ def calc(
         console.print(f"[red]Unknown formula '{formula}'. Options: ke, gravity, wave, gas[/]")
 
 
+@app.command()
+def modules() -> None:
+    """List all scientific modules available in CDS."""
+    from rich import box
+
+    table = Table(title="CDS Scientific Modules", box=box.SIMPLE_HEAVY)
+    table.add_column("Module", style="cyan bold")
+    table.add_column("Key Capabilities", style="white")
+
+    module_info = [
+        ("cds.quantum", "Single & multi-qubit circuits, Bell/GHZ states, entanglement"),
+        ("cds.signals", "DFT, radix-2 FFT, 2D FFT, convolution, filtering"),
+        ("cds.math_utils", "LU/QR/Cholesky, power iteration, Gram-Schmidt, calculus"),
+        ("cds.optimization", "Gradient descent, Newton, Adam, golden section search"),
+        ("cds.stats", "Descriptive stats, regression, t-tests, chi-square, ANOVA"),
+        ("cds.probability", "Gaussian, binomial, Poisson and other distributions"),
+        ("cds.montecarlo", "π estimation, integration, random walks"),
+        ("cds.diffeq", "Euler, RK4, midpoint, ODE system solvers"),
+        ("cds.graph", "BFS/DFS, Dijkstra, Kruskal MST, topological sort"),
+        ("cds.scientific", "Physical constants + common formulas"),
+        ("cds.data_analysis", "CSV loading, normalization, z-score, moving average"),
+        ("cds.hypothesis", "LLM-ready scientific hypothesis generation"),
+    ]
+
+    for name, desc in module_info:
+        table.add_row(name, desc)
+
+    console.print(table)
+    console.print("\n[dim]All modules are pure Python with no heavy dependencies.[/dim]")
+    console.print("[dim]See examples/ for runnable demos of each module.[/dim]\n")
+
+
 if __name__ == "__main__":
     app()
