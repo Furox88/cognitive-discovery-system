@@ -206,5 +206,28 @@ def modules() -> None:
     console.print("[dim]See examples/ for runnable demos of each module.[/dim]\n")
 
 
+@app.command()
+def hypothesis(
+    question: Annotated[
+        str,
+        typer.Argument(
+            help="Research question (e.g. 'What causes the Hubble tension?')"
+        ),
+    ] = "What causes the observed tensions in cosmology?",
+) -> None:
+    """Generate a couple of sample hypotheses for a research question."""
+    from cds.hypothesis import generate_hypotheses
+
+    console.print(f"[bold]Generating hypotheses for:[/] {question}\n")
+    hypos = generate_hypotheses(question, n=2)
+
+    for h in hypos:
+        text = h.to_markdown()
+        if len(text) > 400:
+            text = text[:400] + "..."
+        console.print(Panel(text, title=h.id, border_style="green"))
+        console.print()
+
+
 if __name__ == "__main__":
     app()
