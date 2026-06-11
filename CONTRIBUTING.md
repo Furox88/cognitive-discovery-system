@@ -67,7 +67,35 @@ python examples/quantum_demo.py
 python examples/optimization_demo.py
 python examples/signals_demo.py
 python examples/stats_demo.py
+python examples/hypothesis_demo.py
 ```
+
+## Contributing a New or Improved Module
+
+- Keep it **pure Python** (no NumPy, SciPy, etc.)
+- Add clear docstrings (Args, Returns, Raises)
+- Write tests in `tests/test_*.py`
+- Add a runnable example in `examples/`
+- Update `docs/api-reference.md` and README module table if needed
+- Add entry to CHANGELOG under Unreleased
+- Run `ruff check` and `pytest` before PR
+
+## CLI and Hypothesis Contributions
+
+- CLI uses Typer + Rich. New commands go in `src/cds/cli.py`
+- Keep help text concise and useful (`cds --help`)
+- For the hypothesis module (core to "cognitive discovery"):
+  - Improve `PromptTemplate` or offline generator
+  - Add domain-specific ideas while keeping the Protocol clean
+  - The offline generator is for demos; real LLM backends are welcome as extensions
+- Add or update smoke tests in `tests/test_cli.py` for new commands
+
+## Documentation & Release Hygiene
+
+- Update relevant docs/ and README when changing behavior
+- Keep test count references consistent (currently 309+ via CI)
+- Always update CHANGELOG for user-facing changes
+- Follow the PR template checklist (tests, lint, changelog)
 
 ## License
 

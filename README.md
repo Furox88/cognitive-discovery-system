@@ -64,6 +64,16 @@ cds hypothesis "What causes the Hubble tension?"
 
 See the [`examples/`](examples/) directory for runnable demos.
 
+### Hypothesis Generation (cognitive discovery)
+
+```bash
+# Quick demo
+python examples/hypothesis_demo.py
+
+# Or via CLI
+cds hypothesis "What causes the Hubble tension?"
+```
+
 ### Quantum Circuit (single qubit)
 ```python
 from cds.quantum import QuantumCircuit, hadamard, pauli_x, simulate

@@ -19,8 +19,31 @@ app = typer.Typer(
     name="cds",
     help="Cognitive Discovery System — computational science toolkit.",
     add_completion=False,
+    invoke_without_command=True,
 )
 console = Console()
+
+
+def _version_callback(value: bool) -> None:
+    if value:
+        from cds import __version__
+        console.print(f"[bold]CDS[/] version [cyan]{__version__}[/]")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        callback=_version_callback,
+        is_eager=True,
+        help="Show CDS version and exit",
+    ),
+) -> None:
+    """CDS CLI entrypoint."""
+    pass
 
 
 class DomainChoice(str, Enum):

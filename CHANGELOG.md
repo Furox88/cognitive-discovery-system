@@ -6,15 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - `cds hypothesis` command for quick demos of the hypothesis generation module.
-- GitHub community files: PR template, issue templates, and basic CI workflow.
-- **CLI**: New `cds modules` command that lists all available scientific modules in a clear table.
+- `examples/hypothesis_demo.py` runnable example for the cognitive/hypothesis features.
+- GitHub community files: PR template, issue templates, CI workflow, FUNDING.yml, CODEOWNERS.
+- Basic CLI smoke tests (`tests/test_cli.py`).
+- **CLI**: New `cds modules` command that lists all available scientific modules in a clear table; improved `--version` / `-v` flag and help discoverability.
 - **Public API**: Cleaner top-level package exports and documentation.
 - **Hypothesis module**: Improved module and generator documentation for better clarity on how to integrate language models.
 - **Developer experience**: Replaced the placeholder setup script with a working one-command development setup (creates venv, installs the package, runs tests).
-- **Documentation**: Added a short Vision section and updated contributing notes.
+- **Documentation**: Added a short Vision section, expanded CONTRIBUTING.md with module/CLI/hypothesis guidance, and updated quick-start examples.
 
 ### Changed
 - General improvements to documentation and usability.
+- README now includes live CI badge and reference to the new hypothesis demo.
 
 ### Previous (still in Unreleased from initial push)
 - **2-D FFT** (`cds.signals`): `fft2` / `ifft2` via row-column decomposition (Cooley-Tukey 1965)
