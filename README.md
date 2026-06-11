@@ -6,8 +6,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-309%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-300%2B-brightgreen.svg)]()
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 
 **Open-source computational science toolkit for research, simulation, and discovery.**
 
@@ -20,7 +21,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Broad scope** — 12 modules covering math, physics, stats, signals, optimization, graph theory, ODEs, Monte Carlo
-- **309 tests** — thoroughly tested with pytest
+- **300+ tests** (see CI) — thoroughly tested with pytest
 - **CLI included** — interactive physics calculator from your terminal
 
 ## Modules
@@ -231,7 +232,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 309 tests (pytest)
+tests/              # 300+ tests (see CI)
 docs/               # Documentation (getting started, API reference, benchmarks)
 ```
 
@@ -240,6 +241,8 @@ docs/               # Documentation (getting started, API reference, benchmarks)
 The long-term goal of CDS is to provide a lightweight, dependency-free toolkit for scientific exploration and discovery.
 
 We aim to combine solid numerical foundations (quantum simulation, FFT, linear algebra, statistics, differential equations, etc.) with higher-level tools for hypothesis generation and research workflows.
+
+A distinctive part is the `cds.hypothesis` module, which generates structured, falsifiable hypotheses with explicit assumptions and predictions. The `cds hypothesis` CLI command and `examples/hypothesis_demo.py` make this side immediately usable. Recent work has focused on making the CLI and docs more practical for day-to-day use while keeping everything readable pure Python.
 
 The project is still early but is being actively developed with a focus on code quality, test coverage, documentation, and usability for researchers and students.
 
