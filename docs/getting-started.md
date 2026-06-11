@@ -127,6 +127,6 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 309 tests (pytest)
+tests/              # 300+ tests (see CI)
 docs/               # Documentation, API reference, benchmarks
 ```
