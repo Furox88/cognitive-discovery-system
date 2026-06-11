@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **CLI**: New `cds modules` command that lists all available scientific modules in a clear table.
+- **Public API**: Cleaner top-level package exports and documentation.
+- **Hypothesis module**: Improved module and generator documentation for better clarity on how to integrate language models.
+- **Developer experience**: Replaced the placeholder setup script with a working one-command development setup (creates venv, installs the package, runs tests).
+- **Documentation**: Added a short Vision section and updated contributing notes.
+
+### Changed
+- General improvements to documentation and usability.
+
+### Previous (still in Unreleased from initial push)
 - **2-D FFT** (`cds.signals`): `fft2` / `ifft2` via row-column decomposition (Cooley-Tukey 1965)
 - **Hypothesis testing** (`cds.stats`): one-sample & two-sample t-tests (pooled / Welch),
   chi-square goodness-of-fit and independence, one-way ANOVA, with exact distribution

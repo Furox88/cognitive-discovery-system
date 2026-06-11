@@ -222,6 +222,16 @@ tests/              # 309 tests (pytest)
 docs/               # Documentation (getting started, API reference, benchmarks)
 ```
 
+## Vision
+
+The long-term goal of CDS is to provide a lightweight, dependency-free toolkit for scientific exploration and discovery.
+
+We aim to combine solid numerical foundations (quantum simulation, FFT, linear algebra, statistics, differential equations, etc.) with higher-level tools for hypothesis generation and research workflows.
+
+The project is still early but is being actively developed with a focus on code quality, test coverage, documentation, and usability for researchers and students.
+
+Run `cds modules` after installation to explore the current modules.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
@@ -230,6 +240,7 @@ Looking for:
 - Researchers with domain expertise
 - People interested in pure-Python scientific computing
 - Contributors for new modules (ML basics, PDE solvers, etc.)
+- People excited about AI-augmented research tooling
 
 ## License
 
