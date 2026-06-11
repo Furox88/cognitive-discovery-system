@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- `cds hypothesis` command for quick demos of the hypothesis generation module.
+- GitHub community files: PR template, issue templates, and basic CI workflow.
 - **CLI**: New `cds modules` command that lists all available scientific modules in a clear table.
 - **Public API**: Cleaner top-level package exports and documentation.
 - **Hypothesis module**: Improved module and generator documentation for better clarity on how to integrate language models.

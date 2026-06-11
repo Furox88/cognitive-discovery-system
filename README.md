@@ -55,6 +55,8 @@ pytest
 cds --help
 cds constants
 cds calc ke
+cds modules
+cds hypothesis "What causes the Hubble tension?"
 ```
 
 ## Examples
