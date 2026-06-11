@@ -1,10 +1,21 @@
 """
-Basic hypothesis generator.
+Scientific hypothesis generator for the Cognitive Discovery System.
 
-This is an early implementation. Currently provides:
-- Structured prompt templates (ready for any LLM)
-- A simple offline "generator" for demo purposes
-- Extensible interface for real LLM-backed generation
+This module turns research questions into structured, falsifiable
+hypotheses with clear assumptions and predictions.
+
+It provides ready-to-use prompt templates and an offline generator
+for demos and testing. The design makes it straightforward to
+plug in real language model clients when available.
+
+Key goals:
+- High-quality, reusable prompt templates for scientific reasoning
+- Clean separation between templates and generation logic
+- Simple protocol for swapping in different LLM backends
+- Usable offline as a fallback
+
+See the HypothesisGenerator protocol and examples for how to
+integrate an external model.
 """
 from __future__ import annotations
 
