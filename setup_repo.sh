@@ -50,6 +50,8 @@ echo "    source .venv/bin/activate"
 echo
 echo "Useful commands:"
 echo "    cds --help"
+echo "    cds modules"
+echo "    cds hypothesis \"What causes the Hubble tension?\""
 echo "    cds hypothesize \"Your research question here\" -n 3"
 echo "    cds constants"
 echo "    pytest"

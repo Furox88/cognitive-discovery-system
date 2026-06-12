@@ -105,6 +105,7 @@ python examples/stats_demo.py
 python examples/fft2_demo.py
 python examples/hypothesis_tests_demo.py
 python examples/linalg_demo.py
+python examples/hypothesis_demo.py
 ```
 
 ## Project Structure
