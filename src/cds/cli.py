@@ -11,6 +11,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
+from typer import Context
 
 from cds.core.models import Domain
 from cds.hypothesis.generator import PromptTemplate, generate_hypotheses
@@ -33,6 +34,7 @@ def _version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
+    ctx: Context,
     version: bool = typer.Option(
         False,
         "--version",
@@ -43,7 +45,10 @@ def main(
     ),
 ) -> None:
     """CDS CLI entrypoint."""
-    pass
+    if ctx.invoked_subcommand is None:
+        # No subcommand given, show help
+        console.print(ctx.get_help())
+        raise typer.Exit()
 
 
 class DomainChoice(str, Enum):
@@ -147,7 +152,7 @@ def info() -> None:
         "Modules: quantum, optimization, signals, probability, stats,\n"
         "  math_utils, data_analysis, scientific, graph, montecarlo,\n"
         "  diffeq, hypothesis\n\n"
-        "Status: Alpha v0.1.0 | Tests: 309 | Dependencies: pure Python",
+        "Status: Alpha v0.1.0 | Tests: 300+ | Dependencies: pure Python",
         title="CDS",
         border_style="magenta",
     ))
