@@ -266,3 +266,13 @@ MIT — see [LICENSE](LICENSE).
 
 - Maintainer: [@Furox88](https://github.com/Furox88)
 - Issues & Discussions: [GitHub](https://github.com/Furox88/cognitive-discovery-system/issues)
+
+## Maintainer Workflows (Powered by Codex)
+
+Once we receive Codex for Open Source credits, we will use them for:
+
+- **PR Review**: Automated first-pass code review, style checks, test suggestions.
+- **Automation**: Labeler, auto-comments, dependency updates.
+- **Release Workflow**: Semantic versioning, changelog generation, PyPI publish on tags.
+
+See `.github/workflows/` for current setup. Codex will help scale these without increasing solo maintainer load.

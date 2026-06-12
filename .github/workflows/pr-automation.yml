@@ -1,0 +1,53 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  labeler:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+  codex-review-note:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = context.issue.number;
+            
+            // Check if Codex review comment already exists
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber
+            });
+            
+            const hasCodexComment = comments.some(c => 
+              c.body.includes('Codex PR Review') || c.user.login.includes('github-actions')
+            );
+            
+            if (!hasCodexComment) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: `## 🤖 Codex PR Review
+
+This PR will be reviewed with Codex once we have access (via the Codex for OSS program).
+
+**Planned checks:**
+- Code quality & style
+- Test coverage
+- Documentation updates
+- Breaking changes detection
+
+Maintainer will trigger manual Codex review after merge to main or on request.`
+              });
+            }
