@@ -28,7 +28,7 @@ for h in hypos:
             print(f"  - {p}")
     print()
 
-# Show how to get the raw prompt for use with an external LLM (e.g. Codex, GPT, etc.)
+# Show how to get the raw prompt for use with an external LLM backend (various models or local setups).
 print("=== Prompt template for external LLM ===")
 prompt = PromptTemplate.render(question, hypos[0].domain, n=2)
 print(prompt[:500] + "...\n")
