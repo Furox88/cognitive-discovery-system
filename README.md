@@ -276,3 +276,17 @@ Once we receive Codex for Open Source credits, we will use them for:
 - **Release Workflow**: Semantic versioning, changelog generation, PyPI publish on tags.
 
 See `.github/workflows/` for current setup. Codex will help scale these without increasing solo maintainer load.
+
+## Using Codex for PR Reviews, Automation, and Releases
+
+With access through the Codex for Open Source program, we plan to integrate Codex into our maintainer workflows as follows:
+
+- **PR Review**: On PRs labeled `codex-review` or via manual workflow trigger, Codex will analyze the diff for bugs, style, test coverage, security, and suggest improvements. The maintainer will review all suggestions before applying. See `.github/workflows/pr-automation.yml` for the trigger.
+
+- **Automation**: Dependabot for deps and GitHub Actions updates (weekly). Auto-merge for low-risk Dependabot PRs after CI passes. Labeler for automatic categorization. Codex will help triage issues and summarize changes.
+
+- **Release Workflow**: On version tags, automated build, test, lint, GitHub Release with generated notes, and PyPI publish (when token available). Codex will assist in generating conventional commit-based changelogs and release descriptions to reduce manual effort.
+
+These automations will help sustain the project with limited maintainer time, allowing more focus on new scientific computing features and the cognitive discovery aspects (hypothesis generation).
+
+Current workflows are in `.github/workflows/`. All Codex outputs will be human-reviewed.
