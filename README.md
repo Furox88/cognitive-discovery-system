@@ -258,6 +258,20 @@ Looking for:
 - Contributors for new modules (ML basics, PDE solvers, etc.)
 - People excited about AI-augmented research tooling
 
+
+## Automation and Maintenance Workflows
+
+We maintain a small set of GitHub Actions to reduce repetitive work:
+
+- Dependabot for keeping Python dependencies and GitHub Actions up to date (weekly)
+- Automatic labeling on pull requests based on changed files
+- A release workflow that runs tests + lint, builds the package, and creates a GitHub Release when a version tag is pushed
+- Basic PR checklist reminders on labeled or manually triggered PRs
+
+These workflows help keep the project moving with limited maintainer time.
+
+See the `.github/workflows/` directory for the current setup.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
@@ -267,26 +281,3 @@ MIT — see [LICENSE](LICENSE).
 - Maintainer: [@Furox88](https://github.com/Furox88)
 - Issues & Discussions: [GitHub](https://github.com/Furox88/cognitive-discovery-system/issues)
 
-## Maintainer Workflows (Powered by Codex)
-
-Once we receive Codex for Open Source credits, we will use them for:
-
-- **PR Review**: Automated first-pass code review, style checks, test suggestions.
-- **Automation**: Labeler, auto-comments, dependency updates.
-- **Release Workflow**: Semantic versioning, changelog generation, PyPI publish on tags.
-
-See `.github/workflows/` for current setup. Codex will help scale these without increasing solo maintainer load.
-
-## Using Codex for PR Reviews, Automation, and Releases
-
-With access through the Codex for Open Source program, we plan to integrate Codex into our maintainer workflows as follows:
-
-- **PR Review**: On PRs labeled `codex-review` or via manual workflow trigger, Codex will analyze the diff for bugs, style, test coverage, security, and suggest improvements. The maintainer will review all suggestions before applying. See `.github/workflows/pr-automation.yml` for the trigger.
-
-- **Automation**: Dependabot for deps and GitHub Actions updates (weekly). Auto-merge for low-risk Dependabot PRs after CI passes. Labeler for automatic categorization. Codex will help triage issues and summarize changes.
-
-- **Release Workflow**: On version tags, automated build, test, lint, GitHub Release with generated notes, and PyPI publish (when token available). Codex will assist in generating conventional commit-based changelogs and release descriptions to reduce manual effort.
-
-These automations will help sustain the project with limited maintainer time, allowing more focus on new scientific computing features and the cognitive discovery aspects (hypothesis generation).
-
-Current workflows are in `.github/workflows/`. All Codex outputs will be human-reviewed.

@@ -35,23 +35,12 @@ jobs:
       - name: Build package
         run: python -m build
 
-      - name: Create GitHub Release with conventional changelog
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
-          body: |
-            ## What's Changed
-            
-            This release was prepared with maintainer automation.
-            
-            In the future, Codex will be used to:
-            - Generate detailed change summaries
-            - Suggest release notes based on commit messages
-            - Review the release PR for completeness
-            
-            Full changelog generated from commits.
 
       - name: Publish to PyPI (if token present)
         if: ${{ secrets.PYPI_API_TOKEN != '' }}
