@@ -152,7 +152,7 @@ def info() -> None:
         "Modules: quantum, optimization, signals, probability, stats,\n"
         "  math_utils, data_analysis, scientific, graph, montecarlo,\n"
         "  diffeq, hypothesis\n\n"
-        "Status: Alpha v0.1.0 | Tests: 300+ | Dependencies: pure Python",
+        "Status: Alpha v0.2.0 | Tests: 300+ | Dependencies: pure Python",
         title="CDS",
         border_style="magenta",
     ))

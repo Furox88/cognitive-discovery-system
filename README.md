@@ -17,7 +17,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The project also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> Currently in **alpha (v0.1.0)**. Contributions welcome!
+> Currently in **alpha (v0.2.0)**. Contributions welcome!
 
 ## Why CDS?
 
