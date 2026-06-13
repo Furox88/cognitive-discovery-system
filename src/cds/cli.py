@@ -82,7 +82,10 @@ def hypothesize(
     ] = None,
     show_prompt: Annotated[
         bool,
-        typer.Option("--show-prompt", help="Print the exact prompt template (for LLM use)"),
+        typer.Option(
+            "--show-prompt",
+            help="Print the exact prompt template (for use with a custom generator)",
+        ),
     ] = False,
     dry_run: Annotated[
         bool,
@@ -137,7 +140,7 @@ def prompt(
     domain: Annotated[DomainChoice, typer.Option("--domain", "-d")] = DomainChoice.general,
     n: Annotated[int, typer.Option("--num", "-n")] = 3,
 ) -> None:
-    """Print a ready-to-use prompt for an external LLM."""
+    """Print a ready-to-use prompt for a custom generator implementation."""
     dom = Domain(domain.value)
     prompt_text = PromptTemplate.render(question, dom, n)
     console.print(Syntax(prompt_text, "markdown", theme="monokai", line_numbers=False))
@@ -223,7 +226,10 @@ def modules() -> None:
         ("cds.graph", "BFS/DFS, Dijkstra, Kruskal MST, topological sort"),
         ("cds.scientific", "Physical constants + common formulas"),
         ("cds.data_analysis", "CSV loading, normalization, z-score, moving average"),
-        ("cds.hypothesis", "LLM-ready scientific hypothesis generation"),
+        (
+            "cds.hypothesis",
+            "Structured hypothesis generation with prompt templates for custom research workflows",
+        ),
     ]
 
     for name, desc in module_info:

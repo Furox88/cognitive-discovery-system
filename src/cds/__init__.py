@@ -9,12 +9,11 @@ Key features:
 - Quantum simulation (single & multi-qubit with entanglement)
 - Signal processing (FFT, 2D FFT, convolution, filtering)
 - Optimization, statistics, probability, linear algebra
-- Hypothesis generation with LLM-ready templates
+- Hypothesis generation for structured research ideas
 - CLI for quick calculations and discovery workflows
 
 All modules are designed to be readable, testable, and usable
-for education, research, and as a foundation for AI-augmented
-scientific discovery.
+for education, research, and custom scientific discovery workflows.
 
 Usage:
     import cds

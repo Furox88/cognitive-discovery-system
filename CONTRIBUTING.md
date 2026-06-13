@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests (309 tests)
+# Run tests (300+ tests, see CI)
 pytest
 
 # Run linter
@@ -87,13 +87,13 @@ python examples/hypothesis_demo.py
 - For the hypothesis module (core to "cognitive discovery"):
   - Improve `PromptTemplate` or offline generator
   - Add domain-specific ideas while keeping the Protocol clean
-  - The offline generator is for demos; real LLM backends are welcome as extensions
+  - Researchers typically provide their own generator for production use cases
 - Add or update smoke tests in `tests/test_cli.py` for new commands
 
 ## Documentation & Release Hygiene
 
 - Update relevant docs/ and README when changing behavior
-- Keep test count references consistent (currently 309+ via CI)
+- Keep test count references consistent (300+ via CI)
 - Always update CHANGELOG for user-facing changes
 - Follow the PR template checklist (tests, lint, changelog)
 

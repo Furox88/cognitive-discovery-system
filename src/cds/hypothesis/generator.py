@@ -4,18 +4,19 @@ Scientific hypothesis generator for the Cognitive Discovery System.
 This module turns research questions into structured, falsifiable
 hypotheses with clear assumptions and predictions.
 
-It provides ready-to-use prompt templates and an offline generator
-for demos and testing. The design makes it straightforward to
-plug in real language model clients when available.
+It provides ready-to-use prompt templates and a simple offline
+generator for demos and testing. The HypothesisGenerator Protocol
+makes it straightforward for researchers to supply their own
+generator implementations for specialized workflows.
 
 Key goals:
 - High-quality, reusable prompt templates for scientific reasoning
 - Clean separation between templates and generation logic
-- Simple protocol for swapping in different LLM backends
-- Usable offline as a fallback
+- Simple Protocol for custom generator implementations
+- Usable offline as a starting point
 
 See the HypothesisGenerator protocol and examples for how to
-integrate an external model.
+provide a custom generator.
 """
 from __future__ import annotations
 
@@ -86,8 +87,9 @@ class SimpleOfflineGenerator:
     """
     A deterministic offline generator for demos and early development.
 
-    It creates plausible but generic hypotheses. Replace or wrap with a real
-    LLM client (xAI Grok, OpenAI, local model, etc.) later.
+    It creates plausible but generic hypotheses. Researchers can replace
+    or wrap it with a custom implementation of HypothesisGenerator
+    tailored to their domain or data sources.
     """
 
     def __init__(self) -> None:

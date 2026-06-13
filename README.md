@@ -44,7 +44,7 @@ The project also includes built-in support for structured hypothesis generation,
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
-| `cds.hypothesis` | Hypothesis generation with LLM-ready prompt templates |
+| `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
 
 ## Quick Start
 

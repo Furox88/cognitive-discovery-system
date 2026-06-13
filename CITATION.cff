@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+title: "Cognitive Discovery System"
+version: 0.2.0
+authors:
+  - name: "Furox88"
+    email: "furkanarkn1451@gmail.com"
+abstract: "Pure Python computational science toolkit — quantum simulation, signal processing, statistics, optimization, hypothesis generation, and related numerical methods. All modules are implemented without heavy external dependencies."
+license: MIT
+repository-code: "https://github.com/Furox88/cognitive-discovery-system"
+url: "https://github.com/Furox88/cognitive-discovery-system"
+date-released: "2026-06-13"
+keywords:
+  - "pure python"
+  - "scientific computing"
+  - "quantum simulation"
+  - "signal processing"
+  - "statistics"
+  - "hypothesis generation"
+  - "computational discovery"
+preferred-citation:
+  type: software
+  title: "Cognitive Discovery System"
+  authors:
+    - name: "Furox88"
+  year: 2026
+  version: 0.2.0
+  url: "https://github.com/Furox88/cognitive-discovery-system"

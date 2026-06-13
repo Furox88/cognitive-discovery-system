@@ -3,8 +3,8 @@ Hypothesis generation and evaluation module for Cognitive Discovery.
 
 Provides tools to generate structured scientific hypotheses from
 research questions. Includes prompt templates and an offline
-generator for immediate use, plus a clear interface for connecting
-external language models when desired.
+generator for immediate use, plus a clear Protocol for supplying
+custom generator implementations for specialized research needs.
 
 The focus is on making hypotheses falsifiable, with explicit
 assumptions, predictions, and confidence estimates.

@@ -4,7 +4,6 @@ from typer.testing import CliRunner
 
 from cds.cli import app
 
-
 runner = CliRunner()
 
 

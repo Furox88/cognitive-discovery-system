@@ -28,10 +28,10 @@ for h in hypos:
             print(f"  - {p}")
     print()
 
-# Show how to get the raw prompt for use with an external LLM backend (various models or local setups).
-print("=== Prompt template for external LLM ===")
+# Show how to get the raw prompt for use with a custom generator implementation.
+print("=== Prompt template for custom generator ===")
 prompt = PromptTemplate.render(question, hypos[0].domain, n=2)
 print(prompt[:500] + "...\n")
 
 print("This module provides structured, falsifiable hypotheses with explicit assumptions and predictions.")
-print("The offline generator is for demos; for real discovery work, plug in a real LLM backend.")
+print("The built-in offline generator is for demos and examples; for serious research work, supply a generator that implements the HypothesisGenerator Protocol.")
