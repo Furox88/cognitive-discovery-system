@@ -258,7 +258,7 @@ Looking for:
 - Researchers with domain expertise
 - People interested in pure-Python scientific computing
 - Contributors for new modules (ML basics, PDE solvers, etc.)
-- People excited about AI-augmented research tooling
+- People who want to help make scientific tools easier to maintain and use
 
 
 ## Automation and Maintenance Workflows
