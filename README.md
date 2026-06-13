@@ -9,6 +9,7 @@
 [![Tests](https://img.shields.io/badge/tests-300%2B-brightgreen.svg)]()
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
+<!-- Connect repo on codecov.io for live coverage data (badge is ready) -->
 
 **Open-source computational science toolkit for research, simulation, and discovery.**
 
@@ -233,6 +234,7 @@ src/cds/
 
 examples/           # Runnable demo scripts
 tests/              # 300+ tests (see CI)
+# automation: PR labels + checklist, dependabot, releases (see .github/workflows/)
 docs/               # Documentation (getting started, API reference, benchmarks)
 ```
 
