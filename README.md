@@ -15,15 +15,19 @@
 
 CDS brings together quantum computing simulation, statistical analysis, signal processing, optimization, probability, and scientific computing in a single, dependency-light Python package. Every module is pure Python — no NumPy or SciPy required.
 
+The project also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
+
 > Currently in **alpha (v0.1.0)**. Contributions welcome!
 
 ## Why CDS?
 
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
+- **Built for discovery** — hypothesis generation module with ready-to-use prompt templates and a CLI demo
 - **Broad scope** — 12 modules covering math, physics, stats, signals, optimization, graph theory, ODEs, Monte Carlo
 - **300+ tests** (see CI) — thoroughly tested with pytest
-- **CLI included** — interactive physics calculator from your terminal
+- **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
+- **CLI included** — interactive tools and demos from your terminal
 
 ## Modules
 
@@ -234,8 +238,9 @@ src/cds/
 
 examples/           # Runnable demo scripts
 tests/              # 300+ tests (see CI)
-# automation: PR labels + checklist, dependabot, releases (see .github/workflows/)
 docs/               # Documentation (getting started, API reference, benchmarks)
+
+.github/workflows/  # Automation for PRs (labels + checklist), releases, and dependency updates
 ```
 
 ## Vision
@@ -250,6 +255,16 @@ The project is still early but is being actively developed with a focus on code 
 
 Run `cds modules` after installation to explore the current modules.
 
+## Recent improvements
+
+Recent work has focused on making the toolkit more practical for daily use and reducing repetitive maintenance tasks:
+
+- Added CLI commands to browse modules and quickly try hypothesis generation
+- New example script demonstrating the hypothesis module
+- Workflows for automatic PR labeling, review checklists, dependency updates, and release handling
+
+These improvements help keep the project easier to explore and maintain.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
@@ -263,16 +278,16 @@ Looking for:
 
 ## Automation and Maintenance Workflows
 
-We maintain a small set of GitHub Actions to reduce repetitive work:
+To keep day-to-day maintenance manageable, the project includes several GitHub Actions:
 
-- Dependabot for keeping Python dependencies and GitHub Actions up to date (weekly)
-- Automatic labeling on pull requests based on changed files
-- A release workflow that runs tests + lint, builds the package, and creates a GitHub Release when a version tag is pushed
-- Basic PR checklist reminders on labeled or manually triggered PRs
+- Dependabot for weekly updates to Python dependencies and GitHub Actions
+- Automatic PR labeling based on changed files (ci, docs, hypothesis, tests, etc.)
+- A release workflow triggered by version tags that runs tests, linting, builds the package, and creates a GitHub Release
+- PR checklist reminders to help catch common items like tests, docs, and changelog updates
 
-These workflows help keep the project moving with limited maintainer time.
+These tools help reduce repetitive work so more time can go into new features and the core research-oriented parts of the project.
 
-See the `.github/workflows/` directory for the current setup.
+See the `.github/workflows/` directory for details.
 
 ## License
 
