@@ -23,3 +23,9 @@ This document outlines the planned direction for CDS. Priorities focus on making
 - Maintain the goal of being an accessible, readable toolkit for students, researchers, and independent developers
 
 Contributions and ideas are welcome, especially around the hypothesis generation and scientific discovery aspects.
+
+## Additional Ideas
+- More cross-module demos (hypothesis + stats, quantum + montecarlo, etc.)
+- Simple web UI or notebook templates for non-coders
+- Better error messages and input validation in core modules
+- Integration examples with common research data formats (CSV, HDF5 placeholders)

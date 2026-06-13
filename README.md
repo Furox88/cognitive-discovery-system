@@ -297,3 +297,9 @@ MIT — see [LICENSE](LICENSE).
 - Maintainer: [@Furox88](https://github.com/Furox88)
 - Issues & Discussions: [GitHub](https://github.com/Furox88/cognitive-discovery-system/issues)
 
+
+## Why These Automations Exist
+
+The project is maintained by a small team (often solo). The workflows above exist so that routine tasks (labeling PRs, running checks, cutting releases, keeping dependencies fresh) take as little time as possible. This frees hours for actual research work: improving the hypothesis tools, adding new scientific modules, writing better examples, and exploring new discovery workflows.
+
+If you're a researcher or educator using CDS, these automations mean you can focus on the science instead of repo housekeeping.
