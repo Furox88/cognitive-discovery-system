@@ -5,11 +5,25 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- 
+
+### Changed
+- 
+
+## [0.3.0] - 2026-06-13
+
+### Added
+- `docs/research-workflows.md` — guidance on using CDS in real research and discovery pipelines: combining hypothesis generation with stats/optimization/Monte Carlo, implementing custom `HypothesisGenerator` implementations, and embedding modules in larger scripts.
 - `CITATION.cff` at repository root for standard academic citation of the toolkit in research papers and pipelines.
 - `examples/hypothesis_custom_generator.py` — a small runnable demonstration of supplying a custom implementation of the HypothesisGenerator Protocol for a toy domain.
 
 ### Changed
-- 
+- All references to the test suite updated from approximate "300+" to the exact **314 tests** (README badge and text, docs/getting-started.md, docs/benchmarks.md, CONTRIBUTING.md, CHANGELOG, src/cds/cli.py status panel).
+- `docs/benchmarks.md` refreshed with fresh micro-benchmark timings (hypothesis generation ~0.1 ms for n=3, stats operations, quantum primitives, optimization).
+- Cleaned Codecov placeholder comment from README (badge remains; live data requires connecting the repo on codecov.io).
+- Version bumped to 0.3.0 (pyproject.toml, src/cds/__init__.py, README alpha notice, CLI info/status).
+- Cross-references to the new research workflows documentation added throughout README, getting-started, and CONTRIBUTING.
+- GitHub repository description and topics updated via gh for better visibility (topics include pure-python, scientific-computing, hypothesis-generation, etc.).
 
 ## [0.2.0] - 2026-06-13
 
