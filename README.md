@@ -23,11 +23,15 @@ The project also includes built-in support for structured hypothesis generation,
 
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
-- **Built for discovery** — hypothesis generation module with ready-to-use prompt templates and a CLI demo
+- **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 12 modules covering math, physics, stats, signals, optimization, graph theory, ODEs, Monte Carlo
 - **300+ tests** (see CI) — thoroughly tested with pytest
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 - **CLI included** — interactive tools and demos from your terminal
+
+## Citing CDS
+
+If CDS is useful in your research or publications, please cite it using the information in `CITATION.cff` at the repository root. This helps give proper credit and track adoption in scientific work.
 
 ## Modules
 
@@ -73,8 +77,14 @@ See the [`examples/`](examples/) directory for runnable demos.
 ### Hypothesis Generation (cognitive discovery)
 
 ```bash
-# Quick demo
+# Basic demo
 python examples/hypothesis_demo.py
+
+# With stats / experiment sketch example
+python examples/hypothesis_with_stats_demo.py
+
+# Custom generator implementation (using the HypothesisGenerator Protocol)
+python examples/hypothesis_custom_generator.py
 
 # Or via CLI
 cds hypothesis "What causes the Hubble tension?"
