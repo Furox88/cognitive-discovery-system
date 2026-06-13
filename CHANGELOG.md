@@ -39,7 +39,7 @@ All notable changes to this project will be documented in this file.
 - New runnable demos: `examples/fft2_demo.py`, `examples/hypothesis_tests_demo.py`,
   `examples/linalg_demo.py`
 - Project logo/banner (`assets/logo.svg`)
-- Test suite expanded to **300+ tests** (see CI)
+- Test suite expanded to **314 tests** (see CI)
 
 ## [0.1.0] - 2026-06-09
 

@@ -90,7 +90,7 @@ print(x)  # [2.0, 1.0]
 ## Running Tests
 
 ```bash
-pytest           # run all 300+ tests (see CI)
+pytest           # run all 314 tests (see CI)
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -106,8 +106,11 @@ python examples/fft2_demo.py
 python examples/hypothesis_tests_demo.py
 python examples/linalg_demo.py
 python examples/hypothesis_demo.py
+python examples/hypothesis_with_stats_demo.py
 python examples/hypothesis_custom_generator.py
 ```
+
+See `docs/research-workflows.md` for guidance on using CDS inside larger research scripts and discovery pipelines.
 
 ## Project Structure
 
@@ -129,6 +132,6 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 300+ tests (see CI)
+tests/              # 314 tests (see CI)
 docs/               # Documentation, API reference, benchmarks
 ```

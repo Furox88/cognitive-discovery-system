@@ -84,13 +84,19 @@ RK4 is ~10⁶× more accurate than Euler for the same step size.
 
 ## Test Suite & Coverage
 
-```
-300+ tests in ~0.4 seconds (see CI)
-```
+**314 tests** in ~0.4–0.6 seconds (see CI and recent runs).
 
-Test coverage is tracked and visible via the Codecov badge in the README (connect the repo on codecov.io to view detailed reports).
+Example micro-benchmarks (Python 3.12, single-threaded, project venv):
+- `generate_hypotheses(question, n=3)`: ~0.1 ms
+- 1 000 calls of basic stats (mean + one-sample t-test on 1 000-point data): ~61 ms
+- 5 000 Bell-state creation + entanglement checks: ~8 ms
+- 200 simple gradient-descent optimizations: ~3 ms
 
-All benchmarks are approximate and depend on hardware. Run `pytest --durations=10` to see test timing on your machine.
+Test coverage is tracked and visible via the Codecov badge in the README.
+
+All numbers are approximate and hardware-dependent. Run `pytest --durations=10` on your machine for current timings.
+
+See `docs/research-workflows.md` for examples of combining hypothesis generation with stats, optimization, Monte Carlo, etc. inside real research scripts and for supplying custom `HypothesisGenerator` implementations.
 
 ## Comparison to NumPy/SciPy
 

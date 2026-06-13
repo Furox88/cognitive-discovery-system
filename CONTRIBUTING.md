@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests (300+ tests, see CI)
+# Run tests (314 tests, see CI)
 pytest
 
 # Run linter
@@ -68,6 +68,8 @@ python examples/optimization_demo.py
 python examples/signals_demo.py
 python examples/stats_demo.py
 python examples/hypothesis_demo.py
+python examples/hypothesis_custom_generator.py
+# See docs/research-workflows.md for embedding patterns and custom generators
 ```
 
 ## Contributing a New or Improved Module
@@ -93,7 +95,7 @@ python examples/hypothesis_demo.py
 ## Documentation & Release Hygiene
 
 - Update relevant docs/ and README when changing behavior
-- Keep test count references consistent (300+ via CI)
+- Keep test count references consistent (exact count via CI and pytest --collect-only)
 - Always update CHANGELOG for user-facing changes
 - Follow the PR template checklist (tests, lint, changelog)
 
