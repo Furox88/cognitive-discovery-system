@@ -82,11 +82,13 @@ RK4 is ~10⁶× more accurate than Euler for the same step size.
 | Power iteration (eigenvalue) | 100×100 | ~15 ms |
 | Gram-Schmidt | 50 vectors (dim 50) | ~5 ms |
 
-## Test Suite
+## Test Suite & Coverage
 
 ```
-309 tests in ~0.3 seconds
+300+ tests in ~0.4 seconds (see CI)
 ```
+
+Test coverage is tracked and visible via the Codecov badge in the README (connect the repo on codecov.io to view detailed reports).
 
 All benchmarks are approximate and depend on hardware. Run `pytest --durations=10` to see test timing on your machine.
 

@@ -90,7 +90,7 @@ print(x)  # [2.0, 1.0]
 ## Running Tests
 
 ```bash
-pytest           # run all 309 tests
+pytest           # run all 300+ tests (see CI)
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```

@@ -191,6 +191,8 @@ System solver returns `(t_values, y_values)`.
 
 | Function | Description |
 |----------|-------------|
-| `generate_hypotheses(question, domain, n)` | Generate n hypotheses |
-| `PromptTemplate.render(question, domain, n)` | Create LLM-ready prompt |
-| `SimpleOfflineGenerator()` | Offline placeholder generator |
+| `generate_hypotheses(question, domain, n)` | Generate n hypotheses with explicit assumptions, predictions, and confidence. Returns list of Hypothesis objects. |
+| `PromptTemplate.render(question, domain, n)` | Render a ready-to-use prompt template for external language models. |
+| `SimpleOfflineGenerator()` | Built-in offline generator for demos and testing (no external API calls). |
+
+See the hypothesis module source and `examples/hypothesis_demo.py` for usage patterns focused on research and discovery workflows. The design supports both offline use and swapping in real model backends.
