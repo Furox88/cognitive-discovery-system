@@ -257,13 +257,13 @@ Run `cds modules` after installation to explore the current modules.
 
 ## Recent improvements
 
-Recent work has focused on making the toolkit more practical for daily use and reducing repetitive maintenance tasks:
+Recent updates have aimed to make it simpler to generate and explore ideas within the toolkit:
 
-- Added CLI commands to browse modules and quickly try hypothesis generation
-- New example script demonstrating the hypothesis module
-- Workflows for automatic PR labeling, review checklists, dependency updates, and release handling
+- New CLI commands for browsing available modules and experimenting with hypothesis generation
+- A dedicated example showing how to use the hypothesis features end-to-end
+- Automation around pull requests, dependency management, and releases to free up time for core scientific work
 
-These improvements help keep the project easier to explore and maintain.
+The goal is to lower the barrier for using the discovery-oriented parts of the project and reduce time spent on routine tasks.
 
 ## Contributing
 
@@ -278,16 +278,15 @@ Looking for:
 
 ## Automation and Maintenance Workflows
 
-To keep day-to-day maintenance manageable, the project includes several GitHub Actions:
+A few GitHub Actions handle repetitive aspects of keeping the project running:
 
-- Dependabot for weekly updates to Python dependencies and GitHub Actions
-- Automatic PR labeling based on changed files (ci, docs, hypothesis, tests, etc.)
-- A release workflow triggered by version tags that runs tests, linting, builds the package, and creates a GitHub Release
-- PR checklist reminders to help catch common items like tests, docs, and changelog updates
+- Dependabot for regular updates to dependencies and GitHub Actions
+- Automatic labeling and review checklists for pull requests
+- A release process that builds and publishes on version tags
 
-These tools help reduce repetitive work so more time can go into new features and the core research-oriented parts of the project.
+These help ensure that time spent on the project goes more toward developing new modules, improving hypothesis tools, and supporting research use cases rather than manual upkeep.
 
-See the `.github/workflows/` directory for details.
+See `.github/workflows/` for the current setup.
 
 ## License
 
