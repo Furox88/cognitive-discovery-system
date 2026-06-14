@@ -16,30 +16,57 @@ class OptResult:
     converged: bool
 
 
+def _compute_gradient(f: Callable, x: float | list[float], h: float) -> float | list[float]:
+    """Compute numerical gradient for scalar or vector inputs."""
+    if isinstance(x, (int, float)):
+        return (f(x + h) - f(x - h)) / (2 * h)
+    
+    grad = [0.0] * len(x)
+    for i in range(len(x)):
+        x_plus = x[:]
+        x_plus[i] += h
+        x_minus = x[:]
+        x_minus[i] -= h
+        grad[i] = (f(x_plus) - f(x_minus)) / (2 * h)
+    return grad
+
+def _update_x(x: float | list[float], grad: float | list[float], step: float) -> float | list[float]:
+    """Apply gradient update step for scalar or vector inputs."""
+    if isinstance(x, (int, float)):
+        return x - step * grad
+    return [xi - step * gi for xi, gi in zip(x, grad)]
+
+def _magnitude(vec: float | list[float]) -> float:
+    """Compute magnitude of a scalar or vector."""
+    if isinstance(vec, (int, float)):
+        return abs(vec)
+    return math.sqrt(sum(vi * vi for vi in vec))
+
+
 def gradient_descent(
-    f: Callable[[float], float],
-    x0: float,
+    f: Callable,
+    x0: float | list[float],
     lr: float = 0.01,
     tol: float = 1e-8,
     max_iter: int = 10000,
     h: float = 1e-7,
 ) -> OptResult:
-    """Minimize a scalar function using gradient descent.
+    """Minimize a scalar or vector function using gradient descent.
 
     Args:
         f: objective function
-        x0: starting point
+        x0: starting point (scalar or list of floats)
         lr: learning rate
         tol: convergence tolerance on gradient magnitude
         max_iter: iteration limit
         h: step size for numerical gradient
     """
-    x = x0
+    x = x0 if isinstance(x0, (int, float)) else x0[:]
     for i in range(max_iter):
-        grad = (f(x + h) - f(x - h)) / (2 * h)
-        if abs(grad) < tol:
+        grad = _compute_gradient(f, x, h)
+        if _magnitude(grad) < tol:
             return OptResult(x=x, value=f(x), iterations=i, converged=True)
-        x -= lr * grad
+        x = _update_x(x, grad, lr)
     return OptResult(x=x, value=f(x), iterations=max_iter, converged=False)
 
 
@@ -74,8 +101,8 @@ def newton_method(
 
 
 def adam(
-    f: Callable[[float], float],
-    x0: float,
+    f: Callable,
+    x0: float | list[float],
     lr: float = 0.01,
     beta1: float = 0.9,
     beta2: float = 0.999,
@@ -84,7 +111,7 @@ def adam(
     max_iter: int = 10000,
     h: float = 1e-7,
 ) -> OptResult:
-    """Minimize using Adam optimizer (adaptive learning rate).
+    """Minimize using Adam optimizer (adaptive learning rate) for scalars or vectors.
 
     Args:
         f: objective function
@@ -97,23 +124,36 @@ def adam(
         max_iter: iteration limit
         h: step for numerical gradient
     """
-    x = x0
-    m = 0.0
-    v = 0.0
-    for i in range(1, max_iter + 1):
-        grad = (f(x + h) - f(x - h)) / (2 * h)
-        if abs(grad) < tol:
-            return OptResult(
-                x=x, value=f(x), iterations=i, converged=True,
-            )
-        m = beta1 * m + (1 - beta1) * grad
-        v = beta2 * v + (1 - beta2) * grad ** 2
-        m_hat = m / (1 - beta1 ** i)
-        v_hat = v / (1 - beta2 ** i)
-        x -= lr * m_hat / (math.sqrt(v_hat) + eps)
-    return OptResult(
-        x=x, value=f(x), iterations=max_iter, converged=False,
-    )
+    x = x0 if isinstance(x0, (int, float)) else x0[:]
+    
+    if isinstance(x, (int, float)):
+        m = 0.0
+        v = 0.0
+        for i in range(1, max_iter + 1):
+            grad = _compute_gradient(f, x, h)
+            if abs(grad) < tol:
+                return OptResult(x=x, value=f(x), iterations=i, converged=True)
+            m = beta1 * m + (1 - beta1) * grad
+            v = beta2 * v + (1 - beta2) * grad ** 2
+            m_hat = m / (1 - beta1 ** i)
+            v_hat = v / (1 - beta2 ** i)
+            x -= lr * m_hat / (math.sqrt(v_hat) + eps)
+    else:
+        m = [0.0] * len(x)
+        v = [0.0] * len(x)
+        for i in range(1, max_iter + 1):
+            grad = _compute_gradient(f, x, h)
+            if _magnitude(grad) < tol:
+                return OptResult(x=x, value=f(x), iterations=i, converged=True)
+            
+            for j in range(len(x)):
+                m[j] = beta1 * m[j] + (1 - beta1) * grad[j]
+                v[j] = beta2 * v[j] + (1 - beta2) * grad[j] ** 2
+                m_hat = m[j] / (1 - beta1 ** i)
+                v_hat = v[j] / (1 - beta2 ** i)
+                x[j] -= lr * m_hat / (math.sqrt(v_hat) + eps)
+
+    return OptResult(x=x, value=f(x), iterations=max_iter, converged=False)
 
 
 def line_search(

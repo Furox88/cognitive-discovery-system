@@ -13,10 +13,17 @@ def measure(q: Qubit) -> int:
 
 
 def simulate(circuit: QuantumCircuit, shots: int = 1000, seed: int | None = None) -> dict[int, int]:
+    """Run a circuit many times and collect measurement statistics.
+    
+    Optimized to compute the state vector only once, then probabilistically sample.
+    """
     if seed is not None:
         random.seed(seed)
-    results: list[int] = []
-    for _ in range(shots):
-        q = circuit.run()
-        results.append(measure(q))
+        
+    # Compute the final quantum state exactly once (Massive performance boost)
+    q = circuit.run()
+    p0, _ = q.probabilities()
+    
+    # Probabilistically sample the distribution 'shots' times
+    results = [0 if random.random() < p0 else 1 for _ in range(shots)]
     return dict(Counter(results))
