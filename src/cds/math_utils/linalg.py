@@ -50,16 +50,43 @@ def transpose(m: Matrix) -> Matrix:
 
 
 def determinant(m: Matrix) -> float:
+    """Compute matrix determinant using PLU decomposition (O(N^3)).
+
+    Avoids the O(N!) complexity of minor expansion.
+    """
     n = len(m)
+    if n == 0:
+        return 1.0
     if n == 1:
         return m[0][0]
-    if n == 2:
-        return m[0][0] * m[1][1] - m[0][1] * m[1][0]
-    det = 0.0
-    for j in range(n):
-        minor = [row[:j] + row[j + 1:] for row in m[1:]]
-        det += ((-1) ** j) * m[0][j] * determinant(minor)
-    return det
+
+    try:
+        P, L, U = lu_decomposition(m)
+    except ValueError:
+        # If matrix is singular, determinant is 0
+        return 0.0
+
+    # Determinant of LU is product of diag(U) 
+    # (diag(L) is all 1s).
+    det = 1.0
+    for i in range(n):
+        det *= U[i][i]
+
+    # Determinant of P is (-1)^s where s is number of row swaps.
+    # We can compute it by checking the permutation matrix.
+    swaps = 0
+    p_indices = [row.index(1.0) for row in P]
+    visited = [False] * n
+    for i in range(n):
+        if not visited[i]:
+            swaps += 1
+            curr = i
+            while not visited[curr]:
+                visited[curr] = True
+                curr = p_indices[curr]
+            swaps -= 1
+            
+    return det * ((-1) ** swaps)
 
 
 def identity(n: int) -> Matrix:

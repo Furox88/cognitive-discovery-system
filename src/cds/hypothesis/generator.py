@@ -126,6 +126,14 @@ class SimpleOfflineGenerator:
         n: int = 3,
         **kwargs,
     ) -> list[Hypothesis]:
+        # Ensure domain is a Domain enum instance
+        if isinstance(domain, str):
+            try:
+                # Case-insensitive mapping for better UX
+                domain = Domain(domain.lower())
+            except ValueError:
+                domain = Domain.GENERAL_SCIENCE
+
         ideas = self.templates.get(domain, self.templates[Domain.PHYSICS])[:n]
         if len(ideas) < n:
             # Pad with generic

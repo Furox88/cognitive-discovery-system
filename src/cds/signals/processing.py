@@ -182,14 +182,18 @@ def convolve(a: list[float], b: list[float]) -> list[float]:
 def power_spectrum(signal: list[complex]) -> list[float]:
     """Compute the power spectrum |X[k]|^2 / N.
 
-    Args:
-        signal: input signal
-
-    Returns:
-        list of power values for each frequency bin
+    Optimized to use FFT when signal length is a power of 2.
     """
-    spectrum = dft(signal)
-    n = len(spectrum)
+    n = len(signal)
+    if n == 0:
+        return []
+    
+    # Use FFT if possible (O(N log N))
+    if (n & (n - 1) == 0) and n > 0:
+        spectrum = fft_radix2(signal)
+    else:
+        spectrum = dft(signal)
+        
     return [abs(x) ** 2 / n for x in spectrum]
 
 
@@ -198,18 +202,23 @@ def low_pass_filter(
 ) -> list[complex]:
     """Simple frequency-domain low-pass filter.
 
-    Zeroes out all frequency components above the cutoff index.
-
-    Args:
-        signal: input signal
-        cutoff: keep frequencies 0..cutoff-1 (and mirror)
-
-    Returns:
-        filtered signal (real parts)
+    Optimized to use FFT for power-of-two signal lengths.
     """
-    spectrum = dft(signal)
-    n = len(spectrum)
+    n = len(signal)
+    if n == 0:
+        return []
+
+    # Choose best transform (O(N log N) vs O(N^2))
+    if (n & (n - 1) == 0) and n > 0:
+        spectrum = fft_radix2(signal)
+        inv_func = ifft_radix2
+    else:
+        spectrum = dft(signal)
+        inv_func = idft
+
     for k in range(n):
         if cutoff <= k <= n - cutoff:
             spectrum[k] = 0 + 0j
-    return idft(spectrum)
+            
+    return inv_func(spectrum)
+
