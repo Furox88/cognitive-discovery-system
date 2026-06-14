@@ -152,13 +152,15 @@ def info() -> None:
     from rich.columns import Columns
     from rich.text import Text
     
+    from cds import __version__
+    
     status_panel = Panel.fit(
         "[bold]Cognitive Discovery System (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
         "🚀 [bold green]Status:[/] Production-Ready (Alpha)\n"
         "🧪 [bold blue]Tests:[/] 350 Passing\n"
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
-        "🔗 [bold cyan]Version:[/] 0.3.0",
+        f"🔗 [bold cyan]Version:[/] {__version__}",
         title="Project Info",
         border_style="green",
     )

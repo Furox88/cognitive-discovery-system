@@ -16,7 +16,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The project also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> Currently in **alpha (v0.3.0)**. Contributions welcome!
+> Currently in **alpha (v0.5.0)**. Contributions welcome!
 
 ---
 🚀 **Latest Update:** Achieved **95%+ Test Coverage** with 350 tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
@@ -224,14 +224,17 @@ print(f"MST weight: {total}")  # 6.0
 
 ### Monte Carlo Simulation
 ```python
-from cds.montecarlo import estimate_pi, mc_integrate
 import math
+from cds.montecarlo import estimate_pi, mc_integrate
 
-result = estimate_pi(n_samples=100_000, seed=42)
-print(f"π ≈ {result.estimate:.4f}")  # ~3.1416
+if __name__ == "__main__":
+    # Unit-circle method
+    result = estimate_pi(n_samples=100_000, seed=42)
+    print(f"PI approximation: {result.estimate:.4f}")
 
-area = mc_integrate(math.sin, 0, math.pi, n_samples=100_000)
-print(f"∫sin(x)dx = {area.estimate:.4f}")  # ~2.0
+    # Integration
+    area = mc_integrate(math.sin, 0, math.pi, n_samples=100_000)
+    print(f"Integral of sin(x): {area.estimate:.4f}")
 ```
 
 ### Differential Equations
