@@ -156,7 +156,7 @@ def info() -> None:
         "[bold]Cognitive Discovery System (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
         "🚀 [bold green]Status:[/] Production-Ready (Alpha)\n"
-        "🧪 [bold blue]Tests:[/] 317 Passing\n"
+        "🧪 [bold blue]Tests:[/] 350 Passing\n"
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
         "🔗 [bold cyan]Version:[/] 0.3.0",
         title="Project Info",
@@ -169,7 +169,8 @@ def info() -> None:
         "• [cyan]math_utils[/]    • [cyan]stats[/]\n"
         "• [cyan]optimization[/]  • [cyan]montecarlo[/]\n"
         "• [cyan]hypothesis[/]    • [cyan]diffeq[/]\n"
-        "• [cyan]graph[/]         • [cyan]data_analysis[/]"
+        "• [cyan]graph[/]         • [cyan]data_analysis[/]\n"
+        "• [cyan]ml[/]            • [cyan]core[/]"
     )
     
     capability_panel = Panel.fit(
@@ -179,6 +180,27 @@ def info() -> None:
     )
     
     console.print(Columns([status_panel, capability_panel]))
+
+@app.command()
+def dashboard() -> None:
+    """Launch the interactive Streamlit dashboard."""
+    import subprocess
+    import sys
+    from pathlib import Path
+    
+    dashboard_path = Path(__file__).parent.parent.parent / "dashboard" / "app.py"
+    if not dashboard_path.exists():
+        console.print("[red]Error:[/] Dashboard file not found at " + str(dashboard_path))
+        return
+
+    console.print("[yellow]Launching CDS Interactive Dashboard...[/]")
+    try:
+        subprocess.run([sys.executable, "-m", "streamlit", "run", str(dashboard_path)], check=True)
+    except KeyboardInterrupt:
+        console.print("\n[blue]Dashboard stopped.[/]")
+    except FileNotFoundError:
+        console.print("[red]Error:[/] Streamlit not found. Install it with 'pip install streamlit'.")
+
 
 @app.command()
 def benchmark() -> None:

@@ -29,12 +29,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-
+dashboard = [
+    "streamlit>=1.30.0",
+    "pandas",
+]
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",
     "mypy>=1.10",
     "pre-commit",
+    "pytest-cov",
+    "build",
+    "twine",
 ]
 
 [project.scripts]

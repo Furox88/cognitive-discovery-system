@@ -1,0 +1,143 @@
+import streamlit as st
+import random
+import math
+from cds.hypothesis import generate_hypotheses, Domain, HypothesisEvaluator
+from cds.quantum import QuantumCircuit, hadamard, cnot, simulate
+from cds.ml import Layer, MLP
+from cds.data_analysis import plot_line
+
+st.set_page_config(page_title="CDS Interactive Dashboard", page_icon="🚀", layout="wide")
+
+st.title("🚀 Cognitive Discovery System (CDS)")
+st.markdown("""
+Welcome to the interactive showcase of the **Cognitive Discovery System**. 
+Everything you see here is powered by **Pure Python** algorithms, built from scratch without NumPy or SciPy.
+""")
+
+tabs = st.tabs(["🧠 Hypothesis Engine", "⚛️ Quantum Lab", "🤖 Neural Network", "📈 Math & Stats"])
+
+# --- Tab 1: Hypothesis Engine ---
+with tabs[0]:
+    st.header("Structured Hypothesis Generation")
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        question = st.text_input("Enter a Research Question:", value="What causes the Hubble tension?")
+        domain_choice = st.selectbox("Select Domain:", ["Cosmology", "Physics", "Mathematics", "General Science"])
+        num_hypo = st.slider("Number of Hypotheses:", 1, 5, 2)
+        
+        if st.button("Generate Hypotheses"):
+            with st.spinner("Reasoning..."):
+                dom = Domain(domain_choice.lower().replace(" ", "_"))
+                hypos = generate_hypotheses(question, domain=dom, n=num_hypo)
+                
+                for h in hypos:
+                    with st.expander(f"ID: {h.id} - {h.statement[:50]}...", expanded=True):
+                        st.markdown(h.to_markdown())
+    
+    with col2:
+        st.info("**Discovery Tip:** Generated hypotheses are structured with explicit assumptions and measurable predictions, ready for statistical testing.")
+
+# --- Tab 2: Quantum Lab ---
+with tabs[1]:
+    st.header("Quantum Circuit Simulator")
+    
+    q_col1, q_col2 = st.columns([1, 2])
+    
+    with q_col1:
+        st.subheader("Circuit Builder")
+        apply_h = st.checkbox("Apply Hadamard (H)", value=True)
+        shots = st.select_slider("Number of Shots (Measurements):", options=[100, 1000, 10000, 100000], value=1000)
+        
+        if st.button("Run Simulation"):
+            c = QuantumCircuit()
+            if apply_h:
+                c.add(hadamard())
+            
+            with st.spinner("Simulating..."):
+                counts = simulate(c, shots=shots)
+                st.session_state['q_counts'] = counts
+                st.success("Simulation Complete!")
+
+    with q_col2:
+        st.subheader("Measurement Statistics")
+        if 'q_counts' in st.session_state:
+            counts = st.session_state['q_counts']
+            st.bar_chart(counts)
+            st.json(counts)
+        else:
+            st.write("Construct a circuit and click 'Run Simulation' to see results.")
+
+# --- Tab 3: Neural Network ---
+with tabs[2]:
+    st.header("MLP: Multi-Layer Perceptron")
+    st.markdown("Watch a Pure Python Neural Network learn the XOR logic in real-time.")
+    
+    if st.button("Train XOR Model"):
+        # Training data
+        X = [[0, 0], [0, 1], [1, 0], [1, 1]]
+        y = [[0], [1], [1], [0]] # XOR
+        
+        net = MLP([
+            Layer(2, 4, activation="relu"),
+            Layer(4, 1, activation="sigmoid")
+        ])
+        
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        # Simple training loop with UI updates
+        losses = []
+        for epoch in range(1, 101):
+            res = net.train(X, y, epochs=5, lr=0.1)
+            losses.append(res['final_loss'])
+            progress_bar.progress(epoch)
+            status_text.text(f"Epoch {epoch*5}/500 - Loss: {res['final_loss']:.6f}")
+        
+        st.success("Model Trained!")
+        st.line_chart(losses)
+        
+        st.subheader("Predictions")
+        cols = st.columns(4)
+        for i, xi in enumerate(X):
+            pred = net.predict(xi)[0]
+            cols[i].metric(f"Input {xi}", f"{pred:.4f}", delta="Expected 1" if y[i][0]==1 else "Expected 0")
+
+# --- Tab 4: Math & Stats ---
+with tabs[3]:
+    st.header("Numerical Analysis Showcase")
+    
+    m_col1, m_col2 = st.columns(2)
+    
+    with m_col1:
+        st.subheader("Welch's t-test")
+        st.markdown("Comparing two distributions with unequal variances.")
+        
+        mu1 = st.slider("Mean 1", 50.0, 100.0, 70.0)
+        mu2 = st.slider("Mean 2", 50.0, 100.0, 75.0)
+        
+        data1 = [random.gauss(mu1, 5) for _ in range(50)]
+        data2 = [random.gauss(mu2, 8) for _ in range(50)]
+        
+        from cds.stats import two_sample_ttest
+        res = two_sample_ttest(data1, data2, equal_var=False)
+        
+        st.metric("p-value", f"{res.p_value:.4f}")
+        if res.p_value < 0.05:
+            st.success("Significant Difference Found!")
+        else:
+            st.warning("No Significant Difference.")
+
+    with m_col2:
+        st.subheader("ASCII Visualization Engine")
+        st.markdown("The underlying engine generating terminal-friendly plots.")
+        wave_data = [math.sin(x * 0.3) for x in range(30)]
+        st.text(plot_line(wave_data, title="Pure Python Sine Wave"))
+
+st.sidebar.markdown("---")
+st.sidebar.title("System Status")
+st.sidebar.success("Core: v0.3.0")
+st.sidebar.info("Dependencies: Standard Library + Typer/Rich/Pydantic")
+st.sidebar.markdown("""
+[View Source on GitHub](https://github.com/Furox88/cognitive-discovery-system)
+""")
