@@ -1,6 +1,7 @@
 """Pure Python Neural Network module."""
 from __future__ import annotations
 
+import math
 import random
 from collections.abc import Callable
 from typing import Any
@@ -30,7 +31,15 @@ class Layer:
         if self.activation == "relu":
             return max(0.0, z)
         if self.activation == "sigmoid":
-            return 1.0 / (1.0 + (2.718281828459 ** -z))
+            # Use math.exp for better numerical stability and precision
+            try:
+                if z >= 0:
+                    return 1.0 / (1.0 + math.exp(-z))
+                else:
+                    ez = math.exp(z)
+                    return ez / (1.0 + ez)
+            except OverflowError:
+                return 0.0 if z < 0 else 1.0
         return z  # identity
 
 

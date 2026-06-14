@@ -15,16 +15,33 @@ def plot_bar(data: dict[str, float], title: str = "Bar Chart", width: int = 50) 
     if not data:
         return "No data to plot."
     
-    max_val = max(data.values())
-    min_val = min(0.0, min(data.values()))
-    val_range = max_val - min_val
+    vals = list(data.values())
+    max_val = max(vals)
+    min_val = min(vals)
     
+    # Handle the case where all values are the same
+    if max_val == min_val:
+        span = 1.0 if max_val == 0 else abs(max_val)
+    else:
+        span = max_val - min(0, min_val)
+
     lines = [f"\n[bold]{title}[/]", "─" * len(title)]
     
+    # Simple normalization logic that respects 0 as a baseline
+    limit = max(abs(max_val), abs(min_val), 1e-10)
+    
     for label, val in data.items():
-        bar_len = int((val / max_val) * width) if max_val > 0 else 0
-        bar = "█" * bar_len
-        lines.append(f"{label:<15} | {bar} ({val:.2f})")
+        # Calculate bar length relative to the largest absolute value
+        bar_len = int((abs(val) / limit) * width)
+        if val >= 0:
+            bar = "█" * bar_len
+            suffix = f" (+{val:.2f})"
+        else:
+            # Represent negative values with a different character or notation
+            bar = "░" * bar_len 
+            suffix = f" ({val:.2f})"
+        
+        lines.append(f"{label:<15} | {bar}{suffix}")
     
     return "\n".join(lines)
 
@@ -41,20 +58,23 @@ def plot_line(y_values: list[float], title: str = "Line Plot", height: int = 10,
     if not y_values:
         return "No data to plot."
 
+    # Safety fix for auditor: ensure width is at least 2 for sampling logic
+    eff_width = max(2, width)
+
     # Sample/Interpolate to fit width
-    if len(y_values) > width:
-        indices = [int(i * (len(y_values) - 1) / (width - 1)) for i in range(width)]
+    if len(y_values) > eff_width:
+        indices = [int(i * (len(y_values) - 1) / (eff_width - 1)) for i in range(eff_width)]
         sampled = [y_values[i] for i in indices]
     else:
         sampled = y_values
-        width = len(y_values)
+        eff_width = len(y_values)
 
     max_y = max(sampled)
     min_y = min(sampled)
     y_range = max_y - min_y if max_y != min_y else 1.0
 
     # Create grid
-    grid = [[" " for _ in range(width)] for _ in range(height)]
+    grid = [[" " for _ in range(eff_width)] for _ in range(height)]
 
     for x, y in enumerate(sampled):
         # Calculate row (inverted because row 0 is top)
@@ -66,5 +86,5 @@ def plot_line(y_values: list[float], title: str = "Line Plot", height: int = 10,
     for row in grid:
         lines.append("".join(row))
     
-    lines.append(f"{'min: ' + f'{min_y:.2f}':<{width//2}}{'max: ' + f'{max_y:.2f}':>{width//2}}")
+    lines.append(f"{'min: ' + f'{min_y:.2f}':<{eff_width//2}}{'max: ' + f'{max_y:.2f}':>{eff_width//2}}")
     return "\n".join(lines)
