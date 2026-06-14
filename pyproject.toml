@@ -1,6 +1,6 @@
 [project]
-name = "cds-cognitive"
-version = "0.4.0"
+name = "cognitive-discovery-toolkit"
+version = "0.5.0"
 description = "Pure Python computational science toolkit — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}

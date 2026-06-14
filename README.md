@@ -79,7 +79,7 @@ cds hypothesis "What causes the Hubble tension?"
 CDS now features an **Interactive Web Dashboard** for real-time scientific exploration. Launch it directly from your terminal:
 
 ```bash
-pip install "cds-cognitive[dashboard]"
+pip install "cognitive-discovery-toolkit[dashboard]"
 cds dashboard
 ```
 
