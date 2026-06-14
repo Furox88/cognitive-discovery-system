@@ -76,6 +76,25 @@ def fft_radix2(signal: list[complex]) -> list[complex]:
     return result
 
 
+def ifft_radix2(spectrum: list[complex]) -> list[complex]:
+    """Cooley-Tukey radix-2 Inverse FFT.
+
+    Args:
+        spectrum: frequency domain signal (length must be power of 2)
+
+    Returns:
+        list of complex time-domain samples
+    """
+    n = len(spectrum)
+    if n == 0:
+        return []
+    
+    # The property: IFFT(x) = conj(FFT(conj(x))) / N
+    conj_spectrum = [x.conjugate() for x in spectrum]
+    forward_fft = fft_radix2(conj_spectrum)
+    return [x.conjugate() / n for x in forward_fft]
+
+
 def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
     """2-D Discrete Fourier Transform via the row-column algorithm.
 
@@ -117,40 +136,34 @@ def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
 
 
 def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
-    """Inverse 2-D DFT via the row-column algorithm.
+    """Inverse 2-D DFT via the row-column algorithm (O(N log N)).
 
-    Inverts :func:`fft2` by applying the inverse 1-D DFT along columns then
-    rows. Uses the separability of the multidimensional inverse transform.
-
-    Reference:
-        Cooley, J. W., & Tukey, J. W. (1965). Mathematics of Computation,
-        19(90), 297-301; row-column decomposition per Gonzalez & Woods,
-        Digital Image Processing, §4.
+    Applies a 1-D Inverse FFT along rows, then columns.
 
     Args:
-        spectrum: 2-D frequency-domain input (rows x cols)
+        spectrum: 2-D frequency-domain input (rows x cols), powers of two
 
     Returns:
         2-D list of complex time/space-domain samples
 
     Raises:
-        ValueError: if the matrix is empty or rows have unequal length
+        ValueError: if dimensions are not powers of two
     """
     rows = len(spectrum)
     if rows == 0:
         raise ValueError("matrix must be non-empty")
     cols = len(spectrum[0])
-    if any(len(row) != cols for row in spectrum):
-        raise ValueError("all rows must have equal length")
 
-    col_inv = [[0 + 0j] * cols for _ in range(rows)]
+    # Row-wise IFFT
+    row_inv = [ifft_radix2(list(row)) for row in spectrum]
+
+    result = [[0 + 0j] * cols for _ in range(rows)]
     for j in range(cols):
-        column = [spectrum[i][j] for i in range(rows)]
-        inv = idft(column)
+        column = [row_inv[i][j] for i in range(rows)]
+        col_inv = ifft_radix2(column)
         for i in range(rows):
-            col_inv[i][j] = inv[i]
+            result[i][j] = col_inv[i]
 
-    result = [idft(col_inv[i]) for i in range(rows)]
     return result
 
 

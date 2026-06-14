@@ -27,10 +27,10 @@ The project also includes built-in support for structured hypothesis generation,
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
-- **Broad scope** — 12 modules covering math, physics, stats, signals, optimization, graph theory, ODEs, Monte Carlo
-- **314 tests** (see CI) — thoroughly tested with pytest
+- **Broad scope** — 14 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, Monte Carlo
+- **350+ tests** (see CI) — thoroughly tested with **95%+ code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
-- **CLI included** — interactive tools and demos from your terminal
+- **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
 ## Citing CDS
 
@@ -42,11 +42,12 @@ If CDS is useful in your research or publications, please cite it using the info
 |--------|-------------|
 | `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli, CNOT, SWAP, Toffoli, Bell/GHZ states, entanglement detection |
 | `cds.optimization` | Gradient descent, Newton's method, Adam optimizer, golden section search |
-| `cds.signals` | DFT, FFT (radix-2), 2-D FFT, convolution, power spectrum, low-pass filter |
+| `cds.ml` | **NEW:** Pure Python Neural Networks — MLP, dense layers, Adam-based training |
+| `cds.signals` | DFT, radix-2 FFT/IFFT (O(N log N)), 2D FFT/IFFT, convolution, power spectrum, filtering |
 | `cds.probability` | Gaussian, uniform, exponential, binomial, Poisson distributions |
 | `cds.stats` | Descriptive stats, Pearson correlation, linear regression, t-test, chi-square, ANOVA |
-| `cds.math_utils` | Numerical calculus, LU / QR / Cholesky decomposition, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
-| `cds.data_analysis` | CSV loader, normalization, z-score, moving average |
+| `cds.math_utils` | Numerical calculus, O(N³) LU / QR / Cholesky, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
+| `cds.data_analysis` | **NEW:** Mini-Pandas `DataSet` for filtering/grouping, CSV loading, ASCII visualization |
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |

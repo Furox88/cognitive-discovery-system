@@ -73,20 +73,19 @@ def determinant(m: Matrix) -> float:
         det *= U[i][i]
 
     # Determinant of P is (-1)^s where s is number of row swaps.
-    # We can compute it by checking the permutation matrix.
-    swaps = 0
+    # We compute it using cycle decomposition: s = n - number_of_cycles.
+    num_cycles = 0
     p_indices = [row.index(1.0) for row in P]
     visited = [False] * n
     for i in range(n):
         if not visited[i]:
-            swaps += 1
+            num_cycles += 1
             curr = i
             while not visited[curr]:
                 visited[curr] = True
                 curr = p_indices[curr]
-            swaps -= 1
             
-    return det * ((-1) ** swaps)
+    return det * ((-1) ** (n - num_cycles))
 
 
 def identity(n: int) -> Matrix:
@@ -211,8 +210,7 @@ def power_iteration(
 ) -> tuple[float, Vector]:
     """Find dominant eigenvalue and eigenvector using power iteration.
 
-    Von Mises iteration (1929). Converges to the largest eigenvalue
-    in absolute value and its corresponding eigenvector.
+    Von Mises iteration (1929). Optimized with scaling to prevent overflow.
 
     Args:
         m: square matrix
@@ -224,18 +222,31 @@ def power_iteration(
     """
     n = len(m)
     v = [1.0] * n
-    norm = math.sqrt(sum(x * x for x in v))
-    v = [x / norm for x in v]
+    
+    # Initial scaling
+    max_val = max(abs(x) for x in v)
+    v = [x / max_val for x in v]
 
     eigenvalue = 0.0
     for _ in range(max_iter):
         # w = A * v
         w = [sum(m[i][j] * v[j] for j in range(n)) for i in range(n)]
-        new_eigenvalue = sum(w[i] * v[i] for i in range(n))
-        norm = math.sqrt(sum(x * x for x in w))
+        
+        # Scaling to prevent overflow in large systems
+        # norm = sqrt(sum(w_i^2))
+        try:
+            norm = math.sqrt(sum(x * x for x in w))
+        except OverflowError:
+            # Fallback to absolute max scaling if squared sum overflows
+            norm = max(abs(x) for x in w)
+
         if norm < 1e-15:
             break
+            
         v_new = [x / norm for x in w]
+        
+        # Rayleigh quotient for eigenvalue estimate
+        new_eigenvalue = sum(v_new[i] * sum(m[i][j] * v_new[j] for j in range(n)) for i in range(n))
 
         if abs(new_eigenvalue - eigenvalue) < tol:
             return new_eigenvalue, v_new
