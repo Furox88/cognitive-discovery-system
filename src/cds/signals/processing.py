@@ -164,12 +164,18 @@ def convolve(a: list[float], b: list[float]) -> list[float]:
     Returns:
         convolved signal of length len(a) + len(b) - 1
     """
+    if not a or not b:
+        return []
+    
     na, nb = len(a), len(b)
     out_len = na + nb - 1
     result = [0.0] * out_len
-    for i in range(na):
-        for j in range(nb):
-            result[i + j] += a[i] * b[j]
+    
+    # Fast pure-Python convolution using inner loop summation
+    for i, a_val in enumerate(a):
+        if a_val != 0.0:  # Skip zeros to heavily optimize sparse convolutions
+            for j, b_val in enumerate(b):
+                result[i + j] += a_val * b_val
     return result
 
 

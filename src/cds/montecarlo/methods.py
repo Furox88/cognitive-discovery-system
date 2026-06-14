@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import math
 import random
+import multiprocessing
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 
 
@@ -21,8 +23,21 @@ class MCResult:
     std_error: float
 
 
+def _pi_worker(samples_seed: tuple[int, int | None]) -> int:
+    """Worker function for parallel pi estimation."""
+    samples, seed = samples_seed
+    if seed is not None:
+        random.seed(seed)
+    inside = 0
+    for _ in range(samples):
+        x = random.random()
+        y = random.random()
+        if x * x + y * y <= 1.0:
+            inside += 1
+    return inside
+
 def estimate_pi(n_samples: int = 100_000, seed: int | None = None) -> MCResult:
-    """Estimate π using the unit-circle method.
+    """Estimate π using the unit-circle method (Parallelized).
 
     Throw random points into the unit square [0,1]×[0,1].
     Fraction inside the quarter-circle ≈ π/4.
@@ -31,14 +46,26 @@ def estimate_pi(n_samples: int = 100_000, seed: int | None = None) -> MCResult:
         n_samples: number of random points
         seed: optional random seed
     """
-    if seed is not None:
-        random.seed(seed)
+    if n_samples <= 0:
+        return MCResult(0.0, n_samples, 0.0)
+
+    cores = min(multiprocessing.cpu_count(), n_samples)
+    chunk_size = n_samples // cores
+    chunks = [chunk_size] * cores
+    chunks[-1] += n_samples - sum(chunks) # add remainder to last chunk
+    
+    if seed is None:
+        import sys, os
+        seed = int.from_bytes(os.urandom(4), sys.byteorder)
+
+    seeds = [seed + i for i in range(cores)]
+    tasks = list(zip(chunks, seeds))
+
     inside = 0
-    for _ in range(n_samples):
-        x = random.random()
-        y = random.random()
-        if x * x + y * y <= 1.0:
-            inside += 1
+    with ProcessPoolExecutor(max_workers=cores) as executor:
+        for result in executor.map(_pi_worker, tasks):
+            inside += result
+
     p = inside / n_samples
     estimate = 4.0 * p
     se = 4.0 * math.sqrt(p * (1 - p) / n_samples) if n_samples > 1 else 0.0

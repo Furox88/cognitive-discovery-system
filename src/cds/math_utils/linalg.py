@@ -60,47 +60,68 @@ def identity(n: int) -> Matrix:
     return [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
 
 
-def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix]:
-    """LU decomposition without pivoting (Doolittle's method).
+def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
+    """LU decomposition with partial pivoting (PA = LU).
 
-    A = L * U where L is lower triangular (ones on diagonal)
-    and U is upper triangular.
-    [Golub & Van Loan, §3.2]
+    A = P_inv * L * U where P_inv is a permutation matrix,
+    L is lower triangular (ones on diagonal) and U is upper triangular.
+
+    Returns:
+        P, L, U matrices.
 
     Raises:
-        ValueError: if matrix is singular (zero pivot)
+        ValueError: if matrix is singular
     """
     n = len(m)
-    L = identity(n)
+    P = identity(n)
+    L = [[0.0] * n for _ in range(n)]
     U = [row[:] for row in m]
 
     for k in range(n):
-        if abs(U[k][k]) < 1e-15:
+        # Partial pivoting
+        pivot_idx = k
+        max_val = abs(U[k][k])
+        for i in range(k + 1, n):
+            if abs(U[i][k]) > max_val:
+                max_val = abs(U[i][k])
+                pivot_idx = i
+
+        if max_val < 1e-15:
             raise ValueError("zero pivot encountered — matrix may be singular")
+
+        if pivot_idx != k:
+            U[k], U[pivot_idx] = U[pivot_idx], U[k]
+            P[k], P[pivot_idx] = P[pivot_idx], P[k]
+            L[k], L[pivot_idx] = L[pivot_idx], L[k]
+
+        L[k][k] = 1.0
         for i in range(k + 1, n):
             factor = U[i][k] / U[k][k]
             L[i][k] = factor
             for j in range(k, n):
                 U[i][j] -= factor * U[k][j]
 
-    return L, U
+    return P, L, U
 
 
 def solve_linear(A: Matrix, b: Vector) -> Vector:
-    """Solve Ax = b using LU decomposition.
+    """Solve Ax = b using PLU decomposition.
 
-    Forward substitution for Ly = b, then back substitution for Ux = y.
+    Solves LUx = Pb.
 
     Raises:
         ValueError: if matrix is singular
     """
     n = len(A)
-    L, U = lu_decomposition(A)
+    P, L, U = lu_decomposition(A)
 
-    # forward: Ly = b
+    # Apply permutation: Pb
+    pb = [sum(P[i][j] * b[j] for j in range(n)) for i in range(n)]
+
+    # forward: Ly = Pb
     y = [0.0] * n
     for i in range(n):
-        y[i] = b[i] - sum(L[i][j] * y[j] for j in range(i))
+        y[i] = pb[i] - sum(L[i][j] * y[j] for j in range(i))
 
     # backward: Ux = y
     x = [0.0] * n
@@ -113,21 +134,41 @@ def solve_linear(A: Matrix, b: Vector) -> Vector:
 
 
 def matrix_inverse(m: Matrix) -> Matrix:
-    """Compute matrix inverse via LU decomposition.
+    """Compute matrix inverse via PLU decomposition.
 
-    Solves A * X = I column by column.
+    Reuses a single P, L, U factorization and solves A * x_i = e_i
+    for each column of the identity matrix to build the inverse.
 
     Raises:
         ValueError: if matrix is singular
     """
     n = len(m)
-    inv = identity(n)
+    P, L, U = lu_decomposition(m)
+    inv = [[0.0] * n for _ in range(n)]
+
     for col in range(n):
-        e = [0.0] * n
-        e[col] = 1.0
-        x = solve_linear(m, e)
+        # e is the standard basis vector
+        b = [0.0] * n
+        b[col] = 1.0
+
+        # Apply permutation: Pb
+        pb = [sum(P[i][j] * b[j] for j in range(n)) for i in range(n)]
+
+        # forward: Ly = Pb
+        y = [0.0] * n
+        for i in range(n):
+            y[i] = pb[i] - sum(L[i][j] * y[j] for j in range(i))
+
+        # backward: Ux = y
+        x = [0.0] * n
+        for i in range(n - 1, -1, -1):
+            if abs(U[i][i]) < 1e-15:
+                raise ValueError("singular matrix")
+            x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
+
         for row in range(n):
             inv[row][col] = x[row]
+            
     return inv
 
 

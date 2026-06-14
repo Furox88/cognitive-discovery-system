@@ -30,17 +30,21 @@ class TestIdentity:
 class TestLUDecomposition:
     def test_2x2(self):
         A = [[2.0, 1.0], [4.0, 3.0]]
-        L, U = lu_decomposition(A)
-        # verify L * U = A
-        product = mat_mul(L, U)
+        P, L, U = lu_decomposition(A)
+        # verify P_inv * L * U = A. Since P is symmetric orthogonal here, P = P_inv
+        from cds.math_utils.linalg import transpose
+        P_inv = transpose(P)
+        product = mat_mul(P_inv, mat_mul(L, U))
         for i in range(2):
             for j in range(2):
                 assert abs(product[i][j] - A[i][j]) < 1e-10
 
     def test_3x3(self):
         A = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 10.0]]
-        L, U = lu_decomposition(A)
-        product = mat_mul(L, U)
+        P, L, U = lu_decomposition(A)
+        from cds.math_utils.linalg import transpose
+        P_inv = transpose(P)
+        product = mat_mul(P_inv, mat_mul(L, U))
         for i in range(3):
             for j in range(3):
                 assert abs(product[i][j] - A[i][j]) < 1e-10
@@ -52,7 +56,7 @@ class TestLUDecomposition:
 
     def test_L_is_lower_triangular(self):
         A = [[2.0, 1.0], [4.0, 3.0]]
-        L, U = lu_decomposition(A)
+        P, L, U = lu_decomposition(A)
         assert L[0][1] == 0.0
         assert L[0][0] == 1.0
         assert L[1][1] == 1.0
