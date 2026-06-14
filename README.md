@@ -66,7 +66,7 @@ pip install -e ".[dev]"
 # Run tests
 pytest
 
-# Run CLI
+```bash
 cds --help
 cds constants
 cds calc ke
@@ -74,7 +74,26 @@ cds modules
 cds hypothesis "What causes the Hubble tension?"
 ```
 
+## 🌐 Interactive Dashboard
+
+CDS now features an **Interactive Web Dashboard** for real-time scientific exploration. Launch it directly from your terminal:
+
+```bash
+pip install "cognitive-discovery-system[dashboard]"
+cds dashboard
+```
+
+*The dashboard includes a live Hypothesis Engine, Quantum Circuit Simulator, Neural Network training visualizer, and Statistical testing lab.*
+
+## 🧪 Scientific Case Studies
+
+Explore how CDS is used to solve real-world research problems:
+
+1.  [**Hubble Tension Analysis**](docs/CASE_STUDY_HUBBLE.md): Generating and testing hypotheses for the expansion rate of the universe.
+2.  [**Quantum-ML Integration**](docs/CASE_STUDY_QUANTUM_ML.md): Using quantum circuit measurements as features for classical Neural Network training.
+
 ## Examples
+
 
 See the [`examples/`](examples/) directory for runnable demos and `docs/research-workflows.md` for guidance on embedding CDS in research pipelines.
 
