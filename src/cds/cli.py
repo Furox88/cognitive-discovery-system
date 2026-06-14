@@ -203,6 +203,20 @@ def constants() -> None:
 
 
 @app.command()
+def plot(
+    values: Annotated[str, typer.Argument(help="Comma-separated list of numbers (e.g. '1,5,3,8')")],
+    title: Annotated[str, typer.Option("--title", "-t")] = "CLI Plot",
+) -> None:
+    """Plot a series of numbers directly in the terminal."""
+    from cds.data_analysis.viz import plot_line
+    try:
+        data = [float(x.strip()) for x in values.split(",")]
+        console.print(plot_line(data, title=title))
+    except ValueError:
+        console.print("[red]Error:[/] Values must be a comma-separated list of numbers.")
+
+
+@app.command()
 def calc(
     formula: Annotated[str, typer.Argument(help="Formula: ke, gravity, wave, gas")],
 ) -> None:
