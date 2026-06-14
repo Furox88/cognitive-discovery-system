@@ -19,6 +19,7 @@ Example:
     )
 """
 
+from cds.hypothesis.evaluator import EvaluationResult, HypothesisEvaluator
 from cds.hypothesis.generator import (
     Domain,
     Hypothesis,
@@ -37,4 +38,6 @@ __all__ = [
     "PromptTemplate",
     "SimpleOfflineGenerator",
     "generate_hypotheses",
+    "HypothesisEvaluator",
+    "EvaluationResult",
 ]

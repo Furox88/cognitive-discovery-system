@@ -24,6 +24,8 @@ class HypothesisStatus(str, Enum):
     REFINED = "refined"
     CRITIQUED = "critiqued"
     TESTABLE = "testable"
+    VALIDATED = "validated"
+    REJECTED = "rejected"
     ARCHIVED = "archived"
 
 

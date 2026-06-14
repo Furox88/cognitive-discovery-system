@@ -1,7 +1,7 @@
 """Tests for ODE solvers."""
 import math
 
-from cds.diffeq import euler_method, midpoint_method, rk4, solve_system
+from cds.diffeq import euler_method, midpoint_method, rk4, rk45, solve_system
 
 
 class TestEulerMethod:
@@ -63,6 +63,18 @@ class TestMidpointMethod:
         sol = midpoint_method(lambda t, y: 0, 0, 0, 1, dt=0.1)
         assert sol.method == "midpoint"
 
+
+class TestRK45:
+    def test_exponential_decay_adaptive(self):
+        # dy/dt = -y, y(0) = 1  =>  y(t) = e^(-t)
+        sol = rk45(lambda t, y: -y, 0, 1.0, 2.0, dt=0.1, atol=1e-8, rtol=1e-8)
+        assert abs(sol.y[-1] - math.exp(-2.0)) < 1e-6
+        # adaptive steps should be fewer than fixed-step with same accuracy
+        assert sol.steps < 200
+
+    def test_method_name(self):
+        sol = rk45(lambda t, y: 0, 0, 0, 1, dt=0.1)
+        assert sol.method == "rk45"
 
 class TestSolveSystem:
     def test_harmonic_oscillator(self):

@@ -139,6 +139,85 @@ def midpoint_method(
     return ODESolution(t=t_vals, y=y_vals, method="midpoint", steps=steps)
 
 
+def rk45(
+    f: Callable[[float, float], float],
+    t0: float,
+    y0: float,
+    t_end: float,
+    dt: float = 0.01,
+    atol: float = 1e-6,
+    rtol: float = 1e-3,
+) -> ODESolution:
+    """Dormand-Prince (RK45) adaptive step-size method.
+
+    Computes 4th and 5th order estimates to approximate local error
+    and adjust the step size automatically. [Dormand & Prince 1980]
+
+    Args:
+        f: right-hand side f(t, y)
+        t0: initial time
+        y0: initial value
+        t_end: end time
+        dt: initial time step
+        atol: absolute tolerance
+        rtol: relative tolerance
+    """
+    # Dormand-Prince Butcher Tableau coefficients
+    a = [0, 1/5, 3/10, 4/5, 8/9, 1, 1]
+    b = [
+        [],
+        [1/5],
+        [3/40, 9/40],
+        [44/45, -56/15, 32/9],
+        [19372/6561, -25360/2187, 64448/6561, -212/729],
+        [9017/3168, -355/33, 46732/5247, 49/176, -5103/18656],
+        [35/384, 0, 500/1113, 125/192, -2187/6784, 11/84]
+    ]
+    c5 = [35/384, 0, 500/1113, 125/192, -2187/6784, 11/84, 0]
+    c4 = [5179/57600, 0, 7571/16695, 393/640, -92097/339200, 187/2100, 1/40]
+
+    t, y = t0, y0
+    t_vals = [t]
+    y_vals = [y]
+    h = dt
+    steps = 0
+
+    while t < t_end - 1e-12:
+        if t + h > t_end:
+            h = t_end - t
+
+        k = [0.0] * 7
+        k[0] = f(t, y)
+        for i in range(1, 7):
+            y_next = y + h * sum(b[i][j] * k[j] for j in range(i))
+            k[i] = f(t + a[i] * h, y_next)
+
+        # Estimate 5th and 4th order solutions
+        y5 = y + h * sum(c5[i] * k[i] for i in range(7))
+        y4 = y + h * sum(c4[i] * k[i] for i in range(7))
+
+        # Local error estimate
+        error = abs(y5 - y4)
+        tolerance = atol + rtol * abs(y)
+
+        if error <= tolerance:
+            # Step accepted
+            t += h
+            y = y5
+            t_vals.append(t)
+            y_vals.append(y)
+            steps += 1
+        
+        # Adjust step size
+        if error > 0:
+            h_opt = h * (tolerance / error) ** 0.2
+            h = min(max(0.1 * h, 0.9 * h_opt), 10 * h)
+        else:
+            h *= 2
+
+    return ODESolution(t=t_vals, y=y_vals, method="rk45", steps=steps)
+
+
 def solve_system(
     f: Callable[[float, list[float]], list[float]],
     t0: float,
