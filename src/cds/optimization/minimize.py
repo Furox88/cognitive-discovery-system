@@ -14,15 +14,19 @@ class OptResult:
     value: float
     iterations: int
     converged: bool
+    state: dict[str, Any] | None = None
 
 
-def _compute_gradient(f: Callable, x: float | list[float], h: float) -> float | list[float]:
-    """Compute numerical gradient for scalar or vector inputs."""
+def _compute_gradient(f: Callable, x: float | list[float], h_base: float = 1e-7) -> float | list[float]:
+    """Compute numerical gradient with adaptive step size for precision."""
     if isinstance(x, (int, float)):
+        # Adaptive h based on x scale
+        h = h_base * max(1.0, abs(x))
         return (f(x + h) - f(x - h)) / (2 * h)
     
     grad = [0.0] * len(x)
     for i in range(len(x)):
+        h = h_base * max(1.0, abs(x[i]))
         x_plus = x[:]
         x_plus[i] += h
         x_minus = x[:]
@@ -110,6 +114,7 @@ def adam(
     tol: float = 1e-8,
     max_iter: int = 10000,
     h: float = 1e-7,
+    state: dict[str, Any] | None = None,
 ) -> OptResult:
     """Minimize using Adam optimizer (adaptive learning rate) for scalars or vectors.
 
@@ -123,28 +128,44 @@ def adam(
         tol: convergence tolerance
         max_iter: iteration limit
         h: step for numerical gradient
+        state: optional dictionary to resume optimization (contains m, v, t)
     """
     x = x0 if isinstance(x0, (int, float)) else x0[:]
     
+    if state is None:
+        if isinstance(x, (int, float)):
+            m = 0.0
+            v = 0.0
+        else:
+            m = [0.0] * len(x)
+            v = [0.0] * len(x)
+        t_start = 1
+    else:
+        m = state["m"]
+        v = state["v"]
+        t_start = state["t"]
+
     if isinstance(x, (int, float)):
-        m = 0.0
-        v = 0.0
-        for i in range(1, max_iter + 1):
+        for i in range(t_start, t_start + max_iter):
             grad = _compute_gradient(f, x, h)
             if abs(grad) < tol:
-                return OptResult(x=x, value=f(x), iterations=i, converged=True)
+                return OptResult(
+                    x=x, value=f(x), iterations=i - t_start, converged=True,
+                    state={"m": m, "v": v, "t": i}
+                )
             m = beta1 * m + (1 - beta1) * grad
             v = beta2 * v + (1 - beta2) * grad ** 2
             m_hat = m / (1 - beta1 ** i)
             v_hat = v / (1 - beta2 ** i)
             x -= lr * m_hat / (math.sqrt(v_hat) + eps)
     else:
-        m = [0.0] * len(x)
-        v = [0.0] * len(x)
-        for i in range(1, max_iter + 1):
+        for i in range(t_start, t_start + max_iter):
             grad = _compute_gradient(f, x, h)
             if _magnitude(grad) < tol:
-                return OptResult(x=x, value=f(x), iterations=i, converged=True)
+                return OptResult(
+                    x=x, value=f(x), iterations=i - t_start, converged=True,
+                    state={"m": m, "v": v, "t": i}
+                )
             
             for j in range(len(x)):
                 m[j] = beta1 * m[j] + (1 - beta1) * grad[j]
@@ -153,7 +174,10 @@ def adam(
                 v_hat = v[j] / (1 - beta2 ** i)
                 x[j] -= lr * m_hat / (math.sqrt(v_hat) + eps)
 
-    return OptResult(x=x, value=f(x), iterations=max_iter, converged=False)
+    return OptResult(
+        x=x, value=f(x), iterations=max_iter, converged=False,
+        state={"m": m, "v": v, "t": t_start + max_iter}
+    )
 
 
 def line_search(

@@ -48,6 +48,7 @@ class MLP:
 
     def __init__(self, layers: list[Layer]):
         self.layers = layers
+        self.optimizer_state = None
 
     def predict(self, x: list[float]) -> list[float]:
         """Compute the network output."""
@@ -84,7 +85,7 @@ class MLP:
         epochs: int = 100, 
         lr: float = 0.01
     ) -> dict[str, Any]:
-        """Train the network using the Adam optimizer."""
+        """Train the network using the Adam optimizer with state persistence."""
         
         def loss_fn(params: list[float]) -> float:
             self.set_parameters(params)
@@ -95,8 +96,9 @@ class MLP:
             return total_loss / len(X)
 
         p0 = self.get_parameters()
-        res = adam(loss_fn, p0, lr=lr, max_iter=epochs)
+        res = adam(loss_fn, p0, lr=lr, max_iter=epochs, state=self.optimizer_state)
         self.set_parameters(res.x)
+        self.optimizer_state = res.state # Store state for next training call
         
         return {
             "final_loss": res.value,

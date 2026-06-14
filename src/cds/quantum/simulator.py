@@ -8,8 +8,17 @@ from cds.quantum.circuit import QuantumCircuit, Qubit
 
 
 def measure(q: Qubit) -> int:
+    """Measure a qubit and collapse its state vector."""
     p0, _ = q.probabilities()
-    return 0 if random.random() < p0 else 1
+    outcome = 0 if random.random() < p0 else 1
+    
+    # Kuantum Çöküşü (State Collapse)
+    if outcome == 0:
+        q.alpha, q.beta = 1.0 + 0j, 0.0 + 0j
+    else:
+        q.alpha, q.beta = 0.0 + 0j, 1.0 + 0j
+        
+    return outcome
 
 
 def simulate(circuit: QuantumCircuit, shots: int = 1000, seed: int | None = None) -> dict[int, int]:
