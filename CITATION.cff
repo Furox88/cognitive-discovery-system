@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata from this file."
 type: software
 title: "Cognitive Discovery System"
-version: 0.2.0
+version: 0.3.0
 authors:
   - name: "Furox88"
     email: "furkanarkn1451@gmail.com"
@@ -10,7 +10,7 @@ abstract: "Pure Python computational science toolkit — quantum simulation, sig
 license: MIT
 repository-code: "https://github.com/Furox88/cognitive-discovery-system"
 url: "https://github.com/Furox88/cognitive-discovery-system"
-date-released: "2026-06-13"
+date-released: "2026-06-14"
 keywords:
   - "pure python"
   - "scientific computing"
