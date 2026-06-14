@@ -24,16 +24,23 @@ def dot(a: Vector, b: Vector) -> float:
 
 
 def mat_mul(a: Matrix, b: Matrix) -> Matrix:
+    """Matrix multiplication A * B (Optimized Pure Python).
+    
+    Uses pre-transposition to exploit row-major access patterns,
+    making it significantly faster by using Python's internal zip/sum.
+    """
     rows_a, cols_a = len(a), len(a[0])
     rows_b, cols_b = len(b), len(b[0])
     if cols_a != rows_b:
         raise ValueError(f"incompatible shapes: {rows_a}x{cols_a} and {rows_b}x{cols_b}")
-    result: Matrix = [[0.0] * cols_b for _ in range(rows_a)]
-    for i in range(rows_a):
-        for j in range(cols_b):
-            for k in range(cols_a):
-                result[i][j] += a[i][k] * b[k][j]
-    return result
+    
+    # Pre-transpose B to make column access O(1) row access
+    # This is an 'Intelligence' boost: treating memory access patterns as a priority
+    b_T = list(zip(*b))
+    
+    return [[sum(ai * bi for ai, bi in zip(row_a, col_b)) 
+             for col_b in b_T] 
+            for row_a in a]
 
 
 def transpose(m: Matrix) -> Matrix:
