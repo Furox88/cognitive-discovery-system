@@ -55,7 +55,13 @@ class QuantumRegister:
                 new_amps[i] = 1.0 + 0j
                 self.amplitudes = new_amps
                 return i
-        return len(probs) - 1
+        
+        # Fallback for floating point edge cases
+        final_idx = len(probs) - 1
+        new_amps = [0.0 + 0j] * len(self.amplitudes)
+        new_amps[final_idx] = 1.0 + 0j
+        self.amplitudes = new_amps
+        return final_idx
 
 
     def measure_shots(

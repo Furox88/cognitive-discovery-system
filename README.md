@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-314-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-350-brightgreen.svg)]()
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 
@@ -19,7 +19,7 @@ The project also includes built-in support for structured hypothesis generation,
 > Currently in **alpha (v0.3.0)**. Contributions welcome!
 
 ---
-🚀 **Latest Update:** Achieved **91%+ Test Coverage** with 317 tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
+🚀 **Latest Update:** Achieved **95%+ Test Coverage** with 350 tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
 ---
 
 ## Why CDS?
@@ -66,7 +66,7 @@ pip install -e ".[dev]"
 # Run tests
 pytest
 
-```bash
+# CLI usage
 cds --help
 cds constants
 cds calc ke
@@ -270,7 +270,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 314 tests (see CI)
+tests/              # 350 tests (see CI)
 docs/               # Documentation (getting started, API reference, benchmarks)
 
 .github/workflows/  # Automation for PRs (labels + checklist), releases, and dependency updates

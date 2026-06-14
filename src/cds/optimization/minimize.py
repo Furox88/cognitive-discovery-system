@@ -80,23 +80,27 @@ def newton_method(
     x0: float,
     tol: float = 1e-10,
     max_iter: int = 1000,
-    h: float = 1e-5,
+    h_base: float = 1e-5,
 ) -> OptResult:
-    """Find a root of f using Newton-Raphson method.
+    """Find a root of f using Newton-Raphson method with adaptive step size.
 
     Args:
         f: function whose root to find
         x0: starting point
         tol: convergence tolerance
         max_iter: iteration limit
-        h: step for numerical derivative
+        h_base: base step for numerical derivative
     """
     x = x0
     for i in range(max_iter):
         fx = f(x)
         if abs(fx) < tol:
             return OptResult(x=x, value=fx, iterations=i, converged=True)
+        
+        # Adaptive h based on x scale
+        h = h_base * max(1.0, abs(x))
         dfx = (f(x + h) - f(x - h)) / (2 * h)
+        
         if abs(dfx) < 1e-15:
             break
         x -= fx / dfx
