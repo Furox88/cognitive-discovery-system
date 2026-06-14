@@ -73,6 +73,29 @@ def test_adam_shifted():
     assert abs(result.x - 2) < 0.5
 
 
+# --- Vector (Multi-dimensional) Support ---
+
+def test_gd_vector_quadratic():
+    # minimize f(x, y) = x^2 + y^2, minimum at [0, 0]
+    result = gradient_descent(lambda v: v[0]**2 + v[1]**2, x0=[5.0, -3.0], lr=0.1)
+    assert result.converged
+    assert abs(result.x[0]) < 1e-4
+    assert abs(result.x[1]) < 1e-4
+
+def test_gd_vector_rosenbrock_approximation():
+    # simple 2d parabola shifted
+    result = gradient_descent(lambda v: (v[0]-1)**2 + (v[1]-2)**2, x0=[0.0, 0.0], lr=0.1)
+    assert result.converged
+    assert abs(result.x[0] - 1.0) < 1e-4
+    assert abs(result.x[1] - 2.0) < 1e-4
+
+def test_adam_vector_quadratic():
+    result = adam(lambda v: v[0]**2 + v[1]**2, x0=[5.0, -5.0], lr=0.1)
+    assert result.converged
+    assert abs(result.x[0]) < 0.1
+    assert abs(result.x[1]) < 0.1
+
+
 # --- Golden section search ---
 
 def test_line_search_quadratic():
