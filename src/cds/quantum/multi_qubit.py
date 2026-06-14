@@ -40,7 +40,7 @@ class QuantumRegister:
             self.amplitudes = [a / norm for a in self.amplitudes]
 
     def measure(self, seed: int | None = None) -> int:
-        """Collapse and return measured basis state index."""
+        """Measure the register and collapse its state vector."""
         if seed is not None:
             random.seed(seed)
         probs = self.probabilities()
@@ -48,9 +48,15 @@ class QuantumRegister:
         cumulative = 0.0
         for i, p in enumerate(probs):
             cumulative += p
-            if r < cumulative:
+            if r <= cumulative:
+                # Kuantum Çöküşü (State Collapse)
+                # All other amplitudes become 0, measured state becomes 1.0
+                new_amps = [0.0 + 0j] * len(self.amplitudes)
+                new_amps[i] = 1.0 + 0j
+                self.amplitudes = new_amps
                 return i
         return len(probs) - 1
+
 
     def measure_shots(
         self, shots: int = 1000, seed: int | None = None,

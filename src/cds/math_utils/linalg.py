@@ -245,8 +245,11 @@ def power_iteration(
             
         v_new = [x / norm for x in w]
         
-        # Rayleigh quotient for eigenvalue estimate
-        new_eigenvalue = sum(v_new[i] * sum(m[i][j] * v_new[j] for j in range(n)) for i in range(n))
+        # Rayleigh quotient: (v^T * A * v) / (v^T * v)
+        # Accurate for any normalization (L2 or L-inf)
+        numerator = sum(v_new[i] * sum(m[i][j] * v_new[j] for j in range(n)) for i in range(n))
+        denominator = sum(vi * vi for vi in v_new)
+        new_eigenvalue = numerator / denominator if denominator > 1e-15 else 0.0
 
         if abs(new_eigenvalue - eigenvalue) < tol:
             return new_eigenvalue, v_new
