@@ -92,31 +92,23 @@ def fft(signal: list[complex]) -> list[complex]:
     # Compute radix-2
     full_spectrum = fft_radix2(padded_signal)
     
-    # For a perfect O(N log N) everywhere promise, we return the padded spectrum.
-    # Most scientific libs do this to maintain algorithm efficiency.
     return full_spectrum
 
 
 def ifft(spectrum: list[complex]) -> list[complex]:
-    """Compute 1D Inverse FFT of any length using radix-2.
-    
-    Assumes input length is a power of 2 (matches fft output).
-    """
+    """Compute 1D Inverse FFT of any length using radix-2."""
     n = len(spectrum)
     if n == 0:
         return []
     
-    # Use the property: IFFT(x) = conj(FFT(conj(x))) / N
+    # The property: IFFT(x) = conj(FFT(conj(x))) / N
     conj_spectrum = [x.conjugate() for x in spectrum]
     forward_fft = fft_radix2(conj_spectrum)
     return [x.conjugate() / n for x in forward_fft]
 
 
 def convolve(a: list[float], b: list[float]) -> list[float]:
-    """Linear convolution using the FFT Theorem (O(N log N)).
-    
-    Significantly faster than naive O(N^2) for large signals.
-    """
+    """Linear convolution using the FFT Theorem (O(N log N))."""
     if not a or not b:
         return []
     
@@ -141,10 +133,7 @@ def convolve(a: list[float], b: list[float]) -> list[float]:
 
 
 def power_spectrum(signal: list[complex]) -> list[float]:
-    """Compute the power spectrum |X[k]|^2 / N.
-
-    Optimized to use FFT when signal length is a power of 2.
-    """
+    """Compute the power spectrum |X[k]|^2 / N."""
     n = len(signal)
     if n == 0:
         return []
@@ -158,18 +147,13 @@ def power_spectrum(signal: list[complex]) -> list[float]:
     return [abs(x) ** 2 / n for x in spectrum]
 
 
-def low_pass_filter(
-    signal: list[complex], cutoff: int,
-) -> list[complex]:
-    """Simple frequency-domain low-pass filter.
-
-    Optimized to use FFT for power-of-two signal lengths.
-    """
+def low_pass_filter(signal: list[complex], cutoff: int) -> list[complex]:
+    """Simple frequency-domain low-pass filter."""
     n = len(signal)
     if n == 0:
         return []
 
-    # Choose best transform (O(N log N) vs O(N^2))
+    # Choose best transform
     if (n & (n - 1) == 0) and n > 0:
         spectrum = fft_radix2(signal)
         inv_func = ifft
@@ -178,33 +162,28 @@ def low_pass_filter(
         inv_func = idft
 
     for k in range(n):
-    if cutoff <= k <= n - cutoff:
-        spectrum[k] = 0 + 0j
-
+        if cutoff <= k <= n - cutoff:
+            spectrum[k] = 0 + 0j
+            
     return inv_func(spectrum)
 
 
-    def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
-    """2-D Discrete Fourier Transform (O(N log N)).
-
-    Applies 1-D FFT to rows, then to columns of the result.
-    """
+def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
+    """2-D Discrete Fourier Transform (O(N log N))."""
     rows = len(matrix)
     if rows == 0:
-    raise ValueError("matrix must be non-empty")
+        raise ValueError("matrix must be non-empty")
     cols = len(matrix[0])
     if any(len(row) != cols for row in matrix):
-    raise ValueError("all rows must have equal length")
-
+        raise ValueError("all rows must have equal length")
+    
     # Row-wise FFT
     row_fft = [fft(list(row)) for row in matrix]
+    
     # Column-wise FFT
-    # (Transposing to reuse 1D FFT logic efficiently)
-    cols_count = len(row_fft[0])
     transposed = list(zip(*row_fft))
     col_fft = [fft(list(col)) for col in transposed]
     
-    # Back to original orientation
     return [list(row) for row in zip(*col_fft)]
 
 
@@ -213,6 +192,9 @@ def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
     rows = len(spectrum)
     if rows == 0:
         raise ValueError("matrix must be non-empty")
+    cols = len(spectrum[0])
+    if any(len(row) != cols for row in spectrum):
+        raise ValueError("all rows must have equal length")
     
     # Row-wise IFFT
     row_inv = [ifft(list(row)) for row in spectrum]
@@ -222,4 +204,3 @@ def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
     col_inv = [ifft(list(col)) for col in transposed]
     
     return [list(row) for row in zip(*col_inv)]
-

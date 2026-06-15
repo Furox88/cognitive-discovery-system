@@ -8,15 +8,15 @@ This report tracks the efficiency of pure Python implementations, focusing on **
 - **Monte Carlo:** CDS leverages hardware-aware multiprocessing to saturate all available CPU cores.
 
 ## Linear Algebra (Optimized Pure Python)
-- **CDS Matrix Mul (100x100):** 0.0380s
-- **CDS LU Decomp (100x100):** 0.0152s
-- **NumPy Matrix Mul (Baseline):** 0.000085s
-- **Speed Gap (CDS vs NumPy):** 448.8x slower
+- **CDS Matrix Mul (100x100):** 0.0376s
+- **CDS LU Decomp (100x100):** 0.0151s
+- **NumPy Matrix Mul (Baseline):** 0.000044s
+- **Speed Gap (CDS vs NumPy):** 861.5x slower
 
 ## Monte Carlo (Multi-Core Intelligence)
-- **Parallel Pi (100k samples):** 2.5885s
+- **Parallel Pi (100k samples):** 2.6417s
 - **CPU Cores Used:** 22
 
 ## Quantum (O(1) Sampling Intelligence)
-- **Quantum Sim (100k shots):** 0.0050s
+- **Quantum Sim (100k shots):** 0.0060s
 
