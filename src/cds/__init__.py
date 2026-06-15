@@ -29,8 +29,42 @@ __version__ = "0.5.0"
 # (full submodules remain importable as cds.xxx)
 from cds.scientific.constants import CONSTANTS, get_constant
 
+# Core modules
+from cds import core
+from cds import data_analysis
+from cds import ml
+
+# Scientific computing modules
+from cds import diffeq
+from cds import graph
+from cds import hypothesis
+from cds import knowledge
+from cds import math_utils
+from cds import montecarlo
+from cds import optimization
+from cds import probability
+from cds import quantum
+from cds import scientific
+from cds import signals
+from cds import stats
+
 __all__ = [
     "__version__",
     "CONSTANTS",
     "get_constant",
+    "core",
+    "data_analysis",
+    "ml",
+    "diffeq",
+    "graph",
+    "hypothesis",
+    "knowledge",
+    "math_utils",
+    "montecarlo",
+    "optimization",
+    "probability",
+    "quantum",
+    "scientific",
+    "signals",
+    "stats",
 ]

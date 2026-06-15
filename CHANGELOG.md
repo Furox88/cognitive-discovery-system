@@ -2,13 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.5.0] - 2026-06-14
 
 ### Added
-- 
+- **Machine Learning** (`cds.ml`): Pure Python Neural Networks with `MLP` and `Layer` abstractions. Support for Adam-based training and common activation functions.
+- **Interactive Dashboard**: Streamlit-based web dashboard for real-time scientific exploration, including a live Hypothesis Engine and Quantum Circuit Simulator.
+- **Improved Monte Carlo**: Parallelized Multi-Core Monte Carlo engines for faster π estimation and integration.
+- **Data Analysis Viz**: ASCII-based line plotting directly in the terminal via `cds plot`.
 
 ### Changed
-- 
+- **Numerical Core**: Refactored `math_utils` with O(N³) pure-Python Partial Pivoting LU decomposition, improving stability and performance for linear systems and determinants.
+- **Optimization**: Vectorized machine learning optimizers for improved training efficiency.
+- **Test Coverage**: Achieved **95%+ code coverage** with 350+ tests.
+- **CLI Refresh**: `cds info` now displays a comprehensive status panel with 14 core modules and system health info.
+- Version bumped to 0.5.0 (pyproject.toml, src/cds/__init__.py, README, CLI info).
 
 ## [0.3.0] - 2026-06-13
 

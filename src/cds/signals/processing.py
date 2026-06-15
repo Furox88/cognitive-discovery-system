@@ -183,3 +183,42 @@ def low_pass_filter(
             
     return inv_func(spectrum)
 
+
+def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
+    """2-D Discrete Fourier Transform (O(N log N)).
+
+    Applies 1-D FFT to rows, then to columns of the result.
+    """
+    rows = len(matrix)
+    if rows == 0:
+        raise ValueError("matrix must be non-empty")
+    cols = len(matrix[0])
+    
+    # Row-wise FFT
+    row_fft = [fft(list(row)) for row in matrix]
+    
+    # Column-wise FFT
+    # (Transposing to reuse 1D FFT logic efficiently)
+    cols_count = len(row_fft[0])
+    transposed = list(zip(*row_fft))
+    col_fft = [fft(list(col)) for col in transposed]
+    
+    # Back to original orientation
+    return [list(row) for row in zip(*col_fft)]
+
+
+def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
+    """Inverse 2-D DFT (O(N log N))."""
+    rows = len(spectrum)
+    if rows == 0:
+        raise ValueError("matrix must be non-empty")
+    
+    # Row-wise IFFT
+    row_inv = [ifft(list(row)) for row in spectrum]
+    
+    # Column-wise IFFT
+    transposed = list(zip(*row_inv))
+    col_inv = [ifft(list(col)) for col in transposed]
+    
+    return [list(row) for row in zip(*col_inv)]
+
