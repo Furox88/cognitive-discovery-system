@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="Cognitive Discovery System" width="640">
+  <img src="assets/logo.svg" alt="cognitive-discovery-platform" width="640">
 </p>
 
-# Cognitive Discovery System (CDS)
+# cognitive-discovery-platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
@@ -10,11 +10,11 @@
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 
-**Open-source computational science toolkit for research, simulation, and discovery.**
+**Open-source computational science platform for research, simulation, and discovery.**
 
 CDS brings together quantum computing simulation, statistical analysis, signal processing, optimization, probability, and scientific computing in a single, dependency-light Python package. Every module is pure Python — no NumPy or SciPy required.
 
-The project also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
+The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
 > Currently in **alpha (v0.5.0)**. Contributions welcome!
 
@@ -79,7 +79,7 @@ cds hypothesis "What causes the Hubble tension?"
 CDS now features an **Interactive Web Dashboard** for real-time scientific exploration. Launch it directly from your terminal:
 
 ```bash
-pip install "cognitive-discovery-toolkit[dashboard]"
+pip install "cognitive-discovery-platform[dashboard]"
 cds dashboard
 ```
 
@@ -281,7 +281,7 @@ docs/               # Documentation (getting started, API reference, benchmarks)
 
 ## Vision
 
-The long-term goal of CDS is to provide a lightweight, dependency-free toolkit for scientific exploration and discovery.
+The long-term goal of CDS is to provide a lightweight, dependency-free platform for scientific exploration and discovery.
 
 We aim to combine solid numerical foundations (quantum simulation, FFT, linear algebra, statistics, differential equations, etc.) with higher-level tools for hypothesis generation and research workflows.
 
@@ -293,7 +293,7 @@ Run `cds modules` after installation to explore the current modules.
 
 ## Recent improvements
 
-Recent updates have aimed to make it simpler to generate and explore ideas within the toolkit:
+Recent updates have aimed to make it simpler to generate and explore ideas within the platform:
 
 - New CLI commands for browsing available modules and experimenting with hypothesis generation
 - A dedicated example showing how to use the hypothesis features end-to-end

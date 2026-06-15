@@ -1,7 +1,7 @@
 """
-Cognitive Discovery System (CDS)
+cognitive-discovery-platform
 
-Pure Python computational science toolkit for research, simulation,
+Pure Python computational science platform for research, simulation,
 and scientific discovery.
 
 Key features:

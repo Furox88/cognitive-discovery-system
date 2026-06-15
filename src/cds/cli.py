@@ -173,7 +173,7 @@ def info() -> None:
         "• [cyan]hypothesis[/]    • [cyan]diffeq[/]\n"
         "• [cyan]graph[/]         • [cyan]data_analysis[/]\n"
         "• [cyan]ml[/]            • [cyan]probability[/]\n"
-        "• [cyan]scientific[/]    • [cyan]core[/]"
+        "• [cyan]scientific[/]    • [cyan]knowledge[/]"
     )
     
     capability_panel = Panel.fit(
@@ -247,27 +247,32 @@ def calc(
     """Quick physics calculations."""
     from cds.scientific import formulas
 
-    if formula == "ke":
-        console.print("KE = 0.5 * m * v²")
-        m = float(typer.prompt("mass (kg)"))
-        v = float(typer.prompt("velocity (m/s)"))
-        console.print(f"[green]Kinetic Energy = {formulas.kinetic_energy(m, v):.4f} J[/]")
-    elif formula == "gravity":
-        console.print("F = G * m1 * m2 / r²")
-        m1 = float(typer.prompt("mass 1 (kg)"))
-        m2 = float(typer.prompt("mass 2 (kg)"))
-        r = float(typer.prompt("distance (m)"))
-        console.print(f"[green]Force = {formulas.gravitational_force(m1, m2, r):.6e} N[/]")
-    elif formula == "wave":
-        wl = float(typer.prompt("wavelength (m)"))
-        console.print(f"[green]Frequency = {formulas.wave_frequency(wl):.4e} Hz[/]")
-    elif formula == "gas":
-        n = float(typer.prompt("moles"))
-        t = float(typer.prompt("temperature (K)"))
-        v = float(typer.prompt("volume (m³)"))
-        console.print(f"[green]Pressure = {formulas.ideal_gas_pressure(n, t, v):.2f} Pa[/]")
-    else:
-        console.print(f"[red]Unknown formula '{formula}'. Options: ke, gravity, wave, gas[/]")
+    try:
+        if formula == "ke":
+            console.print("KE = 0.5 * m * v²")
+            m = float(typer.prompt("mass (kg)"))
+            v = float(typer.prompt("velocity (m/s)"))
+            console.print(f"[green]Kinetic Energy = {formulas.kinetic_energy(m, v):.4f} J[/]")
+        elif formula == "gravity":
+            console.print("F = G * m1 * m2 / r²")
+            m1 = float(typer.prompt("mass 1 (kg)"))
+            m2 = float(typer.prompt("mass 2 (kg)"))
+            r = float(typer.prompt("distance (m)"))
+            console.print(f"[green]Force = {formulas.gravitational_force(m1, m2, r):.6e} N[/]")
+        elif formula == "wave":
+            wl = float(typer.prompt("wavelength (m)"))
+            console.print(f"[green]Frequency = {formulas.wave_frequency(wl):.4e} Hz[/]")
+        elif formula == "gas":
+            n = float(typer.prompt("moles"))
+            t = float(typer.prompt("temperature (K)"))
+            v = float(typer.prompt("volume (m³)"))
+            console.print(f"[green]Pressure = {formulas.ideal_gas_pressure(n, t, v):.2f} Pa[/]")
+        else:
+            console.print(f"[red]Unknown formula '{formula}'. Options: ke, gravity, wave, gas[/]")
+    except ValueError:
+        console.print("[red]Error:[/] Input must be a valid number.")
+    except Exception as e:
+        console.print(f"[red]Error:[/] {str(e)}")
 
 
 @app.command()
@@ -289,6 +294,8 @@ def modules() -> None:
         ("cds.montecarlo", "π estimation, integration, random walks"),
         ("cds.diffeq", "Euler, RK4, midpoint, ODE system solvers"),
         ("cds.graph", "BFS/DFS, Dijkstra, Kruskal MST, topological sort"),
+        ("cds.ml", "Neural networks (MLP), backpropagation, activation functions"),
+        ("cds.knowledge", "Structured knowledge representation and domain models"),
         ("cds.scientific", "Physical constants + common formulas"),
         ("cds.data_analysis", "CSV loading, normalization, z-score, moving average"),
         (
@@ -303,29 +310,6 @@ def modules() -> None:
     console.print(table)
     console.print("\n[dim]All modules are pure Python with no heavy dependencies.[/dim]")
     console.print("[dim]See examples/ for runnable demos of each module.[/dim]\n")
-
-
-@app.command()
-def hypothesis(
-    question: Annotated[
-        str,
-        typer.Argument(
-            help="Research question (e.g. 'What causes the Hubble tension?')"
-        ),
-    ] = "What causes the observed tensions in cosmology?",
-) -> None:
-    """Generate a couple of sample hypotheses for a research question."""
-    from cds.hypothesis import generate_hypotheses
-
-    console.print(f"[bold]Generating hypotheses for:[/] {question}\n")
-    hypos = generate_hypotheses(question, n=2)
-
-    for h in hypos:
-        text = h.to_markdown()
-        if len(text) > 400:
-            text = text[:400] + "..."
-        console.print(Panel(text, title=h.id, border_style="green"))
-        console.print()
 
 
 if __name__ == "__main__":

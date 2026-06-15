@@ -30,6 +30,9 @@ jobs:
     - name: Lint with ruff
       run: ruff check .
 
+    - name: Type check with mypy
+      run: mypy src/cds
+
     - name: Run tests
       run: pytest tests/ -v --tb=short
 

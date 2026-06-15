@@ -14,14 +14,14 @@ All notable changes to this project will be documented in this file.
 - **Numerical Core**: Refactored `math_utils` with O(N³) pure-Python Partial Pivoting LU decomposition, improving stability and performance for linear systems and determinants.
 - **Optimization**: Vectorized machine learning optimizers for improved training efficiency.
 - **Test Coverage**: Achieved **95%+ code coverage** with 350+ tests.
-- **CLI Refresh**: `cds info` now displays a comprehensive status panel with 14 core modules and system health info.
+- **CLI Refresh**: `cds info` now displays a comprehensive status panel with 14 core modules and platform health info.
 - Version bumped to 0.5.0 (pyproject.toml, src/cds/__init__.py, README, CLI info).
 
 ## [0.3.0] - 2026-06-13
 
 ### Added
 - `docs/research-workflows.md` — guidance on using CDS in real research and discovery pipelines: combining hypothesis generation with stats/optimization/Monte Carlo, implementing custom `HypothesisGenerator` implementations, and embedding modules in larger scripts.
-- `CITATION.cff` at repository root for standard academic citation of the toolkit in research papers and pipelines.
+- `CITATION.cff` at repository root for standard academic citation of the platform in research papers and pipelines.
 - `examples/hypothesis_custom_generator.py` — a small runnable demonstration of supplying a custom implementation of the HypothesisGenerator Protocol for a toy domain.
 
 ### Changed
@@ -136,7 +136,7 @@ All notable changes to this project will be documented in this file.
   - `cds calc` — interactive physics calculator
   - `cds hypothesize` — generate hypotheses
 - Core data models (`cds.core.models`)
-- 309 tests with pytest
+- 350 tests with pytest
 - Example scripts in `examples/`
 - API reference documentation (`docs/api-reference.md`)
 - Performance benchmarks (`docs/benchmarks.md`)

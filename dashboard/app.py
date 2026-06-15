@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import math
+from cds import __version__
 from cds.hypothesis import generate_hypotheses, Domain, HypothesisEvaluator
 from cds.quantum import QuantumCircuit, hadamard, cnot, simulate
 from cds.ml import Layer, MLP
@@ -27,13 +28,22 @@ with tabs[0]:
         num_hypo = st.slider("Number of Hypotheses:", 1, 5, 2)
         
         if st.button("Generate Hypotheses"):
-            with st.spinner("Reasoning..."):
-                dom = Domain(domain_choice.lower().replace(" ", "_"))
-                hypos = generate_hypotheses(question, domain=dom, n=num_hypo)
-                
-                for h in hypos:
-                    with st.expander(f"ID: {h.id} - {h.statement[:50]}...", expanded=True):
-                        st.markdown(h.to_markdown())
+            if not question.strip():
+                st.error("Please enter a research question.")
+            else:
+                with st.spinner("Reasoning..."):
+                    try:
+                        dom = Domain(domain_choice.lower().replace(" ", "_"))
+                        hypos = generate_hypotheses(question, domain=dom, n=num_hypo)
+                        
+                        if not hypos:
+                            st.warning("No hypotheses were generated. Try a different question.")
+                        else:
+                            for h in hypos:
+                                with st.expander(f"ID: {h.id} - {h.statement[:50]}...", expanded=True):
+                                    st.markdown(h.to_markdown())
+                    except Exception as e:
+                        st.error(f"Error generating hypotheses: {str(e)}")
     
     with col2:
         st.info("**Discovery Tip:** Generated hypotheses are structured with explicit assumptions and measurable predictions, ready for statistical testing.")
@@ -50,14 +60,17 @@ with tabs[1]:
         shots = st.select_slider("Number of Shots (Measurements):", options=[100, 1000, 10000, 100000], value=1000)
         
         if st.button("Run Simulation"):
-            c = QuantumCircuit()
-            if apply_h:
-                c.add(hadamard())
-            
-            with st.spinner("Simulating..."):
-                counts = simulate(c, shots=shots)
-                st.session_state['q_counts'] = counts
-                st.success("Simulation Complete!")
+            try:
+                c = QuantumCircuit()
+                if apply_h:
+                    c.add(hadamard())
+                
+                with st.spinner("Simulating..."):
+                    counts = simulate(c, shots=shots)
+                    st.session_state['q_counts'] = counts
+                    st.success("Simulation Complete!")
+            except Exception as e:
+                st.error(f"Simulation failed: {str(e)}")
 
     with q_col2:
         st.subheader("Measurement Statistics")
@@ -74,34 +87,37 @@ with tabs[2]:
     st.markdown("Watch a Pure Python Neural Network learn the XOR logic in real-time.")
     
     if st.button("Train XOR Model"):
-        # Training data
-        X = [[0, 0], [0, 1], [1, 0], [1, 1]]
-        y = [[0], [1], [1], [0]] # XOR
-        
-        net = MLP([
-            Layer(2, 4, activation="relu"),
-            Layer(4, 1, activation="sigmoid")
-        ])
-        
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        
-        # Simple training loop with UI updates
-        losses = []
-        for epoch in range(1, 101):
-            res = net.train(X, y, epochs=5, lr=0.1)
-            losses.append(res['final_loss'])
-            progress_bar.progress(epoch)
-            status_text.text(f"Epoch {epoch*5}/500 - Loss: {res['final_loss']:.6f}")
-        
-        st.success("Model Trained!")
-        st.line_chart(losses)
-        
-        st.subheader("Predictions")
-        cols = st.columns(4)
-        for i, xi in enumerate(X):
-            pred = net.predict(xi)[0]
-            cols[i].metric(f"Input {xi}", f"{pred:.4f}", delta="Expected 1" if y[i][0]==1 else "Expected 0")
+        try:
+            # Training data
+            X = [[0, 0], [0, 1], [1, 0], [1, 1]]
+            y = [[0], [1], [1], [0]] # XOR
+            
+            net = MLP([
+                Layer(2, 4, activation="relu"),
+                Layer(4, 1, activation="sigmoid")
+            ])
+            
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            # Simple training loop with UI updates
+            losses = []
+            for epoch in range(1, 101):
+                res = net.train(X, y, epochs=5, lr=0.1)
+                losses.append(res['final_loss'])
+                progress_bar.progress(epoch)
+                status_text.text(f"Epoch {epoch*5}/500 - Loss: {res['final_loss']:.6f}")
+            
+            st.success("Model Trained!")
+            st.line_chart(losses)
+            
+            st.subheader("Predictions")
+            cols = st.columns(4)
+            for i, xi in enumerate(X):
+                pred = net.predict(xi)[0]
+                cols[i].metric(f"Input {xi}", f"{pred:.4f}", delta="Expected 1" if y[i][0]==1 else "Expected 0")
+        except Exception as e:
+            st.error(f"Training failed: {str(e)}")
 
 # --- Tab 4: Math & Stats ---
 with tabs[3]:
@@ -119,25 +135,32 @@ with tabs[3]:
         data1 = [random.gauss(mu1, 5) for _ in range(50)]
         data2 = [random.gauss(mu2, 8) for _ in range(50)]
         
-        from cds.stats import two_sample_ttest
-        res = two_sample_ttest(data1, data2, equal_var=False)
-        
-        st.metric("p-value", f"{res.p_value:.4f}")
-        if res.p_value < 0.05:
-            st.success("Significant Difference Found!")
-        else:
-            st.warning("No Significant Difference.")
+        try:
+            from cds.stats import two_sample_ttest
+            res = two_sample_ttest(data1, data2, equal_var=False)
+            
+            st.metric("p-value", f"{res.p_value:.4f}")
+            if res.p_value < 0.05:
+                st.success("Significant Difference Found!")
+            else:
+                st.warning("No Significant Difference.")
+        except Exception as e:
+            st.error(f"Statistical test failed: {str(e)}")
 
     with m_col2:
         st.subheader("ASCII Visualization Engine")
         st.markdown("The underlying engine generating terminal-friendly plots.")
-        wave_data = [math.sin(x * 0.3) for x in range(30)]
-        st.text(plot_line(wave_data, title="Pure Python Sine Wave"))
+        try:
+            wave_data = [math.sin(x * 0.3) for x in range(30)]
+            st.text(plot_line(wave_data, title="Pure Python Sine Wave"))
+        except Exception as e:
+            st.error(f"Visualization failed: {str(e)}")
 
 st.sidebar.markdown("---")
 st.sidebar.title("System Status")
-st.sidebar.success("Core: v0.3.0")
+st.sidebar.success(f"Core: v{__version__}")
 st.sidebar.info("Dependencies: Standard Library + Typer/Rich/Pydantic")
 st.sidebar.markdown("""
 [View Source on GitHub](https://github.com/Furox88/cognitive-discovery-system)
 """)
+
