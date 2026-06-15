@@ -12,7 +12,7 @@ def measure(q: Qubit) -> int:
     p0, _ = q.probabilities()
     outcome = 0 if random.random() < p0 else 1
     
-    # Kuantum Çöküşü (State Collapse)
+    # Quantum State Collapse
     if outcome == 0:
         q.alpha, q.beta = 1.0 + 0j, 0.0 + 0j
     else:
