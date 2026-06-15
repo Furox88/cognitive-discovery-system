@@ -85,7 +85,7 @@ def determinant(m: Matrix) -> float:
                 visited[curr] = True
                 curr = p_indices[curr]
             
-    return det * ((-1) ** (n - num_cycles))
+    return float(det * ((-1) ** (n - num_cycles)))
 
 
 def identity(n: int) -> Matrix:

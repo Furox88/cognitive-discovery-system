@@ -12,7 +12,6 @@ def test_help_shows_main_commands():
     assert result.exit_code == 0
     assert "modules" in result.output
     assert "hypothesis" in result.output
-    assert "hypothesize" in result.output
 
 
 def test_modules_runs():
@@ -23,9 +22,9 @@ def test_modules_runs():
 
 
 def test_hypothesis_runs_with_default():
-    result = runner.invoke(app, ["hypothesis"])
+    result = runner.invoke(app, ["hypothesis", "test question"])
     assert result.exit_code == 0
-    assert "Generating hypotheses for:" in result.output
+    assert "Generating hypotheses for" in result.output
 
 
 def test_version_flag():

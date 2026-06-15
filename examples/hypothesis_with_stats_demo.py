@@ -5,7 +5,7 @@ statistical modules for quick research prototyping.
 """
 
 from cds.hypothesis import generate_hypotheses
-from cds.stats import mean, stdev, one_sample_ttest
+from cds.stats import mean, one_sample_ttest, stdev
 
 print("=== Hypothesis + Stats Demo ===\n")
 

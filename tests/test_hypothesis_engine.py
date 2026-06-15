@@ -1,11 +1,6 @@
 """Tests for the Autonomous Hypothesis Engine."""
-import pytest
-from cds.hypothesis import (
-    Domain,
-    HypothesisEvaluator,
-    generate_hypotheses,
-    HypothesisStatus
-)
+from cds.hypothesis import Domain, HypothesisEvaluator, HypothesisStatus, generate_hypotheses
+
 
 def test_hypothesis_evaluation_t_test():
     hypos = generate_hypotheses("Do plants grow faster with music?", Domain.GENERAL_SCIENCE, n=1)

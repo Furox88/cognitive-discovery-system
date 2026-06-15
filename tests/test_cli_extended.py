@@ -1,7 +1,8 @@
 """Extended tests for the CLI to achieve high coverage."""
 import json
-from pathlib import Path
+
 from typer.testing import CliRunner
+
 from cds.cli import app
 
 runner = CliRunner()
@@ -14,7 +15,7 @@ def test_cli_version():
 def test_cli_info():
     result = runner.invoke(app, ["info"])
     assert result.exit_code == 0
-    assert "Cognitive Discovery System" in result.stdout
+    assert "Cognitive Discovery Platform" in result.stdout
     assert "Architecture" in result.stdout
 
 def test_cli_modules():
@@ -30,7 +31,7 @@ def test_cli_constants():
     assert "c" in result.stdout
 
 def test_cli_hypothesize_dry_run():
-    result = runner.invoke(app, ["hypothesize", "Test question", "--dry-run"])
+    result = runner.invoke(app, ["hypothesis", "Test question", "--dry-run"])
     assert result.exit_code == 0
     assert "Dry run mode" in result.stdout
 
@@ -41,7 +42,7 @@ def test_cli_prompt():
 
 def test_cli_hypothesize_output(tmp_path):
     output_file = tmp_path / "hypo.json"
-    result = runner.invoke(app, ["hypothesize", "Test", "--num", "1", "--output", str(output_file)])
+    result = runner.invoke(app, ["hypothesis", "Test", "--num", "1", "--output", str(output_file)])
     assert result.exit_code == 0
     assert output_file.exists()
     

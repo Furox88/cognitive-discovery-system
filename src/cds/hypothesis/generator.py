@@ -21,7 +21,7 @@ provide a custom generator.
 from __future__ import annotations
 
 import uuid
-from typing import Protocol
+from typing import Any, Protocol
 
 from cds.core.models import Domain, Hypothesis, HypothesisStatus
 
@@ -32,9 +32,9 @@ class HypothesisGenerator(Protocol):
     def generate(
         self,
         research_question: str,
-        domain: Domain = Domain.GENERAL_SCIENCE,
+        domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[Hypothesis]:
         ...
 
@@ -122,9 +122,9 @@ class SimpleOfflineGenerator:
     def generate(
         self,
         research_question: str,
-        domain: Domain = Domain.GENERAL_SCIENCE,
+        domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[Hypothesis]:
         # Ensure domain is a Domain enum instance
         if isinstance(domain, str):

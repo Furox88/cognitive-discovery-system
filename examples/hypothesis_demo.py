@@ -1,6 +1,6 @@
 """Demonstration of the hypothesis generation module for cognitive discovery."""
 
-from cds.hypothesis import generate_hypotheses, PromptTemplate
+from cds.hypothesis import PromptTemplate, generate_hypotheses
 
 print("=== CDS Hypothesis Generation Demo ===\n")
 

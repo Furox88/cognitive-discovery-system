@@ -3,8 +3,7 @@ from __future__ import annotations
 
 import math
 import random
-from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 from cds.optimization.minimize import adam
 
@@ -48,7 +47,7 @@ class MLP:
 
     def __init__(self, layers: list[Layer]):
         self.layers = layers
-        self.optimizer_state = None
+        self.optimizer_state: dict[str, Any] | None = None
 
     def predict(self, x: list[float]) -> list[float]:
         """Compute the network output."""
@@ -97,7 +96,10 @@ class MLP:
 
         p0 = self.get_parameters()
         res = adam(loss_fn, p0, lr=lr, max_iter=epochs, state=self.optimizer_state)
-        self.set_parameters(res.x)
+        
+        # res.x is float | list[float], but for MLP it's guaranteed to be a list
+        final_params = cast(list[float], res.x)
+        self.set_parameters(final_params)
         self.optimizer_state = res.state # Store state for next training call
         
         return {

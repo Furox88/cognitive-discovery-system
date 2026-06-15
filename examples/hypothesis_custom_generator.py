@@ -15,7 +15,6 @@ import uuid
 from cds.hypothesis import (
     Domain,
     Hypothesis,
-    HypothesisGenerator,
     HypothesisStatus,
     generate_hypotheses,
 )

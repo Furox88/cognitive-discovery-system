@@ -1,11 +1,13 @@
-import streamlit as st
-import random
 import math
+import random
+
+import streamlit as st
+
 from cds import __version__
-from cds.hypothesis import generate_hypotheses, Domain, HypothesisEvaluator
-from cds.quantum import QuantumCircuit, hadamard, cnot, simulate
-from cds.ml import Layer, MLP
 from cds.data_analysis import plot_line
+from cds.hypothesis import Domain, generate_hypotheses
+from cds.ml import MLP, Layer
+from cds.quantum import QuantumCircuit, hadamard, simulate
 
 st.set_page_config(page_title="CDS Interactive Dashboard", page_icon="🚀", layout="wide")
 

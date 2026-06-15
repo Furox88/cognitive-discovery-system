@@ -26,30 +26,36 @@ Usage:
 __version__ = "0.6.0"
 
 # Convenient top-level re-exports for common scientific tools
+# Core modules
+# Scientific computing modules
+from cds import (
+    core,
+    data_analysis,
+    diffeq,
+    graph,
+    hypothesis,
+    knowledge,
+    math_utils,
+    ml,
+    montecarlo,
+    optimization,
+    probability,
+    quantum,
+    scientific,
+    signals,
+    stats,
+)
 from cds.scientific.constants import CONSTANTS, get_constant
 from cds.scientific.formulas import (
-    kinetic_energy, gravitational_force, wave_frequency, ideal_gas_pressure,
-    schwarzschild_radius, de_broglie_wavelength, escape_velocity, photon_energy,
+    de_broglie_wavelength,
+    escape_velocity,
+    gravitational_force,
+    ideal_gas_pressure,
+    kinetic_energy,
+    photon_energy,
+    schwarzschild_radius,
+    wave_frequency,
 )
-
-# Core modules
-from cds import core
-from cds import data_analysis
-from cds import ml
-
-# Scientific computing modules
-from cds import diffeq
-from cds import graph
-from cds import hypothesis
-from cds import knowledge
-from cds import math_utils
-from cds import montecarlo
-from cds import optimization
-from cds import probability
-from cds import quantum
-from cds import scientific
-from cds import signals
-from cds import stats
 
 __all__ = [
     "__version__",

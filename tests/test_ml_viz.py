@@ -1,7 +1,7 @@
 """Tests for ML and Visualization modules."""
-import pytest
-from cds.ml import Layer, MLP
 from cds.data_analysis import plot_bar, plot_line
+from cds.ml import MLP, Layer
+
 
 def test_layer_forward():
     layer = Layer(input_size=3, output_size=2, activation="relu")

@@ -1,8 +1,6 @@
 """Pure Python ASCII visualization tools for structured data."""
 from __future__ import annotations
 
-import math
-
 
 def plot_bar(data: dict[str, float], title: str = "Bar Chart", width: int = 50) -> str:
     """Generate an ASCII bar chart from a dictionary.
@@ -19,12 +17,6 @@ def plot_bar(data: dict[str, float], title: str = "Bar Chart", width: int = 50) 
     max_val = max(vals)
     min_val = min(vals)
     
-    # Handle the case where all values are the same
-    if max_val == min_val:
-        span = 1.0 if max_val == 0 else abs(max_val)
-    else:
-        span = max_val - min(0, min_val)
-
     lines = [f"\n[bold]{title}[/]", "─" * len(title)]
     
     # Simple normalization logic that respects 0 as a baseline
@@ -83,8 +75,11 @@ def plot_line(y_values: list[float], title: str = "Line Plot", height: int = 10,
         grid[row][x] = "•"
 
     lines = [f"\n[bold]{title}[/]", "─" * len(title)]
-    for row in grid:
-        lines.append("".join(row))
+    for grid_row in grid:
+        lines.append("".join(grid_row))
     
-    lines.append(f"{'min: ' + f'{min_y:.2f}':<{eff_width//2}}{'max: ' + f'{max_y:.2f}':>{eff_width//2}}")
+    min_y_str = f"{min_y:.2f}"
+    max_y_str = f"{max_y:.2f}"
+    
+    lines.append(f"min: {min_y_str:<{eff_width//2}}max: {max_y_str:>{eff_width//2}}")
     return "\n".join(lines)

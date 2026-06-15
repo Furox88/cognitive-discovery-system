@@ -8,8 +8,9 @@ References:
 from __future__ import annotations
 
 import math
-import random
 import multiprocessing
+import random
+from collections.abc import Callable
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 
@@ -55,7 +56,8 @@ def estimate_pi(n_samples: int = 100_000, seed: int | None = None) -> MCResult:
     chunks[-1] += n_samples - sum(chunks) # add remainder to last chunk
     
     if seed is None:
-        import sys, os
+        import os
+        import sys
         seed = int.from_bytes(os.urandom(4), sys.byteorder)
 
     seeds = [seed + i for i in range(cores)]
@@ -73,7 +75,7 @@ def estimate_pi(n_samples: int = 100_000, seed: int | None = None) -> MCResult:
 
 
 def mc_integrate(
-    f: callable,
+    f: Callable[[float], float],
     a: float,
     b: float,
     n_samples: int = 100_000,

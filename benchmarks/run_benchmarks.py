@@ -2,9 +2,9 @@
 Performance benchmark suite for CDS.
 Measures execution time for core scientific modules and optionally compares with NumPy.
 """
+import multiprocessing
 import time
 import timeit
-import multiprocessing
 from pathlib import Path
 
 # Try to import industry standards for comparison (Optional)
@@ -16,7 +16,7 @@ except ImportError:
 
 # --- Linear Algebra ---
 def bench_linalg():
-    from cds.math_utils.linalg import mat_mul, lu_decomposition
+    from cds.math_utils.linalg import lu_decomposition, mat_mul
     size = 100
     # Create a non-singular matrix
     A = [[0.0] * size for _ in range(size)]

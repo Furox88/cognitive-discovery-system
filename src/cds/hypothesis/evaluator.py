@@ -13,7 +13,6 @@ from cds.core.models import Hypothesis, HypothesisStatus
 from cds.stats.hypothesis_tests import (
     one_way_anova,
     two_sample_ttest,
-    TestResult,
 )
 
 

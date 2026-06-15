@@ -2,8 +2,9 @@
 Demo showing the new Machine Learning (Neural Network) and Visualization modules.
 Everything is 100% Pure Python.
 """
-from cds.ml import Layer, MLP
-from cds.data_analysis import plot_line, plot_bar
+from cds.data_analysis import plot_bar, plot_line
+from cds.ml import MLP, Layer
+
 
 def run_demo():
     print("--- 🧠 Pure Python Neural Network Demo ---")

@@ -69,7 +69,7 @@ def version() -> None:
 
 
 @app.command()
-def hypothesize(
+def hypothesis(
     question: Annotated[str, typer.Argument(help="The core research question or problem")],
     domain: Annotated[
         DomainChoice,

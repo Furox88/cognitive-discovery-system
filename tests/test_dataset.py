@@ -1,6 +1,6 @@
 """Tests for the DataSet (Mini-Pandas) implementation."""
-import pytest
 from cds.data_analysis import DataSet
+
 
 def test_dataset_basic():
     data = [

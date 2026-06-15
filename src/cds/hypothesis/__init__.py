@@ -19,12 +19,10 @@ Example:
     )
 """
 
+from cds.core.models import Domain, Hypothesis, HypothesisStatus
 from cds.hypothesis.evaluator import EvaluationResult, HypothesisEvaluator
 from cds.hypothesis.generator import (
-    Domain,
-    Hypothesis,
     HypothesisGenerator,
-    HypothesisStatus,
     PromptTemplate,
     SimpleOfflineGenerator,
     generate_hypotheses,
@@ -33,8 +31,8 @@ from cds.hypothesis.generator import (
 __all__ = [
     "Domain",
     "Hypothesis",
-    "HypothesisGenerator",
     "HypothesisStatus",
+    "HypothesisGenerator",
     "PromptTemplate",
     "SimpleOfflineGenerator",
     "generate_hypotheses",
