@@ -172,31 +172,32 @@ def low_pass_filter(
     # Choose best transform (O(N log N) vs O(N^2))
     if (n & (n - 1) == 0) and n > 0:
         spectrum = fft_radix2(signal)
-        inv_func = ifft_radix2
+        inv_func = ifft
     else:
         spectrum = dft(signal)
         inv_func = idft
 
     for k in range(n):
-        if cutoff <= k <= n - cutoff:
-            spectrum[k] = 0 + 0j
-            
+    if cutoff <= k <= n - cutoff:
+        spectrum[k] = 0 + 0j
+
     return inv_func(spectrum)
 
 
-def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
+    def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
     """2-D Discrete Fourier Transform (O(N log N)).
 
     Applies 1-D FFT to rows, then to columns of the result.
     """
     rows = len(matrix)
     if rows == 0:
-        raise ValueError("matrix must be non-empty")
+    raise ValueError("matrix must be non-empty")
     cols = len(matrix[0])
-    
+    if any(len(row) != cols for row in matrix):
+    raise ValueError("all rows must have equal length")
+
     # Row-wise FFT
     row_fft = [fft(list(row)) for row in matrix]
-    
     # Column-wise FFT
     # (Transposing to reuse 1D FFT logic efficiently)
     cols_count = len(row_fft[0])
