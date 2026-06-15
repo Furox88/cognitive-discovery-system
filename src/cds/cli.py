@@ -209,8 +209,7 @@ def dashboard() -> None:
 def benchmark() -> None:
     """Run built-in benchmarks to verify performance."""
     console.print("[yellow]Benchmarking CDS systems...[/]")
-    console.print("Run 'python -m benchmarks' for detailed results.")
-    # This will be fully implemented in Phase 5
+    console.print("Run 'python benchmarks/run_benchmarks.py' for detailed results.")
 
 
 @app.command()

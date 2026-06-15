@@ -96,15 +96,30 @@ def fft(signal: list[complex]) -> list[complex]:
 
 
 def ifft(spectrum: list[complex]) -> list[complex]:
-    """Compute 1D Inverse FFT of any length using radix-2."""
+    """Compute 1D Inverse FFT of any length using radix-2 and padding.
+    
+    Args:
+        spectrum: frequency-domain signal
+        
+    Returns:
+        list of complex time-domain samples
+    """
     n = len(spectrum)
     if n == 0:
         return []
     
+    # If not a power of 2, pad it to next power of 2 (matches fft behavior)
+    if n & (n - 1) != 0:
+        padded_len = 1 << (n - 1).bit_length()
+        padded_spectrum = list(spectrum) + [0j] * (padded_len - n)
+    else:
+        padded_spectrum = spectrum
+        padded_len = n
+    
     # The property: IFFT(x) = conj(FFT(conj(x))) / N
-    conj_spectrum = [x.conjugate() for x in spectrum]
+    conj_spectrum = [x.conjugate() for x in padded_spectrum]
     forward_fft = fft_radix2(conj_spectrum)
-    return [x.conjugate() / n for x in forward_fft]
+    return [x.conjugate() / padded_len for x in forward_fft]
 
 
 def convolve(a: list[float], b: list[float]) -> list[float]:

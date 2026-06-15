@@ -1,49 +1,66 @@
-"""Basic descriptive statistics — no numpy needed."""
+"""Descriptive statistics — mean, median, variance, stdev."""
 from __future__ import annotations
 
 import math
 
 
 def mean(data: list[float]) -> float:
+    """Calculate the arithmetic mean of a list of numbers.
+
+    Args:
+        data: List of numeric values.
+
+    Returns:
+        Arithmetic mean (sum / N).
+    """
     if not data:
-        raise ValueError("empty dataset")
+        return 0.0
     return sum(data) / len(data)
 
 
 def median(data: list[float]) -> float:
+    """Calculate the median (middle value) of a list of numbers.
+
+    Args:
+        data: List of numeric values.
+
+    Returns:
+        Median value.
+    """
     if not data:
-        raise ValueError("empty dataset")
-    s = sorted(data)
-    n = len(s)
+        return 0.0
+    sorted_data = sorted(data)
+    n = len(sorted_data)
     mid = n // 2
     if n % 2 == 0:
-        return (s[mid - 1] + s[mid]) / 2
-    return s[mid]
+        return (sorted_data[mid - 1] + sorted_data[mid]) / 2
+    return float(sorted_data[mid])
 
 
 def variance(data: list[float], ddof: int = 1) -> float:
-    """Sample variance (ddof=1) or population variance (ddof=0)."""
-    if len(data) < 2:
-        raise ValueError("need at least 2 values")
+    """Calculate the sample variance of a list of numbers.
+
+    Args:
+        data: List of numeric values.
+        ddof: Delta Degrees of Freedom (1 for sample, 0 for population).
+
+    Returns:
+        Sample or population variance.
+    """
+    if len(data) <= ddof:
+        return 0.0
     m = mean(data)
     return sum((x - m) ** 2 for x in data) / (len(data) - ddof)
 
 
 def stdev(data: list[float], ddof: int = 1) -> float:
+    """Calculate the standard deviation of a list of numbers.
+
+    Args:
+        data: List of numeric values.
+        ddof: Delta Degrees of Freedom.
+
+    Returns:
+        Standard deviation.
+    """
     return math.sqrt(variance(data, ddof))
-
-
-def correlation(x: list[float], y: list[float]) -> float:
-    """Pearson correlation coefficient."""
-    if len(x) != len(y):
-        raise ValueError("x and y must have same length")
-    n = len(x)
-    if n < 2:
-        raise ValueError("need at least 2 points")
-    mx, my = mean(x), mean(y)
-    cov = sum((xi - mx) * (yi - my) for xi, yi in zip(x, y))
-    sx = math.sqrt(sum((xi - mx) ** 2 for xi in x))
-    sy = math.sqrt(sum((yi - my) ** 2 for yi in y))
-    if sx == 0 or sy == 0:
-        return 0.0
-    return cov / (sx * sy)
