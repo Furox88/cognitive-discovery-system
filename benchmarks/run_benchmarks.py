@@ -105,23 +105,20 @@ def run_all():
         report += "| Metric | Value |\n"
         report += "|--------|-------|\n"
         for k, v in metrics.items():
-            # Add simple markdown visuals for speedups
-            if "Speedup" in k:
-                report += f"| **{k}** | 🚀 **{v}** |\n"
-            else:
-                report += f"| {k} | {v} |\n"
+            report += f"| {k} | {v} |\n"
         report += "\n"
         
     report += "## Visual Proof: Quantum Intelligence\n"
     report += "```text\n"
-    report += "Naive Brute Force: █" * 40 + " (Hours)\n"
-    report += "CDS O(1) Sampling: █ (Milliseconds)\n"
+    report += "Naive Brute Force: " + ("#" * 40) + " (Hours)\n"
+    report += "CDS O(1) Sampling: # (Milliseconds)\n"
     report += "```\n"
     
     docs_dir = Path("docs")
     docs_dir.mkdir(exist_ok=True)
-    with open(docs_dir / "benchmarks.md", "w") as f:
+    with open(docs_dir / "benchmarks.md", "w", encoding="utf-8") as f:
         f.write(report)
+
         
     print(f"Benchmarks completed. Report saved to {docs_dir / 'benchmarks.md'}")
 
