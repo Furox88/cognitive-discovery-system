@@ -43,6 +43,10 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Tutorials:
+      - Quick Start: tutorials/quick_start.md
+      - Hypothesis Engine: tutorials/hypothesis_demo.md
+      - Quantum Lab: tutorials/quantum_demo.md
   - API Reference:
       - Overview: api-reference.md
       - Auto-Generated Reference: api.md

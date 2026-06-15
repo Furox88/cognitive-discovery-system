@@ -18,7 +18,7 @@ The platform also includes built-in support for structured hypothesis generation
 
 > Currently in **alpha (v0.6.0)**. Contributions welcome!
 
-📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 📓 **[Notebooks](notebooks/)** | 🚀 **[Quick Start](notebooks/quick_start.ipynb)**
+📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
 🚀 **Latest Update:** Achieved **95%+ Test Coverage** with 350 tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
