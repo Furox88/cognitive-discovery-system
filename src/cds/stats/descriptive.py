@@ -64,3 +64,23 @@ def stdev(data: list[float], ddof: int = 1) -> float:
         Standard deviation.
     """
     return math.sqrt(variance(data, ddof))
+
+
+def correlation(x: list[float], y: list[float]) -> float:
+    """Calculate the Pearson correlation coefficient between two lists.
+
+    Args:
+        x: first list of values
+        y: second list of values
+
+    Returns:
+        Pearson correlation coefficient.
+    """
+    if len(x) != len(y) or len(x) < 2:
+        return 0.0
+    
+    mx, my = mean(x), mean(y)
+    num = sum((xi - mx) * (yi - my) for xi, yi in zip(x, y))
+    den = math.sqrt(sum((xi - mx)**2 for xi in x) * sum((yi - my)**2 for yi in y))
+    
+    return num / den if den > 1e-15 else 0.0
