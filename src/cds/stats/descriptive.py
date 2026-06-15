@@ -12,9 +12,12 @@ def mean(data: list[float]) -> float:
 
     Returns:
         Arithmetic mean (sum / N).
+        
+    Raises:
+        ValueError: if data is empty.
     """
     if not data:
-        return 0.0
+        raise ValueError("mean requires at least one data point")
     return sum(data) / len(data)
 
 
@@ -46,9 +49,12 @@ def variance(data: list[float], ddof: int = 1) -> float:
 
     Returns:
         Sample or population variance.
+        
+    Raises:
+        ValueError: if data size is <= ddof.
     """
     if len(data) <= ddof:
-        return 0.0
+        raise ValueError(f"variance requires more than {ddof} data points")
     m = mean(data)
     return sum((x - m) ** 2 for x in data) / (len(data) - ddof)
 
@@ -75,9 +81,14 @@ def correlation(x: list[float], y: list[float]) -> float:
 
     Returns:
         Pearson correlation coefficient.
+        
+    Raises:
+        ValueError: if lengths mismatch or lists are too short.
     """
-    if len(x) != len(y) or len(x) < 2:
-        return 0.0
+    if len(x) != len(y):
+        raise ValueError("lists must be the same length")
+    if len(x) < 2:
+        raise ValueError("correlation requires at least two data points")
     
     mx, my = mean(x), mean(y)
     num = sum((xi - mx) * (yi - my) for xi, yi in zip(x, y))
