@@ -1,6 +1,6 @@
-# Contributing to Cognitive Discovery System
+# Contributing to Cognitive Discovery Platform
 
-Thank you for your interest! CDS is an open-source computational science toolkit. Your input — whether as a researcher, engineer, or domain expert — is valuable.
+Thank you for your interest! CDS is an open-source computational science platform. Your input — whether as a researcher, engineer, or domain expert — is valuable.
 
 ## How to Contribute
 
@@ -24,13 +24,13 @@ Thank you for your interest! CDS is an open-source computational science toolkit
 ## Development Setup
 
 ```bash
-git clone https://github.com/Furox88/cognitive-discovery-system.git
-cd cognitive-discovery-system
+git clone https://github.com/Furox88/cognitive-discovery-platform.git
+cd cognitive-discovery-platform
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests (314 tests, see CI)
+# Run tests (350 tests, see CI)
 pytest
 
 # Run linter

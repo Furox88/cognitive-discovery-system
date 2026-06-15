@@ -1,6 +1,6 @@
 # Roadmap
 
-This document outlines the planned direction for CDS. Priorities focus on making the toolkit more useful for research, education, and computational discovery while keeping it lightweight and pure Python.
+This document outlines the planned direction for CDS. Priorities focus on making the platform more useful for research, education, and computational discovery while keeping it lightweight and pure Python.
 
 ## Near Term
 
@@ -20,7 +20,7 @@ This document outlines the planned direction for CDS. Priorities focus on making
 
 - Explore community contributions for new modules (ML basics, PDEs, etc.)
 - Continue strengthening automation around releases, testing, and documentation so maintainer time stays focused on research features
-- Maintain the goal of being an accessible, readable toolkit for students, researchers, and independent developers
+- Maintain the goal of being an accessible, readable platform for students, researchers, and independent developers
 
 Contributions and ideas are welcome, especially around the hypothesis generation and scientific discovery aspects.
 

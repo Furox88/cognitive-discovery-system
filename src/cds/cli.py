@@ -18,7 +18,7 @@ from cds.hypothesis.generator import PromptTemplate, generate_hypotheses
 
 app = typer.Typer(
     name="cds",
-    help="Cognitive Discovery System — computational science toolkit.",
+    help="Cognitive Discovery Platform — computational science platform.",
     add_completion=False,
     invoke_without_command=True,
 )
@@ -155,10 +155,11 @@ def info() -> None:
     from cds import __version__
     
     status_panel = Panel.fit(
-        "[bold]Cognitive Discovery System (CDS)[/]\n"
+        "[bold]Cognitive Discovery Platform (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
         "🚀 [bold green]Status:[/] Production-Ready (Alpha)\n"
         "🧪 [bold blue]Tests:[/] 350 Passing\n"
+
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"🔗 [bold cyan]Version:[/] {__version__}",
         title="Project Info",

@@ -26,8 +26,11 @@ Usage:
 __version__ = "0.5.0"
 
 # Convenient top-level re-exports for common scientific tools
-# (full submodules remain importable as cds.xxx)
 from cds.scientific.constants import CONSTANTS, get_constant
+from cds.scientific.formulas import (
+    kinetic_energy, gravitational_force, wave_frequency, ideal_gas_pressure,
+    schwarzschild_radius, de_broglie_wavelength, escape_velocity, photon_energy,
+)
 
 # Core modules
 from cds import core
@@ -52,6 +55,14 @@ __all__ = [
     "__version__",
     "CONSTANTS",
     "get_constant",
+    "kinetic_energy",
+    "gravitational_force",
+    "wave_frequency",
+    "ideal_gas_pressure",
+    "schwarzschild_radius",
+    "de_broglie_wavelength",
+    "escape_velocity",
+    "photon_energy",
     "core",
     "data_analysis",
     "ml",
