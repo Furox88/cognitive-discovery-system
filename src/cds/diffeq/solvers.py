@@ -213,7 +213,11 @@ def rk45(
             h_opt = h * (tolerance / error) ** 0.2
             h = min(max(0.1 * h, 0.9 * h_opt), 10 * h)
         else:
-            h *= 2
+            h *= 10.0 # Error is zero, aggressively increase step up to max scale
+            
+        # Precision floor to prevent infinite loop
+        if t + h == t:
+            raise RuntimeError("Step size h reached machine precision floor.")
 
     return ODESolution(t=t_vals, y=y_vals, method="rk45", steps=steps)
 

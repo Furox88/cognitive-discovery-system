@@ -48,7 +48,7 @@ class QuantumRegister:
         cumulative = 0.0
         for i, p in enumerate(probs):
             cumulative += p
-            if r <= cumulative:
+            if p > 0 and r <= cumulative:
                 # State Collapse logic
                 # All other amplitudes become 0, measured state becomes 1.0
                 new_amps = [0.0 + 0j] * len(self.amplitudes)
