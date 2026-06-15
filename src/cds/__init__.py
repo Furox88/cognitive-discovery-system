@@ -23,7 +23,7 @@ Usage:
     from cds.hypothesis import generate_hypotheses
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 # Convenient top-level re-exports for common scientific tools
 from cds.scientific.constants import CONSTANTS, get_constant

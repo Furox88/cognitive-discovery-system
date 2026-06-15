@@ -1,0 +1,68 @@
+site_name: Cognitive Discovery Platform
+site_url: https://Furox88.github.io/cognitive-discovery-system/
+repo_url: https://github.com/Furox88/cognitive-discovery-system
+repo_name: Furox88/cognitive-discovery-system
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
+            import_column_cols: 0
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference:
+      - Overview: api-reference.md
+      - Auto-Generated Reference: api.md
+  - Case Studies:
+      - Hubble Tension: CASE_STUDY_HUBBLE.md
+      - Quantum-ML: CASE_STUDY_QUANTUM_ML.md
+  - Research Workflows: research-workflows.md
+  - Performance: benchmarks.md
+  - Maintenance: maintenance.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
