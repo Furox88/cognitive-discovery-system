@@ -7,30 +7,36 @@ statistical modules for quick research prototyping.
 from cds.hypothesis import generate_hypotheses
 from cds.stats import mean, one_sample_ttest, stdev
 
-print("=== Hypothesis + Stats Demo ===\n")
 
-question = "Does a new catalyst improve reaction yield?"
+def main() -> None:
+    print("=== Hypothesis + Stats Demo ===\n")
 
-print(f"Research question: {question}\n")
+    question = "Does a new catalyst improve reaction yield?"
 
-hypos = generate_hypotheses(question, domain="chemistry", n=2)
+    print(f"Research question: {question}\n")
 
-for h in hypos:
-    print(f"Hypothesis: {h.statement}")
-    print(f"Predictions: {h.predictions}\n")
+    hypos = generate_hypotheses(question, domain="chemistry", n=2)
 
-# Simulate some experimental data (e.g. yields with/without catalyst)
-control_yields = [72.1, 71.8, 73.2, 70.9, 72.5]
-catalyst_yields = [78.4, 79.1, 77.8, 80.2, 78.9]
+    for h in hypos:
+        print(f"Hypothesis: {h.statement}")
+        print(f"Predictions: {h.predictions}\n")
 
-print("Control group mean yield:", mean(control_yields))
-print("Catalyst group mean yield:", mean(catalyst_yields))
-print("Std dev (catalyst):", stdev(catalyst_yields))
+    # Simulate some experimental data (e.g. yields with/without catalyst)
+    control_yields = [72.1, 71.8, 73.2, 70.9, 72.5]
+    catalyst_yields = [78.4, 79.1, 77.8, 80.2, 78.9]
 
-# Quick statistical check (toy example)
-result = one_sample_ttest(catalyst_yields, popmean=mean(control_yields))
-print(f"One-sample t-test vs control mean: t={result.statistic:.2f}, p={result.p_value:.4f}")
+    print("Control group mean yield:", mean(control_yields))
+    print("Catalyst group mean yield:", mean(catalyst_yields))
+    print("Std dev (catalyst):", stdev(catalyst_yields))
 
-print(
-    "\nThis kind of pairing lets researchers quickly turn a generated hypothesis into a testable experiment sketch."
-)
+    # Quick statistical check (toy example)
+    result = one_sample_ttest(catalyst_yields, popmean=mean(control_yields))
+    print(f"One-sample t-test vs control mean: t={result.statistic:.2f}, p={result.p_value:.4f}")
+
+    print(
+        "\nThis kind of pairing lets researchers quickly turn a generated hypothesis into a testable experiment sketch."
+    )
+
+
+if __name__ == "__main__":
+    main()

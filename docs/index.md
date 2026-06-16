@@ -40,4 +40,4 @@ CDS is an open-source computational science platform designed for research, simu
 - [Benchmarks](benchmarks.md)
 
 ---
-*CDS is an alpha release (v0.8.2) and is actively developed. Contributions are welcome!*
+*CDS is an alpha release (v0.8.3) and is actively developed. Contributions are welcome!*

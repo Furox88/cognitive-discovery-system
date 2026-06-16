@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-06-16
+
+### Changed
+- **Examples guard**: wrapped 9 example scripts in `if __name__ == "__main__":` guard. Previously, executable code ran at import time. Two files (hypothesis_custom_generator.py, ml_and_viz_demo.py) already had the guard; remaining 9 were updated for consistency.
+
 ## [0.8.2] - 2026-06-16
 
 ### Added
