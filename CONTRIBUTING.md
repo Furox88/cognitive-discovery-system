@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests (350 tests, see CI)
+# Run tests (380+ tests, see CI)
 pytest
 
 # Run linter
@@ -40,6 +40,10 @@ ruff check src/ tests/
 cds --help
 cds constants
 ```
+
+## Package Name vs Repository Name
+
+The **PyPI package** is published as `cognitive-discovery-platform` (installed via `pip install cognitive-discovery-platform`), while the **GitHub repository** is named `cognitive-discovery-system`. This is intentional — the repo name was chosen first, and the PyPI name was adjusted to better describe the platform's scope. Both refer to the same project.
 
 ## Code Style
 

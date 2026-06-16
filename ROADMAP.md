@@ -1,31 +1,43 @@
 # Roadmap
 
-This document outlines the planned direction for CDS. Priorities focus on making the platform more useful for research, education, and computational discovery while keeping it lightweight and pure Python.
+Planned direction for CDS. All work maintains the **zero-dependency, pure Python** philosophy.
 
-## Near Term
+## v0.7.0 — Coverage & Polish (Next)
 
-- Expand the hypothesis module with more domain-specific templates and better offline generation
-- Add more runnable demos and examples, especially for combining modules (e.g., generate hypotheses then validate with stats or Monte Carlo)
-- Improve performance notes and add more benchmark comparisons for common use cases
-- Enhance the CLI with additional utilities (e.g., quick module exploration, result export)
+- [ ] Push test coverage to **97%+** across every module
+- [ ] Add `typing.Protocol`-based extension points for custom hypothesis generators
+- [ ] Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md
+- [ ] Replace remaining generic error messages with actionable guidance
 
-## Medium Term
+## v0.8.0 — Performance & Benchmarks
 
-- Add support for more numerical methods and algorithms useful in scientific workflows
-- Improve documentation with more detailed usage guides and research-oriented tutorials
-- Add optional (but still lightweight) extensions for common research tasks while preserving the core no-heavy-deps philosophy
-- Better integration examples between the discovery tools and the numerical modules
+- [ ] Publish automated benchmark suite (FFT speed, Monte Carlo convergence, LU decomposition vs naive)
+- [ ] Add optional `--num-workers` flag to all parallel Monte Carlo functions
+- [ ] Implement caching layer for repeated simulations with identical parameters
+- [ ] Reduce overhead in `MultiQubitRegister.measure_shots()` via batched sampling
+
+## v0.9.0 — New Modules & Integration
+
+- [ ] Add `cds.pde` — 1D/2D finite difference solvers for heat, wave, and Laplace equations
+- [ ] Add `cds.optimization.line_search` — Wolfe conditions, strong/weak line search
+- [ ] Cross-module demos: hypothesis → stats validation, quantum → ML feature pipelines, Monte Carlo → integration benchmarks
+- [ ] CSV/JSON round-trip support in `cds.data_analysis.DataSet`
+
+## v1.0.0 — Stability Release
+
+- [ ] Freeze public API — backward-compatible guarantees for all `cds.*` exports
+- [ ] Full API reference documentation on GitHub Pages
+- [ ] Type stubs (`.pyi`) for IDE autocompletion
+- [ ] Security audit (dependency pinning, signed releases)
+- [ ] Mark as stable — remove alpha/beta labels
 
 ## Longer Term
 
-- Explore community contributions for new modules (ML basics, PDEs, etc.)
-- Continue strengthening automation around releases, testing, and documentation so maintainer time stays focused on research features
-- Maintain the goal of being an accessible, readable platform for students, researchers, and independent developers
+- Optional lightweight extras: `cds[plot]` for matplotlib integration, `cds[pandas]` for DataFrame interop
+- Notebook templates (Jupyter) for non-CLI users
+- Community-contributed domain modules (bioinformatics, finance)
+- Education-focused "tour of numerical methods" guide
 
-Contributions and ideas are welcome, especially around the hypothesis generation and scientific discovery aspects.
+---
 
-## Additional Ideas
-- More cross-module demos (hypothesis + stats, quantum + montecarlo, etc.)
-- Simple web UI or notebook templates for non-coders
-- Better error messages and input validation in core modules
-- Integration examples with common research data formats (CSV, HDF5 placeholders)
+Contributions and ideas are welcome — especially for cross-module demos, new algorithms, and the hypothesis generation system.
