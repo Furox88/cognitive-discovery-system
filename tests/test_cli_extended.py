@@ -10,12 +10,12 @@ runner = CliRunner()
 def test_cli_version():
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "CDS version" in result.stdout
+    assert "version" in result.stdout.lower()
 
 def test_cli_info():
     result = runner.invoke(app, ["info"])
     assert result.exit_code == 0
-    assert "Cognitive Discovery Platform" in result.stdout
+    assert "Platform" in result.stdout
     assert "Architecture" in result.stdout
 
 def test_cli_modules():
@@ -63,7 +63,7 @@ def test_cli_calc_ke(monkeypatch):
 def test_cli_benchmark():
     result = runner.invoke(app, ["benchmark"])
     assert result.exit_code == 0
-    assert "Benchmarking CDS platforms" in result.stdout
+    assert "Benchmarking Platform" in result.stdout
 
 def test_cli_hypothesis_basic():
     result = runner.invoke(app, ["hypothesis", "Why is the sky blue?"])

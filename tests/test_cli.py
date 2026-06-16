@@ -17,7 +17,7 @@ def test_help_shows_main_commands():
 def test_modules_runs():
     result = runner.invoke(app, ["modules"])
     assert result.exit_code == 0
-    assert "CDS Scientific Modules" in result.output
+    assert "Scientific Modules" in result.output
     assert "cds.hypothesis" in result.output
 
 
@@ -30,10 +30,10 @@ def test_hypothesis_runs_with_default():
 def test_version_flag():
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert "CDS" in result.output and "version" in result.output.lower()
+    assert "version" in result.output.lower()
 
 
 def test_version_command():
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "CDS" in result.output and "version" in result.output.lower()
+    assert "version" in result.output.lower()

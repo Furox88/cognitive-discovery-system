@@ -8,7 +8,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-350-brightgreen.svg)]()
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-platform/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-platform)
+[![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 
 **Open-source computational science platform for research, simulation, and discovery.**
 
@@ -21,7 +21,7 @@ The platform also includes built-in support for structured hypothesis generation
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** Achieved **95%+ Test Coverage** with 350 tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
+🚀 **Latest Update:** Achieved **92%+ Test Coverage** with 350 tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
 ---
 
 ## Why CDS?
