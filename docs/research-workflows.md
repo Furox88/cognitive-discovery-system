@@ -66,7 +66,7 @@ Other modules are similarly simple to subclass or wrap when you need domain-spec
 
 ## Citing
 
-If you use CDS in a paper, thesis, or research pipeline, please cite it using the metadata in `CITATION.cff` (or the preferred-citation section inside it). This gives proper credit and helps others discover the toolkit.
+If you use CDS in a paper, thesis, or research pipeline, please cite it using the metadata in `CITATION.cff` (or the preferred-citation section inside it). This gives proper credit and helps others discover the platform.
 
 ## Next Steps
 

@@ -63,7 +63,7 @@ def test_cli_calc_ke(monkeypatch):
 def test_cli_benchmark():
     result = runner.invoke(app, ["benchmark"])
     assert result.exit_code == 0
-    assert "Benchmarking CDS systems" in result.stdout
+    assert "Benchmarking CDS platforms" in result.stdout
 
 def test_cli_hypothesis_basic():
     result = runner.invoke(app, ["hypothesis", "Why is the sky blue?"])

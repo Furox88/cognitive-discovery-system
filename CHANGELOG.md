@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - `examples/hypothesis_custom_generator.py` — a small runnable demonstration of supplying a custom implementation of the HypothesisGenerator Protocol for a toy domain.
 
 ### Changed
-- All references to the test suite updated from approximate "300+" to the exact **314 tests** (README badge and text, docs/getting-started.md, docs/benchmarks.md, CONTRIBUTING.md, CHANGELOG, src/cds/cli.py status panel).
+- All references to the test suite updated to exactly **350 tests** (README, docs, CONTRIBUTING.md, CLI).
 - `docs/benchmarks.md` refreshed with fresh micro-benchmark timings (hypothesis generation ~0.1 ms for n=3, stats operations, quantum primitives, optimization).
 - Cleaned Codecov placeholder comment from README (badge remains; live data requires connecting the repo on codecov.io).
 - Version bumped to 0.3.0 (pyproject.toml, src/cds/__init__.py, README alpha notice, CLI info/status).
@@ -60,7 +60,7 @@ All notable changes to this project will be documented in this file.
 - New runnable demos: `examples/fft2_demo.py`, `examples/hypothesis_tests_demo.py`,
   `examples/linalg_demo.py`
 - Project logo/banner (`assets/logo.svg`)
-- Test suite expanded to **314 tests** (see CI)
+- Test suite expanded to **350 tests** (see CI)
 
 ## [0.1.0] - 2026-06-09
 

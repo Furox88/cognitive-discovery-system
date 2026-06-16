@@ -1,7 +1,7 @@
 # Case Study: Integrating Quantum Simulation with Machine Learning
 
 ## Overview
-This case study explores the synergy between quantum computing simulation and classical machine learning using the `cognitive-discovery-system` (CDS). By leveraging `cds.quantum` for feature generation and `cds.ml` for predictive modeling, we demonstrate a hybrid workflow that paves the way for quantum-classical discovery.
+This case study explores the synergy between quantum computing simulation and classical machine learning using the Cognitive Discovery Platform (CDS). By leveraging `cds.quantum` for feature generation and `cds.ml` for predictive modeling, we demonstrate a hybrid workflow that paves the way for quantum-classical discovery.
 
 ## 1. Building a Quantum Circuit with `cds.quantum`
 
@@ -75,4 +75,4 @@ The integration of `cds.quantum` and `cds.ml` offers significant value for scien
 3.  **Noise Analysis**: By simulating quantum noise and feeding the results into an MLP, researchers can train models to identify and mitigate errors in real quantum hardware.
 4.  **Scientific Insight**: The ability to bridge the gap between quantum mechanics and neural architectures allows for the discovery of new patterns in quantum materials, chemistry simulations, and complex system dynamics.
 
-By combining the probabilistic nature of quantum mechanics with the predictive power of neural networks, the `cognitive-discovery-system` provides a robust platform for the next generation of scientific exploration.
+By combining the probabilistic nature of quantum mechanics with the predictive power of neural networks, the Cognitive Discovery Platform provides a robust platform for the next generation of scientific exploration.

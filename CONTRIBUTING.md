@@ -24,8 +24,8 @@ Thank you for your interest! CDS is an open-source computational science platfor
 ## Development Setup
 
 ```bash
-git clone https://github.com/Furox88/cognitive-discovery-platform.git
-cd cognitive-discovery-platform
+git clone https://github.com/Furox88/cognitive-discovery-system.git
+cd cognitive-discovery-system
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"

@@ -209,7 +209,7 @@ def dashboard() -> None:
 @app.command()
 def benchmark() -> None:
     """Run built-in benchmarks to verify performance."""
-    console.print("[yellow]Benchmarking CDS systems...[/]")
+    console.print("[yellow]Benchmarking CDS platforms...[/]")
     console.print("Run 'python benchmarks/run_benchmarks.py' for detailed results.")
 
 
