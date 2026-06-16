@@ -40,6 +40,8 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - Notebook templates (Jupyter) for non-CLI users
 - Community-contributed domain modules (bioinformatics, finance)
 - Education-focused "tour of numerical methods" guide
+- **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2))
+- **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3))
 
 ---
 
