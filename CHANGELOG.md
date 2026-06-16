@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-06-17
+
+### Changed
+- **Dependency upgrade**: `pydantic 2.12.5 -> 2.13.4` and `pydantic-core 2.41.5 -> 2.46.4`. Lockfiles regenerated via `pip-compile --upgrade-package pydantic --upgrade-package pydantic-core`.
+
 ## [0.8.3] - 2026-06-16
 
 ### Changed
