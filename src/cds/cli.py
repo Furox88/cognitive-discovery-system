@@ -333,5 +333,5 @@ def modules() -> None:
     console.print("[dim]See examples/ for runnable demos of each module.[/dim]\n")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app()

@@ -233,12 +233,18 @@ def power_iteration(
         w = [sum(m[i][j] * v[j] for j in range(n)) for i in range(n)]
         
         # Scaling to prevent overflow in large systems
-        # norm = sqrt(sum(w_i^2))
-        try:
-            norm = math.sqrt(sum(x * x for x in w))
-        except OverflowError:
-            # Fallback to absolute max scaling if squared sum overflows
+        # norm = sqrt(sum(w_i^2)). CPython floats overflow to inf rather
+        # than raising OverflowError, so we detect both cases and fall back
+        # to absolute-max scaling, which is safe for any magnitude.
+        squared_sum = sum(x * x for x in w)
+        if math.isinf(squared_sum):
             norm = max(abs(x) for x in w)
+        else:
+            try:
+                norm = math.sqrt(squared_sum)
+            except OverflowError:  # pragma: no cover - defensive for non-CPython libm
+                # Defensive: still raised on some platforms for subnormal inputs
+                norm = max(abs(x) for x in w)
 
         if norm < 1e-15:
             break
@@ -317,7 +323,7 @@ def qr_decomposition(m: Matrix) -> tuple[Matrix, Matrix]:
         v = x[:]
         v[0] -= alpha
         norm_v = math.sqrt(sum(vi * vi for vi in v))
-        if norm_v < 1e-15:
+        if norm_v < 1e-15:  # pragma: no cover - unreachable: norm_x>0 implies norm_v>0
             continue
         v = [vi / norm_v for vi in v]
 

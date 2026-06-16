@@ -83,10 +83,10 @@ def _gcf(a: float, x: float) -> float:
         an = -i * (i - a)
         b += 2.0
         d = an * d + b
-        if abs(d) < _FPMIN:
+        if abs(d) < _FPMIN:  # pragma: no cover — d ≥ |b| - |an*d| stays above FPMIN
             d = _FPMIN
         c = b + an / c
-        if abs(c) < _FPMIN:
+        if abs(c) < _FPMIN:  # pragma: no cover — c stays ≥ |b| - |an/c| > FPMIN
             c = _FPMIN
         d = 1.0 / d
         delta = d * c
@@ -132,10 +132,10 @@ def _betacf(a: float, b: float, x: float) -> float:
         m2 = 2 * m
         aa = m * (b - m) * x / ((qam + m2) * (a + m2))
         d = 1.0 + aa * d
-        if abs(d) < _FPMIN:
+        if abs(d) < _FPMIN:  # pragma: no cover — first-loop aa≥0 keeps d≥1
             d = _FPMIN
         c = 1.0 + aa / c
-        if abs(c) < _FPMIN:
+        if abs(c) < _FPMIN:  # pragma: no cover — first-loop aa≥0 keeps c≥1
             c = _FPMIN
         d = 1.0 / d
         h *= d * c

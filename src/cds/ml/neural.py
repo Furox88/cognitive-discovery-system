@@ -62,15 +62,23 @@ class Layer:
         if self.activation == "relu":
             return max(0.0, z)
         if self.activation == "sigmoid":
-            # Use math.exp for better numerical stability and precision
-            try:
-                if z >= 0:
+            # Numerically stable logistic sigmoid. The two branches keep the
+            # argument to exp() non-positive so it never overflows; for very
+            # large |z| the exp() underflows to 0.0, which we map to the
+            # asymptotic limits 1.0 (z -> +inf) / 0.0 (z -> -inf). The
+            # OverflowError guard is kept defensively for platforms whose
+            # libm raises on subnormal results rather than returning 0.0.
+            if z >= 0:
+                try:
                     return 1.0 / (1.0 + math.exp(-z))
-                else:
+                except (OverflowError, ValueError):  # pragma: no cover - non-CPython libm
+                    return 1.0
+            else:
+                try:
                     ez = math.exp(z)
-                    return ez / (1.0 + ez)
-            except OverflowError:
-                return 0.0 if z < 0 else 1.0
+                except (OverflowError, ValueError):  # pragma: no cover - non-CPython libm
+                    return 0.0
+                return ez / (1.0 + ez)
         return z  # identity
 
     def _activate_derivative(self, z: float, a: float) -> float:

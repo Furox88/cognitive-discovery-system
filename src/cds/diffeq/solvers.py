@@ -8,6 +8,7 @@ References:
 """
 from __future__ import annotations
 
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -182,6 +183,12 @@ def rk45(
     h = dt
     steps = 0
 
+    # Absolute step-size floor, scaled to the integration span, below which no
+    # further progress can be made (a "machine precision floor"). Prevents the
+    # adaptive loop from spinning forever on stiff/diverging problems.
+    span = abs(t_end - t0) if t_end != t0 else 1.0
+    eps_floor = 16 * sys.float_info.epsilon * max(abs(t), span)
+
     while t < t_end - 1e-12:
         if t + h > t_end:
             h = t_end - t
@@ -207,16 +214,18 @@ def rk45(
             t_vals.append(t)
             y_vals.append(y)
             steps += 1
-        
+
         # Adjust step size
         if error > 0:
             h_opt = h * (tolerance / error) ** 0.2
             h = min(max(0.1 * h, 0.9 * h_opt), 10 * h)
         else:
-            h *= 10.0 # Error is zero, aggressively increase step up to max scale
-            
-        # Precision floor to prevent infinite loop
-        if t + h == t:
+            h *= 10.0  # Error is zero, aggressively increase step up to max scale
+
+        # Precision floor to prevent infinite loop: either the step size has
+        # shrunk below the span-scaled epsilon floor, or it has become so small
+        # that adding it to t makes no progress (t + h == t).
+        if h < eps_floor or t + h == t:
             raise RuntimeError("Step size h reached machine precision floor.")
 
     return ODESolution(t=t_vals, y=y_vals, method="rk45", steps=steps)
