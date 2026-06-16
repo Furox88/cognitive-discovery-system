@@ -1,12 +1,13 @@
-import pytest
 from typing import Any, cast
+
+import pytest
 
 from cds.signals import fft2, ifft2
 
 
 def _max_err(a: Any, b: Any) -> float:
-    from typing import cast
     return cast(float, max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0]))))
+
 
 class TestFFT2:
     def test_constant_matrix_dc_component(self) -> None:

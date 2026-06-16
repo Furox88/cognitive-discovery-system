@@ -93,9 +93,7 @@ def main() -> int:
     #    on main
     status = git("status", "--porcelain")
     # Filter out src/cds/_version.py — hatch-vcs regenerates it on every build.
-    status = "\n".join(
-        line for line in status.splitlines() if "src/cds/_version.py" not in line
-    )
+    status = "\n".join(line for line in status.splitlines() if "src/cds/_version.py" not in line)
     if status:
         print("Working tree is dirty. Commit/stash first:\n", status, file=sys.stderr)
         return 1

@@ -1,4 +1,5 @@
 """Tests for graph theory algorithms."""
+
 from typing import Any
 
 import pytest

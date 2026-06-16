@@ -1,13 +1,14 @@
 """Extended tests for the CLI to achieve high coverage."""
-from typing import Any
 
 import json
+from typing import Any
 
 from typer.testing import CliRunner
 
 from cds.cli import app
 
 runner = CliRunner()
+
 
 def test_cli_version() -> None:
     result = runner.invoke(app, ["version"])
@@ -83,7 +84,7 @@ def test_cli_hypothesis_basic() -> None:
     assert "H-" in result.stdout  # Panel title contains H-ID
 
 
-def test_cli_calc_gravity(monkeypatch: Any ) -> None:
+def test_cli_calc_gravity(monkeypatch: Any) -> None:
     inputs = iter(["5.97e24", "7.35e22", "3.84e8"])
     monkeypatch.setattr("typer.prompt", lambda _: next(inputs))
     result = runner.invoke(app, ["calc", "gravity"])
@@ -91,14 +92,14 @@ def test_cli_calc_gravity(monkeypatch: Any ) -> None:
     assert "Force =" in result.stdout
 
 
-def test_cli_calc_wave(monkeypatch: Any ) -> None:
+def test_cli_calc_wave(monkeypatch: Any) -> None:
     monkeypatch.setattr("typer.prompt", lambda _: "500e-9")
     result = runner.invoke(app, ["calc", "wave"])
     assert result.exit_code == 0
     assert "Frequency =" in result.stdout
 
 
-def test_cli_calc_gas(monkeypatch: Any ) -> None:
+def test_cli_calc_gas(monkeypatch: Any) -> None:
     inputs = iter(["1", "300", "0.024"])
     monkeypatch.setattr("typer.prompt", lambda _: next(inputs))
     result = runner.invoke(app, ["calc", "gas"])

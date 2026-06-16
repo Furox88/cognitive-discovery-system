@@ -5,11 +5,11 @@ Targets:
 - cds.__main__ entry point
 - cds.hypothesis.evaluator new dispatch paths
 """
-from typing import Any
 
 import math
 import subprocess
 import sys
+from typing import Any
 
 from typer.testing import CliRunner
 
@@ -218,7 +218,7 @@ def test_cli_constants() -> None:
     assert "Physical Constants" in result.stdout
 
 
-def test_cli_dashboard_missing_file(monkeypatch: Any ) -> None:
+def test_cli_dashboard_missing_file(monkeypatch: Any) -> None:
     """Dashboard command reports an error when the app file is absent."""
     monkeypatch.setattr(cli_mod.Path, "exists", lambda self: False)
     result = _runner.invoke(app, ["dashboard"])
@@ -244,7 +244,7 @@ def test_cli_hypothesis_show_prompt() -> None:
     assert "Prompt Template" in result.stdout
 
 
-def test_cli_calc_input_error(monkeypatch: Any ) -> None:
+def test_cli_calc_input_error(monkeypatch: Any) -> None:
     """calc command with non-numeric input prints error."""
     monkeypatch.setattr("typer.prompt", lambda _: "not_a_number")
     result = _runner.invoke(app, ["calc", "ke"])
@@ -252,10 +252,10 @@ def test_cli_calc_input_error(monkeypatch: Any ) -> None:
     assert "Error" in result.stdout
 
 
-def test_cli_calc_generic_exception(monkeypatch: Any ) -> None:
+def test_cli_calc_generic_exception(monkeypatch: Any) -> None:
     """calc command with an unexpected exception prints error."""
 
-    def bad_prompt(_: Any ) -> None:
+    def bad_prompt(_: Any) -> None:
         raise RuntimeError("surprise")
 
     monkeypatch.setattr("typer.prompt", bad_prompt)
@@ -264,7 +264,7 @@ def test_cli_calc_generic_exception(monkeypatch: Any ) -> None:
     assert "Error" in result.stdout
 
 
-def test_cli_dashboard_launch(monkeypatch: Any ) -> None:
+def test_cli_dashboard_launch(monkeypatch: Any) -> None:
     """Dashboard command: mock subprocess so streamlit is not actually launched."""
 
     def fake_run(cmd: list[str], **kwargs: Any) -> None:
@@ -276,7 +276,7 @@ def test_cli_dashboard_launch(monkeypatch: Any ) -> None:
     assert "Dashboard stopped" in result.stdout
 
 
-def test_cli_dashboard_streamlit_missing(monkeypatch: Any ) -> None:
+def test_cli_dashboard_streamlit_missing(monkeypatch: Any) -> None:
     """Dashboard command: FileNotFoundError when streamlit is not installed."""
 
     def fake_run(cmd: list[str], **kwargs: Any) -> None:

@@ -4,9 +4,9 @@ Verifies structure (return types, keys) without timing the actual functions,
 so CI stays fast. Timing correctness is validated manually via
 ``python benchmarks/run_benchmarks.py``.
 """
-from typing import Any, cast
 
 from collections import OrderedDict
+from typing import Any, cast
 
 import pytest
 
@@ -16,7 +16,6 @@ class TestBenchmarkStructure:
 
     def _import_and_call(self, func_name: str, module_path: str) -> OrderedDict[str, str]:
         import importlib
-        from typing import cast
 
         mod = importlib.import_module(module_path)
         return cast(OrderedDict[str, str], getattr(mod, func_name)())

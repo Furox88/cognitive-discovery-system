@@ -1,7 +1,7 @@
 """Tests for deterministic numerical quadrature."""
-from typing import Any, cast
 
 import math
+from typing import Any, cast
 
 import pytest
 
@@ -220,11 +220,11 @@ class TestLegendreEdgeCases:
 
     @staticmethod
     def _legendre(n: Any, x: Any) -> tuple[float, float]:
-        from typing import cast
 
         from cds.numerical_integration.quadrature import _legendre as _L
 
         return cast(tuple[float, float], _L(n, x))
+
     def test_legendre_n0(self) -> None:
         # P_0(x) = 1, P_0'(x) = 0
         val, deriv = self._legendre(0, 0.5)

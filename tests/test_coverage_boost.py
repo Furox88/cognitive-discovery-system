@@ -7,9 +7,9 @@ Covers edge cases in:
   low_pass dft path, convolve empty, fft2/ifft2 empty)
 - data_analysis/viz.py (negative bar, interpolation path, flat line)
 """
-from typing import Any
 
 import math
+from typing import Any
 
 import pytest
 
@@ -164,7 +164,7 @@ class TestAdamScalarStateResume:
     def test_adam_resume_from_state(self) -> None:
         """Adam scalar: run for a few iterations, then resume with state."""
 
-        def f(x: Any) -> Any: 
+        def f(x: Any) -> Any:
             return (x - 5.0) ** 2
 
         # First run: state=None, should return state dict
@@ -179,10 +179,10 @@ class TestAdamScalarStateResume:
     def test_adam_scalar_custom_grad(self) -> None:
         """Adam scalar with explicit gradient function."""
 
-        def f(x: Any) -> Any: 
+        def f(x: Any) -> Any:
             return (x - 3.0) ** 2
 
-        def grad_f(x: Any) -> Any: 
+        def grad_f(x: Any) -> Any:
             return 2 * (x - 3.0)
 
         result = adam(f, x0=10.0, lr=0.1, max_iter=200, grad_f=grad_f)
@@ -193,7 +193,7 @@ class TestAdamVectorStateResume:
     def test_adam_vector_resume(self) -> None:
         """Adam vector: run, then resume with state."""
 
-        def f(x: Any) -> Any: 
+        def f(x: Any) -> Any:
             return x[0] ** 2 + (x[1] - 4) ** 2
 
         # First run: state=None
@@ -208,10 +208,10 @@ class TestAdamVectorStateResume:
     def test_adam_vector_custom_grad(self) -> None:
         """Adam vector with explicit gradient function."""
 
-        def f(x: Any) -> Any: 
+        def f(x: Any) -> Any:
             return x[0] ** 2 + x[1] ** 2
 
-        def grad_f(x: Any) -> Any: 
+        def grad_f(x: Any) -> Any:
             return [2 * x[0], 2 * x[1]]
 
         result = adam(f, x0=[5.0, 5.0], lr=0.1, max_iter=200, grad_f=grad_f)
