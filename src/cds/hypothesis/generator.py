@@ -36,7 +36,9 @@ class HypothesisGenerator(Protocol):
         domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
         **kwargs: Any,
-    ) -> list[Hypothesis]: ...
+    ) -> list[Hypothesis]:
+        """Generate `n` hypotheses for the given research question."""
+        ...
 
 
 class PromptTemplate:
@@ -76,6 +78,7 @@ Confidence: 0.xx
 
     @classmethod
     def render(cls, research_question: str, domain: Domain, n: int = 3) -> str:
+        """Format the user-side prompt for a hypothesis generation request."""
         return cls.USER_BASE.format(
             research_question=research_question,
             domain=domain.value,
@@ -138,6 +141,7 @@ class SimpleOfflineGenerator:
         n: int = 3,
         **kwargs: Any,
     ) -> list[Hypothesis]:
+        """Generate `n` hypotheses from the built-in domain templates."""
         # Ensure domain is a Domain enum instance
         if isinstance(domain, str):
             try:

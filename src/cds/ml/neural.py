@@ -154,6 +154,7 @@ class MLP:
         """Train the network using the Adam optimizer with backpropagation and state persistence."""
 
         def loss_fn(params: list[float]) -> float:
+            """Mean squared error over the training set for these parameters."""
             self.set_parameters(params)
             total_loss = 0.0
             for xi, yi in zip(X, y):
@@ -162,6 +163,7 @@ class MLP:
             return total_loss / len(X)
 
         def grad_fn(params: list[float]) -> list[float]:
+            """Parameter gradients via backpropagation over the training set."""
             self.set_parameters(params)
             self.zero_grads()
             for xi, yi in zip(X, y):

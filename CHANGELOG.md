@@ -4,10 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Changed
-- **Replaced `scripts/publish.ps1` with `scripts/publish.py`** for cross-platform, pure-Python local PyPI releases. Removes the only PowerShell surface in the repository (was 1.2% of the GitHub language bar).
+## [0.8.2] - 2026-06-16
+
+### Added
+- **Docstrings** for all public functions and classes (previously 137/168 functions and 22/26 classes were documented; now 100%).
+
+### Fixed
+- **Empty `src/cds/knowledge/` directory removed** (stale artifact from a v0.7.0 cleanup that left a leftover empty package).
+- **CHANGELOG backfill**: added missing entries for v0.4.0 and v0.5.0 to align the file with the actual git tag history.
 
 ## [0.8.1] - 2026-06-16
+
+### Added
+- **Pre-commit hooks** (`.pre-commit-config.yaml`): Ruff (lint + format), Mypy (type check), and standard file checks run on every commit. CI mirrors the same checks.
+- **Dependency lockfiles** (`requirements.lock`, `requirements-dev.lock`): fully pinned dependency snapshots for reproducible installs. Regenerate via `pip-compile` (see CONTRIBUTING.md).
+- **Coverage threshold gate**: CI fails if coverage drops below 100% (`--cov-fail-under=100`). Configured in `pyproject.toml` under `[tool.coverage.*]`.
+
+## [0.5.0] - 2026-06-15
+
+Internal: package rename to `cognitive-discovery-toolkit`, then to `cognitive-discovery-platform`. 350 tests, full metadata synchronization, API finalization. (PyPI: yes)
+
+## [0.4.0] - 2026-06-15
+
+Internal: interim package rename to `cds-cognitive` to avoid a PyPI name collision. Superseded by 0.5.0. (PyPI: no)
+
+## [0.3.3] - 2026-06-15
+## [0.3.2] - 2026-06-15
+## [0.3.1] - 2026-06-15
+## [0.3.0] - 2026-06-14
+## [0.2.0] - 2026-06-14
+## [0.1.0] - 2026-06-09
 
 ### Added
 - **Pre-commit hooks** (`.pre-commit-config.yaml`): Ruff (lint + format), Mypy (type check), and standard file checks run on every commit. CI mirrors the same checks.

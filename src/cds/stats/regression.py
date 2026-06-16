@@ -9,15 +9,27 @@ from cds.stats.descriptive import mean
 
 @dataclass
 class RegressionResult:
+    """Fitted linear-regression parameters and goodness-of-fit."""
+
     slope: float
     intercept: float
     r_squared: float
 
     def predict(self, x: float) -> float:
+        """Predict the response y for a given x using the fitted line."""
         return self.slope * x + self.intercept
 
 
 def linear_regression(x: list[float], y: list[float]) -> RegressionResult:
+    """Fit y = slope*x + intercept by ordinary least squares.
+
+    Returns:
+        RegressionResult with slope, intercept, and R^2.
+
+    Raises:
+        ValueError: if `x` and `y` have different lengths, fewer than 2 points,
+            or all x values are identical (zero variance).
+    """
     if len(x) != len(y) or len(x) < 2:
         raise ValueError("need matching lists with at least 2 points")
     mx = mean(x)

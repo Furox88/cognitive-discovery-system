@@ -24,6 +24,8 @@ def z_score(data: list[float]) -> list[float]:
 
 
 def moving_average(data: list[float], window: int = 3) -> list[float]:
+    """Trailing moving average with the given window size (>= 1)."""
+
     if window < 1:
         raise ValueError("window must be >= 1")
     result = []

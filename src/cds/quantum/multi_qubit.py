@@ -30,12 +30,15 @@ class QuantumRegister:
 
     @property
     def size(self) -> int:
+        """Number of amplitudes in the state vector (= 2**n_qubits)."""
         return len(self.amplitudes)
 
     def probabilities(self) -> list[float]:
+        """List of |amplitude|^2 for each computational basis state."""
         return [abs(a) ** 2 for a in self.amplitudes]
 
     def normalize(self) -> None:
+        """Renormalize the state vector in-place to unit length."""
         norm = math.sqrt(sum(abs(a) ** 2 for a in self.amplitudes))
         if norm > 0:
             self.amplitudes = [a / norm for a in self.amplitudes]

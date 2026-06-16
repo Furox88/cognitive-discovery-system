@@ -14,11 +14,13 @@ class Qubit:
     beta: complex = 0 + 0j
 
     def probabilities(self) -> tuple[float, float]:
+        """Return (P(|0>), P(|1>)) measurement probabilities for this qubit."""
         p0 = abs(self.alpha) ** 2
         p1 = abs(self.beta) ** 2
         return (p0, p1)
 
     def normalize(self) -> None:
+        """Renormalize the state amplitudes in-place to unit length."""
         norm = math.sqrt(abs(self.alpha) ** 2 + abs(self.beta) ** 2)
         if norm > 0:
             self.alpha /= norm
@@ -33,6 +35,7 @@ class QuantumGate:
     matrix: list[complex]
 
     def apply(self, q: Qubit) -> Qubit:
+        """Apply this gate to `q` and return a new Qubit (state is not mutated)."""
         a, b, c, d = self.matrix
         new_alpha = a * q.alpha + b * q.beta
         new_beta = c * q.alpha + d * q.beta
@@ -41,19 +44,23 @@ class QuantumGate:
 
 # common gates
 def hadamard() -> QuantumGate:
+    """Hadamard gate H = (1/sqrt(2)) * [[1, 1], [1, -1]]."""
     s = 1 / math.sqrt(2)
     return QuantumGate("H", [s, s, s, -s])
 
 
 def pauli_x() -> QuantumGate:
+    """Pauli-X (NOT) gate X = [[0, 1], [1, 0]]."""
     return QuantumGate("X", [0, 1, 1, 0])
 
 
 def pauli_z() -> QuantumGate:
+    """Pauli-Z gate Z = [[1, 0], [0, -1]]."""
     return QuantumGate("Z", [1, 0, 0, -1])
 
 
 def phase_gate(theta: float) -> QuantumGate:
+    """Phase rotation gate P(theta) = diag(1, e^{i*theta})."""
     return QuantumGate(f"P({theta:.2f})", [1, 0, 0, complex(math.cos(theta), math.sin(theta))])
 
 
@@ -64,10 +71,12 @@ class QuantumCircuit:
     gates: list[QuantumGate] = field(default_factory=list)
 
     def add(self, gate: QuantumGate) -> QuantumCircuit:
+        """Append a gate to the circuit (returns self for fluent chaining)."""
         self.gates.append(gate)
         return self
 
     def run(self, initial: Qubit | None = None) -> Qubit:
+        """Apply all gates sequentially; starts from `initial` or |0> if None."""
         q = initial or Qubit()
         for g in self.gates:
             q = g.apply(q)

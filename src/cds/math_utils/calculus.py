@@ -31,6 +31,7 @@ def gradient(f: Callable[..., float], point: list[float], h_base: float = 1e-7) 
         h = h_base * max(1.0, abs(point[i]))
 
         def partial(val: float, idx: int = i) -> float:
+            """Return f evaluated with coordinate `idx` set to `val`."""
             p = point.copy()
             p[idx] = val
             return f(*p)

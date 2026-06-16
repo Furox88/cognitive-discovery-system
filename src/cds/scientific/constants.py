@@ -22,6 +22,11 @@ CONSTANTS: dict[str, tuple[float, str]] = {
 
 
 def get_constant(name: str) -> float:
+    """Look up a physical/mathematical constant by short name and return its value.
+
+    Raises:
+        KeyError: if `name` is not in the table (lists valid names in the message).
+    """
     if name not in CONSTANTS:
         raise KeyError(f"unknown constant: {name}. available: {list(CONSTANTS.keys())}")
     return CONSTANTS[name][0]

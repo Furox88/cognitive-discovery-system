@@ -21,6 +21,8 @@ class Domain(str, Enum):
 
 
 class HypothesisStatus(str, Enum):
+    """Lifecycle states for a Hypothesis."""
+
     NEW = "new"
     REFINED = "refined"
     CRITIQUED = "critiqued"
@@ -48,6 +50,7 @@ class Hypothesis(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     def to_markdown(self) -> str:
+        """Render this hypothesis as a structured Markdown document."""
         lines = [
             f"# Hypothesis: {self.id}",
             "",

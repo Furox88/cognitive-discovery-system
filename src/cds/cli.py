@@ -54,6 +54,8 @@ def main(
 
 
 class DomainChoice(str, Enum):
+    """Supported scientific domains for hypothesis generation and CLI dispatch."""
+
     physics = "physics"
     cosmology = "cosmology"
     mathematics = "mathematics"

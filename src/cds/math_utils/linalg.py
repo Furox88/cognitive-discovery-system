@@ -19,6 +19,11 @@ Vector = list[float]
 
 
 def dot(a: Vector, b: Vector) -> float:
+    """Inner product of two equal-length vectors.
+
+    Raises:
+        ValueError: if `a` and `b` have different lengths.
+    """
     if len(a) != len(b):
         raise ValueError(f"vectors a and b must have the same length (got {len(a)} and {len(b)})")
     return sum(x * y for x, y in zip(a, b))
@@ -43,6 +48,7 @@ def mat_mul(a: Matrix, b: Matrix) -> Matrix:
 
 
 def transpose(m: Matrix) -> Matrix:
+    """Return the transpose of a 2-D matrix (rows <-> columns)."""
     if not m:
         return []
     return [[m[i][j] for i in range(len(m))] for j in range(len(m[0]))]
