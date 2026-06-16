@@ -164,7 +164,7 @@ def info() -> None:
         "[bold]Platform (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
         "🚀 [bold green]Status:[/] Production-Ready (Alpha)\n"
-        "🧪 [bold blue]Tests:[/] 350 Passing\n"
+        "🧪 [bold blue]Tests:[/] 550+ Passing\n"
 
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"🔗 [bold cyan]Version:[/] {__version__}",
@@ -180,7 +180,7 @@ def info() -> None:
         "• [cyan]hypothesis[/]    • [cyan]diffeq[/]\n"
         "• [cyan]graph[/]         • [cyan]data_analysis[/]\n"
         "• [cyan]ml[/]            • [cyan]probability[/]\n"
-        "• [cyan]scientific[/]"
+        "• [cyan]scientific[/]    • [cyan]numerical_integration[/]"
     )
     
     capability_panel = Panel.fit(

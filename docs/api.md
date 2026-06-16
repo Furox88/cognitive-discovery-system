@@ -14,14 +14,23 @@ This page contains automatically generated documentation for the Cognitive Disco
 ## Signal Processing
 ::: cds.signals
 
+## Probability
+::: cds.probability
+
 ## Statistics
 ::: cds.stats
 
 ## Mathematical Utilities
 ::: cds.math_utils
 
+## Scientific Computing
+::: cds.scientific
+
 ## Differential Equations
 ::: cds.diffeq
+
+## Numerical Integration
+::: cds.numerical_integration
 
 ## Monte Carlo Methods
 ::: cds.montecarlo

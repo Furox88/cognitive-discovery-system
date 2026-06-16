@@ -4,14 +4,14 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 
 ## v0.7.0 — Coverage & Polish (Next)
 
-- [ ] Push test coverage to **97%+** across every module
-- [ ] Add `typing.Protocol`-based extension points for custom hypothesis generators
+- [x] ~~Push test coverage to **97%+** across every module~~ — achieved **99%**
+- [x] ~~Add `typing.Protocol`-based extension points for custom hypothesis generators~~ — shipped as `HypothesisGenerator` Protocol
 - [ ] Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md
 - [ ] Replace remaining generic error messages with actionable guidance
 
 ## v0.8.0 — Performance & Benchmarks
 
-- [ ] Publish automated benchmark suite (FFT speed, Monte Carlo convergence, LU decomposition vs naive)
+- [x] ~~Publish automated benchmark suite (FFT speed, Monte Carlo convergence, LU decomposition vs naive)~~ — see `benchmarks/run_benchmarks.py` & `docs/benchmarks.md`
 - [ ] Add optional `--num-workers` flag to all parallel Monte Carlo functions
 - [ ] Implement caching layer for repeated simulations with identical parameters
 - [ ] Reduce overhead in `MultiQubitRegister.measure_shots()` via batched sampling
@@ -19,7 +19,7 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 ## v0.9.0 — New Modules & Integration
 
 - [ ] Add `cds.pde` — 1D/2D finite difference solvers for heat, wave, and Laplace equations
-- [ ] Add `cds.optimization.line_search` — Wolfe conditions, strong/weak line search
+- [ ] Extend `cds.optimization.line_search` with Wolfe conditions and strong/weak variants (basic golden-section `line_search` already shipped)
 - [ ] Cross-module demos: hypothesis → stats validation, quantum → ML feature pipelines, Monte Carlo → integration benchmarks
 - [ ] CSV/JSON round-trip support in `cds.data_analysis.DataSet`
 

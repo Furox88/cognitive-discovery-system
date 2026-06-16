@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-440+-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-550+-brightgreen.svg)]()
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 
@@ -21,7 +21,7 @@ The platform also includes built-in support for structured hypothesis generation
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** Achieved **97%+ Test Coverage** with 440+ tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
+🚀 **Latest Update:** Achieved **99% Test Coverage** with 550+ tests! Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
 ---
 
 ## Why CDS?
@@ -29,8 +29,8 @@ The platform also includes built-in support for structured hypothesis generation
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
-- **Broad scope** — 14 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, Monte Carlo
-- **440+ tests** (see CI) — thoroughly tested with **97%+ code coverage**
+- **Broad scope** — 15 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo
+- **550+ tests** (see CI) — thoroughly tested with **99% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 - **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
@@ -54,6 +54,7 @@ If CDS is useful in your research or publications, please cite it using the info
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
+| `cds.numerical_integration` | **NEW:** Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
 | `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
 
 ## Quick Start
@@ -307,6 +308,22 @@ t_vals, y_vals = solve_system(harmonic, 0, [1.0, 0.0], math.pi)
 print(f"x(π) = {y_vals[-1][0]:.4f}")  # ~-1.0
 ```
 
+### Numerical Integration
+```python
+import math
+from cds.numerical_integration import simpson, gaussian_quadrature, romberg
+
+# ∫_0^π sin(x) dx = 2
+print(simpson(math.sin, 0, math.pi, n=100))  # ~2.0, O(h⁴)
+
+# Gauss-Legendre: exact for polynomials up to degree 2n-1
+print(gaussian_quadrature(lambda x: x**7, 0, 1, n=4))  # 0.125 (exact)
+
+# Romberg reaches full machine precision on smooth integrands
+result = romberg(math.exp, 0, 1, tol=1e-12)
+print(f"∫e^x = {result.value:.10f}")  # ~1.7182818285
+```
+
 ## Architecture
 
 ```
@@ -323,12 +340,13 @@ src/cds/
 ├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal MST)
 ├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
 ├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
+├── numerical_integration/  # Deterministic quadrature (trapezoid, Simpson, Romberg, Gauss-Legendre)
 ├── hypothesis/     # Hypothesis generation
 ├── core/           # Shared models, config
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 440+ tests (see CI)
+tests/              # 550+ tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 

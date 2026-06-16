@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests (380+ tests, see CI)
+# Run tests (550+ tests, see CI)
 pytest
 
 # Run linter

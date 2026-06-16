@@ -90,7 +90,7 @@ print(x)  # [2.0, 1.0]
 ## Running Tests
 
 ```bash
-pytest           # run all 350 tests (see CI)
+pytest           # run all 550+ tests (see CI)
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -116,22 +116,24 @@ See `docs/research-workflows.md` for guidance on using CDS inside larger researc
 
 ```
 src/cds/
-├── quantum/        # Quantum circuit simulation (single & multi-qubit)
-├── optimization/   # Gradient descent, Newton, Adam, line search
-├── signals/        # DFT, FFT, convolution, filtering
-├── probability/    # Probability distributions & sampling
-├── stats/          # Statistical analysis & regression
-├── math_utils/     # Calculus, linear algebra, eigenvalues
-├── data_analysis/  # CSV loading & data transforms
-├── scientific/     # Physical constants & formulas
-├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal)
-├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
-├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
-├── hypothesis/     # Hypothesis generation
-├── core/           # Shared models, config
-└── cli.py          # Command-line interface
+├── quantum/             # Quantum circuit simulation (single & multi-qubit)
+├── optimization/        # Gradient descent, Newton, Adam, line search
+├── ml/                  # Pure Python neural networks (MLP, Adam training)
+├── signals/             # DFT, FFT, convolution, filtering
+├── probability/         # Probability distributions & sampling
+├── stats/               # Statistical analysis & regression
+├── math_utils/          # Calculus, linear algebra, eigenvalues
+├── data_analysis/       # CSV loading & data transforms
+├── scientific/          # Physical constants & formulas
+├── graph/               # Graph algorithms (Dijkstra, BFS, DFS, Kruskal)
+├── montecarlo/          # Monte Carlo methods (π, integration, random walks)
+├── diffeq/              # ODE solvers (Euler, RK4, midpoint)
+├── numerical_integration/ # Deterministic quadrature (trapezoid, Simpson, Romberg)
+├── hypothesis/          # Hypothesis generation
+├── core/                # Shared models, config
+└── cli.py               # Command-line interface
 
-examples/           # Runnable demo scripts
-tests/              # 350 tests (see CI)
-docs/               # Documentation, API reference, benchmarks
+examples/                # Runnable demo scripts
+tests/                   # 550+ tests (see CI)
+docs/                    # Documentation, API reference, benchmarks
 ```

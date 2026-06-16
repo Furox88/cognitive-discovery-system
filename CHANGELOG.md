@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Numerical Integration** (`cds.numerical_integration`): Deterministic quadrature module with `trapezoid`, `simpson` (1/3), `simpson_38` (3/8), `romberg` (Richardson extrapolation), `gaussian_quadrature` (Gauss-Legendre), and `adaptive_simpson` (recursive adaptive). Complements the stochastic integration in `cds.montecarlo` and the ODE solvers in `cds.diffeq`. Gauss-Legendre nodes/weights are derived and cached; exact for polynomials up to degree 2n−1. Backed by 36 new tests (Newton-Cotes 1722, Simpson 1743, Romberg 1955, Gauss 1814, Lyness 1969).
+- Top-level `cds.numerical_integration` export registered in package `__init__` and `__all__`.
+
+### Changed
+- README module table, module count (14 → 15), architecture tree, and test badge (440+ → 550+) updated to reflect the new module. `docs/api.md` and `docs/api-reference.md` now document `cds.numerical_integration`.
+
+### Fixed
+- **Public API**: `rz_gate` was missing from the `cds.quantum` package exports (`__init__.py` / `__all__`) despite being documented and tested. Now importable via `from cds.quantum import rz_gate`.
+- **Documentation accuracy**: `lu_decomposition` return type corrected across docs from `(L, U)` to `(P, L, U)` (the implementation uses partial pivoting, PA = LU), and the misleading "Doolittle" label removed.
+- **Consistency sweep**: aligned test-count and coverage references across README, CLI (`cds info`), `docs/index.md`, `getting-started.md`, `CONTRIBUTING.md`, `ROADMAP.md`, and `benchmarks.md`. Coverage now reported as **99%** (previously stale 97% / 92%); test count reported as **550+** (previously stale 350/380/440). Resolved the quantum speedup contradiction in `benchmarks.md` (61.1x → 60.3x, matching the visual proof and the actual 0.41s/0.0068s ratio). Added missing `cds.scientific` and `cds.probability` sections to `docs/api.md`.
+- **api-reference.md vs source-code audit**: corrected 15 discrepancies — fixed `QuantumRegister.normalize()` return type (None, not QuantumRegister); fixed `cds.scientific` constants list (removed phantom `epsilon_0`/`mu_0`, added `hbar`/`pi`/`e_math`); added missing `rk45` (diffeq), `DataSet`/`plot_bar`/`plot_line` (data_analysis), `QuantumGate`/`Qubit` (quantum), and 6 hypothesis exports (`Domain`, `Hypothesis`, `HypothesisStatus`, `HypothesisGenerator`, `HypothesisEvaluator`, `EvaluationResult`); aligned parameter names across optimization (`h`, `h_base`, `state`, `grad_f`), stats (`data`), math_utils (`h_base`, `point`), scientific (`n_moles`, `temperature`, `volume`), and hypothesis (`research_question`). Added missing `numerical_integration` module to CLI `cds info` panel.
+
 ## [0.6.0] - 2026-06-14
 
 ### Added
@@ -97,7 +112,7 @@ All notable changes to this project will be documented in this file.
   - Integrals (Simpson's rule)
   - Gradient computation
   - Matrix multiplication, transpose, determinant
-  - LU decomposition (Doolittle's method)
+  - LU decomposition (partial pivoting)
   - Linear system solver (forward/back substitution)
   - Matrix inverse
   - Eigenvalue computation (power iteration — Von Mises 1929)

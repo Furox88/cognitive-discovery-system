@@ -7,6 +7,8 @@
 | Function | Description |
 |----------|-------------|
 | `QuantumCircuit()` | Create an empty single-qubit circuit |
+| `QuantumGate` | Dataclass representing a quantum gate (name, matrix) |
+| `Qubit` | Dataclass representing a qubit state (alpha, beta) |
 | `hadamard()` | Hadamard gate (creates superposition) |
 | `pauli_x()` | Pauli-X gate (bit flip) |
 | `pauli_z()` | Pauli-Z gate (phase flip) |
@@ -35,15 +37,15 @@
 - `.measure(seed=None)` → int (collapse to basis state)
 - `.measure_shots(shots, seed=None)` → dict[str, int]
 - `.probabilities()` → list[float]
-- `.normalize()` → QuantumRegister
+- `.normalize()` → None (in-place)
 
 ## cds.optimization
 
 | Function | Description |
 |----------|-------------|
-| `gradient_descent(f, x0, lr, tol, max_iter)` | Minimize scalar function |
-| `newton_method(f, x0, tol, max_iter)` | Find root via Newton-Raphson |
-| `adam(f, x0, lr, beta1, beta2, eps, tol, max_iter)` | Minimize with Adam optimizer |
+| `gradient_descent(f, x0, lr, tol, max_iter, h)` | Minimize scalar function |
+| `newton_method(f, x0, tol, max_iter, h_base)` | Find root via Newton-Raphson |
+| `adam(f, x0, lr, beta1, beta2, eps, tol, max_iter, h, state, grad_f)` | Minimize with Adam optimizer |
 | `line_search(f, a, b, tol, max_iter)` | Golden section search in [a,b] |
 
 All return `OptResult(x, value, iterations, converged)`.
@@ -82,7 +84,7 @@ All return `OptResult(x, value, iterations, converged)`.
 | `stdev(data, ddof=1)` | Standard deviation |
 | `correlation(x, y)` | Pearson correlation coefficient |
 | `linear_regression(x, y)` | Returns `RegressionResult(slope, intercept, r_squared, predict)` |
-| `one_sample_ttest(sample, popmean)` | One-sample Student t-test |
+| `one_sample_ttest(data, popmean)` | One-sample Student t-test |
 | `two_sample_ttest(a, b, equal_var=True)` | Two-sample t-test (pooled or Welch) |
 | `chi_square_gof(observed, expected)` | Chi-square goodness-of-fit test |
 | `chi_square_independence(table)` | Chi-square test of independence |
@@ -95,15 +97,15 @@ Test functions return `TestResult(statistic, df, p_value)`.
 
 | Function | Description |
 |----------|-------------|
-| `derivative(f, x, h)` | Numerical derivative (central difference) |
+| `derivative(f, x, h_base)` | Numerical derivative (central difference) |
 | `integral(f, a, b, n)` | Numerical integral (Simpson's rule) |
-| `gradient(f, x, h)` | Gradient for multi-variable functions |
+| `gradient(f, point, h_base)` | Gradient for multi-variable functions |
 | `dot(a, b)` | Dot product |
 | `mat_mul(a, b)` | Matrix multiplication |
 | `transpose(m)` | Matrix transpose |
-| `determinant(m)` | Matrix determinant (recursive) |
+| `determinant(m)` | Matrix determinant via PLU decomposition (O(N³)) |
 | `identity(n)` | n×n identity matrix |
-| `lu_decomposition(m)` | LU decomposition (Doolittle) → (L, U) |
+| `lu_decomposition(m)` | LU decomposition with partial pivoting → (P, L, U) |
 | `solve_linear(A, b)` | Solve Ax=b via LU |
 | `matrix_inverse(m)` | Matrix inverse via LU |
 | `power_iteration(m, max_iter, tol)` | Dominant eigenvalue & eigenvector (Von Mises) |
@@ -119,6 +121,9 @@ Test functions return `TestResult(statistic, df, p_value)`.
 | `normalize(data)` | Min-max normalization to [0, 1] |
 | `z_score(data)` | Standardize to mean=0, std=1 |
 | `moving_average(data, window)` | Sliding window average |
+| `DataSet(path)` | In-memory dataset with filtering, grouping & visualization |
+| `plot_bar(data, title)` | ASCII bar chart in terminal |
+| `plot_line(data, title)` | ASCII line chart in terminal |
 
 **DataTable methods:**
 - `.column(name)` → list[str]
@@ -129,7 +134,7 @@ Test functions return `TestResult(statistic, df, p_value)`.
 ## cds.scientific
 
 ### Constants
-Access via `get_constant(name)`: `c`, `G`, `h`, `k_B`, `N_A`, `R`, `epsilon_0`, `mu_0`, `sigma`, `e`, `m_e`, `m_p`
+Access via `get_constant(name)`: `c`, `G`, `h`, `hbar`, `k_B`, `e`, `N_A`, `R`, `sigma`, `pi`, `e_math`, `m_e`, `m_p`
 
 ### Formulas
 
@@ -138,7 +143,7 @@ Access via `get_constant(name)`: `c`, `G`, `h`, `k_B`, `N_A`, `R`, `epsilon_0`, 
 | `kinetic_energy(mass, velocity)` | KE = ½mv² |
 | `gravitational_force(m1, m2, r)` | F = Gm₁m₂/r² |
 | `wave_frequency(wavelength)` | f = c/λ |
-| `ideal_gas_pressure(n, T, V)` | P = nRT/V |
+| `ideal_gas_pressure(n_moles, temperature, volume)` | P = nRT/V |
 | `photon_energy(frequency)` | E = hf |
 | `schwarzschild_radius(mass)` | r_s = 2GM/c² |
 | `de_broglie_wavelength(mass, velocity)` | λ = h/(mv) |
@@ -181,18 +186,42 @@ All return `MCResult(estimate, samples, std_error)` (except random walks → pos
 | `rk4(f, t0, y0, t_end, dt)` | Classical 4th-order Runge-Kutta — O(dt⁴) |
 | `midpoint_method(f, t0, y0, t_end, dt)` | Explicit midpoint — O(dt²) |
 | `solve_system(f, t0, y0, t_end, dt)` | RK4 for ODE systems (vector y) |
+| `rk45(f, t0, y0, t_end, dt, atol, rtol)` | Dormand-Prince adaptive step-size (RK45) — O(dt⁵) |
 
 Scalar solvers return `ODESolution(t, y, method, steps)`.
 System solver returns `(t_values, y_values)`.
 
 **References:** Euler (1768), Runge (1895), Kutta (1901), Butcher (Numerical Methods for ODEs)
 
+## cds.numerical_integration
+
+Deterministic quadrature — complements the stochastic integration in `cds.montecarlo`.
+
+| Function | Description |
+|----------|-------------|
+| `trapezoid(f, a, b, n)` | Composite trapezoidal rule — O(h²) |
+| `simpson(f, a, b, n)` | Composite Simpson's 1/3 rule — O(h⁴), `n` must be even |
+| `simpson_38(f, a, b, n)` | Composite Simpson's 3/8 rule — O(h⁴), `n` must be a multiple of 3 |
+| `romberg(f, a, b, tol, max_iter)` | Richardson extrapolation on the trapezoid → `QuadratureResult` |
+| `gaussian_quadrature(f, a, b, n)` | Gauss-Legendre, exact for polynomials up to degree 2n−1 |
+| `adaptive_simpson(f, a, b, tol, max_depth)` | Recursive adaptive Simpson → `QuadratureResult` |
+
+`QuadratureResult` fields: `value`, `method`, `n_eval`, `error_estimate`.
+
+**References:** Newton-Cotes (1722), Simpson (1743), Romberg (1955), Gauss (1814), Lyness (1969)
+
 ## cds.hypothesis
 
 | Function | Description |
 |----------|-------------|
-| `generate_hypotheses(question, domain, n)` | Generate n hypotheses with explicit assumptions, predictions, and confidence. Returns list of Hypothesis objects. |
-| `PromptTemplate.render(question, domain, n)` | Render a structured prompt template for use with a custom generator implementation. |
+| `generate_hypotheses(research_question, domain, n, generator)` | Generate n hypotheses with explicit assumptions, predictions, and confidence. Returns list of `Hypothesis` objects. |
+| `PromptTemplate.render(research_question, domain, n)` | Render a structured prompt template for use with a custom generator implementation. |
 | `SimpleOfflineGenerator()` | Built-in offline generator for demos and testing. |
+| `HypothesisEvaluator()` | Evaluate hypotheses against criteria (plausibility, novelty, testability). |
+| `Domain` | Enum of research domains (e.g., `GENERAL_SCIENCE`, `PHYSICS`, `COSMOLOGY`) |
+| `Hypothesis` | Dataclass with assumptions, predictions, confidence, status |
+| `HypothesisStatus` | Status enum for hypothesis lifecycle |
+| `HypothesisGenerator` | Protocol (ABC) for custom generator implementations |
+| `EvaluationResult` | Result of hypothesis evaluation |
 
 See the hypothesis module source and `examples/hypothesis_demo.py` for usage patterns focused on research and discovery workflows. The design supports offline use and supplying custom implementations of the HypothesisGenerator Protocol.
