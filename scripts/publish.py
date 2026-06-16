@@ -88,8 +88,13 @@ def main() -> int:
 
     os.chdir(PROJECT_ROOT)
 
-    # 1. Sanity: clean working tree, on main
+    # 1. Sanity: clean working tree (modulo the build-generated _version.py),
+    #    on main
     status = git("status", "--porcelain")
+    # Filter out src/cds/_version.py — hatch-vcs regenerates it on every build.
+    status = "\n".join(
+        line for line in status.splitlines() if "src/cds/_version.py" not in line
+    )
     if status:
         print("Working tree is dirty. Commit/stash first:\n", status, file=sys.stderr)
         return 1
