@@ -9,4 +9,5 @@ When git tags are unavailable (e.g. shallow clones, sdists without history),
 the build falls back to ``0.0.0+unknown`` — see ``fallback-version`` in
 pyproject.toml.
 """
+
 __version__ = "0.0.0+unknown"
