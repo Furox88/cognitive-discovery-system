@@ -28,17 +28,47 @@ git clone https://github.com/Furox88/cognitive-discovery-system.git
 cd cognitive-discovery-system
 python -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev]"
+pip install -e ".[dev,test]"
+
+# Install pre-commit hooks (run on every commit)
+pip install pre-commit
+pre-commit install
 
 # Run tests (570 tests, see CI)
 pytest
 
 # Run linter
 ruff check src/ tests/
+ruff format --check src/ tests/
 
 # Try the CLI
 cds --help
 cds constants
+```
+
+## Pre-commit Hooks
+
+The repo uses pre-commit to run Ruff (lint + format) and Mypy (type check) on every commit. CI runs the same checks, so locally catching them first saves a CI round-trip.
+
+```bash
+# Install hooks (one-time, after clone)
+pre-commit install
+
+# Run on all files manually
+pre-commit run --all-files
+
+# Skip hooks for a single commit (use sparingly)
+git commit --no-verify
+```
+
+## Dependency Lockfile
+
+`requirements.lock` (production) and `requirements-dev.lock` (dev/test/docs) are committed to the repo. To regenerate after editing `pyproject.toml`:
+
+```bash
+pip install pip-tools
+pip-compile pyproject.toml --output-file requirements.lock
+pip-compile pyproject.toml --extra dev --extra test --extra docs --output-file requirements-dev.lock
 ```
 
 ## Package Name vs Repository Name

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Pre-commit hooks** (`.pre-commit-config.yaml`): Ruff (lint + format), Mypy (type check), and standard file checks run on every commit. CI mirrors the same checks.
+- **Dependency lockfiles** (`requirements.lock`, `requirements-dev.lock`): fully pinned dependency snapshots for reproducible installs. Regenerate via `pip-compile` (see CONTRIBUTING.md).
+- **Coverage threshold gate**: CI fails if coverage drops below 100% (`--cov-fail-under=100`). Branch coverage enabled. Configured in `pyproject.toml` under `[tool.coverage.*]`.
+- **Pre-commit job in CI**: `.github/workflows/tests.yml` now has a dedicated `pre-commit` job alongside the existing test job.
+
+### Changed
+- `CONTRIBUTING.md` updated with pre-commit setup, lockfile regeneration, and `ruff format` instructions.
+- `.github/workflows/tests.yml` extended: added `ruff format --check`, coverage threshold gate, and separate pre-commit job.
+
 ## [0.8.0] - 2026-06-16
 
 ### Fixed
