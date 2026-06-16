@@ -9,9 +9,12 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - [x] ~~Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md~~ — already documented in §"Package Name vs Repository Name"
 - [x] ~~Replace remaining generic error messages with actionable guidance~~ — updated 11 messages in linalg, signals, and stats modules
 
-## v0.8.0 — Performance & Benchmarks (Next)
+## v0.8.0 — Performance & Benchmarks (Released 2026-06-16)
 
 - [x] ~~Publish automated benchmark suite (FFT speed, Monte Carlo convergence, LU decomposition vs naive)~~ — see `benchmarks/run_benchmarks.py` & `docs/benchmarks.md`
+
+## v0.8.1 — Performance Polish (Next)
+
 - [ ] Add optional `--num-workers` flag to all parallel Monte Carlo functions
 - [ ] Implement caching layer for repeated simulations with identical parameters
 - [ ] Reduce overhead in `MultiQubitRegister.measure_shots()` via batched sampling
