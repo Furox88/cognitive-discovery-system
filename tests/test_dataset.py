@@ -3,7 +3,7 @@
 from cds.data_analysis import DataSet
 
 
-def test_dataset_basic():
+def test_dataset_basic() -> None:
     data = [
         {"name": "Alice", "age": 25, "score": 88},
         {"name": "Bob", "age": 30, "score": 92},
@@ -17,7 +17,7 @@ def test_dataset_basic():
     assert ds.column("age") == [25, 30, 25]
 
 
-def test_dataset_filter():
+def test_dataset_filter() -> None:
     data = [
         {"name": "Alice", "age": 25},
         {"name": "Bob", "age": 30},
@@ -31,7 +31,7 @@ def test_dataset_filter():
     assert "Charlie" not in filtered.column("name")
 
 
-def test_dataset_group_by():
+def test_dataset_group_by() -> None:
     data = [
         {"city": "NYC", "temp": 20},
         {"city": "NYC", "temp": 22},
@@ -50,7 +50,7 @@ def test_dataset_group_by():
     assert counts["LA"] == 2
 
 
-def test_dataset_select():
+def test_dataset_select() -> None:
     data = [{"a": 1, "b": 2, "c": 3}]
     ds = DataSet(data)
     selected = ds.select("a", "c")
@@ -59,7 +59,7 @@ def test_dataset_select():
     assert "b" not in selected[0]
 
 
-def test_dataset_head_tail():
+def test_dataset_head_tail() -> None:
     ds = DataSet([{"a": i} for i in range(10)])
     assert len(ds.head(3)) == 3
     assert len(ds.tail(3)) == 3
@@ -67,14 +67,14 @@ def test_dataset_head_tail():
     assert ds.tail(3)[-1]["a"] == 9
 
 
-def test_dataset_empty_repr():
+def test_dataset_empty_repr() -> None:
     ds = DataSet([])
     assert "empty" in repr(ds)
     assert ds.columns == []
     assert ds.shape == (0, 0)
 
 
-def test_dataset_to_list():
+def test_dataset_to_list() -> None:
     data = [{"a": 1}, {"a": 2}]
     ds = DataSet(data)
     lst = ds.to_list()
@@ -82,7 +82,7 @@ def test_dataset_to_list():
     assert lst is not ds.data  # Should be a copy
 
 
-def test_dataset_group_by_empty():
+def test_dataset_group_by_empty() -> None:
     data = [{"cat": "A", "val": "not_a_number"}]
     ds = DataSet(data)
     grouped = ds.group_by("cat")

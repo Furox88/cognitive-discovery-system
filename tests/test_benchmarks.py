@@ -4,6 +4,7 @@ Verifies structure (return types, keys) without timing the actual functions,
 so CI stays fast. Timing correctness is validated manually via
 ``python benchmarks/run_benchmarks.py``.
 """
+from typing import Any, cast
 
 from collections import OrderedDict
 
@@ -15,9 +16,10 @@ class TestBenchmarkStructure:
 
     def _import_and_call(self, func_name: str, module_path: str) -> OrderedDict[str, str]:
         import importlib
+        from typing import cast
 
         mod = importlib.import_module(module_path)
-        return getattr(mod, func_name)()
+        return cast(OrderedDict[str, str], getattr(mod, func_name)())
 
     @pytest.mark.parametrize(
         "func, module",
@@ -30,7 +32,7 @@ class TestBenchmarkStructure:
             ("bench_numerical_integration", "benchmarks.run_benchmarks"),
         ],
     )
-    def test_returns_ordered_dict_of_strings(self, func, module):
+    def test_returns_ordered_dict_of_strings(self, func: Any, module: Any) -> None:
         result = self._import_and_call(func, module)
         assert isinstance(result, OrderedDict)
         for k, v in result.items():
@@ -47,11 +49,11 @@ class TestBenchmarkStructure:
             ("bench_numerical_integration", "benchmarks.run_benchmarks", "Romberg (auto tol)"),
         ],
     )
-    def test_contains_expected_keys(self, func, module, required_key):
+    def test_contains_expected_keys(self, func: Any, module: Any, required_key: Any) -> None:
         result = self._import_and_call(func, module)
         assert required_key in result
 
-    def test_run_all_generates_report(self, tmp_path, monkeypatch):
+    def test_run_all_generates_report(self, tmp_path: Any, monkeypatch: Any) -> None:
         """run_all writes a valid markdown report with all six sections."""
         import importlib
 

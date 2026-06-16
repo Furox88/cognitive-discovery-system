@@ -2,10 +2,16 @@
 """Local PyPI publish script for cognitive-discovery-system.
 
 Usage:
-    python scripts/publish.py                  # build + test + upload
-    python scripts/publish.py --version 0.8.1 # verify version matches
-    python scripts/publish.py --dry-run        # build but do not upload
-    python scripts/publish.py --skip-tests     # skip the pytest step
+    python scripts/publish.py                   # use latest git tag as version
+    python scripts/publish.py --tag v0.9.0b1    # use a specific tag
+    python scripts/publish.py --dry-run         # build but do not upload
+    python scripts/publish.py --skip-tests      # skip the pytest step
+    python scripts/publish.py --skip-docs       # skip mkdocs gh-deploy
+
+Versioning: handled by `hatch-vcs` reading the latest `v*` git tag. The
+script reads the version from the built wheel filename (e.g.
+``cognitive_discovery_platform-0.9.0b1-py3-none-any.whl``) and uses it for
+verification, tag creation, and release notes.
 
 Why local-only: this project does not auto-publish from CI. Tag pushes stay
 clean. The wheel + sdist are pushed manually after a green local test pass.
@@ -20,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -32,8 +39,7 @@ TOKEN_FILE = Path.home() / ".pypi-token"
 def run(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
     """Run a subprocess, inheriting stdout/stderr. Raise on non-zero exit."""
     print(f"\n$ {' '.join(cmd)}", flush=True)
-    result = subprocess.run(cmd, check=True, **kwargs)
-    return result
+    return subprocess.run(cmd, check=True, **kwargs)
 
 
 def run_capture(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
@@ -45,15 +51,38 @@ def git(*args: str) -> str:
     return run_capture(["git", *args], cwd=PROJECT_ROOT).stdout.strip()
 
 
+def latest_tag() -> str | None:
+    """Return the latest ``v*`` tag, or None if there is none."""
+    out = git("tag", "--list", "v*", "--sort=-v:refname")
+    return out.splitlines()[0] if out else None
+
+
+def version_from_wheel(path: Path) -> str | None:
+    """Extract the version from a built wheel filename.
+
+    ``cds-0.9.0b1-py3-none-any.whl`` -> ``0.9.0b1``
+    """
+    m = re.search(r"-([\w.]+)-py\d", path.name)
+    return m.group(1) if m else None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("--version", help="Verify pyproject version matches")
+    parser.add_argument(
+        "--tag",
+        help="Git tag to publish (e.g. v0.9.0b1). Defaults to the latest v* tag.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Build but skip upload")
     parser.add_argument("--skip-tests", action="store_true", help="Skip pytest step")
     parser.add_argument(
         "--skip-docs",
         action="store_true",
         help="Skip mkdocs gh-deploy (Pages not updated after PyPI upload).",
+    )
+    parser.add_argument(
+        "--skip-release",
+        action="store_true",
+        help="Skip the GitHub release creation step (PyPI + tag push only).",
     )
     args = parser.parse_args()
 
@@ -70,25 +99,21 @@ def main() -> int:
         print(f"Not on main (currently on {branch!r}). Publish from main only.", file=sys.stderr)
         return 1
 
-    # 2. Verify pyproject version
-    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    match = next(
-        (line for line in pyproject.splitlines() if line.startswith("version = ")),
-        None,
-    )
-    if not match:
-        print("Could not find version in pyproject.toml", file=sys.stderr)
-        return 1
-    pyproject_version = match.split("=", 1)[1].strip().strip('"')
+    # 2. Determine the tag/version
+    if args.tag:
+        tag = args.tag
+    else:
+        tag = latest_tag()
 
-    if args.version and args.version != pyproject_version:
-        print(
-            f"Version mismatch: pyproject={pyproject_version}, requested={args.version}",
-            file=sys.stderr,
-        )
+    if not tag:
+        print("No --tag given and no v* tags found locally. Use --tag vX.Y.Z.", file=sys.stderr)
         return 1
 
-    print(f"Version: {pyproject_version}", flush=True)
+    if not tag.startswith("v"):
+        print(f"Tag {tag!r} does not start with 'v'. Rename and retry.", file=sys.stderr)
+        return 1
+
+    print(f"Version: {tag} (from {'--tag' if args.tag else 'latest'})", flush=True)
 
     # 3. Tests
     if not args.skip_tests:
@@ -109,7 +134,22 @@ def main() -> int:
         size_kb = path.stat().st_size / 1024
         print(f"  {path.name} ({size_kb:.1f} kB)")
 
-    # 5. Upload (unless dry-run)
+    # 5. Verify the built version matches the requested tag
+    wheel = next((p for p in artifacts if p.suffix == ".whl"), None)
+    if not wheel:
+        print("No wheel produced. Aborting.", file=sys.stderr)
+        return 1
+    built_version = version_from_wheel(wheel)
+    expected_version = tag.lstrip("v")
+    if built_version != expected_version:
+        print(
+            f"Version mismatch: built={built_version}, expected={expected_version}.\n"
+            f"  Did you forget to create the tag? `git tag -a {tag} -m 'Release {tag}'`",
+            file=sys.stderr,
+        )
+        return 1
+
+    # 6. Upload (unless dry-run)
     if args.dry_run:
         print("\nDry run: skipping upload.", flush=True)
         return 0
@@ -126,16 +166,18 @@ def main() -> int:
     env["TWINE_USERNAME"] = "__token__"
     env["TWINE_PASSWORD"] = token
 
-    print("\n=== Uploading to PyPI ===", flush=True)
+    print(f"\n=== Uploading {tag} to PyPI ===", flush=True)
     subprocess.run(
         [sys.executable, "-m", "twine", "upload", "dist/*"],
         check=True,
         env=env,
     )
 
-    print(f"\nDone. v{pyproject_version} published.", flush=True)
+    # 7. Push tag (if not already pushed)
+    print(f"\n=== Pushing tag {tag} ===", flush=True)
+    run(["git", "push", "origin", tag])
 
-    # 6. Deploy docs to GitHub Pages (legacy mode: push to gh-pages branch)
+    # 8. Deploy docs to GitHub Pages (legacy mode: push to gh-pages branch)
     if not args.skip_docs:
         print("\n=== Deploying docs to GitHub Pages ===", flush=True)
         try:
@@ -147,11 +189,23 @@ def main() -> int:
                 file=sys.stderr,
             )
 
-    print("\nNext: tag the release and create a GitHub release.", flush=True)
-    print(f"  git tag -a v{pyproject_version} -m 'Release v{pyproject_version}'")
-    print(f"  git push origin v{pyproject_version}")
-    print(f"  gh release create v{pyproject_version} --generate-notes")
+    # 9. Create GitHub release (attaches sdist + wheel so the attestation
+    #    workflow can sign them)
+    if not args.skip_release:
+        print(f"\n=== Creating GitHub release {tag} ===", flush=True)
+        subprocess.run(
+            [
+                "gh",
+                "release",
+                "create",
+                tag,
+                "--generate-notes",
+                *(str(p) for p in artifacts if p.suffix in {".whl", ".tar.gz"}),
+            ],
+            check=True,
+        )
 
+    print(f"\nDone. {tag} published to PyPI, tagged, and released on GitHub.", flush=True)
     return 0
 
 

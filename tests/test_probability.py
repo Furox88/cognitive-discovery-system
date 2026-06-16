@@ -16,27 +16,27 @@ from cds.probability.distributions import (
 # --- Gaussian ---
 
 
-def test_gaussian_peak():
+def test_gaussian_peak() -> None:
     # PDF peaks at mu
     assert gaussian_pdf(0.0) > gaussian_pdf(1.0)
 
 
-def test_gaussian_symmetric():
+def test_gaussian_symmetric() -> None:
     assert abs(gaussian_pdf(-1.0) - gaussian_pdf(1.0)) < 1e-12
 
 
-def test_gaussian_custom_params():
+def test_gaussian_custom_params() -> None:
     val = gaussian_pdf(5.0, mu=5.0, sigma=2.0)
     peak = 1 / (2 * math.sqrt(2 * math.pi))
     assert abs(val - peak) < 1e-9
 
 
-def test_gaussian_invalid_sigma():
+def test_gaussian_invalid_sigma() -> None:
     with pytest.raises(ValueError):
         gaussian_pdf(0.0, sigma=0.0)
 
 
-def test_gaussian_narrow():
+def test_gaussian_narrow() -> None:
     # smaller sigma -> taller peak
     narrow = gaussian_pdf(0.0, sigma=0.1)
     wide = gaussian_pdf(0.0, sigma=10.0)
@@ -46,21 +46,21 @@ def test_gaussian_narrow():
 # --- Uniform ---
 
 
-def test_uniform_inside():
+def test_uniform_inside() -> None:
     assert abs(uniform_pdf(0.5) - 1.0) < 1e-9
 
 
-def test_uniform_outside():
+def test_uniform_outside() -> None:
     assert uniform_pdf(-1.0) == 0.0
     assert uniform_pdf(2.0) == 0.0
 
 
-def test_uniform_custom_range():
+def test_uniform_custom_range() -> None:
     val = uniform_pdf(5.0, a=0, b=10)
     assert abs(val - 0.1) < 1e-9
 
 
-def test_uniform_invalid():
+def test_uniform_invalid() -> None:
     with pytest.raises(ValueError):
         uniform_pdf(0.5, a=1, b=0)
 
@@ -68,19 +68,19 @@ def test_uniform_invalid():
 # --- Exponential ---
 
 
-def test_exponential_at_zero():
+def test_exponential_at_zero() -> None:
     assert abs(exponential_pdf(0.0, lam=2.0) - 2.0) < 1e-9
 
 
-def test_exponential_negative():
+def test_exponential_negative() -> None:
     assert exponential_pdf(-1.0) == 0.0
 
 
-def test_exponential_decreasing():
+def test_exponential_decreasing() -> None:
     assert exponential_pdf(1.0) > exponential_pdf(2.0)
 
 
-def test_exponential_invalid_lambda():
+def test_exponential_invalid_lambda() -> None:
     with pytest.raises(ValueError):
         exponential_pdf(1.0, lam=-1.0)
 
@@ -88,34 +88,34 @@ def test_exponential_invalid_lambda():
 # --- Binomial ---
 
 
-def test_binomial_fair_coin():
+def test_binomial_fair_coin() -> None:
     # P(3 heads in 5 flips) = C(5,3) * 0.5^5
     val = binomial_pmf(3, 5, 0.5)
     expected = math.comb(5, 3) * 0.5**5
     assert abs(val - expected) < 1e-12
 
 
-def test_binomial_certain():
+def test_binomial_certain() -> None:
     # p=1, k=n => probability 1
     assert abs(binomial_pmf(5, 5, 1.0) - 1.0) < 1e-12
 
 
-def test_binomial_impossible():
+def test_binomial_impossible() -> None:
     # p=0, k>0 => probability 0
     assert binomial_pmf(1, 5, 0.0) == 0.0
 
 
-def test_binomial_out_of_range():
+def test_binomial_out_of_range() -> None:
     assert binomial_pmf(6, 5, 0.5) == 0.0
     assert binomial_pmf(-1, 5, 0.5) == 0.0
 
 
-def test_binomial_invalid_p():
+def test_binomial_invalid_p() -> None:
     with pytest.raises(ValueError):
         binomial_pmf(1, 5, 1.5)
 
 
-def test_binomial_sums_to_one():
+def test_binomial_sums_to_one() -> None:
     total = sum(binomial_pmf(k, 10, 0.3) for k in range(11))
     assert abs(total - 1.0) < 1e-9
 
@@ -123,29 +123,29 @@ def test_binomial_sums_to_one():
 # --- Poisson ---
 
 
-def test_poisson_basic():
+def test_poisson_basic() -> None:
     # P(k=0, lam=1) = e^-1
     val = poisson_pmf(0, 1.0)
     assert abs(val - math.exp(-1)) < 1e-12
 
 
-def test_poisson_mode():
+def test_poisson_mode() -> None:
     # mode of Poisson(5) is near 5
     probs = [poisson_pmf(k, 5.0) for k in range(15)]
     mode = probs.index(max(probs))
     assert mode in (4, 5)
 
 
-def test_poisson_negative_k():
+def test_poisson_negative_k() -> None:
     assert poisson_pmf(-1, 3.0) == 0.0
 
 
-def test_poisson_invalid_lambda():
+def test_poisson_invalid_lambda() -> None:
     with pytest.raises(ValueError):
         poisson_pmf(0, -1.0)
 
 
-def test_poisson_sums_approx_one():
+def test_poisson_sums_approx_one() -> None:
     total = sum(poisson_pmf(k, 3.0) for k in range(50))
     assert abs(total - 1.0) < 1e-9
 
@@ -153,17 +153,17 @@ def test_poisson_sums_approx_one():
 # --- Sampling ---
 
 
-def test_uniform_sample_count():
+def test_uniform_sample_count() -> None:
     samples = uniform_sample(0, 1, 100, seed=42)
     assert len(samples) == 100
 
 
-def test_uniform_sample_range():
+def test_uniform_sample_range() -> None:
     samples = uniform_sample(2, 5, 1000, seed=7)
     assert all(2 <= s <= 5 for s in samples)
 
 
-def test_uniform_sample_reproducible():
+def test_uniform_sample_reproducible() -> None:
     s1 = uniform_sample(0, 1, 10, seed=99)
     s2 = uniform_sample(0, 1, 10, seed=99)
     assert s1 == s2

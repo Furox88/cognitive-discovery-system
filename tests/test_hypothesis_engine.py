@@ -3,7 +3,7 @@
 from cds.hypothesis import Domain, HypothesisEvaluator, HypothesisStatus, generate_hypotheses
 
 
-def test_hypothesis_evaluation_t_test():
+def test_hypothesis_evaluation_t_test() -> None:
     hypos = generate_hypotheses("Do plants grow faster with music?", Domain.GENERAL_SCIENCE, n=1)
     hypo = hypos[0]
 
@@ -20,7 +20,7 @@ def test_hypothesis_evaluation_t_test():
     assert result.p_value < 0.05
 
 
-def test_hypothesis_evaluation_anova():
+def test_hypothesis_evaluation_anova() -> None:
     hypos = generate_hypotheses("Effect of 3 different fertilizers", Domain.GENERAL_SCIENCE, n=1)
     hypo = hypos[0]
 
@@ -35,7 +35,7 @@ def test_hypothesis_evaluation_anova():
     assert hypo.status == HypothesisStatus.VALIDATED
 
 
-def test_hypothesis_evaluation_rejected():
+def test_hypothesis_evaluation_rejected() -> None:
     hypos = generate_hypotheses("Testing null effect", Domain.GENERAL_SCIENCE, n=1)
     hypo = hypos[0]
 

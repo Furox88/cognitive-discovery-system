@@ -1,14 +1,15 @@
 import pytest
+from typing import Any, cast
 
 from cds.signals import fft2, ifft2
 
 
-def _max_err(a, b):
-    return max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0])))
-
+def _max_err(a: Any, b: Any) -> float:
+    from typing import cast
+    return cast(float, max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0]))))
 
 class TestFFT2:
-    def test_constant_matrix_dc_component(self):
+    def test_constant_matrix_dc_component(self) -> None:
         m = [[1.0, 1.0], [1.0, 1.0]]
         out = fft2(m)
         # DC term equals sum of all entries
@@ -18,7 +19,7 @@ class TestFFT2:
         assert abs(out[1][0]) < 1e-12
         assert abs(out[1][1]) < 1e-12
 
-    def test_roundtrip_identity(self):
+    def test_roundtrip_identity(self) -> None:
         m = [
             [1.0, 2.0, 3.0, 4.0],
             [5.0, 6.0, 7.0, 8.0],
@@ -31,7 +32,7 @@ class TestFFT2:
                 assert abs(recovered[i][j].real - m[i][j]) < 1e-9
                 assert abs(recovered[i][j].imag) < 1e-9
 
-    def test_separability_matches_manual(self):
+    def test_separability_matches_manual(self) -> None:
         m = [[1.0, 0.0], [0.0, 0.0]]
         out = fft2(m)
         # impulse at (0,0): all frequency components equal 1
@@ -39,22 +40,22 @@ class TestFFT2:
             for j in range(2):
                 assert abs(out[i][j] - 1.0) < 1e-12
 
-    def test_complex_input_roundtrip(self):
+    def test_complex_input_roundtrip(self) -> None:
         m = [[1 + 1j, 2 - 1j], [0 + 0j, 3 + 2j]]
         recovered = ifft2(fft2(m))
         assert _max_err(recovered, m) < 1e-9
 
-    def test_empty_raises(self):
+    def test_empty_raises(self) -> None:
         with pytest.raises(ValueError):
             fft2([])
         with pytest.raises(ValueError):
             ifft2([])
 
-    def test_ragged_raises(self):
+    def test_ragged_raises(self) -> None:
         with pytest.raises(ValueError):
             fft2([[1.0, 2.0], [3.0]])
 
-    def test_parseval_energy(self):
+    def test_parseval_energy(self) -> None:
         m = [[1.0, 2.0], [3.0, 4.0]]
         out = fft2(m)
         n = 4

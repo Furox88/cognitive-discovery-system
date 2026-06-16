@@ -16,7 +16,7 @@ from cds.signals.processing import (
 # --- DFT / IDFT ---
 
 
-def test_dft_dc_signal():
+def test_dft_dc_signal() -> None:
     # constant signal -> all energy at DC (bin 0)
     signal = [1 + 0j] * 4
     result = dft(signal)
@@ -25,7 +25,7 @@ def test_dft_dc_signal():
         assert abs(result[k]) < 1e-9
 
 
-def test_dft_single_frequency():
+def test_dft_single_frequency() -> None:
     # pure cosine at frequency 1
     n = 8
     signal = [complex(math.cos(2 * math.pi * k / n)) for k in range(n)]
@@ -35,7 +35,7 @@ def test_dft_single_frequency():
     assert abs(result[7]) > 3.0
 
 
-def test_idft_roundtrip():
+def test_idft_roundtrip() -> None:
     signal = [1 + 0j, 2 + 1j, 0 - 1j, 3 + 0j]
     spectrum = dft(signal)
     recovered = idft(spectrum)
@@ -43,11 +43,11 @@ def test_idft_roundtrip():
         assert abs(s - r) < 1e-9
 
 
-def test_dft_empty():
+def test_dft_empty() -> None:
     assert dft([]) == []
 
 
-def test_idft_single():
+def test_idft_single() -> None:
     signal = [5 + 0j]
     assert abs(idft(dft(signal))[0] - 5) < 1e-9
 
@@ -55,7 +55,7 @@ def test_idft_single():
 # --- FFT radix-2 ---
 
 
-def test_fft_matches_dft():
+def test_fft_matches_dft() -> None:
     signal = [complex(i) for i in range(8)]
     dft_result = dft(signal)
     fft_result = fft_radix2(signal)
@@ -63,20 +63,20 @@ def test_fft_matches_dft():
         assert abs(d - f) < 1e-9
 
 
-def test_fft_power_of_2_required():
+def test_fft_power_of_2_required() -> None:
     with pytest.raises(ValueError):
         fft_radix2([1 + 0j, 2 + 0j, 3 + 0j])
 
 
-def test_fft_empty():
+def test_fft_empty() -> None:
     assert fft_radix2([]) == []
 
 
-def test_fft_single():
+def test_fft_single() -> None:
     assert abs(fft_radix2([42 + 0j])[0] - 42) < 1e-9
 
 
-def test_fft_two_elements():
+def test_fft_two_elements() -> None:
     result = fft_radix2([1 + 0j, -1 + 0j])
     assert abs(result[0]) < 1e-9
     assert abs(result[1] - 2) < 1e-9
@@ -85,14 +85,14 @@ def test_fft_two_elements():
 # --- Convolution ---
 
 
-def test_convolve_impulse():
+def test_convolve_impulse() -> None:
     # convolve with delta function
     a = [1.0, 2.0, 3.0]
     b = [1.0]
     assert convolve(a, b) == [1.0, 2.0, 3.0]
 
 
-def test_convolve_simple():
+def test_convolve_simple() -> None:
     a = [1.0, 1.0]
     b = [1.0, 1.0]
     result = convolve(a, b)
@@ -102,7 +102,7 @@ def test_convolve_simple():
     assert abs(result[2] - 1) < 1e-9
 
 
-def test_convolve_length():
+def test_convolve_length() -> None:
     a = [1.0, 2.0, 3.0]
     b = [4.0, 5.0]
     result = convolve(a, b)
@@ -112,7 +112,7 @@ def test_convolve_length():
 # --- Power spectrum ---
 
 
-def test_power_spectrum_dc():
+def test_power_spectrum_dc() -> None:
     signal = [2 + 0j] * 4
     ps = power_spectrum(signal)
     # all energy at DC
@@ -121,7 +121,7 @@ def test_power_spectrum_dc():
         assert abs(ps[k]) < 1e-9
 
 
-def test_power_spectrum_length():
+def test_power_spectrum_length() -> None:
     signal = [complex(i) for i in range(8)]
     assert len(power_spectrum(signal)) == 8
 
@@ -129,14 +129,14 @@ def test_power_spectrum_length():
 # --- Low-pass filter ---
 
 
-def test_low_pass_preserves_dc():
+def test_low_pass_preserves_dc() -> None:
     signal = [3 + 0j] * 8
     filtered = low_pass_filter(signal, cutoff=2)
     for s in filtered:
         assert abs(s.real - 3) < 1e-9
 
 
-def test_low_pass_removes_high_freq():
+def test_low_pass_removes_high_freq() -> None:
     n = 16
     # signal = DC(1) + high-freq noise
     signal = [1 + 0j + 0.5 * complex(math.cos(2 * math.pi * 7 * k / n)) for k in range(n)]

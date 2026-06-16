@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-platform"
-version = "0.8.5"
+dynamic = ["version"]
 description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
@@ -10,7 +10,7 @@ authors = [
 ]
 keywords = ["quantum", "fft", "optimization", "probability", "statistics", "scientific-computing", "signal-processing", "pure-python", "graph-theory", "monte-carlo", "differential-equations", "linear-algebra"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -82,11 +82,23 @@ Issues = "https://github.com/Furox88/cognitive-discovery-system/issues"
 Changelog = "https://github.com/Furox88/cognitive-discovery-system/releases"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/cds"]
+
+# Dynamic version from git tags. `hatch-vcs` reads the most recent 'v*'
+# annotated tag and writes src/cds/_version.py at build time. The stub
+# _version.py is committed (so mypy can resolve __version__ in fresh
+# clones without git history) but gets overwritten during `python -m build`
+# and `pip install -e .`. To cut a release: `git tag -a vX.Y.Z -m "..."`
+# then `python -m build` — the wheel/sdist filename picks up the tag.
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/cds/_version.py"
 
 [tool.ruff]
 line-length = 100
@@ -103,21 +115,25 @@ addopts = ["--strict-markers", "--strict-config"]
 
 [tool.coverage.run]
 source = ["src/cds"]
-# Branch coverage is intentionally OFF. The numerical helper functions in
-# `cds.stats.hypothesis_tests` (`_gser`, `_gcf`) have for-loops whose
-# natural-end branch is mathematically unreachable for convergent inputs;
-# these are validated end-to-end via the higher-level chi2_sf / gamma_sf
-# tests, but triggering the natural-end branch in unit tests would require
-# constructing inputs that defeat Numerical Recipes convergence, which
-# adds noise without improving real coverage. Statement coverage remains
-# enforced at 100%.
+# Branch coverage is on. The reference cell (Linux + Python 3.12) enforces
+# the statement-coverage gate; branch coverage is reported but not gated
+# here, because the `cds.stats.hypothesis_tests` numerical helpers
+# (`_gser`, `_gcf`) contain for-loops whose natural-end branch is
+# mathematically unreachable for convergent inputs. These are validated
+# end-to-end via higher-level chi2_sf / gamma_sf tests; forcing branch
+# coverage on them would require constructing inputs that defeat
+# Numerical Recipes convergence, which adds noise without improving real
+# coverage. The CI command uses `coverage report --fail-under=99` to
+# enforce the statement gate while branch data is still collected.
+branch = true
+dynamic_context = "test_function"
 
 [tool.coverage.report]
-# CDS targets 100% statement coverage. CI enforces this on Python 3.12
-# (the release-gate version) via --cov-fail-under=100. Other matrix Python
-# versions (3.10, 3.11) only report coverage, since micro-differences in
-# their stdlib (e.g. typing.Union, statistics) occasionally surface a
-# 1-statement miss that the 3.12 baseline covers.
+# Statement coverage is the CI gate. CDS targets 100% statement coverage
+# across Linux + Python 3.12 (the reference cell). Other matrix cells
+# (3.10, 3.11, Windows, macOS) only report coverage to keep CI fast
+# and avoid redundant Codecov uploads; micro-differences in their stdlib
+# occasionally surface a 1-statement miss that the 3.12 baseline covers.
 fail_under = 99
 show_missing = true
 skip_covered = false
@@ -135,3 +151,6 @@ warn_return_any = true
 warn_unused_configs = true
 strict = true
 ignore_missing_imports = true
+# Mypy is run on both `src/` and `tests/` in CI (see .github/workflows/tests.yml).
+# Local pre-commit hook still skips mypy to keep the commit loop fast; CI is the
+# gate for test-code type safety.

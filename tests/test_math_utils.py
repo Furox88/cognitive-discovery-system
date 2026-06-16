@@ -6,31 +6,31 @@ from cds.math_utils.calculus import derivative, gradient, integral
 from cds.math_utils.linalg import determinant, dot, mat_mul, transpose
 
 
-def test_derivative_of_x_squared():
+def test_derivative_of_x_squared() -> None:
     # d/dx(x^2) = 2x, at x=3 should be 6
     result = derivative(lambda x: x**2, 3.0)
     assert abs(result - 6.0) < 1e-5
 
 
-def test_derivative_of_sin():
+def test_derivative_of_sin() -> None:
     # d/dx(sin(x)) = cos(x), at x=0 should be 1
     result = derivative(math.sin, 0.0)
     assert abs(result - 1.0) < 1e-5
 
 
-def test_integral_of_x_squared():
+def test_integral_of_x_squared() -> None:
     # integral of x^2 from 0 to 3 = 9
     result = integral(lambda x: x**2, 0, 3)
     assert abs(result - 9.0) < 0.01
 
 
-def test_integral_of_sin():
+def test_integral_of_sin() -> None:
     # integral of sin(x) from 0 to pi = 2
     result = integral(math.sin, 0, math.pi)
     assert abs(result - 2.0) < 0.001
 
 
-def test_gradient():
+def test_gradient() -> None:
     def f(x: float, y: float) -> float:
         return x**2 + y**2
 
@@ -39,80 +39,80 @@ def test_gradient():
     assert abs(g[1] - 8.0) < 1e-4
 
 
-def test_dot_product():
+def test_dot_product() -> None:
     assert dot([1, 2, 3], [4, 5, 6]) == 32
 
 
-def test_mat_mul():
+def test_mat_mul() -> None:
     a = [[1, 2], [3, 4]]
     b = [[5, 6], [7, 8]]
     result = mat_mul(a, b)
     assert result == [[19, 22], [43, 50]]
 
 
-def test_transpose():
+def test_transpose() -> None:
     m = [[1, 2, 3], [4, 5, 6]]
     assert transpose(m) == [[1, 4], [2, 5], [3, 6]]
 
 
-def test_determinant_2x2():
+def test_determinant_2x2() -> None:
     m = [[1, 2], [3, 4]]
     assert abs(determinant(m) - (-2)) < 1e-9
 
 
-def test_determinant_3x3():
+def test_determinant_3x3() -> None:
     m = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
     assert abs(determinant(m) - 1.0) < 1e-9
 
 
-def test_derivative_of_exp():
+def test_derivative_of_exp() -> None:
     # d/dx(e^x) = e^x, at x=1
     result = derivative(math.exp, 1.0)
     assert abs(result - math.e) < 1e-4
 
 
-def test_integral_constant():
+def test_integral_constant() -> None:
     # integral of 5 from 0 to 3 = 15
     result = integral(lambda x: 5.0, 0, 3)
     assert abs(result - 15.0) < 0.01
 
 
-def test_determinant_identity():
+def test_determinant_identity() -> None:
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     assert abs(determinant(m) - 1.0) < 1e-9
 
 
-def test_transpose_square():
+def test_transpose_square() -> None:
     m = [[1, 2], [3, 4]]
     assert transpose(m) == [[1, 3], [2, 4]]
 
 
-def test_dot_orthogonal():
+def test_dot_orthogonal() -> None:
     assert dot([1, 0, 0], [0, 1, 0]) == 0
 
 
-def test_mat_mul_identity():
+def test_mat_mul_identity() -> None:
     I = [[1, 0], [0, 1]]  # noqa: E741
     a = [[5, 6], [7, 8]]
     assert mat_mul(I, a) == a
 
 
-def test_determinant_singular():
+def test_determinant_singular() -> None:
     m = [[1, 2], [2, 4]]
     assert abs(determinant(m)) < 1e-9
 
 
-def test_integral_sin_half_period():
+def test_integral_sin_half_period() -> None:
     result = integral(math.sin, 0, math.pi)
     assert abs(result - 2.0) < 1e-6
 
 
-def test_derivative_of_constant():
+def test_derivative_of_constant() -> None:
     result = derivative(lambda x: 5.0, 3.0)
     assert abs(result) < 1e-6
 
 
-def test_transpose_rect():
+def test_transpose_rect() -> None:
     m = [[1, 2, 3], [4, 5, 6]]
     t = transpose(m)
     assert len(t) == 3
@@ -120,11 +120,11 @@ def test_transpose_rect():
     assert t[0] == [1, 4]
 
 
-def test_determinant_3x3_unit():
+def test_determinant_3x3_unit() -> None:
     m = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
     d = determinant(m)
     assert abs(d - 1.0) < 1e-9
 
 
-def test_dot_parallel():
+def test_dot_parallel() -> None:
     assert dot([2, 0], [3, 0]) == 6

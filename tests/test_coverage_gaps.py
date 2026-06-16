@@ -5,6 +5,7 @@ Targets:
 - cds.__main__ entry point
 - cds.hypothesis.evaluator new dispatch paths
 """
+from typing import Any
 
 import math
 import subprocess
@@ -28,7 +29,7 @@ _runner = CliRunner()
 # ---------------------------------------------------------------------------
 # Quantum simulator: measure() state collapse
 # ---------------------------------------------------------------------------
-def test_measure_collapse_to_zero():
+def test_measure_collapse_to_zero() -> None:
     """A qubit in |0> collapses to 0 and stays |0>."""
     q = Qubit(alpha=1.0 + 0j, beta=0.0 + 0j)
     outcome = measure(q)
@@ -37,7 +38,7 @@ def test_measure_collapse_to_zero():
     assert q.beta == 0.0
 
 
-def test_measure_collapse_to_one():
+def test_measure_collapse_to_one() -> None:
     """A qubit in |1> collapses to 1 and stays |1>."""
     q = Qubit(alpha=0.0 + 0j, beta=1.0 + 0j)
     outcome = measure(q)
@@ -46,7 +47,7 @@ def test_measure_collapse_to_one():
     assert q.beta == 1.0
 
 
-def test_measure_superposition_distribution():
+def test_measure_superposition_distribution() -> None:
     """A |+> qubit collapses ~50/50 over many samples."""
     inv = 1.0 / math.sqrt(2)
     counts = {0: 0, 1: 0}
@@ -57,7 +58,7 @@ def test_measure_superposition_distribution():
     assert counts[0] > 0 and counts[1] > 0
 
 
-def test_simulate_seed_reproducible():
+def test_simulate_seed_reproducible() -> None:
     """simulate() with the same seed gives identical counts."""
     circuit = QuantumCircuit().add(hadamard()).add(pauli_x())
     a = simulate(circuit, shots=500, seed=123)
@@ -68,7 +69,7 @@ def test_simulate_seed_reproducible():
 # ---------------------------------------------------------------------------
 # __main__ entry point (coverage for cds.__main__)
 # ---------------------------------------------------------------------------
-def test_main_module_runs():
+def test_main_module_runs() -> None:
     """`python -m cds --version` exits 0 and prints the version."""
     result = subprocess.run(
         [sys.executable, "-m", "cds", "--version"],
@@ -83,12 +84,12 @@ def test_main_module_runs():
 # ---------------------------------------------------------------------------
 # Evaluator: new dispatch paths
 # ---------------------------------------------------------------------------
-def _make_hypothesis():
+def _make_hypothesis() -> Any:
     hypos = generate_hypotheses("Test question?", Domain.GENERAL_SCIENCE, n=1)
     return hypos[0]
 
 
-def test_evaluator_one_sample_significant():
+def test_evaluator_one_sample_significant() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     # Sample mean well above the reference mean
@@ -101,7 +102,7 @@ def test_evaluator_one_sample_significant():
     assert hypo.status == HypothesisStatus.VALIDATED
 
 
-def test_evaluator_one_sample_not_significant():
+def test_evaluator_one_sample_not_significant() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     # Sample mean close to the reference mean
@@ -113,7 +114,7 @@ def test_evaluator_one_sample_not_significant():
     assert hypo.status == HypothesisStatus.REJECTED
 
 
-def test_evaluator_chi_square_gof():
+def test_evaluator_chi_square_gof() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     # Strongly skewed observed vs uniform expected -> significant
@@ -125,7 +126,7 @@ def test_evaluator_chi_square_gof():
     assert result.is_significant
 
 
-def test_evaluator_chi_square_independence():
+def test_evaluator_chi_square_independence() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     # Strong association between rows and columns
@@ -135,7 +136,7 @@ def test_evaluator_chi_square_independence():
     assert result.is_significant
 
 
-def test_evaluator_paired():
+def test_evaluator_paired() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     result = evaluator.evaluate(
@@ -146,7 +147,7 @@ def test_evaluator_paired():
     assert result.is_significant
 
 
-def test_evaluator_unsupported_format_raises():
+def test_evaluator_unsupported_format_raises() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     try:
@@ -156,7 +157,7 @@ def test_evaluator_unsupported_format_raises():
         assert "Unsupported data format" in str(exc)
 
 
-def test_evaluator_compare_groups_too_few_raises():
+def test_evaluator_compare_groups_too_few_raises() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     try:
@@ -166,7 +167,7 @@ def test_evaluator_compare_groups_too_few_raises():
         assert "2 groups" in str(exc)
 
 
-def test_evaluator_goodness_of_fit_too_few_raises():
+def test_evaluator_goodness_of_fit_too_few_raises() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     try:
@@ -176,7 +177,7 @@ def test_evaluator_goodness_of_fit_too_few_raises():
         assert "2 categories" in str(exc)
 
 
-def test_evaluator_independence_bad_table_raises():
+def test_evaluator_independence_bad_table_raises() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     try:
@@ -186,7 +187,7 @@ def test_evaluator_independence_bad_table_raises():
         assert "contingency" in str(exc)
 
 
-def test_evaluator_one_sample_too_few_raises():
+def test_evaluator_one_sample_too_few_raises() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     try:
@@ -199,25 +200,25 @@ def test_evaluator_one_sample_too_few_raises():
 # ---------------------------------------------------------------------------
 # CLI commands: plot, constants, dashboard error path
 # ---------------------------------------------------------------------------
-def test_cli_plot_valid():
+def test_cli_plot_valid() -> None:
     result = _runner.invoke(app, ["plot", "1,5,3,8", "--title", "Data"])
     assert result.exit_code == 0
     assert "Data" in result.stdout
 
 
-def test_cli_plot_invalid():
+def test_cli_plot_invalid() -> None:
     result = _runner.invoke(app, ["plot", "1,abc,3"])
     assert result.exit_code == 0  # CLI catches the error, prints message
     assert "Error" in result.stdout
 
 
-def test_cli_constants():
+def test_cli_constants() -> None:
     result = _runner.invoke(app, ["constants"])
     assert result.exit_code == 0
     assert "Physical Constants" in result.stdout
 
 
-def test_cli_dashboard_missing_file(monkeypatch):
+def test_cli_dashboard_missing_file(monkeypatch: Any ) -> None:
     """Dashboard command reports an error when the app file is absent."""
     monkeypatch.setattr(cli_mod.Path, "exists", lambda self: False)
     result = _runner.invoke(app, ["dashboard"])
@@ -225,25 +226,25 @@ def test_cli_dashboard_missing_file(monkeypatch):
     assert "not found" in result.stdout.lower()
 
 
-def test_cli_calc_unknown_formula():
+def test_cli_calc_unknown_formula() -> None:
     result = _runner.invoke(app, ["calc", "unknown"])
     assert result.exit_code == 0
     assert "Unknown formula" in result.stdout
 
 
-def test_cli_no_command_shows_help():
+def test_cli_no_command_shows_help() -> None:
     """Invoking the CLI with no subcommand prints help."""
     result = _runner.invoke(app, [])
     assert "help" in result.stdout.lower() or "Usage" in result.stdout
 
 
-def test_cli_hypothesis_show_prompt():
+def test_cli_hypothesis_show_prompt() -> None:
     result = _runner.invoke(app, ["hypothesis", "Test question", "--show-prompt"])
     assert result.exit_code == 0
     assert "Prompt Template" in result.stdout
 
 
-def test_cli_calc_input_error(monkeypatch):
+def test_cli_calc_input_error(monkeypatch: Any ) -> None:
     """calc command with non-numeric input prints error."""
     monkeypatch.setattr("typer.prompt", lambda _: "not_a_number")
     result = _runner.invoke(app, ["calc", "ke"])
@@ -251,10 +252,10 @@ def test_cli_calc_input_error(monkeypatch):
     assert "Error" in result.stdout
 
 
-def test_cli_calc_generic_exception(monkeypatch):
+def test_cli_calc_generic_exception(monkeypatch: Any ) -> None:
     """calc command with an unexpected exception prints error."""
 
-    def bad_prompt(_):
+    def bad_prompt(_: Any ) -> None:
         raise RuntimeError("surprise")
 
     monkeypatch.setattr("typer.prompt", bad_prompt)
@@ -263,10 +264,10 @@ def test_cli_calc_generic_exception(monkeypatch):
     assert "Error" in result.stdout
 
 
-def test_cli_dashboard_launch(monkeypatch):
+def test_cli_dashboard_launch(monkeypatch: Any ) -> None:
     """Dashboard command: mock subprocess so streamlit is not actually launched."""
 
-    def fake_run(cmd, **kwargs):
+    def fake_run(cmd: list[str], **kwargs: Any) -> None:
         raise KeyboardInterrupt()
 
     monkeypatch.setattr(subprocess, "run", fake_run)
@@ -275,10 +276,10 @@ def test_cli_dashboard_launch(monkeypatch):
     assert "Dashboard stopped" in result.stdout
 
 
-def test_cli_dashboard_streamlit_missing(monkeypatch):
+def test_cli_dashboard_streamlit_missing(monkeypatch: Any ) -> None:
     """Dashboard command: FileNotFoundError when streamlit is not installed."""
 
-    def fake_run(cmd, **kwargs):
+    def fake_run(cmd: list[str], **kwargs: Any) -> None:
         raise FileNotFoundError("streamlit not found")
 
     monkeypatch.setattr(subprocess, "run", fake_run)
@@ -287,14 +288,14 @@ def test_cli_dashboard_streamlit_missing(monkeypatch):
     assert "Streamlit not found" in result.stdout
 
 
-def test_cli_modules_end_line():
+def test_cli_modules_end_line() -> None:
     """modules command: verify the final lines are printed."""
     result = _runner.invoke(app, ["modules"])
     assert result.exit_code == 0
     assert "See examples/" in result.stdout
 
 
-def test_import_main():
+def test_import_main() -> None:
     """Ensure cds.__main__ can be imported without side effects."""
     import cds.__main__  # noqa: F401
 
@@ -302,20 +303,20 @@ def test_import_main():
 # ---------------------------------------------------------------------------
 # Monte Carlo: _pi_worker (parallel worker) and edge cases
 # ---------------------------------------------------------------------------
-def test_pi_worker_counts_inside():
+def test_pi_worker_counts_inside() -> None:
     """_pi_worker counts points inside the unit quarter-circle."""
     inside = _pi_worker((1000, 42))
     # With 1000 samples roughly 785 +/- 30 should be inside (pi/4 * 1000)
     assert 700 < inside < 850
 
 
-def test_pi_worker_no_seed():
+def test_pi_worker_no_seed() -> None:
     """_pi_worker runs without a seed (random seed)."""
     inside = _pi_worker((500, None))
     assert 0 <= inside <= 500
 
 
-def test_estimate_pi_zero_samples():
+def test_estimate_pi_zero_samples() -> None:
     """estimate_pi with 0 samples returns a zero result."""
     result = estimate_pi(n_samples=0)
     assert result.estimate == 0.0
@@ -323,7 +324,7 @@ def test_estimate_pi_zero_samples():
     assert result.std_error == 0.0
 
 
-def test_buffon_needle_no_crossings():
+def test_buffon_needle_no_crossings() -> None:
     """buffon_needle with a very short needle can produce 0 crossings."""
     # Short needle, large spacing -> few/no crossings. Guard against div-by-zero.
     result = buffon_needle(needle_length=0.01, line_spacing=2.0, n_throws=5, seed=1)

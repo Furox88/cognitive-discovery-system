@@ -8,13 +8,19 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.python-version }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # full history for setuptools_scm
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
@@ -31,20 +37,25 @@ jobs:
     - name: Format check with Ruff
       run: ruff format --check .
 
-    - name: Type check with Mypy
+    - name: Type check with Mypy (src)
       run: mypy src/
+
+    - name: Type check with Mypy (tests)
+      run: mypy tests/
 
     - name: Run tests with pytest
       run: |
-        # Run tests with coverage on all matrix versions. The fail_under
-        # threshold is set in pyproject.toml (currently 99) and applies
-        # uniformly; this keeps the matrix consistent and avoids spurious
-        # 1-statement misses from stdlib micro-differences across Python
-        # versions. 100% is verified locally and the gap is documented.
-        pytest tests/ --cov=cds --cov-report=xml --cov-report=term
+        # Coverage gate applies only to the reference matrix cell
+        # (Linux + Python 3.12). Other cells only report; this keeps CI fast
+        # and avoids redundant Codecov uploads. The gate is enforced via
+        # pyproject.toml [tool.coverage.report] fail_under = 99.
+        if matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12':
+          pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
+        else:
+          pytest tests/ --cov=cds --cov-branch --cov-report=term --no-cov-on-fail
 
     - name: Upload coverage to Codecov
-      if: matrix.python-version == '3.12'
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       uses: codecov/codecov-action@v4
       with:
         files: ./coverage.xml
@@ -52,9 +63,11 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Build documentation
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: mkdocs build --strict
 
   pre-commit:
+    name: pre-commit (Linux + 3.12)
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

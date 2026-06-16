@@ -21,7 +21,7 @@ from cds.quantum.multi_qubit import (
 # --- QuantumRegister basics ---
 
 
-def test_zeros_register():
+def test_zeros_register() -> None:
     reg = QuantumRegister.zeros(2)
     assert reg.n_qubits == 2
     assert reg.size == 4
@@ -29,39 +29,39 @@ def test_zeros_register():
     assert all(abs(a) < 1e-9 for a in reg.amplitudes[1:])
 
 
-def test_from_bits():
+def test_from_bits() -> None:
     reg = QuantumRegister.from_bits(3, 5)  # |101>
     assert abs(reg.amplitudes[5] - 1) < 1e-9
     assert sum(abs(a) ** 2 for a in reg.amplitudes) - 1.0 < 1e-9
 
 
-def test_probabilities():
+def test_probabilities() -> None:
     reg = QuantumRegister.zeros(1)
     probs = reg.probabilities()
     assert abs(probs[0] - 1.0) < 1e-9
     assert abs(probs[1]) < 1e-9
 
 
-def test_normalize():
+def test_normalize() -> None:
     reg = QuantumRegister(n_qubits=1, amplitudes=[3 + 0j, 4 + 0j])
     reg.normalize()
     total = sum(abs(a) ** 2 for a in reg.amplitudes)
     assert abs(total - 1.0) < 1e-9
 
 
-def test_measure_deterministic():
+def test_measure_deterministic() -> None:
     reg = QuantumRegister.zeros(2)
     result = reg.measure(seed=42)
     assert result == 0
 
 
-def test_measure_shots():
+def test_measure_shots() -> None:
     reg = QuantumRegister.zeros(2)
     counts = reg.measure_shots(shots=100, seed=42)
     assert counts.get("00", 0) == 100
 
 
-def test_expectation_zero_state():
+def test_expectation_zero_state() -> None:
     reg = QuantumRegister.zeros(2)
     assert reg.expectation() == 0.0
 
@@ -69,21 +69,21 @@ def test_expectation_zero_state():
 # --- Single-qubit gates on register ---
 
 
-def test_x_gate_flips_qubit_0():
+def test_x_gate_flips_qubit_0() -> None:
     reg = QuantumRegister.zeros(2)
     reg = x_gate(reg, 0)
     # |00> -> |01>
     assert abs(reg.amplitudes[1] - 1) < 1e-9
 
 
-def test_x_gate_flips_qubit_1():
+def test_x_gate_flips_qubit_1() -> None:
     reg = QuantumRegister.zeros(2)
     reg = x_gate(reg, 1)
     # |00> -> |10>
     assert abs(reg.amplitudes[2] - 1) < 1e-9
 
 
-def test_h_gate_superposition():
+def test_h_gate_superposition() -> None:
     reg = QuantumRegister.zeros(1)
     reg = h_gate(reg, 0)
     probs = reg.probabilities()
@@ -91,21 +91,21 @@ def test_h_gate_superposition():
     assert abs(probs[1] - 0.5) < 1e-9
 
 
-def test_z_gate_on_zero():
+def test_z_gate_on_zero() -> None:
     reg = QuantumRegister.zeros(1)
     reg = z_gate(reg, 0)
     # Z|0> = |0>
     assert abs(reg.amplitudes[0] - 1) < 1e-9
 
 
-def test_z_gate_on_one():
+def test_z_gate_on_one() -> None:
     reg = QuantumRegister.from_bits(1, 1)
     reg = z_gate(reg, 0)
     # Z|1> = -|1>
     assert abs(reg.amplitudes[1] - (-1)) < 1e-9
 
 
-def test_y_gate():
+def test_y_gate() -> None:
     reg = QuantumRegister.zeros(1)
     reg = y_gate(reg, 0)
     # Y|0> = i|1>
@@ -113,7 +113,7 @@ def test_y_gate():
     assert abs(reg.amplitudes[1] - 1j) < 1e-9
 
 
-def test_rz_gate():
+def test_rz_gate() -> None:
     reg = QuantumRegister.zeros(1)
     reg = h_gate(reg, 0)
     reg = rz_gate(reg, 0, math.pi)
@@ -123,14 +123,14 @@ def test_rz_gate():
     assert abs(probs[1] - 0.5) < 1e-9
 
 
-def test_double_x_is_identity():
+def test_double_x_is_identity() -> None:
     reg = QuantumRegister.zeros(2)
     reg = x_gate(reg, 0)
     reg = x_gate(reg, 0)
     assert abs(reg.amplitudes[0] - 1) < 1e-9
 
 
-def test_double_h_is_identity():
+def test_double_h_is_identity() -> None:
     reg = QuantumRegister.zeros(1)
     reg = h_gate(reg, 0)
     reg = h_gate(reg, 0)
@@ -140,21 +140,21 @@ def test_double_h_is_identity():
 # --- CNOT ---
 
 
-def test_cnot_no_flip_when_control_zero():
+def test_cnot_no_flip_when_control_zero() -> None:
     reg = QuantumRegister.zeros(2)
     reg = cnot(reg, 0, 1)
     # control is 0, no change
     assert abs(reg.amplitudes[0] - 1) < 1e-9
 
 
-def test_cnot_flips_when_control_one():
+def test_cnot_flips_when_control_one() -> None:
     reg = QuantumRegister.zeros(2)
     reg = x_gate(reg, 0)  # |01>
     reg = cnot(reg, 0, 1)  # should flip target -> |11>
     assert abs(reg.amplitudes[3] - 1) < 1e-9
 
 
-def test_cnot_creates_entanglement():
+def test_cnot_creates_entanglement() -> None:
     reg = QuantumRegister.zeros(2)
     reg = h_gate(reg, 0)
     reg = cnot(reg, 0, 1)
@@ -165,14 +165,14 @@ def test_cnot_creates_entanglement():
 # --- CZ ---
 
 
-def test_cz_on_11():
+def test_cz_on_11() -> None:
     reg = QuantumRegister.from_bits(2, 3)  # |11>
     reg = cz(reg, 0, 1)
     # CZ|11> = -|11>
     assert abs(reg.amplitudes[3] - (-1)) < 1e-9
 
 
-def test_cz_on_00():
+def test_cz_on_00() -> None:
     reg = QuantumRegister.zeros(2)
     reg = cz(reg, 0, 1)
     # no change
@@ -182,7 +182,7 @@ def test_cz_on_00():
 # --- SWAP ---
 
 
-def test_swap_01_to_10():
+def test_swap_01_to_10() -> None:
     reg = QuantumRegister.zeros(2)
     reg = x_gate(reg, 0)  # |01>
     reg = swap(reg, 0, 1)  # -> |10>
@@ -192,7 +192,7 @@ def test_swap_01_to_10():
 # --- Toffoli ---
 
 
-def test_toffoli_flips_when_both_controls_set():
+def test_toffoli_flips_when_both_controls_set() -> None:
     reg = QuantumRegister.zeros(3)
     reg = x_gate(reg, 0)  # |001>
     reg = x_gate(reg, 1)  # |011>
@@ -200,7 +200,7 @@ def test_toffoli_flips_when_both_controls_set():
     assert abs(reg.amplitudes[7] - 1) < 1e-9
 
 
-def test_toffoli_no_flip_when_one_control():
+def test_toffoli_no_flip_when_one_control() -> None:
     reg = QuantumRegister.zeros(3)
     reg = x_gate(reg, 0)  # |001>
     reg = toffoli(reg, 0, 1, 2)  # control1 is 0, no change
@@ -210,7 +210,7 @@ def test_toffoli_no_flip_when_one_control():
 # --- Bell states ---
 
 
-def test_bell_phi_plus():
+def test_bell_phi_plus() -> None:
     reg = bell_state(0)
     s = 1 / math.sqrt(2)
     assert abs(reg.amplitudes[0] - s) < 1e-9  # |00>
@@ -218,7 +218,7 @@ def test_bell_phi_plus():
     assert is_entangled(reg)
 
 
-def test_bell_phi_minus():
+def test_bell_phi_minus() -> None:
     reg = bell_state(1)
     s = 1 / math.sqrt(2)
     assert abs(abs(reg.amplitudes[0]) - s) < 1e-9
@@ -226,7 +226,7 @@ def test_bell_phi_minus():
     assert is_entangled(reg)
 
 
-def test_bell_psi_plus():
+def test_bell_psi_plus() -> None:
     reg = bell_state(2)
     s = 1 / math.sqrt(2)
     assert abs(abs(reg.amplitudes[1]) - s) < 1e-9
@@ -234,12 +234,12 @@ def test_bell_psi_plus():
     assert is_entangled(reg)
 
 
-def test_bell_psi_minus():
+def test_bell_psi_minus() -> None:
     reg = bell_state(3)
     assert is_entangled(reg)
 
 
-def test_bell_measurements():
+def test_bell_measurements() -> None:
     reg = bell_state(0)
     counts = reg.measure_shots(shots=10000, seed=7)
     assert "00" in counts
@@ -253,7 +253,7 @@ def test_bell_measurements():
 # --- GHZ ---
 
 
-def test_ghz_3_qubit():
+def test_ghz_3_qubit() -> None:
     reg = ghz_state(3)
     probs = reg.probabilities()
     # only |000> and |111> should have probability
@@ -263,7 +263,7 @@ def test_ghz_3_qubit():
         assert abs(probs[i]) < 1e-9
 
 
-def test_ghz_4_qubit():
+def test_ghz_4_qubit() -> None:
     reg = ghz_state(4)
     probs = reg.probabilities()
     assert abs(probs[0] - 0.5) < 1e-9
@@ -273,19 +273,19 @@ def test_ghz_4_qubit():
 # --- Entanglement checks ---
 
 
-def test_separable_state():
+def test_separable_state() -> None:
     reg = QuantumRegister.zeros(2)
     assert not is_entangled(reg)
 
 
-def test_product_superposition_not_entangled():
+def test_product_superposition_not_entangled() -> None:
     # H|0> ⊗ |0> is separable
     reg = QuantumRegister.zeros(2)
     reg = h_gate(reg, 0)
     assert not is_entangled(reg)
 
 
-def test_entangled_after_cnot():
+def test_entangled_after_cnot() -> None:
     reg = QuantumRegister.zeros(2)
     reg = h_gate(reg, 0)
     reg = cnot(reg, 0, 1)
@@ -295,7 +295,7 @@ def test_entangled_after_cnot():
 # --- 3-qubit circuits ---
 
 
-def test_3_qubit_circuit():
+def test_3_qubit_circuit() -> None:
     reg = QuantumRegister.zeros(3)
     reg = h_gate(reg, 0)
     reg = h_gate(reg, 1)
@@ -306,7 +306,7 @@ def test_3_qubit_circuit():
         assert abs(p - 0.125) < 1e-9
 
 
-def test_quantum_teleportation_circuit():
+def test_quantum_teleportation_circuit() -> None:
     """Simplified teleportation-like circuit."""
     reg = QuantumRegister.zeros(3)
     # prepare qubit 0 in some state

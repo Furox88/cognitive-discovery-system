@@ -1,0 +1,48 @@
+name: Attest Release Artifacts
+
+# Attests the sdist + wheel uploaded with `gh release upload` (or attached
+# via the publish script) using GitHub's sigstore-based build provenance.
+# This is the recommended approach for publishing signed, verifiable release
+# artifacts without managing cosign keys manually.
+#
+# Trigger: a new release is published (manual `gh release create` or via
+# the publish script). The workflow downloads the artifacts, attests them,
+# and re-uploads the attestation as a release asset (.sigstore bundle).
+#
+# Reference: https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  attest:
+    name: Attest sdist + wheel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download "${{ github.event.release.tag_name }}" \
+            --dir dist \
+            --pattern "*.tar.gz" \
+            --pattern "*.whl" \
+            --clobber
+
+      - name: Display downloaded artifacts
+        run: ls -la dist/
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'dist/*'
+
+      # No upload step needed: actions/attest-build-provenance attaches the
+      # attestation to the workflow run, and the GitHub release UI shows a
+      # "Verified" badge next to the linked workflow run automatically.

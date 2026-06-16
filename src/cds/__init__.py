@@ -23,8 +23,6 @@ Usage:
     from cds.hypothesis import generate_hypotheses
 """
 
-__version__ = "0.8.5"
-
 # Convenient top-level re-exports for common scientific tools
 # Core modules
 # Scientific computing modules
@@ -45,6 +43,7 @@ from cds import (
     signals,
     stats,
 )
+from cds._version import __version__
 from cds.scientific.constants import CONSTANTS, get_constant
 from cds.scientific.formulas import (
     de_broglie_wavelength,

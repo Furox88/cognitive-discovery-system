@@ -7,6 +7,7 @@ Covers edge cases in:
   low_pass dft path, convolve empty, fft2/ifft2 empty)
 - data_analysis/viz.py (negative bar, interpolation path, flat line)
 """
+from typing import Any
 
 import math
 
@@ -41,101 +42,101 @@ from cds.stats.hypothesis_tests import (
 
 
 class TestChi2SfBoundary:
-    def test_zero_x_returns_one(self):
+    def test_zero_x_returns_one(self) -> None:
         assert chi2_sf(0.0, df=5) == 1.0
 
-    def test_negative_x_returns_one(self):
+    def test_negative_x_returns_one(self) -> None:
         assert chi2_sf(-1.0, df=5) == 1.0
 
-    def test_small_x(self):
+    def test_small_x(self) -> None:
         # Very small positive x, should be close to 1.0
         assert chi2_sf(0.001, df=5) > 0.99
 
 
 class TestFSfBoundary:
-    def test_zero_f_returns_one(self):
+    def test_zero_f_returns_one(self) -> None:
         assert f_sf(0.0, df1=3, df2=10) == 1.0
 
-    def test_negative_f_returns_one(self):
+    def test_negative_f_returns_one(self) -> None:
         assert f_sf(-1.0, df1=3, df2=10) == 1.0
 
 
 class TestOneSampleTTestEdgeCases:
-    def test_single_element_raises(self):
+    def test_single_element_raises(self) -> None:
         with pytest.raises(ValueError):
             one_sample_ttest([1.0])
 
-    def test_zero_variance_raises(self):
+    def test_zero_variance_raises(self) -> None:
         with pytest.raises(ValueError):
             one_sample_ttest([5.0, 5.0, 5.0, 5.0])
 
 
 class TestTwoSampleTTestEdgeCases:
-    def test_single_element_in_a_raises(self):
+    def test_single_element_in_a_raises(self) -> None:
         with pytest.raises(ValueError):
             two_sample_ttest([1.0], [2.0, 3.0])
 
-    def test_single_element_in_b_raises(self):
+    def test_single_element_in_b_raises(self) -> None:
         with pytest.raises(ValueError):
             two_sample_ttest([1.0, 2.0], [3.0])
 
-    def test_zero_variance_in_both_raises(self):
+    def test_zero_variance_in_both_raises(self) -> None:
         with pytest.raises(ValueError):
             two_sample_ttest([5.0, 5.0], [5.0, 5.0])
 
 
 class TestChiSquareIndependenceEdgeCases:
-    def test_single_row_raises(self):
+    def test_single_row_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_independence([[1, 2, 3]])
 
-    def test_single_column_raises(self):
+    def test_single_column_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_independence([[1], [2], [3]])
 
-    def test_jagged_rows_raises(self):
+    def test_jagged_rows_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_independence([[1, 2], [3]])
 
-    def test_zero_grand_total_raises(self):
+    def test_zero_grand_total_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_independence([[0, 0], [0, 0]])
 
 
 class TestOneWayAnovaEdgeCases:
-    def test_single_group_raises(self):
+    def test_single_group_raises(self) -> None:
         with pytest.raises(ValueError):
             one_way_anova([1.0, 2.0])
 
-    def test_empty_group_raises(self):
+    def test_empty_group_raises(self) -> None:
         with pytest.raises(ValueError):
             one_way_anova([1.0, 2.0], [])
 
-    def test_n_total_equals_k_raises(self):
+    def test_n_total_equals_k_raises(self) -> None:
         # 3 groups with 1 element each: n_total == k
         with pytest.raises(ValueError):
             one_way_anova([1.0], [2.0], [3.0])
 
-    def test_zero_within_variance_raises(self):
+    def test_zero_within_variance_raises(self) -> None:
         # All identical within groups but different between groups
         with pytest.raises(ValueError):
             one_way_anova([1.0, 1.0, 1.0], [5.0, 5.0, 5.0], [9.0, 9.0, 9.0])
 
 
 class TestChiSquareGofEdgeCases:
-    def test_length_mismatch_raises(self):
+    def test_length_mismatch_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_gof([1, 2, 3], [1, 2])
 
-    def test_too_few_categories_raises(self):
+    def test_too_few_categories_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_gof([1], [1])
 
-    def test_zero_expected_raises(self):
+    def test_zero_expected_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_gof([1, 2], [0, 3])
 
-    def test_negative_expected_raises(self):
+    def test_negative_expected_raises(self) -> None:
         with pytest.raises(ValueError):
             chi_square_gof([1, 2], [-1, 3])
 
@@ -146,13 +147,13 @@ class TestChiSquareGofEdgeCases:
 
 
 class TestNewtonMethodEdgeCases:
-    def test_flat_derivative_breaks(self):
+    def test_flat_derivative_breaks(self) -> None:
         """f(x) = constant → derivative = 0, should break early with converged=False."""
         result = newton_method(lambda x: 5.0, x0=1.0, max_iter=100)
         assert isinstance(result, OptResult)
         assert result.converged is False
 
-    def test_non_converged_max_iter(self):
+    def test_non_converged_max_iter(self) -> None:
         """Oscillating function that won't converge."""
         # f(x) = x^3 - 2x + 2, x0=0 oscillates between 0 and 1
         result = newton_method(lambda x: x**3 - 2 * x + 2, x0=0.0, max_iter=5)
@@ -160,10 +161,10 @@ class TestNewtonMethodEdgeCases:
 
 
 class TestAdamScalarStateResume:
-    def test_adam_resume_from_state(self):
+    def test_adam_resume_from_state(self) -> None:
         """Adam scalar: run for a few iterations, then resume with state."""
 
-        def f(x):
+        def f(x: Any) -> Any: 
             return (x - 5.0) ** 2
 
         # First run: state=None, should return state dict
@@ -175,13 +176,13 @@ class TestAdamScalarStateResume:
         assert r2.state is not None
         assert r2.state["t"] > r1.state["t"]
 
-    def test_adam_scalar_custom_grad(self):
+    def test_adam_scalar_custom_grad(self) -> None:
         """Adam scalar with explicit gradient function."""
 
-        def f(x):
+        def f(x: Any) -> Any: 
             return (x - 3.0) ** 2
 
-        def grad_f(x):
+        def grad_f(x: Any) -> Any: 
             return 2 * (x - 3.0)
 
         result = adam(f, x0=10.0, lr=0.1, max_iter=200, grad_f=grad_f)
@@ -189,10 +190,10 @@ class TestAdamScalarStateResume:
 
 
 class TestAdamVectorStateResume:
-    def test_adam_vector_resume(self):
+    def test_adam_vector_resume(self) -> None:
         """Adam vector: run, then resume with state."""
 
-        def f(x):
+        def f(x: Any) -> Any: 
             return x[0] ** 2 + (x[1] - 4) ** 2
 
         # First run: state=None
@@ -204,13 +205,13 @@ class TestAdamVectorStateResume:
         assert r2.state is not None
         assert r2.state["t"] > r1.state["t"]
 
-    def test_adam_vector_custom_grad(self):
+    def test_adam_vector_custom_grad(self) -> None:
         """Adam vector with explicit gradient function."""
 
-        def f(x):
+        def f(x: Any) -> Any: 
             return x[0] ** 2 + x[1] ** 2
 
-        def grad_f(x):
+        def grad_f(x: Any) -> Any: 
             return [2 * x[0], 2 * x[1]]
 
         result = adam(f, x0=[5.0, 5.0], lr=0.1, max_iter=200, grad_f=grad_f)
@@ -219,12 +220,12 @@ class TestAdamVectorStateResume:
 
 
 class TestLineSearchEdgeCases:
-    def test_already_converged(self):
+    def test_already_converged(self) -> None:
         """a and b are very close → should converge immediately."""
         result = line_search(lambda x: x**2, a=0.999, b=1.001, tol=0.01)
         assert result.converged is True
 
-    def test_max_iter_exhausted(self):
+    def test_max_iter_exhausted(self) -> None:
         """Function where golden section is slow to converge with very low max_iter."""
         result = line_search(lambda x: math.sin(x) + 0.1 * x, a=-5.0, b=5.0, max_iter=1)
         assert isinstance(result, OptResult)
@@ -236,24 +237,24 @@ class TestLineSearchEdgeCases:
 
 
 class TestFFTRadix2EdgeCases:
-    def test_empty_signal(self):
+    def test_empty_signal(self) -> None:
         assert fft_radix2([]) == []
 
-    def test_single_element(self):
+    def test_single_element(self) -> None:
         result = fft_radix2([5.0])
         assert len(result) == 1
         assert abs(result[0] - 5.0) < 1e-10
 
-    def test_non_power_of_2_raises(self):
+    def test_non_power_of_2_raises(self) -> None:
         with pytest.raises(ValueError):
             fft_radix2([1, 2, 3])
 
 
 class TestFFTAutoPad:
-    def test_empty_signal(self):
+    def test_empty_signal(self) -> None:
         assert fft([]) == []
 
-    def test_non_power_of_2_auto_pads(self):
+    def test_non_power_of_2_auto_pads(self) -> None:
         """fft() should auto-pad to next power of 2 and return correct result."""
         signal = [1.0, 2.0, 3.0]  # length 3 → padded to 4
         result = fft(signal)
@@ -265,10 +266,10 @@ class TestFFTAutoPad:
 
 
 class TestIFFTAutoPad:
-    def test_empty_spectrum(self):
+    def test_empty_spectrum(self) -> None:
         assert ifft([]) == []
 
-    def test_non_power_of_2_auto_pads(self):
+    def test_non_power_of_2_auto_pads(self) -> None:
         """ifft() should auto-pad non-power-of-2 input."""
         spectrum = [complex(6, 0), complex(0, 0), complex(0, 0)]
         result = ifft(spectrum)
@@ -277,21 +278,21 @@ class TestIFFTAutoPad:
 
 
 class TestConvolveEdgeCases:
-    def test_empty_a(self):
+    def test_empty_a(self) -> None:
         assert convolve([], [1, 2]) == []
 
-    def test_empty_b(self):
+    def test_empty_b(self) -> None:
         assert convolve([1, 2], []) == []
 
-    def test_both_empty(self):
+    def test_both_empty(self) -> None:
         assert convolve([], []) == []
 
 
 class TestPowerSpectrumEdgeCases:
-    def test_empty_signal(self):
+    def test_empty_signal(self) -> None:
         assert power_spectrum([]) == []
 
-    def test_non_power_of_2_uses_dft(self):
+    def test_non_power_of_2_uses_dft(self) -> None:
         """power_spectrum with non-power-of-2 length should use dft path."""
         signal = [1.0, 2.0, 3.0, 5.0, 7.0]
         result = power_spectrum(signal)
@@ -304,10 +305,10 @@ class TestPowerSpectrumEdgeCases:
 
 
 class TestLowPassFilterEdgeCases:
-    def test_empty_signal(self):
+    def test_empty_signal(self) -> None:
         assert low_pass_filter([], cutoff=1) == []
 
-    def test_non_power_of_2_uses_dft_path(self):
+    def test_non_power_of_2_uses_dft_path(self) -> None:
         """low_pass_filter with non-power-of-2 signal should use dft/idft path."""
         signal = [1.0, 2.0, 3.0, 4.0, 5.0]
         cutoff = 1
@@ -315,7 +316,7 @@ class TestLowPassFilterEdgeCases:
         # Verify roundtrip-ish: the result should be a filtered version
         assert len(result) == len(signal)
 
-    def test_high_cutoff_passes_all(self):
+    def test_high_cutoff_passes_all(self) -> None:
         """cutoff >= n/2 → nothing is filtered out."""
         signal = [1.0, 0.0, 1.0, 0.0]
         result = low_pass_filter(signal, cutoff=2)
@@ -324,21 +325,21 @@ class TestLowPassFilterEdgeCases:
 
 
 class TestFFT2EdgeCases:
-    def test_empty_matrix_raises(self):
+    def test_empty_matrix_raises(self) -> None:
         with pytest.raises(ValueError):
             fft2([])
 
-    def test_jagged_rows_raises(self):
+    def test_jagged_rows_raises(self) -> None:
         with pytest.raises(ValueError):
             fft2([[1, 2], [3]])
 
 
 class TestIFFT2EdgeCases:
-    def test_empty_matrix_raises(self):
+    def test_empty_matrix_raises(self) -> None:
         with pytest.raises(ValueError):
             ifft2([])
 
-    def test_jagged_rows_raises(self):
+    def test_jagged_rows_raises(self) -> None:
         with pytest.raises(ValueError):
             ifft2([[1, 2], [3]])
 
@@ -349,10 +350,10 @@ class TestIFFT2EdgeCases:
 
 
 class TestPlotBarEdgeCases:
-    def test_empty_data(self):
+    def test_empty_data(self) -> None:
         assert plot_bar({}) == "No data to plot."
 
-    def test_negative_values(self):
+    def test_negative_values(self) -> None:
         """Negative values should render with ░ character."""
         result = plot_bar({"loss": -5, "gain": 3})
         assert "loss" in result
@@ -360,27 +361,27 @@ class TestPlotBarEdgeCases:
         assert "░" in result  # negative bar uses this character
         assert "█" in result  # positive bar uses this character
 
-    def test_single_entry(self):
+    def test_single_entry(self) -> None:
         result = plot_bar({"only": 10})
         assert "only" in result
         assert "█" in result
 
 
 class TestPlotLineEdgeCases:
-    def test_empty_data(self):
+    def test_empty_data(self) -> None:
         assert plot_line([]) == "No data to plot."
 
-    def test_single_point(self):
+    def test_single_point(self) -> None:
         result = plot_line([5.0])
         assert "█" in result or "─" in result or "|" in result
 
-    def test_flat_line(self):
+    def test_flat_line(self) -> None:
         """All identical values → y_range should be clamped to 1.0 to avoid division by zero."""
         result = plot_line([3.0, 3.0, 3.0, 3.0, 3.0])
         assert isinstance(result, str)
         assert len(result) > 0
 
-    def test_interpolation_path(self):
+    def test_interpolation_path(self) -> None:
         """More data points than width triggers interpolation/sampling."""
         # 100 points but default width is 80 → should trigger sampling
         data = [math.sin(i * 0.1) for i in range(100)]
@@ -388,13 +389,13 @@ class TestPlotLineEdgeCases:
         assert isinstance(result, str)
         assert len(result) > 0
 
-    def test_custom_width(self):
+    def test_custom_width(self) -> None:
         """Explicit small width to force interpolation."""
         data = list(range(20))
         result = plot_line(data, width=5)
         assert isinstance(result, str)
 
-    def test_height_parameter(self):
+    def test_height_parameter(self) -> None:
         """Custom height should produce proportional output."""
         data = [0, 5, 10, 5, 0]
         result = plot_line(data, height=3)

@@ -14,69 +14,69 @@ from cds.montecarlo import (
 
 
 class TestEstimatePi:
-    def test_pi_within_tolerance(self):
+    def test_pi_within_tolerance(self) -> None:
         result = estimate_pi(n_samples=50_000, seed=42)
         assert abs(result.estimate - math.pi) < 0.1
 
-    def test_standard_error_positive(self):
+    def test_standard_error_positive(self) -> None:
         result = estimate_pi(n_samples=1000, seed=42)
         assert result.std_error > 0
 
-    def test_samples_recorded(self):
+    def test_samples_recorded(self) -> None:
         result = estimate_pi(n_samples=500, seed=42)
         assert result.samples == 500
 
-    def test_reproducible_with_seed(self):
+    def test_reproducible_with_seed(self) -> None:
         r1 = estimate_pi(n_samples=1000, seed=123)
         r2 = estimate_pi(n_samples=1000, seed=123)
         assert r1.estimate == r2.estimate
 
 
 class TestMCIntegrate:
-    def test_integrate_x_squared(self):
+    def test_integrate_x_squared(self) -> None:
         # ∫₀¹ x² dx = 1/3
         result = mc_integrate(lambda x: x**2, 0, 1, n_samples=50_000, seed=42)
         assert abs(result.estimate - 1 / 3) < 0.02
 
-    def test_integrate_sine(self):
+    def test_integrate_sine(self) -> None:
         # ∫₀^π sin(x) dx = 2
         result = mc_integrate(math.sin, 0, math.pi, n_samples=50_000, seed=42)
         assert abs(result.estimate - 2.0) < 0.1
 
-    def test_standard_error(self):
+    def test_standard_error(self) -> None:
         result = mc_integrate(lambda x: x, 0, 1, n_samples=10_000, seed=42)
         assert result.std_error > 0
 
 
 class TestRandomWalk1D:
-    def test_starts_at_zero(self):
+    def test_starts_at_zero(self) -> None:
         walk = random_walk_1d(10, seed=42)
         assert walk[0] == 0.0
 
-    def test_correct_length(self):
+    def test_correct_length(self) -> None:
         walk = random_walk_1d(100, seed=42)
         assert len(walk) == 101
 
-    def test_step_size(self):
+    def test_step_size(self) -> None:
         walk = random_walk_1d(1, step_size=2.5, seed=42)
         assert abs(walk[1]) == 2.5
 
-    def test_reproducible(self):
+    def test_reproducible(self) -> None:
         w1 = random_walk_1d(50, seed=99)
         w2 = random_walk_1d(50, seed=99)
         assert w1 == w2
 
 
 class TestRandomWalk2D:
-    def test_starts_at_origin(self):
+    def test_starts_at_origin(self) -> None:
         walk = random_walk_2d(10, seed=42)
         assert walk[0] == (0.0, 0.0)
 
-    def test_correct_length(self):
+    def test_correct_length(self) -> None:
         walk = random_walk_2d(50, seed=42)
         assert len(walk) == 51
 
-    def test_step_distance(self):
+    def test_step_distance(self) -> None:
         walk = random_walk_2d(1, step_size=1.0, seed=42)
         x, y = walk[1]
         dist = math.sqrt(x**2 + y**2)
@@ -84,7 +84,7 @@ class TestRandomWalk2D:
 
 
 class TestBuffonNeedle:
-    def test_pi_estimate(self):
+    def test_pi_estimate(self) -> None:
         result = buffon_needle(
             needle_length=1.0,
             line_spacing=2.0,
@@ -93,11 +93,11 @@ class TestBuffonNeedle:
         )
         assert abs(result.estimate - math.pi) < 0.2
 
-    def test_needle_too_long_raises(self):
+    def test_needle_too_long_raises(self) -> None:
         with pytest.raises(ValueError, match="shorter"):
             buffon_needle(needle_length=3.0, line_spacing=2.0)
 
-    def test_reproducible(self):
+    def test_reproducible(self) -> None:
         r1 = buffon_needle(n_throws=1000, seed=42)
         r2 = buffon_needle(n_throws=1000, seed=42)
         assert r1.estimate == r2.estimate
