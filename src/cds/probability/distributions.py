@@ -111,6 +111,5 @@ def uniform_sample(
         n: number of samples
         seed: optional random seed
     """
-    if seed is not None:
-        random.seed(seed)
-    return [random.uniform(a, b) for _ in range(n)]
+    rng = random.Random(seed)
+    return [rng.uniform(a, b) for _ in range(n)]

@@ -180,7 +180,7 @@ def info() -> None:
         "• [cyan]hypothesis[/]    • [cyan]diffeq[/]\n"
         "• [cyan]graph[/]         • [cyan]data_analysis[/]\n"
         "• [cyan]ml[/]            • [cyan]probability[/]\n"
-        "• [cyan]scientific[/]    • [cyan]knowledge[/]"
+        "• [cyan]scientific[/]    • [cyan]hypothesis[/]"
     )
     
     capability_panel = Panel.fit(
@@ -317,7 +317,6 @@ def modules() -> None:
         ("cds.diffeq", "Euler, RK4, midpoint, ODE system solvers"),
         ("cds.graph", "BFS/DFS, Dijkstra, Kruskal MST, topological sort"),
         ("cds.ml", "Neural networks (MLP), backpropagation, activation functions"),
-        ("cds.knowledge", "Structured knowledge representation and domain models"),
         ("cds.scientific", "Physical constants + common formulas"),
         ("cds.data_analysis", "CSV loading, normalization, z-score, moving average"),
         (

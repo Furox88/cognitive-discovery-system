@@ -27,12 +27,11 @@ class MCResult:
 def _pi_worker(samples_seed: tuple[int, int | None]) -> int:
     """Worker function for parallel pi estimation."""
     samples, seed = samples_seed
-    if seed is not None:
-        random.seed(seed)
+    rng = random.Random(seed)
     inside = 0
     for _ in range(samples):
-        x = random.random()
-        y = random.random()
+        x = rng.random()
+        y = rng.random()
         if x * x + y * y <= 1.0:
             inside += 1
     return inside
@@ -92,13 +91,12 @@ def mc_integrate(
         n_samples: number of random evaluations
         seed: optional random seed
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = random.Random(seed)
     total = 0.0
     total_sq = 0.0
     width = b - a
     for _ in range(n_samples):
-        x = a + random.random() * width
+        x = a + rng.random() * width
         val = f(x)
         total += val
         total_sq += val * val
@@ -125,12 +123,11 @@ def random_walk_1d(
     Returns:
         list of positions at each step (length = steps + 1)
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = random.Random(seed)
     positions = [0.0]
     pos = 0.0
     for _ in range(steps):
-        pos += step_size if random.random() < 0.5 else -step_size
+        pos += step_size if rng.random() < 0.5 else -step_size
         positions.append(pos)
     return positions
 
@@ -150,12 +147,11 @@ def random_walk_2d(
     Returns:
         list of (x, y) positions at each step (length = steps + 1)
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = random.Random(seed)
     positions: list[tuple[float, float]] = [(0.0, 0.0)]
     x, y = 0.0, 0.0
     for _ in range(steps):
-        angle = random.uniform(0, 2 * math.pi)
+        angle = rng.uniform(0, 2 * math.pi)
         x += step_size * math.cos(angle)
         y += step_size * math.sin(angle)
         positions.append((x, y))
@@ -186,13 +182,12 @@ def buffon_needle(
     """
     if needle_length > line_spacing:
         raise ValueError("needle must be shorter than line spacing")
-    if seed is not None:
-        random.seed(seed)
+    rng = random.Random(seed)
 
     crossings = 0
     for _ in range(n_throws):
-        center = random.uniform(0, line_spacing / 2)
-        angle = random.uniform(0, math.pi)
+        center = rng.uniform(0, line_spacing / 2)
+        angle = rng.uniform(0, math.pi)
         tip = (needle_length / 2) * math.sin(angle)
         if tip >= center:
             crossings += 1

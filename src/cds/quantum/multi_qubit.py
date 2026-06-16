@@ -41,10 +41,9 @@ class QuantumRegister:
 
     def measure(self, seed: int | None = None) -> int:
         """Measure the register and collapse its state vector."""
-        if seed is not None:
-            random.seed(seed)
+        rng = random.Random(seed)
         probs = self.probabilities()
-        r = random.random()
+        r = rng.random()
         cumulative = 0.0
         for i, p in enumerate(probs):
             cumulative += p
@@ -68,12 +67,11 @@ class QuantumRegister:
         self, shots: int = 1000, seed: int | None = None,
     ) -> dict[str, int]:
         """Run multiple measurements, return counts as binary strings."""
-        if seed is not None:
-            random.seed(seed)
+        rng = random.Random(seed)
         counts: dict[str, int] = {}
         probs = self.probabilities()
         for _ in range(shots):
-            r = random.random()
+            r = rng.random()
             cumulative = 0.0
             result = len(probs) - 1
             for i, p in enumerate(probs):
