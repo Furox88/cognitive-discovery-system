@@ -20,7 +20,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> Currently in **alpha (v0.7.0)**. Contributions welcome!
+> Currently in **alpha (v0.8.0)**. Contributions welcome!
 
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 

@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-06-16
+
 ### Fixed
 - **`adaptive_simpson` hang on NaN/divergent integrands**: when the integrand produced `NaN` (e.g. `float("nan")` or a divergent integrand), the Lyness error estimate `diff` was `NaN`, making `abs(diff) <= 15*eps` always `False`. The recursion then branched down to `max_depth`, making up to `2**max_depth` calls and effectively hanging the suite (the test ran for 10+ minutes). Added an early-exit: if `diff` is `NaN`, the subinterval stops recursing so the `NaN` propagates to the top-level `RuntimeError` guard. The previously hanging test `test_divergent_integrand_raises` now passes in <0.2 s. Full suite runtime dropped from 10 min (timeout) to ~19 s, and test coverage reached **100%** (570 tests).
 
