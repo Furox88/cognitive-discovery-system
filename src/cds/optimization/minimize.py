@@ -122,6 +122,7 @@ def adam(
     max_iter: int = 10000,
     h: float = 1e-7,
     state: dict[str, Any] | None = None,
+    grad_f: Callable[..., float | list[float]] | None = None,
 ) -> OptResult:
     """Minimize using Adam optimizer (adaptive learning rate) for scalars or vectors.
 
@@ -136,6 +137,7 @@ def adam(
         max_iter: iteration limit
         h: step for numerical gradient
         state: optional dictionary to resume optimization (contains m, v, t)
+        grad_f: optional gradient function. If None, numerical gradient is used.
     """
     if isinstance(x0, (int, float)):
         x_scalar: float = float(x0)
@@ -147,13 +149,19 @@ def adam(
         else:
             m_s = float(state["m"])
             v_s = float(state["v"])
-            t_start = int(state["t"])
+            t_start = int(state["t"]) + 1
 
+        last_t = t_start - 1
         for i in range(t_start, t_start + max_iter):
-            grad_s = cast(float, _compute_gradient(f, x_scalar, h))
+            last_t = i
+            if grad_f:
+                grad_s = cast(float, grad_f(x_scalar))
+            else:
+                grad_s = cast(float, _compute_gradient(f, x_scalar, h))
+            
             if abs(grad_s) < tol:
                 return OptResult(
-                    x=x_scalar, value=f(x_scalar), iterations=i - t_start, converged=True,
+                    x=x_scalar, value=f(x_scalar), iterations=i - t_start + 1, converged=True,
                     state={"m": m_s, "v": v_s, "t": i}
                 )
             m_s = beta1 * m_s + (1 - beta1) * grad_s
@@ -164,7 +172,7 @@ def adam(
 
         return OptResult(
             x=x_scalar, value=f(x_scalar), iterations=max_iter, converged=False,
-            state={"m": m_s, "v": v_s, "t": t_start + max_iter}
+            state={"m": m_s, "v": v_s, "t": last_t}
         )
     else:
         x_list: list[float] = list(x0)
@@ -176,13 +184,19 @@ def adam(
         else:
             m_l = cast(list[float], state["m"])
             v_l = cast(list[float], state["v"])
-            t_start = int(state["t"])
+            t_start = int(state["t"]) + 1
 
+        last_t = t_start - 1
         for i in range(t_start, t_start + max_iter):
-            grad_l = cast(list[float], _compute_gradient(f, x_list, h))
+            last_t = i
+            if grad_f:
+                grad_l = cast(list[float], grad_f(x_list))
+            else:
+                grad_l = cast(list[float], _compute_gradient(f, x_list, h))
+            
             if _magnitude(grad_l) < tol:
                 return OptResult(
-                    x=x_list, value=f(x_list), iterations=i - t_start, converged=True,
+                    x=x_list, value=f(x_list), iterations=i - t_start + 1, converged=True,
                     state={"m": m_l, "v": v_l, "t": i}
                 )
             
@@ -195,7 +209,7 @@ def adam(
 
         return OptResult(
             x=x_list, value=f(x_list), iterations=max_iter, converged=False,
-            state={"m": m_l, "v": v_l, "t": t_start + max_iter}
+            state={"m": m_l, "v": v_l, "t": last_t}
         )
 
 

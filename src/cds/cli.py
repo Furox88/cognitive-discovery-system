@@ -137,8 +137,14 @@ def hypothesis(
 @app.command()
 def prompt(
     question: Annotated[str, typer.Argument(help="Research question")],
-    domain: Annotated[DomainChoice, typer.Option("--domain", "-d")] = DomainChoice.general,
-    n: Annotated[int, typer.Option("--num", "-n")] = 3,
+    domain: Annotated[
+        DomainChoice,
+        typer.Option("--domain", "-d", help="Scientific domain focus"),
+    ] = DomainChoice.general,
+    n: Annotated[
+        int,
+        typer.Option("--num", "-n", help="Number of hypotheses to propose"),
+    ] = 3,
 ) -> None:
     """Print a ready-to-use prompt for a custom generator implementation."""
     dom = Domain(domain.value)
@@ -148,21 +154,21 @@ def prompt(
 
 @app.command()
 def info() -> None:
-    """Show project info, module status, and Platform health."""
+    """Show Platform info, module status, and Platform health."""
     from rich.columns import Columns
     from rich.text import Text
     
     from cds import __version__
     
     status_panel = Panel.fit(
-        "[bold]Cognitive Discovery Platform (CDS)[/]\n"
+        "[bold]Platform (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
         "🚀 [bold green]Status:[/] Production-Ready (Alpha)\n"
         "🧪 [bold blue]Tests:[/] 350 Passing\n"
 
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"🔗 [bold cyan]Version:[/] {__version__}",
-        title="Project Info",
+        title="Platform Info",
         border_style="green",
     )
     
@@ -187,19 +193,34 @@ def info() -> None:
 
 @app.command()
 def dashboard() -> None:
-    """Launch the interactive Streamlit dashboard."""
+    """Launch the interactive Platform dashboard."""
+    import os
     import subprocess
     import sys
     from pathlib import Path
     
-    dashboard_path = Path(__file__).parent.parent.parent / "dashboard" / "app.py"
+    root_dir = Path(__file__).parent.parent.parent
+    dashboard_path = root_dir / "dashboard" / "app.py"
     if not dashboard_path.exists():
         console.print("[red]Error:[/] Dashboard file not found at " + str(dashboard_path))
         return
 
-    console.print("[yellow]Launching CDS Interactive Dashboard...[/]")
+    console.print("[yellow]Launching Platform Interactive Dashboard...[/]")
+    
+    # Ensure src is in PYTHONPATH so dashboard can import cds
+    env = os.environ.copy()
+    src_path = str(root_dir / "src")
+    if "PYTHONPATH" in env:
+        env["PYTHONPATH"] = f"{src_path}{os.pathsep}{env['PYTHONPATH']}"
+    else:
+        env["PYTHONPATH"] = src_path
+
     try:
-        subprocess.run([sys.executable, "-m", "streamlit", "run", str(dashboard_path)], check=True)
+        subprocess.run(
+            [sys.executable, "-m", "streamlit", "run", str(dashboard_path)],
+            check=True,
+            env=env
+        )
     except KeyboardInterrupt:
         console.print("\n[blue]Dashboard stopped.[/]")
     except FileNotFoundError:
@@ -209,7 +230,7 @@ def dashboard() -> None:
 @app.command()
 def benchmark() -> None:
     """Run built-in benchmarks to verify performance."""
-    console.print("[yellow]Benchmarking CDS platforms...[/]")
+    console.print("[yellow]Benchmarking Platform performance...[/]")
     console.print("Run 'python benchmarks/run_benchmarks.py' for detailed results.")
 
 
@@ -230,7 +251,7 @@ def constants() -> None:
 @app.command()
 def plot(
     values: Annotated[str, typer.Argument(help="Comma-separated list of numbers (e.g. '1,5,3,8')")],
-    title: Annotated[str, typer.Option("--title", "-t")] = "CLI Plot",
+    title: Annotated[str, typer.Option("--title", "-t", help="Title of the plot")] = "CLI Plot",
 ) -> None:
     """Plot a series of numbers directly in the terminal."""
     from cds.data_analysis.viz import plot_line
@@ -278,10 +299,10 @@ def calc(
 
 @app.command()
 def modules() -> None:
-    """List all scientific modules available in CDS."""
+    """List all scientific modules available in the Platform."""
     from rich import box
 
-    table = Table(title="CDS Scientific Modules", box=box.SIMPLE_HEAVY)
+    table = Table(title="Platform Scientific Modules", box=box.SIMPLE_HEAVY)
     table.add_column("Module", style="cyan bold")
     table.add_column("Key Capabilities", style="white")
 

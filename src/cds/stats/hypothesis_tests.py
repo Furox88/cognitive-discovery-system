@@ -107,7 +107,11 @@ def _gammp(a: float, x: float) -> float:
 
 def _gammq(a: float, x: float) -> float:
     """Regularized upper incomplete gamma function Q(a, x) = 1 - P(a, x)."""
-    return 1.0 - _gammp(a, x)
+    if x < 0.0 or a <= 0.0:
+        raise ValueError("invalid arguments to gammq")
+    if x < a + 1.0:
+        return 1.0 - _gser(a, x)
+    return _gcf(a, x)
 
 
 def _betacf(a: float, b: float, x: float) -> float:

@@ -1,20 +1,31 @@
 import math
 import random
+import sys
+from pathlib import Path
 
 import streamlit as st
 
-from cds import __version__
-from cds.data_analysis import plot_line
-from cds.hypothesis import Domain, generate_hypotheses
-from cds.ml import MLP, Layer
-from cds.quantum import QuantumCircuit, hadamard, simulate
+# Add src to path if running directly from dashboard/ folder
+root_path = Path(__file__).parent.parent
+if str(root_path / "src") not in sys.path:
+    sys.path.append(str(root_path / "src"))
 
-st.set_page_config(page_title="CDS Interactive Dashboard", page_icon="🚀", layout="wide")
+try:
+    from cds import __version__
+    from cds.data_analysis import plot_line
+    from cds.hypothesis import Domain, generate_hypotheses
+    from cds.ml import MLP, Layer
+    from cds.quantum import QuantumCircuit, hadamard, simulate
+except ImportError:
+    st.error("Could not import the 'cds' package. Ensure the 'src' directory is in your PYTHONPATH.")
+    st.stop()
 
-st.title("🚀 Cognitive Discovery Platform (CDS)")
+st.set_page_config(page_title="Platform Interactive Dashboard", page_icon="🚀", layout="wide")
+
+st.title("🚀 Cognitive Discovery Platform")
 st.markdown("""
-Welcome to the interactive showcase of the **Cognitive Discovery Platform**. 
-Everything you see here is powered by **Pure Python** algorithms, built from scratch without NumPy or SciPy.
+Welcome to the interactive showcase of the **Platform**. 
+Everything you see here is powered by **Pure Python** algorithms, built from scratch without NumPy, SciPy, or other heavy numerical dependencies.
 """)
 
 tabs = st.tabs(["🧠 Hypothesis Engine", "⚛️ Quantum Lab", "🤖 Neural Network", "📈 Math & Stats"])
@@ -22,6 +33,7 @@ tabs = st.tabs(["🧠 Hypothesis Engine", "⚛️ Quantum Lab", "🤖 Neural Net
 # --- Tab 1: Hypothesis Engine ---
 with tabs[0]:
     st.header("Structured Hypothesis Generation")
+    st.write("Generate scientific hypotheses with explicit reasoning, assumptions, and predictions.")
     col1, col2 = st.columns([2, 1])
     
     with col1:
@@ -29,7 +41,7 @@ with tabs[0]:
         domain_choice = st.selectbox("Select Domain:", ["Cosmology", "Physics", "Mathematics", "General Science"])
         num_hypo = st.slider("Number of Hypotheses:", 1, 5, 2)
         
-        if st.button("Generate Hypotheses"):
+        if st.button("Generate Hypotheses", type="primary"):
             if not question.strip():
                 st.error("Please enter a research question.")
             else:
@@ -53,15 +65,17 @@ with tabs[0]:
 # --- Tab 2: Quantum Lab ---
 with tabs[1]:
     st.header("Quantum Circuit Simulator")
+    st.write("Simulate quantum gates and measure state probabilities using pure linear algebra.")
     
     q_col1, q_col2 = st.columns([1, 2])
     
     with q_col1:
         st.subheader("Circuit Builder")
-        apply_h = st.checkbox("Apply Hadamard (H)", value=True)
+        apply_h = st.checkbox("Apply Hadamard (H) to Qubit 0", value=True)
+        st.caption("The Hadamard gate creates superposition: |0⟩ → (|0⟩ + |1⟩)/√2")
         shots = st.select_slider("Number of Shots (Measurements):", options=[100, 1000, 10000, 100000], value=1000)
         
-        if st.button("Run Simulation"):
+        if st.button("Run Simulation", type="primary"):
             try:
                 c = QuantumCircuit()
                 if apply_h:
@@ -81,14 +95,14 @@ with tabs[1]:
             st.bar_chart(counts)
             st.json(counts)
         else:
-            st.write("Construct a circuit and click 'Run Simulation' to see results.")
+            st.info("Construct a circuit and click 'Run Simulation' to see results.")
 
 # --- Tab 3: Neural Network ---
 with tabs[2]:
     st.header("MLP: Multi-Layer Perceptron")
-    st.markdown("Watch a Pure Python Neural Network learn the XOR logic in real-time.")
+    st.markdown("Watch a Pure Python Neural Network learn the **XOR logic** in real-time using backpropagation.")
     
-    if st.button("Train XOR Model"):
+    if st.button("Train XOR Model", type="primary"):
         try:
             # Training data
             X = [[0, 0], [0, 1], [1, 0], [1, 1]]
@@ -111,7 +125,7 @@ with tabs[2]:
                 status_text.text(f"Epoch {epoch*5}/500 - Loss: {res['final_loss']:.6f}")
             
             st.success("Model Trained!")
-            st.line_chart(losses)
+            st.line_chart(losses, use_container_width=True)
             
             st.subheader("Predictions")
             cols = st.columns(4)
@@ -124,12 +138,13 @@ with tabs[2]:
 # --- Tab 4: Math & Stats ---
 with tabs[3]:
     st.header("Numerical Analysis Showcase")
+    st.write("Direct implementation of statistical tests and terminal-friendly visualizations.")
     
     m_col1, m_col2 = st.columns(2)
     
     with m_col1:
         st.subheader("Welch's t-test")
-        st.markdown("Comparing two distributions with unequal variances.")
+        st.markdown("Comparing two distributions with unequal variances (Pure Python).")
         
         mu1 = st.slider("Mean 1", 50.0, 100.0, 70.0)
         mu2 = st.slider("Mean 2", 50.0, 100.0, 75.0)
@@ -165,4 +180,5 @@ st.sidebar.info("Dependencies: Standard Library + Typer/Rich/Pydantic")
 st.sidebar.markdown("""
 [View Source on GitHub](https://github.com/Furox88/cognitive-discovery-platform)
 """)
+
 

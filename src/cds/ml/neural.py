@@ -17,14 +17,46 @@ class Layer:
         self.weights = [[random.uniform(-limit, limit) for _ in range(input_size)] for _ in range(output_size)]
         self.biases = [0.0] * output_size
         self.activation = activation
+        
+        # State for backpropagation
+        self.last_x: list[float] = []
+        self.last_z: list[float] = []
+        self.last_a: list[float] = []
+        self.grad_weights = [[0.0 for _ in range(input_size)] for _ in range(output_size)]
+        self.grad_biases = [0.0] * output_size
 
     def forward(self, x: list[float]) -> list[float]:
-        """Compute layer output for a single input vector."""
-        out = []
+        """Compute layer output for a single input vector and store state for backward pass."""
+        self.last_x = x
+        self.last_z = []
+        self.last_a = []
         for i in range(len(self.weights)):
             z = sum(w * xi for w, xi in zip(self.weights[i], x)) + self.biases[i]
-            out.append(self._activate(z))
-        return out
+            self.last_z.append(z)
+            self.last_a.append(self._activate(z))
+        return self.last_a
+
+    def backward(self, grad_out: list[float]) -> list[float]:
+        """Backpropagate error gradient through the layer."""
+        # dL/dz = dL/da * da/dz
+        grad_z = [go * self._activate_derivative(z, a) for go, z, a in zip(grad_out, self.last_z, self.last_a)]
+        
+        # dL/dw_ij = dL/dz_i * x_j
+        for i in range(len(self.weights)):
+            gz_i = grad_z[i]
+            for j in range(len(self.weights[i])):
+                self.grad_weights[i][j] += gz_i * self.last_x[j]
+        
+        # dL/db_i = dL/dz_i
+        for i in range(len(self.biases)):
+            self.grad_biases[i] += grad_z[i]
+
+        # dL/dx_j = sum_i (dL/dz_i * w_ij)
+        grad_in = [0.0] * len(self.last_x)
+        for j in range(len(self.last_x)):
+            grad_in[j] = sum(grad_z[i] * self.weights[i][j] for i in range(len(self.weights)))
+        
+        return grad_in
 
     def _activate(self, z: float) -> float:
         if self.activation == "relu":
@@ -40,6 +72,13 @@ class Layer:
             except OverflowError:
                 return 0.0 if z < 0 else 1.0
         return z  # identity
+
+    def _activate_derivative(self, z: float, a: float) -> float:
+        if self.activation == "relu":
+            return 1.0 if z > 0 else 0.0
+        if self.activation == "sigmoid":
+            return a * (1.0 - a)
+        return 1.0  # identity
 
 
 class MLP:
@@ -77,6 +116,24 @@ class MLP:
                 layer.biases[i] = params[idx]
                 idx += 1
 
+    def get_gradients(self) -> list[float]:
+        """Flatten all accumulated gradients into a single list."""
+        grads = []
+        for layer in self.layers:
+            for row in layer.grad_weights:
+                grads.extend(row)
+            grads.extend(layer.grad_biases)
+        return grads
+
+    def zero_grads(self) -> None:
+        """Reset all parameter gradients to zero."""
+        for layer in self.layers:
+            for i in range(len(layer.grad_weights)):
+                for j in range(len(layer.grad_weights[i])):
+                    layer.grad_weights[i][j] = 0.0
+            for i in range(len(layer.grad_biases)):
+                layer.grad_biases[i] = 0.0
+
     def train(
         self, 
         X: list[list[float]], 
@@ -84,7 +141,7 @@ class MLP:
         epochs: int = 100, 
         lr: float = 0.01
     ) -> dict[str, Any]:
-        """Train the network using the Adam optimizer with state persistence."""
+        """Train the network using the Adam optimizer with backpropagation and state persistence."""
         
         def loss_fn(params: list[float]) -> float:
             self.set_parameters(params)
@@ -94,8 +151,27 @@ class MLP:
                 total_loss += sum((p - target) ** 2 for p, target in zip(pred, yi))
             return total_loss / len(X)
 
+        def grad_fn(params: list[float]) -> list[float]:
+            self.set_parameters(params)
+            self.zero_grads()
+            for xi, yi in zip(X, y):
+                pred = self.predict(xi)
+                # MSE gradient: dL/dp = 2/N * (p - y)
+                grad_out = [2.0 * (p - target) / len(X) for p, target in zip(pred, yi)]
+                curr_grad = grad_out
+                for layer in reversed(self.layers):
+                    curr_grad = layer.backward(curr_grad)
+            return self.get_gradients()
+
         p0 = self.get_parameters()
-        res = adam(loss_fn, p0, lr=lr, max_iter=epochs, state=self.optimizer_state)
+        res = adam(
+            loss_fn, 
+            p0, 
+            lr=lr, 
+            max_iter=epochs, 
+            state=self.optimizer_state,
+            grad_f=grad_fn
+        )
         
         # res.x is float | list[float], but for MLP it's guaranteed to be a list
         final_params = cast(list[float], res.x)
