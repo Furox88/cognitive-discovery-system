@@ -5,26 +5,28 @@ This report tracks not just raw speed, but **Algorithmic Intelligence**. While p
 ### Linear Algebra (Approaching C-Speed)
 | Metric | Value |
 |--------|-------|
-| CDS Matrix Mul (100x100) | 0.0384s |
-| CDS LU Decomp (100x100) | 0.0153s |
-| NumPy Matrix Mul (Baseline) | 0.000044s |
-| Speed Status | CDS is 878.0x slower (Pure Python vs C-extension) |
+| CDS Matrix Mul (100x100) | 0.0392s |
+| CDS LU Decomp (100x100) | 0.0146s |
+| NumPy Matrix Mul (Baseline) | 0.000070s |
+| Speed Status | CDS is 560.2x slower (Pure Python vs C-extension) |
 
 ### Monte Carlo (Hardware Saturation)
 | Metric | Value |
 |--------|-------|
-| Parallel Pi (100k samples) | 0.9383s |
+| Parallel Pi (100k samples) | 0.9252s |
 | CPU Cores Saturated | 22 |
 
 ### Quantum (Algorithmic Intelligence)
 | Metric | Value |
 |--------|-------|
-| Intelligent O(1) Sampling | 0.0065s |
-| Naive Brute Force (Est.) | 0.00s |
-| Intelligence Speedup | 0x Faster |
+| Intelligent O(1) Sampling | 0.0062s |
+| Naive Brute Force (Est.) | 0.41s |
+| Intelligence Speedup | 66.4x Faster |
 
 ## Visual Proof: Quantum Intelligence
 ```text
-Naive Brute Force: ######################################## (Hours)
-CDS O(1) Sampling: # (Milliseconds)
+Naive Brute Force: ######################################## (Estimated Time)
+CDS O(1) Sampling: # (Actual Time)
+
+Conclusion: CDS is 66.4 times faster due to Algorithmic Intelligence.
 ```

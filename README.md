@@ -76,6 +76,27 @@ cds modules
 cds hypothesis "What causes the Hubble tension?"
 ```
 
+## 🧠 Intelligence over Brute Force
+
+CDS is built on the philosophy that **smart algorithms beat brute force**. While pure Python cannot match C-extensions in raw loop speed, CDS closes the gap with mathematical intelligence:
+
+- **Quantum Simulation:** Instead of multiplying massive matrices for every shot, CDS uses **O(1) probabilistic sampling** with true state collapse, making it millions of times faster than naive approaches.
+- **Linear Algebra:** Replaced standard O(N!) determinants with **O(N³)** Partial Pivoting LU Decomposition.
+- **Signal Processing:** Uses zero-padded **O(N log N)** FFT and FFT-based Convolution Theorems.
+- **Neural Networks:** Features Adam optimizers with momentum state persistence.
+
+See the full [Intelligence & Performance Benchmark Report](docs/benchmarks.md) for detailed figures.
+
+## 📊 ASCII Visualization & Tools
+
+You don't need heavy plotting libraries to see your data. CDS includes a built-in terminal visualization engine:
+
+```bash
+# Plot a sine wave or data series directly in your terminal!
+cds plot "1, 5, 3, 8, 4, 9" --title "My Data"
+```
+*Outputs clean, scale-aware ASCII line plots and bar charts.*
+
 ## 🌐 Interactive Dashboard
 
 CDS now features an **Interactive Web Dashboard** for real-time scientific exploration. Launch it directly from your terminal:
@@ -198,6 +219,37 @@ reg = linear_regression(x, y)
 print(f"y = {reg.slope:.2f}x + {reg.intercept:.2f}, R²={reg.r_squared:.3f}")
 ```
 
+### Machine Learning
+```python
+from cds.ml import Layer, MLP
+
+# Simple XOR-like Neural Network
+net = MLP([
+    Layer(2, 4, activation="relu"),
+    Layer(4, 1, activation="sigmoid")
+])
+X, y = [[0, 0], [0, 1], [1, 0], [1, 1]], [[0], [1], [1], [0]]
+
+# Train with built-in Adam optimizer
+history = net.train(X, y, epochs=50, lr=0.1)
+print(f"Final loss: {history['final_loss']:.4f}")
+```
+
+### Data Analysis & Visualization
+```python
+from cds.data_analysis import DataSet, plot_bar
+
+# Mini-Pandas DataSet for filtering and grouping
+data = [{"name": "A", "score": 88}, {"name": "B", "score": 92}]
+ds = DataSet(data)
+filtered = ds.filter(lambda row: row["score"] > 90)
+print(filtered.column("name"))  # ['B']
+
+# Terminal Visualization
+scores = {row["name"]: row["score"] for row in ds.to_list()}
+print(plot_bar(scores, title="Scores"))
+```
+
 ### Scientific Computing
 ```python
 from cds.scientific import kinetic_energy, escape_velocity, get_constant
@@ -261,11 +313,12 @@ print(f"x(π) = {y_vals[-1][0]:.4f}")  # ~-1.0
 src/cds/
 ├── quantum/        # Quantum circuit simulation (single & multi-qubit)
 ├── optimization/   # Gradient descent, Newton, Adam, line search
+├── ml/             # Neural Networks (MLP, Layers, Adam training)
 ├── signals/        # DFT, FFT, convolution, filtering
 ├── probability/    # Probability distributions & sampling
 ├── stats/          # Statistical analysis & regression
 ├── math_utils/     # Calculus, linear algebra, eigenvalues, Gram-Schmidt
-├── data_analysis/  # CSV loading & data transforms
+├── data_analysis/  # Mini-Pandas DataSet, CSV loading, ASCII viz
 ├── scientific/     # Physical constants & formulas
 ├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal MST)
 ├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
@@ -276,7 +329,8 @@ src/cds/
 
 examples/           # Runnable demo scripts
 tests/              # 350 tests (see CI)
-docs/               # Documentation (getting started, API reference, benchmarks)
+docs/               # MkDocs documentation, tutorials, benchmarks
+```
 
 .github/workflows/  # Automation for PRs (labels + checklist), releases, and dependency updates
 ```

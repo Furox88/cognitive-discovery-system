@@ -50,9 +50,9 @@ def bench_montecarlo():
     from cds.montecarlo import estimate_pi
     samples = 100_000
     
-    start = time.time()
+    start = time.perf_counter()
     estimate_pi(samples, seed=42)
-    t_parallel = time.time() - start
+    t_parallel = time.perf_counter() - start
     
     return {
         "Parallel Pi (100k samples)": f"{t_parallel:.4f}s",
@@ -70,23 +70,21 @@ def bench_quantum():
     shots = 100_000
     
     # Intelligent O(1) Sampling
-    start = time.time()
+    start = time.perf_counter()
     simulate(c, shots=shots)
-    t_intelligent = time.time() - start
+    t_intelligent = time.perf_counter() - start
     
     # Simulated Naive Brute Force (running the circuit N times)
-    # We estimate this to prevent freezing the user's machine
-    start = time.time()
-    c.run()
-    t_single_run = time.time() - start
+    # Measure average of 100 runs to ensure non-zero high-precision result
+    t_single_run = timeit.timeit(lambda: c.run(), number=100) / 100
     t_naive_estimate = t_single_run * shots
     
-    speedup = t_naive_estimate / t_intelligent if t_intelligent > 0 else float('inf')
+    speedup = t_naive_estimate / t_intelligent if t_intelligent > 0 else 1.0
     
     return {
         "Intelligent O(1) Sampling": f"{t_intelligent:.4f}s",
         "Naive Brute Force (Est.)": f"{t_naive_estimate:.2f}s",
-        "Intelligence Speedup": f"{speedup:.0f}x Faster"
+        "Intelligence Speedup": f"{speedup:.1f}x Faster"
     }
 
 def run_all():
@@ -108,10 +106,14 @@ def run_all():
             report += f"| {k} | {v} |\n"
         report += "\n"
         
+    # Dynamic Visual Proof based on actual calculated speedup
+    speedup_val = float(results["Quantum (Algorithmic Intelligence)"]["Intelligence Speedup"].split('x')[0])
+    
     report += "## Visual Proof: Quantum Intelligence\n"
     report += "```text\n"
-    report += "Naive Brute Force: " + ("#" * 40) + " (Hours)\n"
-    report += "CDS O(1) Sampling: # (Milliseconds)\n"
+    report += "Naive Brute Force: " + ("#" * 40) + " (Estimated Time)\n"
+    report += "CDS O(1) Sampling: # (Actual Time)\n"
+    report += f"\nConclusion: CDS is {speedup_val:.1f} times faster due to Algorithmic Intelligence.\n"
     report += "```\n"
     
     docs_dir = Path("docs")
@@ -119,7 +121,6 @@ def run_all():
     with open(docs_dir / "benchmarks.md", "w", encoding="utf-8") as f:
         f.write(report)
 
-        
     print(f"Benchmarks completed. Report saved to {docs_dir / 'benchmarks.md'}")
 
 if __name__ == "__main__":
