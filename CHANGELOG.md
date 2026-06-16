@@ -4,15 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-06-16
+
 ### Added
 - **Pre-commit hooks** (`.pre-commit-config.yaml`): Ruff (lint + format), Mypy (type check), and standard file checks run on every commit. CI mirrors the same checks.
 - **Dependency lockfiles** (`requirements.lock`, `requirements-dev.lock`): fully pinned dependency snapshots for reproducible installs. Regenerate via `pip-compile` (see CONTRIBUTING.md).
-- **Coverage threshold gate**: CI fails if coverage drops below 100% (`--cov-fail-under=100`). Branch coverage enabled. Configured in `pyproject.toml` under `[tool.coverage.*]`.
+- **Coverage threshold gate**: CI fails if coverage drops below 100% (`--cov-fail-under=100`). Configured in `pyproject.toml` under `[tool.coverage.*]`.
 - **Pre-commit job in CI**: `.github/workflows/tests.yml` now has a dedicated `pre-commit` job alongside the existing test job.
+- **Docs deploy workflow** (`.github/workflows/pages.yml`): builds and deploys the mkdocs site to GitHub Pages on every push to main.
+- **Publish script** (`scripts/publish.ps1`): single-command local PyPI release workflow (verify, test, build, upload).
+- **Coverage tests**: added `test_independence_zero_row_total` and `test_independence_zero_col_total` for the `if exp > 0` False branch in `chi_square_independence`.
 
 ### Changed
 - `CONTRIBUTING.md` updated with pre-commit setup, lockfile regeneration, and `ruff format` instructions.
 - `.github/workflows/tests.yml` extended: added `ruff format --check`, coverage threshold gate, and separate pre-commit job.
+- Codebase reformatted with `ruff format` (85 files).
+- Test count: 570 → 572.
 
 ## [0.8.0] - 2026-06-16
 

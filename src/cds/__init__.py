@@ -23,7 +23,7 @@ Usage:
     from cds.hypothesis import generate_hypotheses
 """
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 
 # Convenient top-level re-exports for common scientific tools
 # Core modules

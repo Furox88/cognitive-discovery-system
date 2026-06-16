@@ -7,7 +7,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-570-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-572-brightgreen.svg)](#)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
@@ -20,7 +20,7 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> Currently in **alpha (v0.8.0)**. Contributions welcome!
+> Currently in **alpha (v0.8.1)**. Contributions welcome!
 
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
