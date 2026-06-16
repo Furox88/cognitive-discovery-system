@@ -101,12 +101,15 @@ source = "vcs"
 version-file = "src/cds/_version.py"
 
 # setuptools_scm options (used internally by hatch-vcs):
-# - `no-local-version`: don't append `.dev0+g<sha>` when the working tree
-#   is dirty. The version stays as the tag (e.g. 0.9.0b1) for release
-#   builds; dev installs will still see the right tag value, and CI never
-#   publishes a build with a `.dev0` suffix because the publish script
-#   refuses if the built version doesn't match the requested tag.
+# - `no-guess-dev`: never append `.devN+g<sha>` even when the working tree
+#   is dirty. The version stays exactly as the tag (e.g. 0.9.0b1). This
+#   matches what we want for release builds.
+# - `no-local-version`: don't add `+local.X` suffix.
+# - `fallback_version`: used when git tags are unavailable (e.g. shallow
+#   clones without history). The placeholder src/cds/_version.py mirrors
+#   this so mypy has something to resolve against in fresh checkouts.
 [tool.setuptools_scm]
+version_scheme = "no-guess-dev"
 local_scheme = "no-local-version"
 fallback_version = "0.0.0+unknown"
 

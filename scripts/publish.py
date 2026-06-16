@@ -61,8 +61,9 @@ def version_from_wheel(path: Path) -> str | None:
     """Extract the version from a built wheel filename.
 
     ``cds-0.9.0b1-py3-none-any.whl`` -> ``0.9.0b1``
+    ``cds-0.9.0b1.post1-py3-none-any.whl`` -> ``0.9.0b1.post1``
     """
-    m = re.search(r"-([\w.]+)-py\d", path.name)
+    m = re.search(r"-([\w.+]+)-py\d", path.name)
     return m.group(1) if m else None
 
 
