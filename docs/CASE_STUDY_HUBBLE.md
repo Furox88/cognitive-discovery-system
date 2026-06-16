@@ -77,4 +77,4 @@ if result.p_value < 1e-5:
 The CDS framework allows researchers to transition from high-level theoretical exploration to rigorous data validation in a unified environment. By combining automated hypothesis generation with robust statistical tools, we can systematically approach the "Hubble Crisis" and evaluate the viability of new physics.
 
 ---
-*This report was generated using the Cognitive Discovery System (CDS) - Scientist Agent 1.*
+*This report was generated using the Cognitive Discovery Platform (CDS).*
