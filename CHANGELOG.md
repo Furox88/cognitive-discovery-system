@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Replaced `scripts/publish.ps1` with `scripts/publish.py`** for cross-platform, pure-Python local PyPI releases. Removes the only PowerShell surface in the repository (was 1.2% of the GitHub language bar).
+
 ## [0.8.1] - 2026-06-16
 
 ### Added

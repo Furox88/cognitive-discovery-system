@@ -25,8 +25,6 @@ repos:
       - id: check-case-conflict
       - id: mixed-line-ending
         args: ["--fix=lf"]
-        # PowerShell scripts (.ps1) and Windows-generated files use CRLF.
-        exclude: '\.ps1$|\.bat$|\.cmd$'
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
