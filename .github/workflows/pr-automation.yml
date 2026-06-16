@@ -1,0 +1,80 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to run automation for'
+        required: true
+        type: string
+
+jobs:
+  labeler:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+  review-checklist:
+    runs-on: ubuntu-latest
+    # Runs on label 'needs-review' or manual dispatch
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'needs-review')) ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            let prNumber = context.issue ? context.issue.number : null;
+            
+            if (context.eventName === 'workflow_dispatch') {
+              prNumber = parseInt('${{ inputs.pr_number }}');
+            }
+            
+            if (!prNumber) {
+              console.log('No PR number provided');
+              return;
+            }
+            
+            // Avoid duplicate comments
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber
+            });
+            
+            const hasChecklist = comments.some(c => 
+              c.body.includes('PR Review Checklist') && c.user.type === 'Bot'
+            );
+            
+            if (hasChecklist) {
+              console.log('Review checklist comment already exists');
+              return;
+            }
+            
+            const checklist = `## PR Review Checklist
+            
+            Maintainer quick checklist for this PR:
+            
+            - [ ] Tests added or updated where needed
+            - [ ] Documentation updated (README, docstrings, examples)
+            - [ ] No unnecessary dependencies added
+            - [ ] Code follows project style (run ruff locally)
+            - [ ] CHANGELOG updated if user-facing
+            
+            Feel free to ping the maintainer for review.`;
+            
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body: checklist
+            });
+            
+            console.log(`Posted review checklist for PR #${prNumber}`);

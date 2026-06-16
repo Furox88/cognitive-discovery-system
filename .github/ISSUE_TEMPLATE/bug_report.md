@@ -1,0 +1,42 @@
+---
+name: Bug report
+about: Report something that isn't working as expected
+title: "[BUG] "
+labels: bug
+assignees: ''
+---
+
+## Describe the bug
+A clear and concise description of what the bug is.
+
+## To reproduce
+Steps to reproduce the behavior:
+1. Run `...`
+2. Call `...`
+3. See error
+
+```python
+# Minimal reproducible example
+import cds
+...
+```
+
+## Expected behavior
+What you expected to happen.
+
+## Actual behavior / traceback
+```
+Paste the full error or unexpected output here.
+```
+
+## Environment
+- CDS version: `cds --version` →
+- Python version:
+- OS:
+- How installed: `pip install cognitive-discovery-platform` / from source / other
+
+## Module / function affected
+e.g. `cds.quantum`, `cds.numerical_integration.simpson`, `cds.cli`
+
+## Additional context
+Anything else relevant.

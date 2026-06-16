@@ -1,0 +1,90 @@
+[project]
+name = "cognitive-discovery-platform"
+version = "0.7.0"
+description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Furox88", email = "furkanarkn1451@gmail.com"}
+]
+keywords = ["quantum", "fft", "optimization", "probability", "statistics", "scientific-computing", "signal-processing", "pure-python", "graph-theory", "monte-carlo", "differential-equations", "linear-algebra"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+dependencies = [
+    "typer[all]>=0.9.0",
+    "pydantic>=2.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dashboard = [
+    "streamlit>=1.30.0",
+    "pandas",
+]
+test = [
+    "pytest>=8.0",
+    "pytest-cov",
+]
+dev = [
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "pre-commit",
+    "build",
+    "twine",
+    "ipykernel",
+    "notebook",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+]
+
+[project.scripts]
+cds = "cds.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/Furox88/cognitive-discovery-system"
+Repository = "https://github.com/Furox88/cognitive-discovery-system"
+Documentation = "https://furox88.github.io/cognitive-discovery-system/"
+"PyPI" = "https://pypi.org/project/cognitive-discovery-platform/"
+Issues = "https://github.com/Furox88/cognitive-discovery-system/issues"
+Changelog = "https://github.com/Furox88/cognitive-discovery-system/releases"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cds"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+strict = true
+ignore_missing_imports = true

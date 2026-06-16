@@ -1,0 +1,34 @@
+# Labeler config for auto-labeling PRs based on paths
+# See https://github.com/actions/labeler
+
+ci:
+  - .github/workflows/**
+
+docs:
+  - docs/**
+  - README.md
+  - CONTRIBUTING.md
+  - CHANGELOG.md
+  - examples/**
+
+cli:
+  - src/cds/cli.py
+  - tests/test_cli.py
+
+hypothesis:
+  - src/cds/hypothesis/**
+  - examples/hypothesis*.py
+  - tests/test_hypothesis*.py
+
+core:
+  - src/cds/core/**
+  - src/cds/__init__.py
+
+tests:
+  - tests/**
+  - pytest.ini
+  - pyproject.toml
+
+dependencies:
+  - pyproject.toml
+  - setup_repo.sh
