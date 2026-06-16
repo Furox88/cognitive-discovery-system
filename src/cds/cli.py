@@ -1,4 +1,4 @@
-"""CDS Command Line Interface."""
+"""Platform Command Line Interface."""
 from __future__ import annotations
 
 import json
@@ -28,7 +28,7 @@ console = Console()
 def _version_callback(value: bool) -> None:
     if value:
         from cds import __version__
-        console.print(f"[bold]CDS[/] version [cyan]{__version__}[/]")
+        console.print(f"[bold]Platform[/] version [cyan]{__version__}[/]")
         raise typer.Exit()
 
 
@@ -41,10 +41,10 @@ def main(
         "-v",
         callback=_version_callback,
         is_eager=True,
-        help="Show CDS version and exit",
+        help="Show Platform version and exit",
     ),
 ) -> None:
-    """CDS CLI entrypoint."""
+    """Platform CLI entrypoint."""
     if ctx.invoked_subcommand is None:
         # No subcommand given, show help
         console.print(ctx.get_help())
@@ -62,10 +62,10 @@ class DomainChoice(str, Enum):
 
 @app.command()
 def version() -> None:
-    """Show CDS version."""
+    """Show Platform version."""
     from cds import __version__
 
-    console.print(f"[bold]CDS[/] version [cyan]{__version__}[/]")
+    console.print(f"[bold]Platform[/] version [cyan]{__version__}[/]")
 
 
 @app.command()
@@ -148,7 +148,7 @@ def prompt(
 
 @app.command()
 def info() -> None:
-    """Show project info, module status, and system health."""
+    """Show project info, module status, and Platform health."""
     from rich.columns import Columns
     from rich.text import Text
     

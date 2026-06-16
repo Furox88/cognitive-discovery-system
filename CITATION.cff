@@ -8,8 +8,8 @@ authors:
     email: "furkanarkn1451@gmail.com"
 abstract: "Pure Python computational science platform — quantum simulation, signal processing, statistics, optimization, hypothesis generation, and related numerical methods. All modules are implemented without heavy external dependencies."
 license: MIT
-repository-code: "https://github.com/Furox88/cognitive-discovery-system"
-url: "https://github.com/Furox88/cognitive-discovery-system"
+repository-code: "https://github.com/Furox88/cognitive-discovery-platform"
+url: "https://github.com/Furox88/cognitive-discovery-platform"
 date-released: "2026-06-14"
 keywords:
   - "pure python"
@@ -26,4 +26,4 @@ preferred-citation:
     - name: "Furox88"
   year: 2026
   version: 0.6.0
-  url: "https://github.com/Furox88/cognitive-discovery-system"
+  url: "https://github.com/Furox88/cognitive-discovery-platform"
