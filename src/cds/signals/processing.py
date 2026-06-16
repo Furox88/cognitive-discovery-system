@@ -61,7 +61,7 @@ def fft_radix2(signal: list[complex]) -> list[complex]:
     if n == 0:
         return []
     if n & (n - 1) != 0:
-        raise ValueError("length must be a power of 2")
+        raise ValueError(f"signal length must be a power of 2 for FFT (got {n}); pad with zeros or use dft() for arbitrary lengths")
     if n == 1:
         return list(signal)
 
@@ -190,8 +190,8 @@ def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
         raise ValueError("matrix must be non-empty")
     cols = len(matrix[0])
     if any(len(row) != cols for row in matrix):
-        raise ValueError("all rows must have equal length")
-    
+        raise ValueError("all rows must have the same length (ragged matrix detected)")
+
     # Row-wise FFT
     row_fft = [fft(list(row)) for row in matrix]
     
@@ -209,8 +209,8 @@ def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
         raise ValueError("matrix must be non-empty")
     cols = len(spectrum[0])
     if any(len(row) != cols for row in spectrum):
-        raise ValueError("all rows must have equal length")
-    
+        raise ValueError("all rows must have the same length (ragged matrix detected)")
+
     # Row-wise IFFT
     row_inv = [ifft(list(row)) for row in spectrum]
     

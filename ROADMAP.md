@@ -2,14 +2,14 @@
 
 Planned direction for CDS. All work maintains the **zero-dependency, pure Python** philosophy.
 
-## v0.7.0 — Coverage & Polish (Next)
+## v0.7.0 — Coverage & Polish
 
 - [x] ~~Push test coverage to **97%+** across every module~~ — achieved **99%**
 - [x] ~~Add `typing.Protocol`-based extension points for custom hypothesis generators~~ — shipped as `HypothesisGenerator` Protocol
-- [ ] Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md
-- [ ] Replace remaining generic error messages with actionable guidance
+- [x] ~~Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md~~ — already documented in §"Package Name vs Repository Name"
+- [x] ~~Replace remaining generic error messages with actionable guidance~~ — updated 11 messages in linalg, signals, and stats modules
 
-## v0.8.0 — Performance & Benchmarks
+## v0.8.0 — Performance & Benchmarks (Next)
 
 - [x] ~~Publish automated benchmark suite (FFT speed, Monte Carlo convergence, LU decomposition vs naive)~~ — see `benchmarks/run_benchmarks.py` & `docs/benchmarks.md`
 - [ ] Add optional `--num-workers` flag to all parallel Monte Carlo functions

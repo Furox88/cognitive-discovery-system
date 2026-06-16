@@ -99,7 +99,7 @@ def _gcf(a: float, x: float) -> float:
 def _gammp(a: float, x: float) -> float:
     """Regularized lower incomplete gamma function P(a, x)."""
     if x < 0.0 or a <= 0.0:
-        raise ValueError("invalid arguments to gammp")
+        raise ValueError("a must be > 0 and x must be >= 0 (regularized incomplete gamma P(a, x))")
     if x < a + 1.0:
         return _gser(a, x)
     return 1.0 - _gcf(a, x)
@@ -108,7 +108,7 @@ def _gammp(a: float, x: float) -> float:
 def _gammq(a: float, x: float) -> float:
     """Regularized upper incomplete gamma function Q(a, x) = 1 - P(a, x)."""
     if x < 0.0 or a <= 0.0:
-        raise ValueError("invalid arguments to gammq")
+        raise ValueError("a must be > 0 and x must be >= 0 (regularized incomplete gamma Q(a, x))")
     if x < a + 1.0:
         return 1.0 - _gser(a, x)
     return _gcf(a, x)
@@ -160,7 +160,7 @@ def _betai(a: float, b: float, x: float) -> float:
     Reference: Numerical Recipes §6.4 (betai).
     """
     if x < 0.0 or x > 1.0:
-        raise ValueError("x must be in [0, 1]")
+        raise ValueError("x must be in [0, 1] for the incomplete beta function I_x(a, b)")
     if x == 0.0 or x == 1.0:
         return x
     front = math.exp(

@@ -19,7 +19,7 @@ Vector = list[float]
 
 def dot(a: Vector, b: Vector) -> float:
     if len(a) != len(b):
-        raise ValueError("vectors must be same length")
+        raise ValueError(f"vectors a and b must have the same length (got {len(a)} and {len(b)})")
     return sum(x * y for x, y in zip(a, b))
 
 
@@ -120,7 +120,7 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
                 pivot_idx = i
 
         if max_val < 1e-15:
-            raise ValueError("zero pivot encountered — matrix may be singular")
+            raise ValueError(f"zero pivot at column {k} — the input matrix is singular or nearly singular; try regularizing or checking your data")
 
         if pivot_idx != k:
             U[k], U[pivot_idx] = U[pivot_idx], U[k]
@@ -160,7 +160,7 @@ def solve_linear(A: Matrix, b: Vector) -> Vector:
     x = [0.0] * n
     for i in range(n - 1, -1, -1):
         if abs(U[i][i]) < 1e-15:
-            raise ValueError("singular matrix")
+            raise ValueError(f"singular matrix — LU backward substitution failed at row {i}; matrix has no unique inverse")
         x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
 
     return x
@@ -196,7 +196,7 @@ def matrix_inverse(m: Matrix) -> Matrix:
         x = [0.0] * n
         for i in range(n - 1, -1, -1):
             if abs(U[i][i]) < 1e-15:
-                raise ValueError("singular matrix")
+                raise ValueError(f"singular matrix — LU backward substitution failed at row {i} (during inverse computation); matrix has no unique inverse")
             x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
 
         for row in range(n):
@@ -370,7 +370,7 @@ def cholesky(m: Matrix) -> Matrix:
             if i == j:
                 diag = m[i][i] - s
                 if diag <= 0.0:
-                    raise ValueError("matrix is not positive definite")
+                    raise ValueError("matrix is not positive definite — Cholesky decomposition requires symmetric positive definite input; check that the matrix is symmetric and all eigenvalues > 0")
                 L[i][j] = math.sqrt(diag)
             else:
                 L[i][j] = (m[i][j] - s) / L[j][j]

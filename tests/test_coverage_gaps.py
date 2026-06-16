@@ -9,6 +9,8 @@ import math
 import subprocess
 import sys
 
+from cds import __version__
+
 from typer.testing import CliRunner
 
 import cds.cli as cli_mod
@@ -75,7 +77,7 @@ def test_main_module_runs():
         timeout=30,
     )
     assert result.returncode == 0
-    assert "0.6" in result.stdout
+    assert __version__ in result.stdout
 
 
 # ---------------------------------------------------------------------------
