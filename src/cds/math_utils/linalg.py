@@ -9,6 +9,7 @@ References:
     - Cholesky, A.-L. / Benoît (1924). Méthode de résolution des équations
       normales (Bulletin Géodésique, 2, 67-77).
 """
+
 from __future__ import annotations
 
 import math
@@ -25,7 +26,7 @@ def dot(a: Vector, b: Vector) -> float:
 
 def mat_mul(a: Matrix, b: Matrix) -> Matrix:
     """Matrix multiplication A * B (Optimized Pure Python).
-    
+
     Uses pre-transposition to exploit row-major access patterns,
     making it significantly faster by using Python's internal zip/sum.
     """
@@ -33,14 +34,12 @@ def mat_mul(a: Matrix, b: Matrix) -> Matrix:
     rows_b, cols_b = len(b), len(b[0])
     if cols_a != rows_b:
         raise ValueError(f"incompatible shapes: {rows_a}x{cols_a} and {rows_b}x{cols_b}")
-    
+
     # Pre-transpose B to make column access O(1) row access
     # This is an 'Intelligence' boost: treating memory access patterns as a priority
     b_T = list(zip(*b))
-    
-    return [[sum(ai * bi for ai, bi in zip(row_a, col_b)) 
-             for col_b in b_T] 
-            for row_a in a]
+
+    return [[sum(ai * bi for ai, bi in zip(row_a, col_b)) for col_b in b_T] for row_a in a]
 
 
 def transpose(m: Matrix) -> Matrix:
@@ -66,7 +65,7 @@ def determinant(m: Matrix) -> float:
         # If matrix is singular, determinant is 0
         return 0.0
 
-    # Determinant of LU is product of diag(U) 
+    # Determinant of LU is product of diag(U)
     # (diag(L) is all 1s).
     det = 1.0
     for i in range(n):
@@ -84,7 +83,7 @@ def determinant(m: Matrix) -> float:
             while not visited[curr]:
                 visited[curr] = True
                 curr = p_indices[curr]
-            
+
     return float(det * ((-1) ** (n - num_cycles)))
 
 
@@ -120,7 +119,9 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
                 pivot_idx = i
 
         if max_val < 1e-15:
-            raise ValueError(f"zero pivot at column {k} — the input matrix is singular or nearly singular; try regularizing or checking your data")
+            raise ValueError(
+                f"zero pivot at column {k} — the input matrix is singular or nearly singular; try regularizing or checking your data"
+            )
 
         if pivot_idx != k:
             U[k], U[pivot_idx] = U[pivot_idx], U[k]
@@ -160,7 +161,9 @@ def solve_linear(A: Matrix, b: Vector) -> Vector:
     x = [0.0] * n
     for i in range(n - 1, -1, -1):
         if abs(U[i][i]) < 1e-15:
-            raise ValueError(f"singular matrix — LU backward substitution failed at row {i}; matrix has no unique inverse")
+            raise ValueError(
+                f"singular matrix — LU backward substitution failed at row {i}; matrix has no unique inverse"
+            )
         x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
 
     return x
@@ -196,17 +199,21 @@ def matrix_inverse(m: Matrix) -> Matrix:
         x = [0.0] * n
         for i in range(n - 1, -1, -1):
             if abs(U[i][i]) < 1e-15:
-                raise ValueError(f"singular matrix — LU backward substitution failed at row {i} (during inverse computation); matrix has no unique inverse")
+                raise ValueError(
+                    f"singular matrix — LU backward substitution failed at row {i} (during inverse computation); matrix has no unique inverse"
+                )
             x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
 
         for row in range(n):
             inv[row][col] = x[row]
-            
+
     return inv
 
 
 def power_iteration(
-    m: Matrix, max_iter: int = 1000, tol: float = 1e-10,
+    m: Matrix,
+    max_iter: int = 1000,
+    tol: float = 1e-10,
 ) -> tuple[float, Vector]:
     """Find dominant eigenvalue and eigenvector using power iteration.
 
@@ -222,7 +229,7 @@ def power_iteration(
     """
     n = len(m)
     v = [1.0] * n
-    
+
     # Initial scaling
     max_val = max(abs(x) for x in v)
     v = [x / max_val for x in v]
@@ -231,7 +238,7 @@ def power_iteration(
     for _ in range(max_iter):
         # w = A * v
         w = [sum(m[i][j] * v[j] for j in range(n)) for i in range(n)]
-        
+
         # Scaling to prevent overflow in large systems
         # norm = sqrt(sum(w_i^2)). CPython floats overflow to inf rather
         # than raising OverflowError, so we detect both cases and fall back
@@ -248,9 +255,9 @@ def power_iteration(
 
         if norm < 1e-15:
             break
-            
+
         v_new = [x / norm for x in w]
-        
+
         # Rayleigh quotient: (v^T * A * v) / (v^T * v)
         # Accurate for any normalization (L2 or L-inf)
         numerator = sum(v_new[i] * sum(m[i][j] * v_new[j] for j in range(n)) for i in range(n))
@@ -370,7 +377,9 @@ def cholesky(m: Matrix) -> Matrix:
             if i == j:
                 diag = m[i][i] - s
                 if diag <= 0.0:
-                    raise ValueError("matrix is not positive definite — Cholesky decomposition requires symmetric positive definite input; check that the matrix is symmetric and all eigenvalues > 0")
+                    raise ValueError(
+                        "matrix is not positive definite — Cholesky decomposition requires symmetric positive definite input; check that the matrix is symmetric and all eigenvalues > 0"
+                    )
                 L[i][j] = math.sqrt(diag)
             else:
                 L[i][j] = (m[i][j] - s) / L[j][j]

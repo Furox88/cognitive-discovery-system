@@ -33,5 +33,9 @@ print("=== Prompt template for custom generator ===")
 prompt = PromptTemplate.render(question, hypos[0].domain, n=2)
 print(prompt[:500] + "...\n")
 
-print("This module provides structured, falsifiable hypotheses with explicit assumptions and predictions.")
-print("The built-in offline generator is for demos and examples; for serious research work, supply a generator that implements the HypothesisGenerator Protocol.")
+print(
+    "This module provides structured, falsifiable hypotheses with explicit assumptions and predictions."
+)
+print(
+    "The built-in offline generator is for demos and examples; for serious research work, supply a generator that implements the HypothesisGenerator Protocol."
+)

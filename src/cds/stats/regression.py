@@ -1,4 +1,5 @@
 """Simple linear regression via least squares."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

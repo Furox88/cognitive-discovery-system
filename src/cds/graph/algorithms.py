@@ -5,6 +5,7 @@ References:
     - Dijkstra, E.W. (1959). A note on two problems in connexion with graphs.
     - Kruskal, J.B. (1956). On the shortest spanning subtree of a graph.
 """
+
 from __future__ import annotations
 
 import heapq
@@ -85,7 +86,8 @@ def dfs(graph: Graph, start: int) -> list[int]:
 
 
 def dijkstra(
-    graph: Graph, start: int,
+    graph: Graph,
+    start: int,
 ) -> tuple[dict[int, float], dict[int, int | None]]:
     """Dijkstra's shortest path algorithm.
 
@@ -135,7 +137,10 @@ def _find(parent: dict[int, int], x: int) -> int:
 
 
 def _union(
-    parent: dict[int, int], rank: dict[int, int], a: int, b: int,
+    parent: dict[int, int],
+    rank: dict[int, int],
+    a: int,
+    b: int,
 ) -> bool:
     """Union-Find: union by rank. Returns True if merged."""
     ra, rb = _find(parent, a), _find(parent, b)
@@ -197,9 +202,7 @@ def topological_sort(graph: Graph) -> list[int]:
         for v, _ in graph.adj[u]:
             in_degree[v] = in_degree.get(v, 0) + 1
 
-    queue: deque[int] = deque(
-        v for v in range(graph.n_vertices) if in_degree.get(v, 0) == 0
-    )
+    queue: deque[int] = deque(v for v in range(graph.n_vertices) if in_degree.get(v, 0) == 0)
     order: list[int] = []
 
     while queue:
@@ -235,6 +238,4 @@ def has_cycle(graph: Graph) -> bool:
         color[u] = BLACK
         return False
 
-    return any(
-        _dfs(v) for v in range(graph.n_vertices) if color[v] == WHITE
-    )
+    return any(_dfs(v) for v in range(graph.n_vertices) if color[v] == WHITE)

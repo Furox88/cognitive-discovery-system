@@ -1,4 +1,5 @@
 """Tests for scientific module."""
+
 import pytest
 
 from cds.scientific.constants import CONSTANTS, get_constant
@@ -106,6 +107,7 @@ def test_constants_have_descriptions():
 
 def test_escape_velocity():
     from cds.scientific.formulas import escape_velocity
+
     v = escape_velocity(5.972e24, 6.371e6)
     assert abs(v - 11186) < 50  # ~11.2 km/s
 

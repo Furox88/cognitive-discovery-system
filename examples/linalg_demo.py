@@ -1,4 +1,5 @@
 """Numerical linear algebra demo (QR, Cholesky, eigenvalues, solving)."""
+
 from cds.math_utils import (
     cholesky,
     mat_mul,

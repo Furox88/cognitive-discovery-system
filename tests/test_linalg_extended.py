@@ -1,4 +1,5 @@
 """Tests for extended linear algebra functions."""
+
 import math
 
 import pytest
@@ -33,6 +34,7 @@ class TestLUDecomposition:
         P, L, U = lu_decomposition(A)
         # verify P_inv * L * U = A. Since P is symmetric orthogonal here, P = P_inv
         from cds.math_utils.linalg import transpose
+
         P_inv = transpose(P)
         product = mat_mul(P_inv, mat_mul(L, U))
         for i in range(2):
@@ -43,6 +45,7 @@ class TestLUDecomposition:
         A = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 10.0]]
         P, L, U = lu_decomposition(A)
         from cds.math_utils.linalg import transpose
+
         P_inv = transpose(P)
         product = mat_mul(P_inv, mat_mul(L, U))
         for i in range(3):
@@ -111,7 +114,7 @@ class TestPowerIteration:
     def test_eigenvector_normalized(self):
         A = [[2.0, 1.0], [1.0, 2.0]]
         _, v = power_iteration(A)
-        norm = math.sqrt(sum(x ** 2 for x in v))
+        norm = math.sqrt(sum(x**2 for x in v))
         assert abs(norm - 1.0) < 1e-10
 
     def test_diagonal_matrix(self):

@@ -9,6 +9,7 @@ NumPy. Run directly to regenerate ``docs/benchmarks.md``:
 Each ``bench_*`` function returns an ordered dict of ``{metric: value}`` so the
 report stays deterministic.
 """
+
 import math
 import multiprocessing
 import time
@@ -19,6 +20,7 @@ from pathlib import Path
 # Try to import industry standards for comparison (Optional)
 try:
     import numpy as np
+
     HAS_NUMPY = True
 except ImportError:
     HAS_NUMPY = False
@@ -89,13 +91,15 @@ def bench_linalg_intelligence() -> OrderedDict[str, str]:
     # Expected ratio for true O(N^3): (100/50)^3 = 8.0x
     observed = t_n100 / t_n50 if t_n50 > 0 else math.inf
 
-    return OrderedDict([
-        ("Determinant @ N=50", f"{t_n50:.6f}s"),
-        ("Determinant @ N=100", f"{t_n100:.6f}s"),
-        ("Ratio (doubling N)", f"{observed:.1f}x"),
-        ("Expected for O(N^3)", "8.0x"),
-        ("Complexity", "O(N^3) PLU"),
-    ])
+    return OrderedDict(
+        [
+            ("Determinant @ N=50", f"{t_n50:.6f}s"),
+            ("Determinant @ N=100", f"{t_n100:.6f}s"),
+            ("Ratio (doubling N)", f"{observed:.1f}x"),
+            ("Expected for O(N^3)", "8.0x"),
+            ("Complexity", "O(N^3) PLU"),
+        ]
+    )
 
 
 # --- Monte Carlo ---
@@ -108,11 +112,13 @@ def bench_montecarlo() -> OrderedDict[str, str]:
     result = estimate_pi(samples, seed=42)
     t_parallel = time.perf_counter() - start
 
-    return OrderedDict([
-        ("Parallel Pi (100k samples)", f"{t_parallel:.4f}s"),
-        ("CPU Cores Saturated", str(multiprocessing.cpu_count())),
-        ("Estimate error vs π", f"{abs(result.estimate - math.pi):.5f}"),
-    ])
+    return OrderedDict(
+        [
+            ("Parallel Pi (100k samples)", f"{t_parallel:.4f}s"),
+            ("CPU Cores Saturated", str(multiprocessing.cpu_count())),
+            ("Estimate error vs π", f"{abs(result.estimate - math.pi):.5f}"),
+        ]
+    )
 
 
 # --- Quantum Intelligence vs Brute Force ---
@@ -138,11 +144,13 @@ def bench_quantum() -> OrderedDict[str, str]:
 
     speedup = t_naive_estimate / t_intelligent if t_intelligent > 0 else 1.0
 
-    return OrderedDict([
-        ("Intelligent O(1) Sampling", f"{t_intelligent:.4f}s"),
-        ("Naive Brute Force (Est.)", f"{t_naive_estimate:.2f}s"),
-        ("Intelligence Speedup", f"{speedup:.1f}x Faster"),
-    ])
+    return OrderedDict(
+        [
+            ("Intelligent O(1) Sampling", f"{t_intelligent:.4f}s"),
+            ("Naive Brute Force (Est.)", f"{t_naive_estimate:.2f}s"),
+            ("Intelligence Speedup", f"{speedup:.1f}x Faster"),
+        ]
+    )
 
 
 # --- Signal Processing: FFT vs naive DFT ---
@@ -156,12 +164,14 @@ def bench_signals() -> OrderedDict[str, str]:
     t_dft = _bench(lambda: dft(signal), number=1)
 
     speedup = t_dft / t_fft if t_fft > 0 else math.inf
-    return OrderedDict([
-        ("Signal length", f"{n} samples"),
-        ("CDS FFT (radix-2, O(N log N))", f"{t_fft:.6f}s"),
-        ("Naive DFT (O(N^2))", f"{t_dft:.6f}s"),
-        ("Algorithmic speedup", f"{speedup:.0f}x"),
-    ])
+    return OrderedDict(
+        [
+            ("Signal length", f"{n} samples"),
+            ("CDS FFT (radix-2, O(N log N))", f"{t_fft:.6f}s"),
+            ("Naive DFT (O(N^2))", f"{t_dft:.6f}s"),
+            ("Algorithmic speedup", f"{speedup:.0f}x"),
+        ]
+    )
 
 
 # --- Numerical Integration: convergence ---
@@ -181,14 +191,16 @@ def bench_numerical_integration() -> OrderedDict[str, str]:
     def _err(val: float) -> str:
         return f"{abs(val - exact):.2e}"
 
-    return OrderedDict([
-        ("Integral", "∫_0^1 e^x dx = e - 1"),
-        ("Trapezoid n=1000", _err(trapezoid(f, 0, 1, 1000))),
-        ("Simpson n=100", _err(simpson(f, 0, 1, 100))),
-        ("Gauss-Legendre n=8", _err(gaussian_quadrature(f, 0, 1, 8))),
-        ("Romberg (auto tol)", _err(romberg(f, 0, 1).value)),
-        ("Adaptive Simpson", _err(adaptive_simpson(f, 0, 1).value)),
-    ])
+    return OrderedDict(
+        [
+            ("Integral", "∫_0^1 e^x dx = e - 1"),
+            ("Trapezoid n=1000", _err(trapezoid(f, 0, 1, 1000))),
+            ("Simpson n=100", _err(simpson(f, 0, 1, 100))),
+            ("Gauss-Legendre n=8", _err(gaussian_quadrature(f, 0, 1, 8))),
+            ("Romberg (auto tol)", _err(romberg(f, 0, 1).value)),
+            ("Adaptive Simpson", _err(adaptive_simpson(f, 0, 1).value)),
+        ]
+    )
 
 
 def _bar(value: float, max_value: float, width: int = 40) -> str:
@@ -237,7 +249,9 @@ def run_all() -> None:
     report += "```text\n"
     report += f"Naive Brute Force: {_bar(t_naive, t_naive)} ({t_naive:.2f}s)\n"
     report += f"CDS O(1) Sampling: {_bar(t_intelligent, t_naive)} ({t_intelligent:.4f}s)\n"
-    report += f"\nConclusion: CDS is {speedup_val:.1f} times faster due to Algorithmic Intelligence.\n"
+    report += (
+        f"\nConclusion: CDS is {speedup_val:.1f} times faster due to Algorithmic Intelligence.\n"
+    )
     report += "```\n"
 
     docs_dir = Path("docs")

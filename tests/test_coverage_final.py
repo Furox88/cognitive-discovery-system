@@ -227,7 +227,8 @@ class TestPowerIterationEdgeCases:
     def test_non_convergence(self) -> None:
         # A matrix that doesn't converge within very few iterations.
         eigenvalue, v = power_iteration(
-            [[2.0, 1.0], [1.0, 2.0]], max_iter=1,
+            [[2.0, 1.0], [1.0, 2.0]],
+            max_iter=1,
         )
         assert isinstance(eigenvalue, float)
         assert len(v) == 2
@@ -306,6 +307,7 @@ class TestMeasureFallback:
         # Apply H to create superposition, then measure many times to
         # exercise all code paths
         from cds.quantum.multi_qubit import h_gate
+
         h_gate(reg, 0)
         # This exercises the main loop; the fallback is for rounding only
         result = reg.measure(seed=42)
@@ -425,6 +427,7 @@ class TestEstimatePiAutoSeed:
         fake_bytes = b"\x00\x00\x00\x2a"  # 42 in little-endian
         with mock.patch("os.urandom", return_value=fake_bytes):
             from cds.montecarlo.methods import estimate_pi
+
             result = estimate_pi(n_samples=100, seed=None)
         assert result.estimate > 0.0
         assert result.samples == 100
@@ -494,6 +497,7 @@ class TestCLIEnvVars:
         from typer.testing import CliRunner
 
         from cds.cli import app
+
         runner = CliRunner()
         # Set PYTHONPATH so the "if PYTHONPATH in env" branch fires.
         env = {"PYTHONPATH": "/fake/path"}
@@ -510,12 +514,18 @@ class TestCLIMainGuard:
     def test_cli_main_module_run(self) -> None:
         # Run cli.py as __main__ via subprocess.
         cli_path = os.path.join(
-            os.path.dirname(__file__), "..", "src", "cds", "cli.py",
+            os.path.dirname(__file__),
+            "..",
+            "src",
+            "cds",
+            "cli.py",
         )
         cli_path = os.path.abspath(cli_path)
         result = subprocess.run(
             [sys.executable, cli_path, "--help"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         assert result.returncode == 0
         assert "Cognitive Discovery" in result.stdout or "cognitive" in result.stdout.lower()
@@ -531,12 +541,18 @@ class TestMainModuleRun:
 
     def test_main_module_via_subprocess(self) -> None:
         main_path = os.path.join(
-            os.path.dirname(__file__), "..", "src", "cds", "__main__.py",
+            os.path.dirname(__file__),
+            "..",
+            "src",
+            "cds",
+            "__main__.py",
         )
         main_path = os.path.abspath(main_path)
         result = subprocess.run(
             [sys.executable, "-m", "cds", "--help"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
             cwd=os.path.join(os.path.dirname(__file__), ".."),
         )
         assert result.returncode == 0
@@ -559,7 +575,12 @@ class TestRK45PrecisionFloor:
 
         with pytest.raises(RuntimeError, match="precision"):
             rk45(
-                constant_zero, t0=0.0, y0=1.0, t_end=1e308, atol=1e-30, rtol=1e-30,
+                constant_zero,
+                t0=0.0,
+                y0=1.0,
+                t_end=1e308,
+                atol=1e-30,
+                rtol=1e-30,
             )
 
 
@@ -589,7 +610,10 @@ class TestGradientDescentNonConverge:
     def test_gd_non_converge(self) -> None:
         # Use a very small learning rate and few iterations so it won't converge.
         result = gradient_descent(
-            lambda x: x ** 2, x0=10.0, lr=1e-15, max_iter=2,
+            lambda x: x**2,
+            x0=10.0,
+            lr=1e-15,
+            max_iter=2,
         )
         assert result.converged is False
         assert result.iterations == 2

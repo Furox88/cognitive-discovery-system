@@ -1,4 +1,5 @@
 """Tests for ODE solvers."""
+
 import math
 
 from cds.diffeq import euler_method, midpoint_method, rk4, rk45, solve_system
@@ -48,6 +49,7 @@ class TestRK4:
     def test_better_than_euler(self):
         def f(t, y):
             return -y
+
         sol_euler = euler_method(f, 0, 1.0, 1.0, dt=0.1)
         sol_rk4 = rk4(f, 0, 1.0, 1.0, dt=0.1)
         exact = math.exp(-1)
@@ -76,6 +78,7 @@ class TestRK45:
         sol = rk45(lambda t, y: 0, 0, 0, 1, dt=0.1)
         assert sol.method == "rk45"
 
+
 class TestSolveSystem:
     def test_harmonic_oscillator(self):
         # x'' = -x  =>  [x, v]' = [v, -x]
@@ -98,6 +101,10 @@ class TestSolveSystem:
 
     def test_initial_conditions_preserved(self):
         t_vals, y_vals = solve_system(
-            lambda t, y: [0, 0], 0, [3.0, 7.0], 1.0, dt=0.1,
+            lambda t, y: [0, 0],
+            0,
+            [3.0, 7.0],
+            1.0,
+            dt=0.1,
         )
         assert y_vals[0] == [3.0, 7.0]

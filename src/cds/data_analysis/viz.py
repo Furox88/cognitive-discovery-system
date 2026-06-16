@@ -1,10 +1,11 @@
 """Pure Python ASCII visualization tools for structured data."""
+
 from __future__ import annotations
 
 
 def plot_bar(data: dict[str, float], title: str = "Bar Chart", width: int = 50) -> str:
     """Generate an ASCII bar chart from a dictionary.
-    
+
     Args:
         data: Mapping from label to numeric value.
         title: Chart title.
@@ -12,16 +13,16 @@ def plot_bar(data: dict[str, float], title: str = "Bar Chart", width: int = 50) 
     """
     if not data:
         return "No data to plot."
-    
+
     vals = list(data.values())
     max_val = max(vals)
     min_val = min(vals)
-    
+
     lines = [f"\n[bold]{title}[/]", "─" * len(title)]
-    
+
     # Simple normalization logic that respects 0 as a baseline
     limit = max(abs(max_val), abs(min_val), 1e-10)
-    
+
     for label, val in data.items():
         # Calculate bar length relative to the largest absolute value
         bar_len = int((abs(val) / limit) * width)
@@ -30,17 +31,19 @@ def plot_bar(data: dict[str, float], title: str = "Bar Chart", width: int = 50) 
             suffix = f" (+{val:.2f})"
         else:
             # Represent negative values with a different character or notation
-            bar = "░" * bar_len 
+            bar = "░" * bar_len
             suffix = f" ({val:.2f})"
-        
+
         lines.append(f"{label:<15} | {bar}{suffix}")
-    
+
     return "\n".join(lines)
 
 
-def plot_line(y_values: list[float], title: str = "Line Plot", height: int = 10, width: int = 60) -> str:
+def plot_line(
+    y_values: list[float], title: str = "Line Plot", height: int = 10, width: int = 60
+) -> str:
     """Generate a simple ASCII line plot.
-    
+
     Args:
         y_values: List of numeric values.
         title: Plot title.
@@ -77,9 +80,9 @@ def plot_line(y_values: list[float], title: str = "Line Plot", height: int = 10,
     lines = [f"\n[bold]{title}[/]", "─" * len(title)]
     for grid_row in grid:
         lines.append("".join(grid_row))
-    
+
     min_y_str = f"{min_y:.2f}"
     max_y_str = f"{max_y:.2f}"
-    
-    lines.append(f"min: {min_y_str:<{eff_width//2}}max: {max_y_str:>{eff_width//2}}")
+
+    lines.append(f"min: {min_y_str:<{eff_width // 2}}max: {max_y_str:>{eff_width // 2}}")
     return "\n".join(lines)

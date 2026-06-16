@@ -1,4 +1,5 @@
 """Numerical calculus — derivatives, integrals, gradients."""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -11,7 +12,7 @@ def derivative(f: Callable[[float], float], x: float, h_base: float = 1e-7) -> f
 
 
 def integral(f: Callable[[float], float], a: float, b: float, n: int = 1000) -> float:
-    """ Simpson's rule for numerical integration. """
+    """Simpson's rule for numerical integration."""
     if n % 2 != 0:
         n += 1
     h = (b - a) / n
@@ -28,9 +29,11 @@ def gradient(f: Callable[..., float], point: list[float], h_base: float = 1e-7) 
     for i in range(len(point)):
         # Scale step size h relative to point magnitude to maintain precision
         h = h_base * max(1.0, abs(point[i]))
+
         def partial(val: float, idx: int = i) -> float:
             p = point.copy()
             p[idx] = val
             return f(*p)
+
         grad.append((partial(point[i] + h) - partial(point[i] - h)) / (2 * h))
     return grad

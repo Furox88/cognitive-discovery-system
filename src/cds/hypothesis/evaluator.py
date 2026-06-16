@@ -12,6 +12,7 @@ Supported data formats for ``evaluate``:
 - ``{"chi_square_gof": {"observed": [...], "expected": [...]}}``
 - ``{"chi_square_independence": [[...], ...]}`` (contingency table)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -127,7 +128,9 @@ class HypothesisEvaluator:
             n = len(observed)
             expected = [total / n] * n
         res = chi_square_gof(observed, expected)
-        return self._build_result(hypothesis, "Chi-square goodness-of-fit", res.statistic, res.p_value)
+        return self._build_result(
+            hypothesis, "Chi-square goodness-of-fit", res.statistic, res.p_value
+        )
 
     def test_independence(
         self,

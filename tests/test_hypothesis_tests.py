@@ -73,7 +73,9 @@ class TestTwoSampleTTest:
 
     def test_welch_df_noninteger(self):
         r = two_sample_ttest(
-            [1, 2, 3, 4, 5], [10, 20, 30], equal_var=False,
+            [1, 2, 3, 4, 5],
+            [10, 20, 30],
+            equal_var=False,
         )
         assert r.df != int(r.df) or r.df < 6
 
@@ -90,7 +92,8 @@ class TestTwoSampleTTest:
 class TestChiSquare:
     def test_gof_known(self):
         r = chi_square_gof(
-            [16, 18, 16, 14, 12, 12], [16, 16, 16, 16, 16, 8],
+            [16, 18, 16, 14, 12, 12],
+            [16, 16, 16, 16, 16, 8],
         )
         assert abs(r.statistic - 3.5) < 1e-9
         assert r.df == 5
@@ -122,6 +125,23 @@ class TestChiSquare:
     def test_independence_too_small_raises(self):
         with pytest.raises(ValueError):
             chi_square_independence([[1, 2]])
+
+    def test_independence_zero_row_total(self):
+        # Row with all zeros -> some expected frequencies are 0 ->
+        # the `if exp > 0` branch in chi_square_independence skips them.
+        # Result should still be a valid TestResult.
+        table = [[10, 20], [0, 0]]
+        r = chi_square_independence(table)
+        assert r.df == 1
+        assert r.statistic >= 0
+        assert 0.0 <= r.p_value <= 1.0
+
+    def test_independence_zero_col_total(self):
+        # Column with all zeros -> some expected frequencies are 0.
+        table = [[10, 0], [20, 0]]
+        r = chi_square_independence(table)
+        assert r.df == 1
+        assert r.statistic >= 0
 
 
 class TestANOVA:

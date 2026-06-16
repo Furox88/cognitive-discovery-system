@@ -1,4 +1,5 @@
 """Signal processing tools."""
+
 from cds.signals.processing import (
     convolve,
     dft,
@@ -11,6 +12,12 @@ from cds.signals.processing import (
 )
 
 __all__ = [
-    "dft", "idft", "fft_radix2", "fft2", "ifft2", "convolve",
-    "power_spectrum", "low_pass_filter",
+    "dft",
+    "idft",
+    "fft_radix2",
+    "fft2",
+    "ifft2",
+    "convolve",
+    "power_spectrum",
+    "low_pass_filter",
 ]

@@ -1,4 +1,5 @@
 """Data transformations."""
+
 from __future__ import annotations
 
 from cds.stats.descriptive import mean, stdev
@@ -28,6 +29,6 @@ def moving_average(data: list[float], window: int = 3) -> list[float]:
     result = []
     for i in range(len(data)):
         start = max(0, i - window + 1)
-        chunk = data[start:i + 1]
+        chunk = data[start : i + 1]
         result.append(sum(chunk) / len(chunk))
     return result

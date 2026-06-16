@@ -1,4 +1,5 @@
 """Tests for stats module."""
+
 import math
 
 import pytest

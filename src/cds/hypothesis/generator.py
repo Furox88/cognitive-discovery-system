@@ -18,6 +18,7 @@ Key goals:
 See the HypothesisGenerator protocol and examples for how to
 provide a custom generator.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -35,8 +36,7 @@ class HypothesisGenerator(Protocol):
         domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
         **kwargs: Any,
-    ) -> list[Hypothesis]:
-        ...
+    ) -> list[Hypothesis]: ...
 
 
 class PromptTemplate:
@@ -95,27 +95,39 @@ class SimpleOfflineGenerator:
     def __init__(self) -> None:
         self.templates = {
             Domain.COSMOLOGY: [
-                ("Late-time modifications to gravity can mimic "
-                 "dark energy while altering structure growth."),
-                ("A time-varying dark energy equation of state "
-                 "w(a) with a sharp transition at z~0.5 "
-                 "explains current tensions."),
-                ("Primordial non-Gaussianity of local type at "
-                 "f_NL ~ 5-10 is detectable with next-gen "
-                 "surveys and resolves sigma8 tension."),
+                (
+                    "Late-time modifications to gravity can mimic "
+                    "dark energy while altering structure growth."
+                ),
+                (
+                    "A time-varying dark energy equation of state "
+                    "w(a) with a sharp transition at z~0.5 "
+                    "explains current tensions."
+                ),
+                (
+                    "Primordial non-Gaussianity of local type at "
+                    "f_NL ~ 5-10 is detectable with next-gen "
+                    "surveys and resolves sigma8 tension."
+                ),
             ],
             Domain.PHYSICS: [
-                ("A hidden sector with light mediators can "
-                 "resolve the muon g-2 anomaly without "
-                 "conflicting with collider bounds."),
-                ("Modified dispersion relations at Planck scale "
-                 "suppress high-energy cosmic rays in a "
-                 "characteristic energy-dependent way."),
+                (
+                    "A hidden sector with light mediators can "
+                    "resolve the muon g-2 anomaly without "
+                    "conflicting with collider bounds."
+                ),
+                (
+                    "Modified dispersion relations at Planck scale "
+                    "suppress high-energy cosmic rays in a "
+                    "characteristic energy-dependent way."
+                ),
             ],
             Domain.MATHEMATICS: [
-                ("A new family of special functions between "
-                 "hypergeometric and q-hypergeometric satisfies "
-                 "a novel functional equation."),
+                (
+                    "A new family of special functions between "
+                    "hypergeometric and q-hypergeometric satisfies "
+                    "a novel functional equation."
+                ),
             ],
         }
 
@@ -138,8 +150,7 @@ class SimpleOfflineGenerator:
         if len(ideas) < n:
             # Pad with generic
             ideas += [
-                f"Variant of mechanism X applied to "
-                f"{research_question} yields new observable Y.",
+                f"Variant of mechanism X applied to {research_question} yields new observable Y.",
             ] * (n - len(ideas))
 
         hypos: list[Hypothesis] = []

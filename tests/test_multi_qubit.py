@@ -1,4 +1,5 @@
 """Tests for multi-qubit quantum operations and entanglement."""
+
 import math
 
 from cds.quantum.multi_qubit import (
@@ -18,6 +19,7 @@ from cds.quantum.multi_qubit import (
 )
 
 # --- QuantumRegister basics ---
+
 
 def test_zeros_register():
     reg = QuantumRegister.zeros(2)
@@ -65,6 +67,7 @@ def test_expectation_zero_state():
 
 
 # --- Single-qubit gates on register ---
+
 
 def test_x_gate_flips_qubit_0():
     reg = QuantumRegister.zeros(2)
@@ -136,6 +139,7 @@ def test_double_h_is_identity():
 
 # --- CNOT ---
 
+
 def test_cnot_no_flip_when_control_zero():
     reg = QuantumRegister.zeros(2)
     reg = cnot(reg, 0, 1)
@@ -160,6 +164,7 @@ def test_cnot_creates_entanglement():
 
 # --- CZ ---
 
+
 def test_cz_on_11():
     reg = QuantumRegister.from_bits(2, 3)  # |11>
     reg = cz(reg, 0, 1)
@@ -176,6 +181,7 @@ def test_cz_on_00():
 
 # --- SWAP ---
 
+
 def test_swap_01_to_10():
     reg = QuantumRegister.zeros(2)
     reg = x_gate(reg, 0)  # |01>
@@ -184,6 +190,7 @@ def test_swap_01_to_10():
 
 
 # --- Toffoli ---
+
 
 def test_toffoli_flips_when_both_controls_set():
     reg = QuantumRegister.zeros(3)
@@ -201,6 +208,7 @@ def test_toffoli_no_flip_when_one_control():
 
 
 # --- Bell states ---
+
 
 def test_bell_phi_plus():
     reg = bell_state(0)
@@ -244,6 +252,7 @@ def test_bell_measurements():
 
 # --- GHZ ---
 
+
 def test_ghz_3_qubit():
     reg = ghz_state(3)
     probs = reg.probabilities()
@@ -262,6 +271,7 @@ def test_ghz_4_qubit():
 
 
 # --- Entanglement checks ---
+
 
 def test_separable_state():
     reg = QuantumRegister.zeros(2)
@@ -283,6 +293,7 @@ def test_entangled_after_cnot():
 
 
 # --- 3-qubit circuits ---
+
 
 def test_3_qubit_circuit():
     reg = QuantumRegister.zeros(3)

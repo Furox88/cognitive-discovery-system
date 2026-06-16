@@ -1,4 +1,5 @@
 """Signal processing demo — FFT and filtering."""
+
 import math
 
 from cds.signals import convolve, dft, fft_radix2, low_pass_filter
@@ -28,10 +29,7 @@ print(f"{a} * {b} = {[round(x, 1) for x in result]}")
 
 # --- Low-pass filter ---
 print("\n=== Low-Pass Filter ===")
-noisy = [
-    1 + 0.3 * math.sin(2 * math.pi * 7 * k / n)
-    for k in range(n)
-]
+noisy = [1 + 0.3 * math.sin(2 * math.pi * 7 * k / n) for k in range(n)]
 filtered = low_pass_filter([complex(x) for x in noisy], cutoff=3)
 print("Original (first 8):", [f"{x:.2f}" for x in noisy[:8]])
 print("Filtered (first 8):", [f"{x.real:.2f}" for x in filtered[:8]])

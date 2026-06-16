@@ -1,4 +1,5 @@
 """Common physics formulas."""
+
 from __future__ import annotations
 
 import math
@@ -8,7 +9,7 @@ from cds.scientific.constants import get_constant
 
 def kinetic_energy(mass: float, velocity: float) -> float:
     """KE = 0.5 * m * v^2"""
-    return 0.5 * mass * velocity ** 2
+    return 0.5 * mass * velocity**2
 
 
 def gravitational_force(m1: float, m2: float, r: float) -> float:
@@ -16,7 +17,7 @@ def gravitational_force(m1: float, m2: float, r: float) -> float:
     G = get_constant("G")
     if r == 0:
         raise ValueError("distance can't be zero")
-    return G * m1 * m2 / r ** 2
+    return G * m1 * m2 / r**2
 
 
 def wave_frequency(wavelength: float) -> float:
@@ -45,7 +46,7 @@ def schwarzschild_radius(mass: float) -> float:
     """r_s = 2GM/c^2"""
     G = get_constant("G")
     c = get_constant("c")
-    return 2 * G * mass / c ** 2
+    return 2 * G * mass / c**2
 
 
 def de_broglie_wavelength(mass: float, velocity: float) -> float:

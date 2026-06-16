@@ -1,4 +1,5 @@
 """Platform Command Line Interface."""
+
 from __future__ import annotations
 
 import json
@@ -28,6 +29,7 @@ console = Console()
 def _version_callback(value: bool) -> None:
     if value:
         from cds import __version__
+
         console.print(f"[bold]Platform[/] version [cyan]{__version__}[/]")
         raise typer.Exit()
 
@@ -103,8 +105,7 @@ def hypothesis(
     if dry_run:
         console.print("[yellow]Dry run mode — no generation performed.[/]")
         console.print(
-            f"Would generate {n} hypotheses for: "
-            f"[bold]{question}[/] in domain [cyan]{dom.value}[/]"
+            f"Would generate {n} hypotheses for: [bold]{question}[/] in domain [cyan]{dom.value}[/]"
         )
         return
 
@@ -157,21 +158,20 @@ def info() -> None:
     """Show Platform info, module status, and Platform health."""
     from rich.columns import Columns
     from rich.text import Text
-    
+
     from cds import __version__
-    
+
     status_panel = Panel.fit(
         "[bold]Platform (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
         "🚀 [bold green]Status:[/] Production-Ready (Alpha)\n"
         "🧪 [bold blue]Tests:[/] 570 Passing (100% Coverage)\n"
-
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"🔗 [bold cyan]Version:[/] {__version__}",
         title="Platform Info",
         border_style="green",
     )
-    
+
     module_text = Text.from_markup(
         "[bold]Core Modules:[/]\n"
         "• [cyan]quantum[/]       • [cyan]signals[/]\n"
@@ -182,14 +182,11 @@ def info() -> None:
         "• [cyan]ml[/]            • [cyan]probability[/]\n"
         "• [cyan]scientific[/]    • [cyan]numerical_integration[/]"
     )
-    
-    capability_panel = Panel.fit(
-        module_text,
-        title="Architecture",
-        border_style="blue"
-    )
-    
+
+    capability_panel = Panel.fit(module_text, title="Architecture", border_style="blue")
+
     console.print(Columns([status_panel, capability_panel]))
+
 
 @app.command()
 def dashboard() -> None:
@@ -198,7 +195,7 @@ def dashboard() -> None:
     import subprocess
     import sys
     from pathlib import Path
-    
+
     root_dir = Path(__file__).parent.parent.parent
     dashboard_path = root_dir / "dashboard" / "app.py"
     if not dashboard_path.exists():
@@ -206,7 +203,7 @@ def dashboard() -> None:
         return
 
     console.print("[yellow]Launching Platform Interactive Dashboard...[/]")
-    
+
     # Ensure src is in PYTHONPATH so dashboard can import cds
     env = os.environ.copy()
     src_path = str(root_dir / "src")
@@ -217,14 +214,14 @@ def dashboard() -> None:
 
     try:
         subprocess.run(
-            [sys.executable, "-m", "streamlit", "run", str(dashboard_path)],
-            check=True,
-            env=env
+            [sys.executable, "-m", "streamlit", "run", str(dashboard_path)], check=True, env=env
         )
     except KeyboardInterrupt:
         console.print("\n[blue]Dashboard stopped.[/]")
     except FileNotFoundError:
-        console.print("[red]Error:[/] Streamlit not found. Install it with 'pip install streamlit'.")
+        console.print(
+            "[red]Error:[/] Streamlit not found. Install it with 'pip install streamlit'."
+        )
 
 
 @app.command()
@@ -255,6 +252,7 @@ def plot(
 ) -> None:
     """Plot a series of numbers directly in the terminal."""
     from cds.data_analysis.viz import plot_line
+
     try:
         data = [float(x.strip()) for x in values.split(",")]
         console.print(plot_line(data, title=title))

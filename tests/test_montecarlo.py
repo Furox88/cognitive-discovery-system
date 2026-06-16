@@ -1,4 +1,5 @@
 """Tests for Monte Carlo methods."""
+
 import math
 
 import pytest
@@ -34,7 +35,7 @@ class TestEstimatePi:
 class TestMCIntegrate:
     def test_integrate_x_squared(self):
         # ∫₀¹ x² dx = 1/3
-        result = mc_integrate(lambda x: x ** 2, 0, 1, n_samples=50_000, seed=42)
+        result = mc_integrate(lambda x: x**2, 0, 1, n_samples=50_000, seed=42)
         assert abs(result.estimate - 1 / 3) < 0.02
 
     def test_integrate_sine(self):
@@ -78,15 +79,17 @@ class TestRandomWalk2D:
     def test_step_distance(self):
         walk = random_walk_2d(1, step_size=1.0, seed=42)
         x, y = walk[1]
-        dist = math.sqrt(x ** 2 + y ** 2)
+        dist = math.sqrt(x**2 + y**2)
         assert abs(dist - 1.0) < 1e-10
 
 
 class TestBuffonNeedle:
     def test_pi_estimate(self):
         result = buffon_needle(
-            needle_length=1.0, line_spacing=2.0,
-            n_throws=50_000, seed=42,
+            needle_length=1.0,
+            line_spacing=2.0,
+            n_throws=50_000,
+            seed=42,
         )
         assert abs(result.estimate - math.pi) < 0.2
 

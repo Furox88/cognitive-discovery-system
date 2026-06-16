@@ -1,4 +1,5 @@
 """Quantum computing demo — Bell states and entanglement."""
+
 from cds.quantum import (
     QuantumCircuit,
     bell_state,

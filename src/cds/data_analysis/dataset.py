@@ -1,4 +1,5 @@
 """Pure Python DataFrame-like structure for structured data analysis."""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -7,7 +8,7 @@ from typing import Any
 
 class DataSet:
     """A lightweight, pure Python 'DataFrame' for structured data.
-    
+
     Data is stored internally as a list of dictionaries where keys are column names.
     """
 
@@ -55,7 +56,7 @@ class DataSet:
         for name in names:
             if name not in self._columns:
                 raise ValueError(f"Column '{name}' not found.")
-        
+
         new_data = [{name: row[name] for name in names} for row in self.data]
         return DataSet(new_data)
 
@@ -63,14 +64,14 @@ class DataSet:
         """Group data by a specific column for aggregation."""
         if column_name not in self._columns:
             raise ValueError(f"Column '{column_name}' not found.")
-        
+
         groups: dict[Any, list[dict[str, Any]]] = {}
         for row in self.data:
             key = row[column_name]
             if key not in groups:
                 groups[key] = []
             groups[key].append(row)
-        
+
         return DataGroup(groups, column_name)
 
     def to_list(self) -> list[dict[str, Any]]:
@@ -94,7 +95,9 @@ class DataGroup:
         """Calculate the mean of a numeric column for each group."""
         result = {}
         for key, rows in self.groups.items():
-            values = [row[numeric_col] for row in rows if isinstance(row.get(numeric_col), (int, float))]
+            values = [
+                row[numeric_col] for row in rows if isinstance(row.get(numeric_col), (int, float))
+            ]
             if values:
                 result[key] = sum(values) / len(values)
             else:

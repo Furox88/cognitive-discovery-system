@@ -4,11 +4,7 @@ from cds.signals import fft2, ifft2
 
 
 def _max_err(a, b):
-    return max(
-        abs(a[i][j] - b[i][j])
-        for i in range(len(a))
-        for j in range(len(a[0]))
-    )
+    return max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0])))
 
 
 class TestFFT2:
@@ -63,7 +59,5 @@ class TestFFT2:
         out = fft2(m)
         n = 4
         space_energy = sum(m[i][j] ** 2 for i in range(2) for j in range(2))
-        freq_energy = sum(
-            abs(out[i][j]) ** 2 for i in range(2) for j in range(2)
-        ) / n
+        freq_energy = sum(abs(out[i][j]) ** 2 for i in range(2) for j in range(2)) / n
         assert abs(space_energy - freq_energy) < 1e-9

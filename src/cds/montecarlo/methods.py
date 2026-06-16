@@ -5,6 +5,7 @@ References:
     - Buffon, G.L. (1777). Essai d'arithmétique morale.
     - Robert, C.P. & Casella, G. Monte Carlo Statistical Methods (2nd ed.)
 """
+
 from __future__ import annotations
 
 import math
@@ -36,6 +37,7 @@ def _pi_worker(samples_seed: tuple[int, int | None]) -> int:
             inside += 1
     return inside
 
+
 def estimate_pi(n_samples: int = 100_000, seed: int | None = None) -> MCResult:
     """Estimate π using the unit-circle method (Parallelized).
 
@@ -52,11 +54,12 @@ def estimate_pi(n_samples: int = 100_000, seed: int | None = None) -> MCResult:
     cores = min(multiprocessing.cpu_count(), n_samples)
     chunk_size = n_samples // cores
     chunks = [chunk_size] * cores
-    chunks[-1] += n_samples - sum(chunks) # add remainder to last chunk
-    
+    chunks[-1] += n_samples - sum(chunks)  # add remainder to last chunk
+
     if seed is None:
         import os
         import sys
+
         seed = int.from_bytes(os.urandom(4), sys.byteorder)
 
     seeds = [seed + i for i in range(cores)]
@@ -103,13 +106,15 @@ def mc_integrate(
 
     mean_val = total / n_samples
     estimate = mean_val * width
-    var = (total_sq / n_samples - mean_val ** 2) if n_samples > 1 else 0.0
+    var = (total_sq / n_samples - mean_val**2) if n_samples > 1 else 0.0
     se = width * math.sqrt(var / n_samples) if var > 0 else 0.0
     return MCResult(estimate=estimate, samples=n_samples, std_error=se)
 
 
 def random_walk_1d(
-    steps: int, step_size: float = 1.0, seed: int | None = None,
+    steps: int,
+    step_size: float = 1.0,
+    seed: int | None = None,
 ) -> list[float]:
     """1D symmetric random walk.
 
@@ -133,7 +138,9 @@ def random_walk_1d(
 
 
 def random_walk_2d(
-    steps: int, step_size: float = 1.0, seed: int | None = None,
+    steps: int,
+    step_size: float = 1.0,
+    seed: int | None = None,
 ) -> list[tuple[float, float]]:
     """2D random walk on a plane.
 

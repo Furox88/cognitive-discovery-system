@@ -1,4 +1,5 @@
 """Basic quantum circuit representation."""
+
 from __future__ import annotations
 
 import math
@@ -8,6 +9,7 @@ from dataclasses import dataclass, field
 @dataclass
 class Qubit:
     """Single qubit state as (alpha, beta) amplitudes."""
+
     alpha: complex = 1 + 0j
     beta: complex = 0 + 0j
 
@@ -26,6 +28,7 @@ class Qubit:
 @dataclass
 class QuantumGate:
     """A 2x2 unitary gate stored as flat list [a, b, c, d]."""
+
     name: str
     matrix: list[complex]
 
@@ -57,6 +60,7 @@ def phase_gate(theta: float) -> QuantumGate:
 @dataclass
 class QuantumCircuit:
     """Simple circuit that applies gates sequentially to a single qubit."""
+
     gates: list[QuantumGate] = field(default_factory=list)
 
     def add(self, gate: QuantumGate) -> QuantumCircuit:

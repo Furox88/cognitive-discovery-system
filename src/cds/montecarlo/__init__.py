@@ -1,4 +1,5 @@
 """Monte Carlo methods — estimation, integration, random walks."""
+
 from cds.montecarlo.methods import (
     buffon_needle,
     estimate_pi,

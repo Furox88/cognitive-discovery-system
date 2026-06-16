@@ -1,4 +1,5 @@
 """Core data models for CDS."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

@@ -4,11 +4,7 @@ from cds.math_utils import cholesky, mat_mul, qr_decomposition, transpose
 
 
 def _max_err(a, b):
-    return max(
-        abs(a[i][j] - b[i][j])
-        for i in range(len(a))
-        for j in range(len(a[0]))
-    )
+    return max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0])))
 
 
 class TestQRDecomposition:

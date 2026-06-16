@@ -1,4 +1,5 @@
 """Numerical optimization algorithms."""
+
 from cds.optimization.minimize import (
     adam,
     gradient_descent,
@@ -7,5 +8,8 @@ from cds.optimization.minimize import (
 )
 
 __all__ = [
-    "gradient_descent", "newton_method", "adam", "line_search",
+    "gradient_descent",
+    "newton_method",
+    "adam",
+    "line_search",
 ]

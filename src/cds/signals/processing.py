@@ -1,4 +1,5 @@
 """Discrete Fourier Transform and signal processing utilities."""
+
 from __future__ import annotations
 
 import cmath
@@ -61,7 +62,9 @@ def fft_radix2(signal: list[complex]) -> list[complex]:
     if n == 0:
         return []
     if n & (n - 1) != 0:
-        raise ValueError(f"signal length must be a power of 2 for FFT (got {n}); pad with zeros or use dft() for arbitrary lengths")
+        raise ValueError(
+            f"signal length must be a power of 2 for FFT (got {n}); pad with zeros or use dft() for arbitrary lengths"
+        )
     if n == 1:
         return list(signal)
 
@@ -78,36 +81,36 @@ def fft_radix2(signal: list[complex]) -> list[complex]:
 
 def fft(signal: list[complex]) -> list[complex]:
     """Compute 1D FFT of any length using radix-2 and zero-padding.
-    
+
     Automatically pads input to next power of 2 for O(N log N) speed.
     """
     n = len(signal)
     if n == 0:
         return []
-    
+
     # Next power of 2
     padded_len = 1 << (n - 1).bit_length()
     padded_signal = list(signal) + [0j] * (padded_len - n)
-    
+
     # Compute radix-2
     full_spectrum = fft_radix2(padded_signal)
-    
+
     return full_spectrum
 
 
 def ifft(spectrum: list[complex]) -> list[complex]:
     """Compute 1D Inverse FFT of any length using radix-2 and padding.
-    
+
     Args:
         spectrum: frequency-domain signal
-        
+
     Returns:
         list of complex time-domain samples
     """
     n = len(spectrum)
     if n == 0:
         return []
-    
+
     # If not a power of 2, pad it to next power of 2 (matches fft behavior)
     if n & (n - 1) != 0:
         padded_len = 1 << (n - 1).bit_length()
@@ -115,7 +118,7 @@ def ifft(spectrum: list[complex]) -> list[complex]:
     else:
         padded_spectrum = spectrum
         padded_len = n
-    
+
     # The property: IFFT(x) = conj(FFT(conj(x))) / N
     conj_spectrum = [x.conjugate() for x in padded_spectrum]
     forward_fft = fft_radix2(conj_spectrum)
@@ -126,23 +129,23 @@ def convolve(a: list[float], b: list[float]) -> list[float]:
     """Linear convolution using the FFT Theorem (O(N log N))."""
     if not a or not b:
         return []
-    
+
     na, nb = len(a), len(b)
     n_out = na + nb - 1
-    
+
     # Next power of 2 for FFT speed
     n_fft = 1 << (n_out - 1).bit_length()
-    
+
     # Transform to frequency domain
     fa = fft(list(a) + [0j] * (n_fft - na))
     fb = fft(list(b) + [0j] * (n_fft - nb))
-    
+
     # Multiplication in frequency domain
     fc = [xa * xb for xa, xb in zip(fa, fb)]
-    
+
     # Inverse transform
     full_conv = ifft(fc)
-    
+
     # Return truncated to correct length
     return [x.real for x in full_conv[:n_out]]
 
@@ -152,13 +155,13 @@ def power_spectrum(signal: list[complex]) -> list[float]:
     n = len(signal)
     if n == 0:
         return []
-    
+
     # Use FFT if possible (O(N log N))
     if (n & (n - 1) == 0) and n > 0:
         spectrum = fft_radix2(signal)
     else:
         spectrum = dft(signal)
-        
+
     return [abs(x) ** 2 / n for x in spectrum]
 
 
@@ -179,7 +182,7 @@ def low_pass_filter(signal: list[complex], cutoff: int) -> list[complex]:
     for k in range(n):
         if cutoff <= k <= n - cutoff:
             spectrum[k] = 0 + 0j
-            
+
     return inv_func(spectrum)
 
 
@@ -194,11 +197,11 @@ def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
 
     # Row-wise FFT
     row_fft = [fft(list(row)) for row in matrix]
-    
+
     # Column-wise FFT
     transposed = list(zip(*row_fft))
     col_fft = [fft(list(col)) for col in transposed]
-    
+
     return [list(row) for row in zip(*col_fft)]
 
 
@@ -213,9 +216,9 @@ def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
 
     # Row-wise IFFT
     row_inv = [ifft(list(row)) for row in spectrum]
-    
+
     # Column-wise IFFT
     transposed = list(zip(*row_inv))
     col_inv = [ifft(list(col)) for col in transposed]
-    
+
     return [list(row) for row in zip(*col_inv)]

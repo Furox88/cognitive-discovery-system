@@ -11,6 +11,7 @@ References:
     - Gauss, C.F. (1814). Methodus nova integralium valores per approximationem inveniendi.
     - Davis, P.J. & Rabinowitz, P. Methods of Numerical Integration (2nd ed.).
 """
+
 from __future__ import annotations
 
 import functools
@@ -38,7 +39,10 @@ class QuadratureResult:
 
 
 def trapezoid(
-    f: Callable[[float], float], a: float, b: float, n: int = 1000,
+    f: Callable[[float], float],
+    a: float,
+    b: float,
+    n: int = 1000,
 ) -> float:
     """Composite trapezoidal rule.
 
@@ -67,7 +71,10 @@ def trapezoid(
 
 
 def simpson(
-    f: Callable[[float], float], a: float, b: float, n: int = 1000,
+    f: Callable[[float], float],
+    a: float,
+    b: float,
+    n: int = 1000,
 ) -> float:
     """Composite Simpson's 1/3 rule.
 
@@ -96,7 +103,10 @@ def simpson(
 
 
 def simpson_38(
-    f: Callable[[float], float], a: float, b: float, n: int = 999,
+    f: Callable[[float], float],
+    a: float,
+    b: float,
+    n: int = 999,
 ) -> float:
     """Composite Simpson's 3/8 rule.
 
@@ -185,7 +195,10 @@ def romberg(
             break
 
     return QuadratureResult(
-        value=best, method="romberg", n_eval=n_eval, error_estimate=error_est,
+        value=best,
+        method="romberg",
+        n_eval=n_eval,
+        error_estimate=error_est,
     )
 
 
@@ -240,7 +253,10 @@ def _legendre(n: int, x: float) -> tuple[float, float]:
 
 
 def gaussian_quadrature(
-    f: Callable[[float], float], a: float, b: float, n: int = 5,
+    f: Callable[[float], float],
+    a: float,
+    b: float,
+    n: int = 5,
 ) -> float:
     """Gauss-Legendre quadrature with ``n`` nodes.
 
@@ -309,8 +325,9 @@ def adaptive_simpson(
         counter["n"] += 1
         return f(x)
 
-    def _recurse(a: float, b: float, fa: float, fb: float, fm: float,
-                 whole: float, depth: int, eps: float) -> float:
+    def _recurse(
+        a: float, b: float, fa: float, fb: float, fm: float, whole: float, depth: int, eps: float
+    ) -> float:
         m = 0.5 * (a + b)
         lm = 0.5 * (a + m)
         rm = 0.5 * (m + b)
@@ -328,9 +345,8 @@ def adaptive_simpson(
         # Standard Lyness error estimate (scaled by 1/15).
         if depth <= 0 or abs(diff) <= 15.0 * eps:
             return left + right + diff / 15.0
-        return (
-            _recurse(a, m, fa, fm, flm, left, depth - 1, 0.5 * eps)
-            + _recurse(m, b, fm, fb, frm, right, depth - 1, 0.5 * eps)
+        return _recurse(a, m, fa, fm, flm, left, depth - 1, 0.5 * eps) + _recurse(
+            m, b, fm, fb, frm, right, depth - 1, 0.5 * eps
         )
 
     fa = _eval(a)
@@ -343,6 +359,8 @@ def adaptive_simpson(
         raise RuntimeError("adaptive_simpson produced NaN (likely divergent integrand)")
 
     return QuadratureResult(
-        value=value, method="adaptive_simpson",
-        n_eval=counter["n"], error_estimate=math.nan,
+        value=value,
+        method="adaptive_simpson",
+        n_eval=counter["n"],
+        error_estimate=math.nan,
     )

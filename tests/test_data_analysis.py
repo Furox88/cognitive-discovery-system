@@ -1,4 +1,5 @@
 """Tests for data_analysis module."""
+
 import tempfile
 
 import pytest
@@ -7,6 +8,7 @@ from cds.data_analysis.loader import DataTable, load_csv
 from cds.data_analysis.transform import moving_average, normalize, z_score
 
 # --- CSV loading ---
+
 
 def test_load_csv():
     with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
@@ -46,6 +48,7 @@ def test_load_csv_empty_rows():
 
 # --- DataTable ---
 
+
 def test_column_as_float():
     dt = DataTable(headers=["x", "y"], rows=[["1", "2"], ["3", "4"]])
     assert dt.column_as_float("x") == [1.0, 3.0]
@@ -84,6 +87,7 @@ def test_datatable_empty():
 
 # --- Normalize ---
 
+
 def test_normalize():
     result = normalize([10, 20, 30])
     assert result == [0.0, 0.5, 1.0]
@@ -108,6 +112,7 @@ def test_normalize_negative():
 
 # --- Z-score ---
 
+
 def test_z_score():
     result = z_score([10, 20, 30])
     assert abs(sum(result)) < 1e-9  # mean should be ~0
@@ -119,6 +124,7 @@ def test_z_score_same_values():
 
 
 # --- Moving average ---
+
 
 def test_moving_average():
     result = moving_average([1, 2, 3, 4, 5], window=3)

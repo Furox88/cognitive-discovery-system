@@ -1,4 +1,5 @@
 """Tests for signal processing module."""
+
 import math
 
 import pytest
@@ -13,6 +14,7 @@ from cds.signals.processing import (
 )
 
 # --- DFT / IDFT ---
+
 
 def test_dft_dc_signal():
     # constant signal -> all energy at DC (bin 0)
@@ -52,6 +54,7 @@ def test_idft_single():
 
 # --- FFT radix-2 ---
 
+
 def test_fft_matches_dft():
     signal = [complex(i) for i in range(8)]
     dft_result = dft(signal)
@@ -81,6 +84,7 @@ def test_fft_two_elements():
 
 # --- Convolution ---
 
+
 def test_convolve_impulse():
     # convolve with delta function
     a = [1.0, 2.0, 3.0]
@@ -107,6 +111,7 @@ def test_convolve_length():
 
 # --- Power spectrum ---
 
+
 def test_power_spectrum_dc():
     signal = [2 + 0j] * 4
     ps = power_spectrum(signal)
@@ -123,6 +128,7 @@ def test_power_spectrum_length():
 
 # --- Low-pass filter ---
 
+
 def test_low_pass_preserves_dc():
     signal = [3 + 0j] * 8
     filtered = low_pass_filter(signal, cutoff=2)
@@ -133,10 +139,7 @@ def test_low_pass_preserves_dc():
 def test_low_pass_removes_high_freq():
     n = 16
     # signal = DC(1) + high-freq noise
-    signal = [
-        1 + 0j + 0.5 * complex(math.cos(2 * math.pi * 7 * k / n))
-        for k in range(n)
-    ]
+    signal = [1 + 0j + 0.5 * complex(math.cos(2 * math.pi * 7 * k / n)) for k in range(n)]
     filtered = low_pass_filter(signal, cutoff=3)
     # after filtering, should be close to DC=1
     for s in filtered:

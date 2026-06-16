@@ -20,6 +20,7 @@ References:
     - Abramowitz, M., & Stegun, I. A. (1964). "Handbook of Mathematical
       Functions," §6.5, §26.
 """
+
 from __future__ import annotations
 
 import math
@@ -38,8 +39,12 @@ def _gammln(x: float) -> float:
     Reference: Numerical Recipes §6.1; Lanczos (1964).
     """
     cof = [
-        76.18009172947146, -86.50532032941677, 24.01409824083091,
-        -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5,
+        76.18009172947146,
+        -86.50532032941677,
+        24.01409824083091,
+        -1.231739572450155,
+        0.1208650973866179e-2,
+        -0.5395239384953e-5,
     ]
     y = x
     tmp = x + 5.5
@@ -164,8 +169,7 @@ def _betai(a: float, b: float, x: float) -> float:
     if x == 0.0 or x == 1.0:
         return x
     front = math.exp(
-        _gammln(a + b) - _gammln(a) - _gammln(b)
-        + a * math.log(x) + b * math.log(1.0 - x)
+        _gammln(a + b) - _gammln(a) - _gammln(b) + a * math.log(x) + b * math.log(1.0 - x)
     )
     if x < (a + 1.0) / (a + b + 2.0):
         return front * _betacf(a, b, x) / a
@@ -245,7 +249,9 @@ def one_sample_ttest(data: list[float], popmean: float = 0.0) -> TestResult:
 
 
 def two_sample_ttest(
-    a: list[float], b: list[float], equal_var: bool = True,
+    a: list[float],
+    b: list[float],
+    equal_var: bool = True,
 ) -> TestResult:
     """Two-sample t-test for equality of means.
 
@@ -289,7 +295,8 @@ def two_sample_ttest(
 
 
 def chi_square_gof(
-    observed: list[float], expected: list[float],
+    observed: list[float],
+    expected: list[float],
 ) -> TestResult:
     """Pearson's chi-square goodness-of-fit test.
 
@@ -377,9 +384,7 @@ def one_way_anova(*groups: list[float]) -> TestResult:
         raise ValueError("need more observations than groups")
     grand_mean = sum(sum(g) for g in groups) / n_total
     ss_between = sum(len(g) * (mean(g) - grand_mean) ** 2 for g in groups)
-    ss_within = sum(
-        sum((x - mean(g)) ** 2 for x in g) for g in groups
-    )
+    ss_within = sum(sum((x - mean(g)) ** 2 for x in g) for g in groups)
     df_between = k - 1
     df_within = n_total - k
     ms_between = ss_between / df_between
@@ -388,5 +393,7 @@ def one_way_anova(*groups: list[float]) -> TestResult:
         raise ValueError("zero within-group variance; F undefined")
     f = ms_between / ms_within
     return TestResult(
-        statistic=f, df=df_between, p_value=f_sf(f, df_between, df_within),
+        statistic=f,
+        df=df_between,
+        p_value=f_sf(f, df_between, df_within),
     )

@@ -1,4 +1,5 @@
 """Tests for deterministic numerical quadrature."""
+
 import math
 
 import pytest
@@ -48,7 +49,7 @@ class TestSimpson:
 
     def test_cubic_is_exact(self):
         # Simpson 1/3 is exact for cubics (degree <= 3).
-        assert abs(simpson(lambda x: x ** 3, 0, 1, 2) - 0.25) < 1e-12
+        assert abs(simpson(lambda x: x**3, 0, 1, 2) - 0.25) < 1e-12
 
     def test_high_accuracy_sin(self):
         assert abs(simpson(math.sin, 0, math.pi, 100) - 2.0) < 1e-7
@@ -71,7 +72,7 @@ class TestSimpson38:
 
     def test_cubic_is_exact(self):
         # 3/8 rule is exact for cubics.
-        assert abs(simpson_38(lambda x: x ** 3, 0, 1, 3) - 0.25) < 1e-12
+        assert abs(simpson_38(lambda x: x**3, 0, 1, 3) - 0.25) < 1e-12
 
     def test_invalid_n_not_multiple_of_3(self):
         with pytest.raises(ValueError):
@@ -84,7 +85,7 @@ class TestSimpson38:
 
 class TestRomberg:
     def test_polynomial(self):
-        result = romberg(lambda x: x ** 2, 0, 1)
+        result = romberg(lambda x: x**2, 0, 1)
         assert abs(result.value - 1 / 3) < 1e-12
         assert result.method == "romberg"
         assert result.n_eval >= 1
@@ -95,7 +96,7 @@ class TestRomberg:
         assert abs(result.value - (math.e - 1)) < 1e-10
 
     def test_error_estimate_recorded(self):
-        result = romberg(lambda x: x ** 4, 0, 1)
+        result = romberg(lambda x: x**4, 0, 1)
         assert result.error_estimate >= 0
 
     def test_beats_trapezoid_accuracy(self):
@@ -117,11 +118,11 @@ class TestGaussianQuadrature:
     def test_degree_2n_minus_1_exact(self):
         # With n nodes, Gauss-Legendre is exact for degree <= 2n-1.
         # n=4 => exact up to degree 7.
-        assert abs(gaussian_quadrature(lambda x: x ** 7, 0, 1, 4) - 0.125) < 1e-12
+        assert abs(gaussian_quadrature(lambda x: x**7, 0, 1, 4) - 0.125) < 1e-12
 
     def test_not_exact_above_degree(self):
         # Degree 8 with n=4 should NOT be exact.
-        assert abs(gaussian_quadrature(lambda x: x ** 8, 0, 1, 4) - 1 / 9) > 1e-6
+        assert abs(gaussian_quadrature(lambda x: x**8, 0, 1, 4) - 1 / 9) > 1e-6
 
     def test_n_equals_one(self):
         # 1-point rule: midpoint, exact for linear integrands.
@@ -146,13 +147,14 @@ class TestGaussianQuadrature:
         # The wrapper catches n<1 before reaching _gauss_legendre_nodes.
         # Directly call the cached helper to cover its own n<1 guard.
         from cds.numerical_integration.quadrature import _gauss_legendre_nodes
+
         with pytest.raises(ValueError):
             _gauss_legendre_nodes(0)
 
     def test_node_cache_reused(self):
         # Calling twice with the same n must reuse cached nodes/weights and
         # give identical results.
-        f = lambda x: x ** 6  # noqa: E731
+        f = lambda x: x**6  # noqa: E731
         a = gaussian_quadrature(f, 0, 1, 6)
         b = gaussian_quadrature(f, 0, 1, 6)
         assert a == b
@@ -160,7 +162,7 @@ class TestGaussianQuadrature:
 
 class TestAdaptiveSimpson:
     def test_polynomial(self):
-        result = adaptive_simpson(lambda x: x ** 2, 0, 1)
+        result = adaptive_simpson(lambda x: x**2, 0, 1)
         assert abs(result.value - 1 / 3) < 1e-10
         assert result.method == "adaptive_simpson"
         assert result.n_eval >= 1
@@ -218,6 +220,7 @@ class TestLegendreEdgeCases:
     @staticmethod
     def _legendre(n, x):
         from cds.numerical_integration.quadrature import _legendre as _L
+
         return _L(n, x)
 
     def test_legendre_n0(self):

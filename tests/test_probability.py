@@ -1,4 +1,5 @@
 """Tests for probability distributions module."""
+
 import math
 
 import pytest
@@ -13,6 +14,7 @@ from cds.probability.distributions import (
 )
 
 # --- Gaussian ---
+
 
 def test_gaussian_peak():
     # PDF peaks at mu
@@ -43,6 +45,7 @@ def test_gaussian_narrow():
 
 # --- Uniform ---
 
+
 def test_uniform_inside():
     assert abs(uniform_pdf(0.5) - 1.0) < 1e-9
 
@@ -64,6 +67,7 @@ def test_uniform_invalid():
 
 # --- Exponential ---
 
+
 def test_exponential_at_zero():
     assert abs(exponential_pdf(0.0, lam=2.0) - 2.0) < 1e-9
 
@@ -83,10 +87,11 @@ def test_exponential_invalid_lambda():
 
 # --- Binomial ---
 
+
 def test_binomial_fair_coin():
     # P(3 heads in 5 flips) = C(5,3) * 0.5^5
     val = binomial_pmf(3, 5, 0.5)
-    expected = math.comb(5, 3) * 0.5 ** 5
+    expected = math.comb(5, 3) * 0.5**5
     assert abs(val - expected) < 1e-12
 
 
@@ -117,6 +122,7 @@ def test_binomial_sums_to_one():
 
 # --- Poisson ---
 
+
 def test_poisson_basic():
     # P(k=0, lam=1) = e^-1
     val = poisson_pmf(0, 1.0)
@@ -145,6 +151,7 @@ def test_poisson_sums_approx_one():
 
 
 # --- Sampling ---
+
 
 def test_uniform_sample_count():
     samples = uniform_sample(0, 1, 100, seed=42)

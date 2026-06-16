@@ -31,4 +31,6 @@ print("Std dev (catalyst):", stdev(catalyst_yields))
 result = one_sample_ttest(catalyst_yields, popmean=mean(control_yields))
 print(f"One-sample t-test vs control mean: t={result.statistic:.2f}, p={result.p_value:.4f}")
 
-print("\nThis kind of pairing lets researchers quickly turn a generated hypothesis into a testable experiment sketch.")
+print(
+    "\nThis kind of pairing lets researchers quickly turn a generated hypothesis into a testable experiment sketch."
+)

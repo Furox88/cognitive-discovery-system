@@ -1,4 +1,5 @@
 """Minimization algorithms for single and multi-variable functions."""
+
 from __future__ import annotations
 
 import math
@@ -18,13 +19,15 @@ class OptResult:
     state: dict[str, Any] | None = None
 
 
-def _compute_gradient(f: Callable[..., float], x: float | list[float], h_base: float = 1e-7) -> float | list[float]:
+def _compute_gradient(
+    f: Callable[..., float], x: float | list[float], h_base: float = 1e-7
+) -> float | list[float]:
     """Compute numerical gradient with adaptive step size for precision."""
     if isinstance(x, (int, float)):
         # Adaptive h based on x scale
         h = h_base * max(1.0, abs(x))
         return float((f(x + h) - f(x - h)) / (2 * h))
-    
+
     grad = [0.0] * len(x)
     for i in range(len(x)):
         h = h_base * max(1.0, abs(x[i]))
@@ -35,13 +38,17 @@ def _compute_gradient(f: Callable[..., float], x: float | list[float], h_base: f
         grad[i] = float((f(x_plus) - f(x_minus)) / (2 * h))
     return grad
 
-def _update_x(x: float | list[float], grad: float | list[float], step: float) -> float | list[float]:
+
+def _update_x(
+    x: float | list[float], grad: float | list[float], step: float
+) -> float | list[float]:
     """Apply gradient update step for scalar or vector inputs."""
     if isinstance(x, (int, float)):
         return x - step * cast(float, grad)
-    
+
     grad_list = cast(list[float], grad)
     return [xi - step * gi for xi, gi in zip(x, grad_list)]
+
 
 def _magnitude(vec: float | list[float]) -> float:
     """Compute magnitude of a scalar or vector."""
@@ -98,16 +105,19 @@ def newton_method(
         fx = f(x)
         if abs(fx) < tol:
             return OptResult(x=x, value=fx, iterations=i, converged=True)
-        
+
         # Adaptive h based on x scale
         h = h_base * max(1.0, abs(x))
         dfx = (f(x + h) - f(x - h)) / (2 * h)
-        
+
         if abs(dfx) < 1e-15:
             break
         x -= fx / dfx
     return OptResult(
-        x=x, value=f(x), iterations=max_iter, converged=False,
+        x=x,
+        value=f(x),
+        iterations=max_iter,
+        converged=False,
     )
 
 
@@ -141,7 +151,7 @@ def adam(
     """
     if isinstance(x0, (int, float)):
         x_scalar: float = float(x0)
-        
+
         if state is None:
             m_s = 0.0
             v_s = 0.0
@@ -158,25 +168,31 @@ def adam(
                 grad_s = cast(float, grad_f(x_scalar))
             else:
                 grad_s = cast(float, _compute_gradient(f, x_scalar, h))
-            
+
             if abs(grad_s) < tol:
                 return OptResult(
-                    x=x_scalar, value=f(x_scalar), iterations=i - t_start + 1, converged=True,
-                    state={"m": m_s, "v": v_s, "t": i}
+                    x=x_scalar,
+                    value=f(x_scalar),
+                    iterations=i - t_start + 1,
+                    converged=True,
+                    state={"m": m_s, "v": v_s, "t": i},
                 )
             m_s = beta1 * m_s + (1 - beta1) * grad_s
-            v_s = beta2 * v_s + (1 - beta2) * grad_s ** 2
-            m_hat = m_s / (1 - beta1 ** i)
-            v_hat = v_s / (1 - beta2 ** i)
+            v_s = beta2 * v_s + (1 - beta2) * grad_s**2
+            m_hat = m_s / (1 - beta1**i)
+            v_hat = v_s / (1 - beta2**i)
             x_scalar -= lr * m_hat / (math.sqrt(v_hat) + eps)
 
         return OptResult(
-            x=x_scalar, value=f(x_scalar), iterations=max_iter, converged=False,
-            state={"m": m_s, "v": v_s, "t": last_t}
+            x=x_scalar,
+            value=f(x_scalar),
+            iterations=max_iter,
+            converged=False,
+            state={"m": m_s, "v": v_s, "t": last_t},
         )
     else:
         x_list: list[float] = list(x0)
-        
+
         if state is None:
             m_l = [0.0] * len(x_list)
             v_l = [0.0] * len(x_list)
@@ -193,23 +209,29 @@ def adam(
                 grad_l = cast(list[float], grad_f(x_list))
             else:
                 grad_l = cast(list[float], _compute_gradient(f, x_list, h))
-            
+
             if _magnitude(grad_l) < tol:
                 return OptResult(
-                    x=x_list, value=f(x_list), iterations=i - t_start + 1, converged=True,
-                    state={"m": m_l, "v": v_l, "t": i}
+                    x=x_list,
+                    value=f(x_list),
+                    iterations=i - t_start + 1,
+                    converged=True,
+                    state={"m": m_l, "v": v_l, "t": i},
                 )
-            
+
             for j in range(len(x_list)):
                 m_l[j] = beta1 * m_l[j] + (1 - beta1) * grad_l[j]
                 v_l[j] = beta2 * v_l[j] + (1 - beta2) * grad_l[j] ** 2
-                m_hat = m_l[j] / (1 - beta1 ** i)
-                v_hat = v_l[j] / (1 - beta2 ** i)
+                m_hat = m_l[j] / (1 - beta1**i)
+                v_hat = v_l[j] / (1 - beta2**i)
                 x_list[j] -= lr * m_hat / (math.sqrt(v_hat) + eps)
 
         return OptResult(
-            x=x_list, value=f(x_list), iterations=max_iter, converged=False,
-            state={"m": m_l, "v": v_l, "t": last_t}
+            x=x_list,
+            value=f(x_list),
+            iterations=max_iter,
+            converged=False,
+            state={"m": m_l, "v": v_l, "t": last_t},
         )
 
 
@@ -234,7 +256,10 @@ def line_search(
         if abs(b - a) < tol:
             mid = (a + b) / 2
             return OptResult(
-                x=mid, value=f(mid), iterations=i, converged=True,
+                x=mid,
+                value=f(mid),
+                iterations=i,
+                converged=True,
             )
         x1 = b - phi * (b - a)
         x2 = a + phi * (b - a)
@@ -244,5 +269,8 @@ def line_search(
             a = x1
     mid = (a + b) / 2
     return OptResult(
-        x=mid, value=f(mid), iterations=max_iter, converged=False,
+        x=mid,
+        value=f(mid),
+        iterations=max_iter,
+        converged=False,
     )

@@ -1,4 +1,5 @@
 """Tests for quantum module."""
+
 import math
 
 from cds.quantum.circuit import (

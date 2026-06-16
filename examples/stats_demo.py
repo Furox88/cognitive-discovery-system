@@ -1,4 +1,5 @@
 """Statistics and regression demo."""
+
 from cds.stats import (
     correlation,
     linear_regression,

@@ -1,4 +1,5 @@
 """Simple CSV loader — no pandas dependency."""
+
 from __future__ import annotations
 
 import csv
@@ -32,6 +33,7 @@ class DataTable:
     def describe(self) -> dict[str, dict[str, float]]:
         """Quick summary stats for numeric columns."""
         from cds.stats.descriptive import mean, median, stdev
+
         result: dict[str, dict[str, float]] = {}
         for h in self.headers:
             try:

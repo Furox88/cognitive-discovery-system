@@ -1,4 +1,5 @@
 """Multi-qubit quantum register with entanglement support."""
+
 from __future__ import annotations
 
 import math
@@ -16,14 +17,14 @@ class QuantumRegister:
     @classmethod
     def zeros(cls, n: int) -> QuantumRegister:
         """All qubits in |0> state."""
-        amps: list[complex] = [0 + 0j] * (2 ** n)
+        amps: list[complex] = [0 + 0j] * (2**n)
         amps[0] = 1 + 0j
         return cls(n_qubits=n, amplitudes=amps)
 
     @classmethod
     def from_bits(cls, n: int, value: int) -> QuantumRegister:
         """Computational basis state |value>."""
-        amps: list[complex] = [0 + 0j] * (2 ** n)
+        amps: list[complex] = [0 + 0j] * (2**n)
         amps[value] = 1 + 0j
         return cls(n_qubits=n, amplitudes=amps)
 
@@ -54,7 +55,7 @@ class QuantumRegister:
                 new_amps[i] = 1.0 + 0j
                 self.amplitudes = new_amps
                 return i
-        
+
         # Fallback for floating point edge cases
         final_idx = len(probs) - 1
         new_amps = [0.0 + 0j] * len(self.amplitudes)
@@ -62,9 +63,10 @@ class QuantumRegister:
         self.amplitudes = new_amps
         return final_idx
 
-
     def measure_shots(
-        self, shots: int = 1000, seed: int | None = None,
+        self,
+        shots: int = 1000,
+        seed: int | None = None,
     ) -> dict[str, int]:
         """Run multiple measurements, return counts as binary strings."""
         rng = random.Random(seed)
@@ -85,13 +87,13 @@ class QuantumRegister:
 
     def expectation(self) -> float:
         """Expected value treating basis index as eigenvalue."""
-        return sum(
-            i * abs(a) ** 2 for i, a in enumerate(self.amplitudes)
-        )
+        return sum(i * abs(a) ** 2 for i, a in enumerate(self.amplitudes))
 
 
 def _gate_2x2(
-    reg: QuantumRegister, target: int, matrix: list[complex],
+    reg: QuantumRegister,
+    target: int,
+    matrix: list[complex],
 ) -> QuantumRegister:
     """Apply a 2x2 gate to a specific qubit in the register."""
     n = reg.n_qubits
@@ -133,7 +135,9 @@ def y_gate(reg: QuantumRegister, target: int) -> QuantumRegister:
 
 
 def rz_gate(
-    reg: QuantumRegister, target: int, theta: float,
+    reg: QuantumRegister,
+    target: int,
+    theta: float,
 ) -> QuantumRegister:
     """Rotation around Z axis."""
     e_neg = complex(math.cos(theta / 2), -math.sin(theta / 2))
@@ -142,7 +146,9 @@ def rz_gate(
 
 
 def cnot(
-    reg: QuantumRegister, control: int, target: int,
+    reg: QuantumRegister,
+    control: int,
+    target: int,
 ) -> QuantumRegister:
     """Controlled-NOT gate."""
     n = reg.n_qubits
@@ -156,7 +162,9 @@ def cnot(
 
 
 def cz(
-    reg: QuantumRegister, control: int, target: int,
+    reg: QuantumRegister,
+    control: int,
+    target: int,
 ) -> QuantumRegister:
     """Controlled-Z gate."""
     n = reg.n_qubits
@@ -168,7 +176,9 @@ def cz(
 
 
 def swap(
-    reg: QuantumRegister, q1: int, q2: int,
+    reg: QuantumRegister,
+    q1: int,
+    q2: int,
 ) -> QuantumRegister:
     """SWAP gate — exchange two qubits."""
     reg = cnot(reg, q1, q2)
@@ -178,7 +188,10 @@ def swap(
 
 
 def toffoli(
-    reg: QuantumRegister, c1: int, c2: int, target: int,
+    reg: QuantumRegister,
+    c1: int,
+    c2: int,
+    target: int,
 ) -> QuantumRegister:
     """Toffoli (CCNOT) gate — 3-qubit controlled-controlled-NOT."""
     n = reg.n_qubits
@@ -188,12 +201,14 @@ def toffoli(
             j = i ^ (1 << target)
             if j > i:
                 new_amps[i], new_amps[j] = (
-                    reg.amplitudes[j], reg.amplitudes[i],
+                    reg.amplitudes[j],
+                    reg.amplitudes[i],
                 )
     return QuantumRegister(n_qubits=n, amplitudes=new_amps)
 
 
 # ----- common state preparation -----
+
 
 def bell_state(which: int = 0) -> QuantumRegister:
     """Create one of the 4 Bell states (0-3).

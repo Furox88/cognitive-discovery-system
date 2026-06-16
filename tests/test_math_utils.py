@@ -1,4 +1,5 @@
 """Tests for math_utils module."""
+
 import math
 
 from cds.math_utils.calculus import derivative, gradient, integral
@@ -7,7 +8,7 @@ from cds.math_utils.linalg import determinant, dot, mat_mul, transpose
 
 def test_derivative_of_x_squared():
     # d/dx(x^2) = 2x, at x=3 should be 6
-    result = derivative(lambda x: x ** 2, 3.0)
+    result = derivative(lambda x: x**2, 3.0)
     assert abs(result - 6.0) < 1e-5
 
 
@@ -19,7 +20,7 @@ def test_derivative_of_sin():
 
 def test_integral_of_x_squared():
     # integral of x^2 from 0 to 3 = 9
-    result = integral(lambda x: x ** 2, 0, 3)
+    result = integral(lambda x: x**2, 0, 3)
     assert abs(result - 9.0) < 0.01
 
 
@@ -31,7 +32,8 @@ def test_integral_of_sin():
 
 def test_gradient():
     def f(x: float, y: float) -> float:
-        return x ** 2 + y ** 2
+        return x**2 + y**2
+
     g = gradient(f, [3.0, 4.0])
     assert abs(g[0] - 6.0) < 1e-4
     assert abs(g[1] - 8.0) < 1e-4

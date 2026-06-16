@@ -1,4 +1,5 @@
 """Graph theory algorithms — BFS, DFS, Dijkstra, Kruskal MST."""
+
 from cds.graph.algorithms import (
     Graph,
     bfs,

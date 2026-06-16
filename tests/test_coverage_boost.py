@@ -155,7 +155,7 @@ class TestNewtonMethodEdgeCases:
     def test_non_converged_max_iter(self):
         """Oscillating function that won't converge."""
         # f(x) = x^3 - 2x + 2, x0=0 oscillates between 0 and 1
-        result = newton_method(lambda x: x ** 3 - 2 * x + 2, x0=0.0, max_iter=5)
+        result = newton_method(lambda x: x**3 - 2 * x + 2, x0=0.0, max_iter=5)
         assert isinstance(result, OptResult)
 
 
@@ -221,7 +221,7 @@ class TestAdamVectorStateResume:
 class TestLineSearchEdgeCases:
     def test_already_converged(self):
         """a and b are very close → should converge immediately."""
-        result = line_search(lambda x: x ** 2, a=0.999, b=1.001, tol=0.01)
+        result = line_search(lambda x: x**2, a=0.999, b=1.001, tol=0.01)
         assert result.converged is True
 
     def test_max_iter_exhausted(self):

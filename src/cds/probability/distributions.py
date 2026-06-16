@@ -1,4 +1,5 @@
 """Common probability distributions — pure Python."""
+
 from __future__ import annotations
 
 import math
@@ -24,7 +25,9 @@ def gaussian_pdf(x: float, mu: float = 0.0, sigma: float = 1.0) -> float:
 
 
 def uniform_pdf(
-    x: float, a: float = 0.0, b: float = 1.0,
+    x: float,
+    a: float = 0.0,
+    b: float = 1.0,
 ) -> float:
     """Uniform distribution PDF on [a, b].
 
@@ -78,7 +81,7 @@ def binomial_pmf(k: int, n: int, p: float) -> float:
     if k < 0 or k > n:
         return 0.0
     coeff = math.comb(n, k)
-    return coeff * (p ** k) * ((1 - p) ** (n - k))
+    return coeff * (p**k) * ((1 - p) ** (n - k))
 
 
 def poisson_pmf(k: int, lam: float) -> float:
@@ -97,11 +100,14 @@ def poisson_pmf(k: int, lam: float) -> float:
         raise ValueError("lambda must be non-negative")
     if k < 0:
         return 0.0
-    return (lam ** k) * math.exp(-lam) / math.factorial(k)
+    return (lam**k) * math.exp(-lam) / math.factorial(k)
 
 
 def uniform_sample(
-    a: float, b: float, n: int, seed: int | None = None,
+    a: float,
+    b: float,
+    n: int,
+    seed: int | None = None,
 ) -> list[float]:
     """Generate n uniform random samples from [a, b].
 

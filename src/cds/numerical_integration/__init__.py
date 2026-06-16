@@ -3,6 +3,7 @@
 Complements :mod:`cds.montecarlo` (stochastic integration) and :mod:`cds.diffeq`
 (ODE integration) with classical deterministic integration rules.
 """
+
 from cds.numerical_integration.quadrature import (
     QuadratureResult,
     adaptive_simpson,

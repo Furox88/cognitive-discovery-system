@@ -1,4 +1,5 @@
 """Descriptive statistics — mean, median, variance, stdev."""
+
 from __future__ import annotations
 
 import math
@@ -12,7 +13,7 @@ def mean(data: list[float]) -> float:
 
     Returns:
         Arithmetic mean (sum / N).
-        
+
     Raises:
         ValueError: if data is empty.
     """
@@ -49,7 +50,7 @@ def variance(data: list[float], ddof: int = 1) -> float:
 
     Returns:
         Sample or population variance.
-        
+
     Raises:
         ValueError: if data size is <= ddof.
     """
@@ -81,7 +82,7 @@ def correlation(x: list[float], y: list[float]) -> float:
 
     Returns:
         Pearson correlation coefficient.
-        
+
     Raises:
         ValueError: if lengths mismatch or lists are too short.
     """
@@ -89,9 +90,9 @@ def correlation(x: list[float], y: list[float]) -> float:
         raise ValueError("lists must be the same length")
     if len(x) < 2:
         raise ValueError("correlation requires at least two data points")
-    
+
     mx, my = mean(x), mean(y)
     num = sum((xi - mx) * (yi - my) for xi, yi in zip(x, y))
-    den = math.sqrt(sum((xi - mx)**2 for xi in x) * sum((yi - my)**2 for yi in y))
-    
+    den = math.sqrt(sum((xi - mx) ** 2 for xi in x) * sum((yi - my) ** 2 for yi in y))
+
     return num / den if den > 1e-15 else 0.0

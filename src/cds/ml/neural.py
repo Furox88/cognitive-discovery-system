@@ -1,4 +1,5 @@
 """Pure Python Neural Network module."""
+
 from __future__ import annotations
 
 import math
@@ -14,10 +15,12 @@ class Layer:
     def __init__(self, input_size: int, output_size: int, activation: str = "relu"):
         # Xavier/Glorot initialization for weights
         limit = (6.0 / (input_size + output_size)) ** 0.5
-        self.weights = [[random.uniform(-limit, limit) for _ in range(input_size)] for _ in range(output_size)]
+        self.weights = [
+            [random.uniform(-limit, limit) for _ in range(input_size)] for _ in range(output_size)
+        ]
         self.biases = [0.0] * output_size
         self.activation = activation
-        
+
         # State for backpropagation
         self.last_x: list[float] = []
         self.last_z: list[float] = []
@@ -39,14 +42,17 @@ class Layer:
     def backward(self, grad_out: list[float]) -> list[float]:
         """Backpropagate error gradient through the layer."""
         # dL/dz = dL/da * da/dz
-        grad_z = [go * self._activate_derivative(z, a) for go, z, a in zip(grad_out, self.last_z, self.last_a)]
-        
+        grad_z = [
+            go * self._activate_derivative(z, a)
+            for go, z, a in zip(grad_out, self.last_z, self.last_a)
+        ]
+
         # dL/dw_ij = dL/dz_i * x_j
         for i in range(len(self.weights)):
             gz_i = grad_z[i]
             for j in range(len(self.weights[i])):
                 self.grad_weights[i][j] += gz_i * self.last_x[j]
-        
+
         # dL/db_i = dL/dz_i
         for i in range(len(self.biases)):
             self.grad_biases[i] += grad_z[i]
@@ -55,7 +61,7 @@ class Layer:
         grad_in = [0.0] * len(self.last_x)
         for j in range(len(self.last_x)):
             grad_in[j] = sum(grad_z[i] * self.weights[i][j] for i in range(len(self.weights)))
-        
+
         return grad_in
 
     def _activate(self, z: float) -> float:
@@ -143,14 +149,10 @@ class MLP:
                 layer.grad_biases[i] = 0.0
 
     def train(
-        self, 
-        X: list[list[float]], 
-        y: list[list[float]], 
-        epochs: int = 100, 
-        lr: float = 0.01
+        self, X: list[list[float]], y: list[list[float]], epochs: int = 100, lr: float = 0.01
     ) -> dict[str, Any]:
         """Train the network using the Adam optimizer with backpropagation and state persistence."""
-        
+
         def loss_fn(params: list[float]) -> float:
             self.set_parameters(params)
             total_loss = 0.0
@@ -172,22 +174,11 @@ class MLP:
             return self.get_gradients()
 
         p0 = self.get_parameters()
-        res = adam(
-            loss_fn, 
-            p0, 
-            lr=lr, 
-            max_iter=epochs, 
-            state=self.optimizer_state,
-            grad_f=grad_fn
-        )
-        
+        res = adam(loss_fn, p0, lr=lr, max_iter=epochs, state=self.optimizer_state, grad_f=grad_fn)
+
         # res.x is float | list[float], but for MLP it's guaranteed to be a list
         final_params = cast(list[float], res.x)
         self.set_parameters(final_params)
-        self.optimizer_state = res.state # Store state for next training call
-        
-        return {
-            "final_loss": res.value,
-            "iterations": res.iterations,
-            "converged": res.converged
-        }
+        self.optimizer_state = res.state  # Store state for next training call
+
+        return {"final_loss": res.value, "iterations": res.iterations, "converged": res.converged}

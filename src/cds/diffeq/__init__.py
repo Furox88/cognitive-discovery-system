@@ -1,4 +1,5 @@
 """Ordinary differential equation solvers — Euler, RK4, RK45, leapfrog."""
+
 from cds.diffeq.solvers import (
     ODESolution,
     euler_method,

@@ -1,4 +1,5 @@
 """Tests for graph theory algorithms."""
+
 import pytest
 
 from cds.graph import Graph, bfs, dfs, dijkstra, has_cycle, kruskal_mst, topological_sort

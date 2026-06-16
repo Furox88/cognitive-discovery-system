@@ -103,9 +103,7 @@ if __name__ == "__main__":
     # Custom implementation
     print("Custom ToyPhysicsGenerator:")
     custom = ToyPhysicsGenerator()
-    custom_hypos = generate_hypotheses(
-        question, domain=Domain.PHYSICS, n=2, generator=custom
-    )
+    custom_hypos = generate_hypotheses(question, domain=Domain.PHYSICS, n=2, generator=custom)
     for h in custom_hypos:
         print(f"  ID: {h.id}")
         print(f"  Statement: {h.statement}")
