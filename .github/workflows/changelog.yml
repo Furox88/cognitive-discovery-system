@@ -27,10 +27,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # The checkout is on a detached HEAD (the tag); switch to main so we
+          # can push the regenerated CHANGELOG.md back to the branch.
+          git checkout main
+          git pull --ff-only
           git add CHANGELOG.md
           if git diff --cached --quiet; then
             echo "CHANGELOG.md is up to date"
             exit 0
           fi
           git commit -m "docs(changelog): regenerate for ${GITHUB_REF_NAME}"
-          git push
+          git push origin main
