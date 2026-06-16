@@ -42,9 +42,7 @@ def run_capture(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
 
 
 def git(*args: str) -> str:
-    return run_capture(
-        ["git", *args], cwd=PROJECT_ROOT
-    ).stdout.strip()
+    return run_capture(["git", *args], cwd=PROJECT_ROOT).stdout.strip()
 
 
 def main() -> int:

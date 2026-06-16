@@ -32,7 +32,7 @@ def get_quantum_features(theta: float, shots: int = 1000):
     """Generates features from quantum simulation."""
     circuit = create_quantum_feature_circuit(theta)
     counts = simulate(circuit, shots=shots)
-    
+
     # Calculate probability of state |1>
     prob_1 = counts.get(1, 0) / shots
     return [prob_1]
