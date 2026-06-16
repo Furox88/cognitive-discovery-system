@@ -180,7 +180,7 @@ def info() -> None:
         "• [cyan]hypothesis[/]    • [cyan]diffeq[/]\n"
         "• [cyan]graph[/]         • [cyan]data_analysis[/]\n"
         "• [cyan]ml[/]            • [cyan]probability[/]\n"
-        "• [cyan]scientific[/]    • [cyan]hypothesis[/]"
+        "• [cyan]scientific[/]"
     )
     
     capability_panel = Panel.fit(

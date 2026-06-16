@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - **Numerical Core**: Refactored `math_utils` with O(N³) pure-Python Partial Pivoting LU decomposition, improving stability and performance for linear systems and determinants.
 - **Optimization**: Vectorized machine learning optimizers for improved training efficiency.
-- **Test Coverage**: Achieved **95%+ code coverage** with 350 tests.
+- **Test Coverage**: Achieved **92%+ code coverage** with 350 tests.
 - **CLI Refresh**: `cds info` now displays a comprehensive status panel with 14 core modules and platform health info.
 - Version bumped to 0.6.0 (pyproject.toml, src/cds/__init__.py, README, CLI info).
 
