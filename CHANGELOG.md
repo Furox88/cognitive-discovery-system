@@ -9,12 +9,12 @@ All notable changes to this project will be documented in this file.
 - Top-level `cds.numerical_integration` export registered in package `__init__` and `__all__`.
 
 ### Changed
-- README module table, module count (14 → 15), architecture tree, and test badge (440+ → 550+) updated to reflect the new module. `docs/api.md` and `docs/api-reference.md` now document `cds.numerical_integration`.
+- README module table, module count (14 → 15), architecture tree, and test badge (440+ → 565) updated to reflect the new module. `docs/api.md` and `docs/api-reference.md` now document `cds.numerical_integration`.
 
 ### Fixed
 - **Public API**: `rz_gate` was missing from the `cds.quantum` package exports (`__init__.py` / `__all__`) despite being documented and tested. Now importable via `from cds.quantum import rz_gate`.
 - **Documentation accuracy**: `lu_decomposition` return type corrected across docs from `(L, U)` to `(P, L, U)` (the implementation uses partial pivoting, PA = LU), and the misleading "Doolittle" label removed.
-- **Consistency sweep**: aligned test-count and coverage references across README, CLI (`cds info`), `docs/index.md`, `getting-started.md`, `CONTRIBUTING.md`, `ROADMAP.md`, and `benchmarks.md`. Coverage now reported as **99%** (previously stale 97% / 92%); test count reported as **550+** (previously stale 350/380/440). Resolved the quantum speedup contradiction in `benchmarks.md` (61.1x → 60.3x, matching the visual proof and the actual 0.41s/0.0068s ratio). Added missing `cds.scientific` and `cds.probability` sections to `docs/api.md`.
+- **Consistency sweep**: aligned test-count and coverage references across README, CLI (`cds info`), `docs/index.md`, `getting-started.md`, `CONTRIBUTING.md`, `ROADMAP.md`, and `benchmarks.md`. Coverage now reported as **99%** (previously stale 97% / 92%); test count reported as **565** (previously stale 350/380/440). Resolved the quantum speedup contradiction in `benchmarks.md` (61.1x → 60.3x, matching the visual proof and the actual 0.41s/0.0068s ratio). Added missing `cds.scientific` and `cds.probability` sections to `docs/api.md`.
 - **api-reference.md vs source-code audit**: corrected 15 discrepancies — fixed `QuantumRegister.normalize()` return type (None, not QuantumRegister); fixed `cds.scientific` constants list (removed phantom `epsilon_0`/`mu_0`, added `hbar`/`pi`/`e_math`); added missing `rk45` (diffeq), `DataSet`/`plot_bar`/`plot_line` (data_analysis), `QuantumGate`/`Qubit` (quantum), and 6 hypothesis exports (`Domain`, `Hypothesis`, `HypothesisStatus`, `HypothesisGenerator`, `HypothesisEvaluator`, `EvaluationResult`); aligned parameter names across optimization (`h`, `h_base`, `state`, `grad_f`), stats (`data`), math_utils (`h_base`, `point`), scientific (`n_moles`, `temperature`, `volume`), and hypothesis (`research_question`). Added missing `numerical_integration` module to CLI `cds info` panel.
 
 ## [0.6.0] - 2026-06-14
