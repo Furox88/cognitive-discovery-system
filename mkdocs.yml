@@ -47,9 +47,7 @@ nav:
       - Quick Start: tutorials/quick_start.md
       - Hypothesis Engine: tutorials/hypothesis_demo.md
       - Quantum Lab: tutorials/quantum_demo.md
-  - API Reference:
-      - Overview: api-reference.md
-      - Auto-Generated Reference: api.md
+  - API Reference: api.md
   - Case Studies:
       - Hubble Tension: CASE_STUDY_HUBBLE.md
       - Quantum-ML: CASE_STUDY_QUANTUM_ML.md

@@ -50,6 +50,11 @@ def main() -> int:
     parser.add_argument("--version", help="Verify pyproject version matches")
     parser.add_argument("--dry-run", action="store_true", help="Build but skip upload")
     parser.add_argument("--skip-tests", action="store_true", help="Skip pytest step")
+    parser.add_argument(
+        "--skip-docs",
+        action="store_true",
+        help="Skip mkdocs gh-deploy (Pages not updated after PyPI upload).",
+    )
     args = parser.parse_args()
 
     os.chdir(PROJECT_ROOT)
@@ -129,7 +134,20 @@ def main() -> int:
     )
 
     print(f"\nDone. v{pyproject_version} published.", flush=True)
-    print("Next: tag the release and create a GitHub release.", flush=True)
+
+    # 6. Deploy docs to GitHub Pages (legacy mode: push to gh-pages branch)
+    if not args.skip_docs:
+        print("\n=== Deploying docs to GitHub Pages ===", flush=True)
+        try:
+            run([sys.executable, "-m", "mkdocs", "gh-deploy", "--force", "--no-history"])
+        except subprocess.CalledProcessError as exc:
+            print(
+                f"  mkdocs gh-deploy failed (exit {exc.returncode}). "
+                "PyPI upload already succeeded; you can retry with --skip-docs off later.",
+                file=sys.stderr,
+            )
+
+    print("\nNext: tag the release and create a GitHub release.", flush=True)
     print(f"  git tag -a v{pyproject_version} -m 'Release v{pyproject_version}'")
     print(f"  git push origin v{pyproject_version}")
     print(f"  gh release create v{pyproject_version} --generate-notes")

@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-platform"
-version = "0.8.4"
+version = "0.8.5"
 description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
@@ -29,6 +29,24 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Meta-package: every extras group in one install.
+# Use as: `pip install cognitive-discovery-platform[all]`
+all = [
+    "streamlit>=1.30.0",
+    "pandas",
+    "pytest>=8.0",
+    "pytest-cov",
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "pre-commit",
+    "build",
+    "twine",
+    "ipykernel",
+    "notebook",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+]
 dashboard = [
     "streamlit>=1.30.0",
     "pandas",
