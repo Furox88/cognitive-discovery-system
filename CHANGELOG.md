@@ -5,6 +5,21 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.0b8] - 2026-06-17
+
+
+### <!-- 0 -->🚀 Features
+
+
+- Feat(nlp): add Sprint 2 — multi-head attention + transformer block ([4f38cae](4f38cae))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.9.0b7 (#16) ([44ec93c](44ec93c))
+
+
 ## [v0.9.0b7] - 2026-06-17
 
 
