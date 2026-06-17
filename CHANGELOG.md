@@ -5,6 +5,15 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.0b4] - 2026-06-17
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix: drop stale 'auditor' comment + sync 570 to 572 across docs and cli ([0dcaba6](0dcaba6))
+
+
 ## [v0.9.0b3] - 2026-06-17
 
 
@@ -52,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docs(changelog): regenerate for v0.9.0b2 ([404532c](404532c))
 
 - Docs(changelog): regenerate for v0.9.0b3 (#8) ([3a8ef95](3a8ef95))
+
+- Docs(changelog): regenerate for v0.9.0b3 (#9) ([c4fcb9b](c4fcb9b))
 
 - Docs: add threat model, signed commits guide, Why CDS comparison, Turkish i18n; update ROADMAP ([0ba07cf](0ba07cf))
 
