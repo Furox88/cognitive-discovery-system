@@ -5,7 +5,7 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.9.0b1] - 2026-06-16
+## [v0.9.0b2] - 2026-06-17
 
 
 ### <!-- 10 -->💼 Other
@@ -13,15 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Build: add setuptools_scm local-scheme config (no-local-version, fallback) ([82d07c9](82d07c9))
 
+- Build: exclude hatch-vcs generated _version.py from ruff ([76760d3](76760d3))
+
 - Build: publish.py ignores hatch-vcs regenerated _version.py in dirty check ([bea5f71](bea5f71))
 
 - Build: setuptools_scm version_scheme=no-guess-dev; fix wheel version regex ([8ccb292](8ccb292))
 
 - Release: v0.9.0b1 - Beta milestone, CI multi-OS, hatch-vcs, git-cliff, attestation ([3e3928f](3e3928f))
 
+- Release: v0.9.0b2 - same code, re-tag to trigger attest workflow (checkout fix) ([c54e900](c54e900))
+
 
 ### <!-- 3 -->📚 Documentation
 
+
+- Docs(changelog): regenerate for v0.9.0b1 ([44f7823](44f7823))
 
 - Docs: update SECURITY.md supported versions (0.6.x → 0.8.x) ([b42cf5f](b42cf5f))
 
@@ -31,11 +37,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Style: pre-commit auto-fix (trailing whitespace, import order, ruff format) ([9adbf5a](9adbf5a))
 
+- Style: pre-commit auto-fix _version.py (add blank line before __version__) ([277b535](277b535))
+
 
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 
 
 - Ci: fix attest + changelog workflows (checkout step, detached HEAD push) ([d2c9d6e](d2c9d6e))
+
+- Ci: quote step name with colon (YAML parse error) ([0731ca8](0731ca8))
+
+- Ci: rewrite tests.yml with simple bash conditional (no GitHub conditional parse issues) ([2cc8483](2cc8483))
+
+- Ci: split test step into 2 by matrix (gate vs report-only) - fix missing fi ([9e68ff0](9e68ff0))
 
 
 ## [v0.8.5] - 2026-06-16
