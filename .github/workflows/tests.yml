@@ -43,16 +43,22 @@ jobs:
     - name: Type check with Mypy (tests)
       run: mypy tests/
 
-    - name: Run tests with pytest
+    - name: Run tests with pytest (reference cell: coverage gate)
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: |
-        # Coverage gate applies only to the reference matrix cell
-        # (Linux + Python 3.12). Other cells only report; this keeps CI fast
-        # and avoids redundant Codecov uploads. The gate is enforced via
-        # pyproject.toml [tool.coverage.report] fail_under = 99.
-        if matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12':
-          pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
-        else:
-          pytest tests/ --cov=cds --cov-branch --cov-report=term --no-cov-on-fail
+        # Reference cell: Linux + Python 3.12. The coverage gate
+        # (--cov-fail-under) is enforced here via pyproject.toml
+        # [tool.coverage.report] fail_under = 99. Branch coverage is
+        # reported but not gated (see the comment in pyproject.toml).
+        pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
+
+    - name: Run tests with pytest (other matrix cells: report only)
+      if: !(matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12')
+      run: |
+        # Non-reference cells run the test suite for cross-platform coverage.
+        # They do not enforce the coverage gate; --no-cov-on-fail keeps a
+        # single 1-line branch miss from breaking the whole matrix.
+        pytest tests/ --cov=cds --cov-branch --cov-report=term --no-cov-on-fail
 
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
