@@ -100,4 +100,4 @@ Y: v0.9.0b2 beta sürümü. API kararlı, %100 test coverage, CI multi-OS yeşil
 
 ## Katkıda Bulunma
 
-Katkılarınızı bekliyoruz! Bakınız: [CONTRIBUTING.md](../CONTRIBUTING.md). Türkçe konuşan katkıcılar için: issue/PR'ları Türkçe açabilirsiniz, kod yorumları İngilizce tercih edilir.
+Katkılarınızı bekliyoruz! Bakınız: [CONTRIBUTING.md](https://github.com/Furox88/cognitive-discovery-system/blob/main/CONTRIBUTING.md). Türkçe konuşan katkıcılar için: issue/PR'ları Türkçe açabilirsiniz, kod yorumları İngilizce tercih edilir.

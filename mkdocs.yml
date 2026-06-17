@@ -42,7 +42,9 @@ plugins:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
+  - Getting Started:
+      - English: getting-started.md
+      - Türkçe: getting-started.tr.md
   - Tutorials:
       - Quick Start: tutorials/quick_start.md
       - Hypothesis Engine: tutorials/hypothesis_demo.md
