@@ -5,6 +5,21 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.0b7] - 2026-06-17
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix: catch two more stale surfaces (CITATION.cff, mkdocs api.md) ([b59b6e3](b59b6e3))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.9.0b6 (#15) ([e1244ce](e1244ce))
+
+
 ## [v0.9.0b6] - 2026-06-17
 
 
