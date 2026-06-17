@@ -54,8 +54,8 @@ The platform also includes built-in support for structured hypothesis generation
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
-- **Broad scope** — 15 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo
-- **572 tests** (see CI) — thoroughly tested with **100% code coverage**
+- **Broad scope** — 16 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, and educational NLP (BPE + embeddings)
+- **655 tests** (see CI) — thoroughly tested with **100% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 
 ### CDS vs other libraries
@@ -65,7 +65,8 @@ The platform also includes built-in support for structured hypothesis generation
 | Pure-Python (no compile, no binary) | ✅ | ❌ (C/Fortran) | ✅ | ❌ (needs Qiskit/Cirq) |
 | Quantum simulation | ✅ single/multi-qubit | ❌ | minimal | ✅ full SDK |
 | Hypothesis generation (structured) | ✅ | ❌ | ❌ | ❌ |
-| Single-package umbrella (math+physics+stats+ML+signals) | ✅ | ❌ split across 6+ | partial | ❌ focused |
+| Educational NLP (BPE, embeddings) | ✅ from-scratch | ❌ | ❌ | ❌ |
+| Single-package umbrella (math+physics+stats+ML+signals+NLP) | ✅ | ❌ split across 6+ | partial | ❌ focused |
 | Production-ready CI/CD (multi-OS matrix, signed releases) | ✅ | n/a | partial | ✅ |
 | Educational / readable source | ✅ | ❌ large surface | ✅ | ❌ |
 | Edge runtime (no BLAS) | ✅ | ❌ | partial | ❌ |

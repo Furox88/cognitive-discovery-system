@@ -45,6 +45,13 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - Notebook templates (Jupyter) for non-CLI users
 - Community-contributed domain modules (bioinformatics, finance)
 - Education-focused "tour of numerical methods" guide
+- **Educational NLP track** (Sprint 1+ — see `cds.nlp`):
+  - Sprint 1 ✅ BPE tokenizer + token / positional embeddings (v0.9.0b5)
+  - Sprint 2 Multi-head self-attention block (Sprint 2 — pure-Python, slow on purpose)
+  - Sprint 3 Pure-Python autograd with optional `cds[fast-jit]` Numba backend (kept opt-in so the core stays zero-dep)
+  - Sprint 4 Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
+  - Sprint 5 Attention / embedding visualisations for the educational narrative
+  - Scope explicitly excludes production-scale training — that belongs in PyTorch / JAX / MLX.
 - **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2))
 - **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3))
 - **CDS Script Templates** — domain-specific scientific workflows (quantum chemistry, signal processing demos)
