@@ -223,7 +223,9 @@ class TestLegendreEdgeCases:
 
         from cds.numerical_integration.quadrature import _legendre as _L
 
-        return _L(n, x)
+        # Local import returns Any; the cast documents the contract and
+        # satisfies mypy on Python 3.10/3.11 (3.12 flags it as redundant).
+        return cast(tuple[float, float], _L(n, x))  # type: ignore[redundant-cast]
 
     def test_legendre_n0(self) -> None:
         # P_0(x) = 1, P_0'(x) = 0
