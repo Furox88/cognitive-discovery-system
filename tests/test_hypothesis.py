@@ -58,6 +58,7 @@ def test_hypothesis_to_markdown() -> None:
         domain=Domain.PHYSICS,
         research_question="test question",
         rationale="test rationale",
+        confidence=0.8,
         assumptions=["a1", "a2"],
         predictions=["p1"],
     )
@@ -75,6 +76,7 @@ def test_hypothesis_model_fields() -> None:
         statement="stmt",
         domain=Domain.CHEMISTRY,
         research_question="q",
+        confidence=0.5,
     )
     assert h.confidence == 0.5
     assert h.status == HypothesisStatus.NEW

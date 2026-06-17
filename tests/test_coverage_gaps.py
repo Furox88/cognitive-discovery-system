@@ -9,11 +9,11 @@ Targets:
 import math
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 from typer.testing import CliRunner
 
-import cds.cli as cli_mod
 from cds import __version__
 from cds.cli import app
 from cds.hypothesis import Domain, HypothesisEvaluator, HypothesisStatus, generate_hypotheses
@@ -220,7 +220,7 @@ def test_cli_constants() -> None:
 
 def test_cli_dashboard_missing_file(monkeypatch: Any) -> None:
     """Dashboard command reports an error when the app file is absent."""
-    monkeypatch.setattr(cli_mod.Path, "exists", lambda self: False)
+    monkeypatch.setattr(Path, "exists", lambda self: False)
     result = _runner.invoke(app, ["dashboard"])
     assert result.exit_code == 0
     assert "not found" in result.stdout.lower()
@@ -271,7 +271,7 @@ def test_cli_dashboard_launch(monkeypatch: Any) -> None:
         raise KeyboardInterrupt()
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    monkeypatch.setattr(cli_mod.Path, "exists", lambda self: True)
+    monkeypatch.setattr(Path, "exists", lambda self: True)
     result = _runner.invoke(app, ["dashboard"])
     assert "Dashboard stopped" in result.stdout
 
@@ -283,7 +283,7 @@ def test_cli_dashboard_streamlit_missing(monkeypatch: Any) -> None:
         raise FileNotFoundError("streamlit not found")
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    monkeypatch.setattr(cli_mod.Path, "exists", lambda self: True)
+    monkeypatch.setattr(Path, "exists", lambda self: True)
     result = _runner.invoke(app, ["dashboard"])
     assert "Streamlit not found" in result.stdout
 

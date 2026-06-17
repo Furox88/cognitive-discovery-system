@@ -110,7 +110,7 @@ class TestChiSquare:
 
     def test_independence_table(self) -> None:
         # classic 2x2 table
-        table = [[10, 20], [30, 40]]
+        table: list[list[float]] = [[10.0, 20.0], [30.0, 40.0]]
         r = chi_square_independence(table)
         assert r.df == 1
         assert r.statistic >= 0
@@ -118,19 +118,19 @@ class TestChiSquare:
 
     def test_independence_independent_data(self) -> None:
         # rows proportional -> chi2 ~ 0
-        table = [[10, 20], [20, 40]]
+        table: list[list[float]] = [[10.0, 20.0], [20.0, 40.0]]
         r = chi_square_independence(table)
         assert r.statistic < 1e-9
 
     def test_independence_too_small_raises(self) -> None:
         with pytest.raises(ValueError):
-            chi_square_independence([[1, 2]])
+            chi_square_independence([[1.0, 2.0]])
 
     def test_independence_zero_row_total(self) -> None:
         # Row with all zeros -> some expected frequencies are 0 ->
         # the `if exp > 0` branch in chi_square_independence skips them.
         # Result should still be a valid TestResult.
-        table = [[10, 20], [0, 0]]
+        table: list[list[float]] = [[10.0, 20.0], [0.0, 0.0]]
         r = chi_square_independence(table)
         assert r.df == 1
         assert r.statistic >= 0
@@ -138,7 +138,7 @@ class TestChiSquare:
 
     def test_independence_zero_col_total(self) -> None:
         # Column with all zeros -> some expected frequencies are 0.
-        table = [[10, 0], [20, 0]]
+        table: list[list[float]] = [[10.0, 0.0], [20.0, 0.0]]
         r = chi_square_independence(table)
         assert r.df == 1
         assert r.statistic >= 0

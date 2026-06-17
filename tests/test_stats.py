@@ -105,7 +105,7 @@ def test_mean_negative() -> None:
 
 
 def test_median_large() -> None:
-    data = list(range(100))
+    data: list[float] = [float(i) for i in range(100)]
     assert median(data) == 49.5
 
 

@@ -44,24 +44,24 @@ def test_dot_product() -> None:
 
 
 def test_mat_mul() -> None:
-    a = [[1, 2], [3, 4]]
-    b = [[5, 6], [7, 8]]
+    a = [[1.0, 2.0], [3.0, 4.0]]
+    b = [[5.0, 6.0], [7.0, 8.0]]
     result = mat_mul(a, b)
-    assert result == [[19, 22], [43, 50]]
+    assert result == [[19.0, 22.0], [43.0, 50.0]]
 
 
 def test_transpose() -> None:
-    m = [[1, 2, 3], [4, 5, 6]]
-    assert transpose(m) == [[1, 4], [2, 5], [3, 6]]
+    m = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+    assert transpose(m) == [[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]]
 
 
 def test_determinant_2x2() -> None:
-    m = [[1, 2], [3, 4]]
+    m = [[1.0, 2.0], [3.0, 4.0]]
     assert abs(determinant(m) - (-2)) < 1e-9
 
 
 def test_determinant_3x3() -> None:
-    m = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
+    m = [[1.0, 2.0, 3.0], [0.0, 1.0, 4.0], [5.0, 6.0, 0.0]]
     assert abs(determinant(m) - 1.0) < 1e-9
 
 
@@ -78,13 +78,13 @@ def test_integral_constant() -> None:
 
 
 def test_determinant_identity() -> None:
-    m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    m = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     assert abs(determinant(m) - 1.0) < 1e-9
 
 
 def test_transpose_square() -> None:
-    m = [[1, 2], [3, 4]]
-    assert transpose(m) == [[1, 3], [2, 4]]
+    m = [[1.0, 2.0], [3.0, 4.0]]
+    assert transpose(m) == [[1.0, 3.0], [2.0, 4.0]]
 
 
 def test_dot_orthogonal() -> None:
@@ -92,13 +92,13 @@ def test_dot_orthogonal() -> None:
 
 
 def test_mat_mul_identity() -> None:
-    I = [[1, 0], [0, 1]]  # noqa: E741
-    a = [[5, 6], [7, 8]]
+    I = [[1.0, 0.0], [0.0, 1.0]]  # noqa: E741
+    a = [[5.0, 6.0], [7.0, 8.0]]
     assert mat_mul(I, a) == a
 
 
 def test_determinant_singular() -> None:
-    m = [[1, 2], [2, 4]]
+    m = [[1.0, 2.0], [2.0, 4.0]]
     assert abs(determinant(m)) < 1e-9
 
 
@@ -113,15 +113,15 @@ def test_derivative_of_constant() -> None:
 
 
 def test_transpose_rect() -> None:
-    m = [[1, 2, 3], [4, 5, 6]]
+    m = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
     t = transpose(m)
     assert len(t) == 3
     assert len(t[0]) == 2
-    assert t[0] == [1, 4]
+    assert t[0] == [1.0, 4.0]
 
 
 def test_determinant_3x3_unit() -> None:
-    m = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
+    m = [[1.0, 2.0, 3.0], [0.0, 1.0, 4.0], [5.0, 6.0, 0.0]]
     d = determinant(m)
     assert abs(d - 1.0) < 1e-9
 

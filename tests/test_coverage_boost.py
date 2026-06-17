@@ -256,10 +256,10 @@ class TestFFTAutoPad:
 
     def test_non_power_of_2_auto_pads(self) -> None:
         """fft() should auto-pad to next power of 2 and return correct result."""
-        signal = [1.0, 2.0, 3.0]  # length 3 → padded to 4
+        signal: list[float | complex] = [1.0, 2.0, 3.0]  # length 3 → padded to 4
         result = fft(signal)
         # Should match dft of the padded signal
-        padded = signal + [0.0]  # zero-padded to length 4
+        padded: list[float | complex] = signal + [0.0]  # zero-padded to length 4
         expected = fft_radix2(padded)
         for r, e in zip(result, expected):
             assert abs(r - e) < 1e-10
@@ -294,7 +294,7 @@ class TestPowerSpectrumEdgeCases:
 
     def test_non_power_of_2_uses_dft(self) -> None:
         """power_spectrum with non-power-of-2 length should use dft path."""
-        signal = [1.0, 2.0, 3.0, 5.0, 7.0]
+        signal: list[float | complex] = [1.0, 2.0, 3.0, 5.0, 7.0]
         result = power_spectrum(signal)
         # Manually compute |DFT|^2 / N
         d = dft(signal)
@@ -310,7 +310,7 @@ class TestLowPassFilterEdgeCases:
 
     def test_non_power_of_2_uses_dft_path(self) -> None:
         """low_pass_filter with non-power-of-2 signal should use dft/idft path."""
-        signal = [1.0, 2.0, 3.0, 4.0, 5.0]
+        signal: list[float | complex] = [1.0, 2.0, 3.0, 4.0, 5.0]
         cutoff = 1
         result = low_pass_filter(signal, cutoff)
         # Verify roundtrip-ish: the result should be a filtered version
@@ -318,7 +318,7 @@ class TestLowPassFilterEdgeCases:
 
     def test_high_cutoff_passes_all(self) -> None:
         """cutoff >= n/2 → nothing is filtered out."""
-        signal = [1.0, 0.0, 1.0, 0.0]
+        signal: list[float | complex] = [1.0, 0.0, 1.0, 0.0]
         result = low_pass_filter(signal, cutoff=2)
         # With cutoff=2, bins 2 and 2 (n=4, n-cutoff=2) are zeroed but bins 0,1,3 kept
         assert len(result) == 4
@@ -391,13 +391,13 @@ class TestPlotLineEdgeCases:
 
     def test_custom_width(self) -> None:
         """Explicit small width to force interpolation."""
-        data = list(range(20))
+        data: list[float] = [float(i) for i in range(20)]
         result = plot_line(data, width=5)
         assert isinstance(result, str)
 
     def test_height_parameter(self) -> None:
         """Custom height should produce proportional output."""
-        data = [0, 5, 10, 5, 0]
+        data: list[float] = [0.0, 5.0, 10.0, 5.0, 0.0]
         result = plot_line(data, height=3)
         # Count lines with plot characters
         lines = [ln for ln in result.split("\n") if any(c in ln for c in "█▀▄▌▐│─")]

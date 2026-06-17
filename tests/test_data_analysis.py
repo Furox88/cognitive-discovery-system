@@ -136,7 +136,7 @@ def test_moving_average() -> None:
 
 
 def test_moving_average_window_1() -> None:
-    data = [5, 10, 15]
+    data: list[float] = [5.0, 10.0, 15.0]
     result = moving_average(data, window=1)
     assert result == [5.0, 10.0, 15.0]
 

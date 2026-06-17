@@ -6,7 +6,7 @@ import cmath
 import math
 
 
-def dft(signal: list[complex]) -> list[complex]:
+def dft(signal: list[float | complex]) -> list[complex]:
     """Discrete Fourier Transform (direct computation).
 
     Args:
@@ -26,7 +26,7 @@ def dft(signal: list[complex]) -> list[complex]:
     return result
 
 
-def idft(spectrum: list[complex]) -> list[complex]:
+def idft(spectrum: list[float | complex]) -> list[complex]:
     """Inverse Discrete Fourier Transform.
 
     Args:
@@ -46,7 +46,7 @@ def idft(spectrum: list[complex]) -> list[complex]:
     return result
 
 
-def fft_radix2(signal: list[complex]) -> list[complex]:
+def fft_radix2(signal: list[float | complex]) -> list[complex]:
     """Cooley-Tukey radix-2 FFT. Input length must be a power of 2.
 
     Args:
@@ -79,7 +79,7 @@ def fft_radix2(signal: list[complex]) -> list[complex]:
     return result
 
 
-def fft(signal: list[complex]) -> list[complex]:
+def fft(signal: list[float | complex]) -> list[complex]:
     """Compute 1D FFT of any length using radix-2 and zero-padding.
 
     Automatically pads input to next power of 2 for O(N log N) speed.
@@ -150,7 +150,7 @@ def convolve(a: list[float], b: list[float]) -> list[float]:
     return [x.real for x in full_conv[:n_out]]
 
 
-def power_spectrum(signal: list[complex]) -> list[float]:
+def power_spectrum(signal: list[float | complex]) -> list[float]:
     """Compute the power spectrum |X[k]|^2 / N."""
     n = len(signal)
     if n == 0:
@@ -165,7 +165,7 @@ def power_spectrum(signal: list[complex]) -> list[float]:
     return [abs(x) ** 2 / n for x in spectrum]
 
 
-def low_pass_filter(signal: list[complex], cutoff: int) -> list[complex]:
+def low_pass_filter(signal: list[float | complex], cutoff: int) -> list[complex]:
     """Simple frequency-domain low-pass filter."""
     n = len(signal)
     if n == 0:
@@ -186,7 +186,7 @@ def low_pass_filter(signal: list[complex], cutoff: int) -> list[complex]:
     return inv_func(spectrum)
 
 
-def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
+def fft2(matrix: list[list[float | complex]]) -> list[list[complex]]:
     """2-D Discrete Fourier Transform (O(N log N))."""
     rows = len(matrix)
     if rows == 0:
@@ -205,7 +205,7 @@ def fft2(matrix: list[list[complex]]) -> list[list[complex]]:
     return [list(row) for row in zip(*col_fft)]
 
 
-def ifft2(spectrum: list[list[complex]]) -> list[list[complex]]:
+def ifft2(spectrum: list[list[float | complex]]) -> list[list[complex]]:
     """Inverse 2-D DFT (O(N log N))."""
     rows = len(spectrum)
     if rows == 0:

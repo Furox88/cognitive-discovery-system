@@ -26,7 +26,7 @@ def test_mlp_train_simple() -> None:
     net = MLP([Layer(2, 1, activation="sigmoid")])
 
     def get_loss() -> float:
-        total = 0
+        total: float = 0.0
         for xi, yi in zip(X, y):
             total += (net.predict(xi)[0] - yi[0]) ** 2
         return total / len(X)
@@ -39,7 +39,7 @@ def test_mlp_train_simple() -> None:
 
 
 def test_viz_bar_basic() -> None:
-    data = {"A": 10, "B": 20}
+    data = {"A": 10.0, "B": 20.0}
     plot = plot_bar(data)
     assert "A" in plot
     assert "B" in plot
@@ -47,7 +47,7 @@ def test_viz_bar_basic() -> None:
 
 
 def test_viz_line_basic() -> None:
-    y = [1, 2, 3, 2, 1]
+    y = [1.0, 2.0, 3.0, 2.0, 1.0]
     plot = plot_line(y)
     assert "•" in plot
     assert "max: 3.00" in plot

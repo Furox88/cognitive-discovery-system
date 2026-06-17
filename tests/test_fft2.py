@@ -11,7 +11,7 @@ def _max_err(a: Any, b: Any) -> float:
 
 class TestFFT2:
     def test_constant_matrix_dc_component(self) -> None:
-        m = [[1.0, 1.0], [1.0, 1.0]]
+        m: list[list[float | complex]] = [[1.0, 1.0], [1.0, 1.0]]
         out = fft2(m)
         # DC term equals sum of all entries
         assert abs(out[0][0] - 4.0) < 1e-12
@@ -21,7 +21,7 @@ class TestFFT2:
         assert abs(out[1][1]) < 1e-12
 
     def test_roundtrip_identity(self) -> None:
-        m = [
+        m: list[list[float | complex]] = [
             [1.0, 2.0, 3.0, 4.0],
             [5.0, 6.0, 7.0, 8.0],
             [9.0, 10.0, 11.0, 12.0],
@@ -34,7 +34,7 @@ class TestFFT2:
                 assert abs(recovered[i][j].imag) < 1e-9
 
     def test_separability_matches_manual(self) -> None:
-        m = [[1.0, 0.0], [0.0, 0.0]]
+        m: list[list[float | complex]] = [[1.0, 0.0], [0.0, 0.0]]
         out = fft2(m)
         # impulse at (0,0): all frequency components equal 1
         for i in range(2):
@@ -57,7 +57,7 @@ class TestFFT2:
             fft2([[1.0, 2.0], [3.0]])
 
     def test_parseval_energy(self) -> None:
-        m = [[1.0, 2.0], [3.0, 4.0]]
+        m: list[list[float | complex]] = [[1.0, 2.0], [3.0, 4.0]]
         out = fft2(m)
         n = 4
         space_energy = sum(m[i][j] ** 2 for i in range(2) for j in range(2))
