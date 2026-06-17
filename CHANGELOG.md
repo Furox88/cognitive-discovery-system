@@ -5,13 +5,25 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.9.0b4] - 2026-06-17
+## [v0.9.0b5] - 2026-06-17
+
+
+### <!-- 0 -->🚀 Features
+
+
+- Feat(nlp): add cds.nlp module — BPE tokenizer + sinusoidal embeddings ([045b9d1](045b9d1))
 
 
 ### <!-- 10 -->💼 Other
 
 
 - Build: drop hatch-vcs + setuptools_scm, switch to static versioning ([6e04d31](6e04d31))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.9.0b4 (#13) ([da52ee0](da52ee0))
 
 
 ## [v0.9.0b4] - 2026-06-17
