@@ -166,8 +166,8 @@ def info() -> None:
     status_panel = Panel.fit(
         "[bold]Platform (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
-        "🚀 [bold green]Status:[/] Production-Ready (Beta)\n"
-        "🧪 [bold blue]Tests:[/] 802 Passing (100% Coverage)\n"
+        "🚀 [bold green]Status:[/] Beta\n"
+        "🧪 [bold blue]Tests:[/] 803 Passing (100% Coverage)\n"
         "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"🔗 [bold cyan]Version:[/] {__version__}",
         title="Platform Info",
@@ -319,6 +319,7 @@ def modules() -> None:
         ("cds.ml", "Neural networks (MLP), backpropagation, activation functions"),
         ("cds.scientific", "Physical constants + common formulas"),
         ("cds.data_analysis", "CSV loading, normalization, z-score, moving average"),
+        ("cds.nlp", "Educational NLP: BPE tokenizer, embeddings, attention, autograd, MiniGPT"),
         (
             "cds.hypothesis",
             "Structured hypothesis generation with prompt templates for custom research workflows",

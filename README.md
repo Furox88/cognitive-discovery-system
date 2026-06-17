@@ -7,7 +7,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-802-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-803-brightgreen.svg)](#)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
@@ -25,7 +25,7 @@ The platform also includes built-in support for structured hypothesis generation
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** Achieved **100% Test Coverage** with 802 tests! Fixed a hang in `adaptive_simpson` on NaN/divergent integrands (early-exit instead of recursing to `max_depth`). Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
+🚀 **Latest Update:** Added the **`cds.nlp`** module — educational, from-scratch implementations of modern NLP building blocks: BPE tokenization, sinusoidal embeddings, scaled dot-product / multi-head attention, a Transformer block, a scalar reverse-mode autograd engine with SGD/Adam, and a MiniGPT training demo. All in readable pure Python, with **803 tests** and 100% coverage maintained.
 ---
 
 ## Contents
@@ -55,7 +55,7 @@ The platform also includes built-in support for structured hypothesis generation
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 16 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, and educational NLP (BPE + embeddings)
-- **802 tests** (see CI) — thoroughly tested with **100% code coverage**
+- **803 tests** (see CI) — thoroughly tested with **100% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 
 ### CDS vs other libraries
@@ -97,6 +97,7 @@ If CDS is useful in your research or publications, please cite it using the info
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
 | `cds.numerical_integration` | **NEW:** Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
+| `cds.nlp` | **NEW:** Educational NLP from scratch — BPE tokenizer, sinusoidal embeddings, multi-head attention, Transformer block, scalar autograd (SGD/Adam), MiniGPT demo |
 | `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
 
 ## Quick Start
@@ -383,12 +384,13 @@ src/cds/
 ├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
 ├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
 ├── numerical_integration/  # Deterministic quadrature (trapezoid, Simpson, Romberg, Gauss-Legendre)
+├── nlp/            # Educational NLP (BPE, embeddings, attention, autograd, MiniGPT)
 ├── hypothesis/     # Hypothesis generation
 ├── core/           # Shared models, config
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 802 tests (see CI)
+tests/              # 803 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 

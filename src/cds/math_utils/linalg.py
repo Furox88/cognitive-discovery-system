@@ -30,18 +30,19 @@ def dot(a: Vector, b: Vector) -> float:
 
 
 def mat_mul(a: Matrix, b: Matrix) -> Matrix:
-    """Matrix multiplication A * B (Optimized Pure Python).
+    """Matrix multiplication A * B.
 
-    Uses pre-transposition to exploit row-major access patterns,
-    making it significantly faster by using Python's internal zip/sum.
+    Pre-transposes B so that columns are read as contiguous rows, which
+    keeps memory access row-major and lets the inner loops run over
+    Python's C-implemented ``zip``/``sum`` rather than indexed lookups.
     """
     rows_a, cols_a = len(a), len(a[0])
     rows_b, cols_b = len(b), len(b[0])
     if cols_a != rows_b:
         raise ValueError(f"incompatible shapes: {rows_a}x{cols_a} and {rows_b}x{cols_b}")
 
-    # Pre-transpose B to make column access O(1) row access
-    # This is an 'Intelligence' boost: treating memory access patterns as a priority
+    # Transpose B once up front: each output column becomes a row we can
+    # iterate cheaply, instead of striding through B column-by-column.
     b_T = list(zip(*b))
 
     return [[sum(ai * bi for ai, bi in zip(row_a, col_b)) for col_b in b_T] for row_a in a]

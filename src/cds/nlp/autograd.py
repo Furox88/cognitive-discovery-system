@@ -33,7 +33,7 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 # ---------------------------------------------------------------------- #
 # Type aliases
@@ -47,7 +47,7 @@ Scalar = float
 
 # A function called during ``backward`` that propagates the gradient
 # to the children of a node. Set during forward by each op.
-BackwardFn = Optional[Callable[[], None]]
+BackwardFn = Callable[[], None] | None
 
 
 # ---------------------------------------------------------------------- #

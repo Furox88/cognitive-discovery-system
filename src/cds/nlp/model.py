@@ -30,13 +30,10 @@ Out of scope for the educational track:
 from __future__ import annotations
 
 import math
-from typing import Optional
 
-from cds.nlp.autograd import Parameter, Tensor, exp, log
 from cds.nlp.attention import causal_mask
-from cds.nlp.embed import PositionalEncoding, add_positional
-from cds.nlp.optim import Adam
-from cds.nlp.training import cross_entropy, train_step
+from cds.nlp.autograd import Parameter, Tensor, exp, log
+from cds.nlp.embed import PositionalEncoding
 
 __all__ = ["MiniGPT", "sample"]
 
@@ -80,9 +77,7 @@ class MiniGPT:
         seed: int = 0xC0DE,
     ) -> None:
         if d_model % n_heads != 0:
-            raise ValueError(
-                f"d_model {d_model} must be divisible by n_heads {n_heads}"
-            )
+            raise ValueError(f"d_model {d_model} must be divisible by n_heads {n_heads}")
         if d_ff < 1:
             raise ValueError(f"d_ff must be >= 1, got {d_ff}")
         if max_len < 1:
@@ -97,13 +92,11 @@ class MiniGPT:
         import random
 
         rng = random.Random(seed)
+
         # Xavier-uniform-ish init for matrices, zero for biases.
         def _rand_matrix(rows: int, cols: int) -> list[list[float]]:
             bound = 1.0 / math.sqrt(cols)
-            return [
-                [rng.uniform(-bound, bound) for _ in range(cols)]
-                for _ in range(rows)
-            ]
+            return [[rng.uniform(-bound, bound) for _ in range(cols)] for _ in range(rows)]
 
         # Token embedding: each row is the d_model vector for a token id.
         # Represented as a list of Parameters (one per row) so the
@@ -170,9 +163,7 @@ class MiniGPT:
         if not ids:
             return []
         if len(ids) > self.max_len:
-            raise ValueError(
-                f"sequence length {len(ids)} exceeds max_len {self.max_len}"
-            )
+            raise ValueError(f"sequence length {len(ids)} exceeds max_len {self.max_len}")
         n = len(ids)
         d = self.d_model
 
@@ -187,15 +178,19 @@ class MiniGPT:
             for i in range(n)
         ]
         x: list[list[Tensor]] = [
-            [token_vecs[i][j] + pos_vecs[i][j] for j in range(d)]
-            for i in range(n)
+            [token_vecs[i][j] + pos_vecs[i][j] for j in range(d)] for i in range(n)
         ]
 
         # Causal multi-head self-attention + FFN with pre-norm.
         normed = _layer_norm(x, self.ln1_gamma, self.ln1_beta)
         attn_out = _multi_head_attention(
-            normed, self.w_q, self.w_k, self.w_v, self.w_o,
-            self.n_heads, mask=causal_mask(n),
+            normed,
+            self.w_q,
+            self.w_k,
+            self.w_v,
+            self.w_o,
+            self.n_heads,
+            mask=causal_mask(n),
         )
         x = _add(x, attn_out)
         normed2 = _layer_norm(x, self.ln2_gamma, self.ln2_beta)
@@ -208,9 +203,7 @@ class MiniGPT:
         # Linear: logits = last @ w_head + b_head
         logits: list[Tensor] = []
         for v in range(self.vocab_size):
-            acc: Tensor = self.b_head[v] + Tensor(
-                data=0.0, requires_grad=False
-            )
+            acc: Tensor = self.b_head[v] + Tensor(data=0.0, requires_grad=False)
             for j in range(d):
                 acc = acc + last[j] * self.w_head[j][v]
             logits.append(acc)
@@ -305,7 +298,7 @@ def _multi_head_attention(
     w_v: list[list[Parameter]],
     w_o: list[list[Parameter]],
     n_heads: int,
-    mask: Optional[list[list[float]]] = None,
+    mask: list[list[float]] | None = None,
 ) -> list[list[Tensor]]:
     """Multi-head self-attention on Tensor rows.
 
@@ -314,6 +307,7 @@ def _multi_head_attention(
     """
     d = len(x[0])
     d_head = d // n_heads
+
     # Project to Q, K, V via a tiny "matvec" inner loop.
     def _project(x_row: list[Tensor], w: list[list[Parameter]]) -> list[Tensor]:
         out: list[Tensor] = []
@@ -360,7 +354,7 @@ def _scaled_dot_product(
     q: list[list[Tensor]],
     k: list[list[Tensor]],
     v: list[list[Tensor]],
-    mask: Optional[list[list[float]]] = None,
+    mask: list[list[float]] | None = None,
 ) -> list[list[Tensor]]:
     d_k = len(q[0])
     n = len(q)
@@ -428,9 +422,7 @@ def _feed_forward(
             # educational engine are detached — keeps the autograd
             # graph tractable for a tiny demo. The activation itself
             # is exact via math.erf.)
-            row_i.append(
-                Tensor(data=_gelu_scalar(acc.data), requires_grad=False)
-            )
+            row_i.append(Tensor(data=_gelu_scalar(acc.data), requires_grad=False))
         h.append(row_i)
     # Output layer.
     out: list[list[Tensor]] = []
@@ -455,7 +447,7 @@ class _no_grad:
     once a graph-pruning pass is added.
     """
 
-    def __enter__(self) -> "_no_grad":
+    def __enter__(self) -> _no_grad:
         return self
 
     def __exit__(self, *exc: object) -> None:

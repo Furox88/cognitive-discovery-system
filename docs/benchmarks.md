@@ -1,6 +1,6 @@
 # CDS Performance & Intelligence Report
 
-This report tracks not just raw speed, but **Algorithmic Intelligence**. While pure Python cannot beat C-extensions in brute force math, CDS uses intelligent shortcuts (O(1) sampling, zero-padding, row-major transposition, Richardson extrapolation) to outsmart naive approaches.
+This report measures both raw speed and algorithmic scaling. Pure Python is slower than C-extensions for dense numerics, so rather than only racing NumPy, the comparisons below also check that the implemented algorithms scale with their theoretical complexity (e.g. O(N log N) FFT, O(N^3) PLU determinant) and converge to machine precision where expected.
 
 ### Linear Algebra (Approaching C-Speed)
 | Metric | Value |
@@ -8,7 +8,7 @@ This report tracks not just raw speed, but **Algorithmic Intelligence**. While p
 | CDS Matrix Mul (100x100) | 0.0423s |
 | CDS LU Decomp (100x100) | 0.0155s |
 | NumPy Matrix Mul (Baseline) | 0.000058s |
-| Speed Status | CDS is 727.3x slower (Pure Python vs C-extension) |
+| Speed Status | CDS is 727.3x slower than NumPy (pure Python vs C) |
 
 ### Linear Algebra Intelligence (LU vs Naive)
 | Metric | Value |
@@ -56,5 +56,5 @@ This report tracks not just raw speed, but **Algorithmic Intelligence**. While p
 Naive Brute Force: ######################################## (0.41s)
 CDS O(1) Sampling: # (0.0068s)
 
-Conclusion: CDS is 60.3 times faster due to Algorithmic Intelligence.
+Conclusion: CDS is 60.3 times faster via O(1) probabilistic sampling vs running the circuit shot-by-shot.
 ```

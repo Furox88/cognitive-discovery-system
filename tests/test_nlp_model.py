@@ -17,7 +17,6 @@ from cds.nlp.model import MiniGPT
 from cds.nlp.optim import Adam
 from cds.nlp.training import train_step
 
-
 # ---------------------------------------------------------------------- #
 # Shakespeare corpus
 # ---------------------------------------------------------------------- #
@@ -115,9 +114,7 @@ class TestMiniGPT:
         """A handful of train_steps on the Shakespeare excerpt should
         bring the loss down. (We don't expect a perfect model — just
         that gradients flow and the optimiser updates parameters.)"""
-        model = MiniGPT(
-            vocab_size=vocab_size, d_model=16, n_heads=2, d_ff=32, max_len=64
-        )
+        model = MiniGPT(vocab_size=vocab_size, d_model=16, n_heads=2, d_ff=32, max_len=64)
         # Use a 32-char window so the input fits well within max_len.
         ids = encode(TEXT[:33])
         opt = Adam(params=model.parameters(), lr=0.01)

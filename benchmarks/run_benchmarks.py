@@ -62,7 +62,7 @@ def bench_linalg() -> OrderedDict[str, str]:
         t_mul_np = _bench(lambda: np.dot(A_np, B_np), number=100)
         ratio = t_mul_cds / t_mul_np if t_mul_np > 0 else math.inf
         results["NumPy Matrix Mul (Baseline)"] = f"{t_mul_np:.6f}s"
-        results["Speed Status"] = f"CDS is {ratio:.1f}x slower (Pure Python vs C-extension)"
+        results["Speed Status"] = f"CDS is {ratio:.1f}x slower than NumPy (pure Python vs C)"
 
     return results
 
@@ -224,10 +224,12 @@ def run_all() -> None:
     # Generate Report Table with Visuals
     report = "# CDS Performance & Intelligence Report\n\n"
     report += (
-        "This report tracks not just raw speed, but **Algorithmic Intelligence**. "
-        "While pure Python cannot beat C-extensions in brute force math, CDS uses "
-        "intelligent shortcuts (O(1) sampling, zero-padding, row-major transposition, "
-        "Richardson extrapolation) to outsmart naive approaches.\n\n"
+        "This report measures both raw speed and algorithmic scaling. Pure "
+        "Python is slower than C-extensions for dense numerics, so rather "
+        "than only racing NumPy, the comparisons below also check that the "
+        "implemented algorithms scale with their theoretical complexity "
+        "(e.g. O(N log N) FFT, O(N^3) PLU determinant) and converge to "
+        "machine precision where expected.\n\n"
     )
 
     for category, metrics in results.items():
@@ -250,7 +252,8 @@ def run_all() -> None:
     report += f"Naive Brute Force: {_bar(t_naive, t_naive)} ({t_naive:.2f}s)\n"
     report += f"CDS O(1) Sampling: {_bar(t_intelligent, t_naive)} ({t_intelligent:.4f}s)\n"
     report += (
-        f"\nConclusion: CDS is {speedup_val:.1f} times faster due to Algorithmic Intelligence.\n"
+        f"\nConclusion: CDS is {speedup_val:.1f} times faster via O(1) probabilistic "
+        f"sampling vs running the circuit shot-by-shot.\n"
     )
     report += "```\n"
 

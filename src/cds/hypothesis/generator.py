@@ -152,9 +152,14 @@ class SimpleOfflineGenerator:
 
         ideas = self.templates.get(domain, self.templates[Domain.PHYSICS])[:n]
         if len(ideas) < n:
-            # Pad with generic
+            # The built-in templates only cover a few domains. For any other
+            # domain (or when more hypotheses are requested than templates
+            # exist), fall back to a generic template derived from the
+            # research question rather than a domain-specific claim, so the
+            # output stays a usable starting point for a custom generator.
             ideas += [
-                f"Variant of mechanism X applied to {research_question} yields new observable Y.",
+                f"A yet-untested factor influencing {research_question} "
+                f"produces a measurable, reproducible effect.",
             ] * (n - len(ideas))
 
         hypos: list[Hypothesis] = []
