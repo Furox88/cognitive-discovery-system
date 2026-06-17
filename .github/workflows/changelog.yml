@@ -44,5 +44,6 @@ jobs:
             Auto-generated CHANGELOG update from git history.
             Triggered by: tag push `${{ github.ref_name }}`
           branch: chore/changelog-${{ github.ref_name }}
+          base: main
           delete-branch: true
           add-paths: CHANGELOG.md
