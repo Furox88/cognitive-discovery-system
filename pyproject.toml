@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-platform"
-dynamic = ["version"]
+version = "0.9.0b4"
 description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
@@ -82,36 +82,26 @@ Issues = "https://github.com/Furox88/cognitive-discovery-system/issues"
 Changelog = "https://github.com/Furox88/cognitive-discovery-system/releases"
 
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/cds"]
 
-# Dynamic version from git tags. `hatch-vcs` reads the most recent 'v*'
-# annotated tag and writes src/cds/_version.py at build time. The stub
-# _version.py is committed (so mypy can resolve __version__ in fresh
-# clones without git history) but gets overwritten during `python -m build`
-# and `pip install -e .`. To cut a release: `git tag -a vX.Y.Z -m "..."`
-# then `python -m build` — the wheel/sdist filename picks up the tag.
-[tool.hatch.version]
-source = "vcs"
-
-[tool.hatch.build.hooks.vcs]
-version-file = "src/cds/_version.py"
-
-# setuptools_scm options (used internally by hatch-vcs):
-# - `no-guess-dev`: never append `.devN+g<sha>` even when the working tree
-#   is dirty. The version stays exactly as the tag (e.g. 0.9.0b1). This
-#   matches what we want for release builds.
-# - `no-local-version`: don't add `+local.X` suffix.
-# - `fallback_version`: used when git tags are unavailable (e.g. shallow
-#   clones without history). The placeholder src/cds/_version.py mirrors
-#   this so mypy has something to resolve against in fresh checkouts.
-[tool.setuptools_scm]
-version_scheme = "no-guess-dev"
-local_scheme = "no-local-version"
-fallback_version = "0.0.0+unknown"
+# Static version. Previously used hatch-vcs + setuptools_scm with
+# `[tool.hatch.vcs] version-scheme = "release"`, but hatch-vcs 0.5.0
+# silently ignored the override (default `release-with-dev` produced
+# `0.9.0b5.dev0+g<sha>.d<date>` instead of `0.9.0b4`). The release tag
+# is the source of truth — the wheel filename reads the git tag, not
+# this file. Bump manually before tagging a new release, and keep
+# `src/cds/_version.py` in lockstep so mypy + `cds --version` see the
+# right value.
+#
+# Release checklist:
+#   1. Bump `version` below AND `__version__` in `src/cds/_version.py`
+#   2. Commit, push, wait for CI green
+#   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
+#   4. `python scripts/publish.py --tag vX.Y.Z`
 
 [tool.ruff]
 line-length = 100
