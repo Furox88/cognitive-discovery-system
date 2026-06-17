@@ -6,5 +6,5 @@ from __future__ import annotations
 
 __all__ = ["__version__", "version", "__version_tuple__", "version_tuple"]
 
-__version__ = version = "0.9.0b5"
-__version_tuple__ = version_tuple = (0, 9, 0, "b5")
+__version__ = version = "0.9.0b6"
+__version_tuple__ = version_tuple = (0, 9, 0, "b6")
