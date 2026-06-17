@@ -163,3 +163,9 @@ data/external/
 # CDS specific (future)
 .cds/
 *.hypo.json
+
+# ZCode agent session state (local only, never commit)
+.zcode/
+
+# Windows NUL device accidentally materialized as a file
+nul

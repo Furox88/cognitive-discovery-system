@@ -25,7 +25,7 @@ The platform also includes built-in support for structured hypothesis generation
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** Added the **`cds.nlp`** module — educational, from-scratch implementations of modern NLP building blocks: BPE tokenization, sinusoidal embeddings, scaled dot-product / multi-head attention, a Transformer block, a scalar reverse-mode autograd engine with SGD/Adam, and a MiniGPT training demo. All in readable pure Python, with **803 tests** and 100% coverage maintained.
+🚀 **Latest Update:** Added the **`cds.nlp`** module — educational, from-scratch implementations of modern NLP building blocks: BPE tokenization, sinusoidal embeddings, scaled dot-product / multi-head attention, a Transformer block, a scalar reverse-mode autograd engine with SGD/Adam, and a MiniGPT training demo. All in readable pure Python, with **803 tests** and ~99% coverage maintained.
 ---
 
 ## Contents
@@ -55,7 +55,7 @@ The platform also includes built-in support for structured hypothesis generation
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 16 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, and educational NLP (BPE + embeddings)
-- **803 tests** (see CI) — thoroughly tested with **100% code coverage**
+- **803 tests** (see CI) — thoroughly tested with **~99% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 
 ### CDS vs other libraries
