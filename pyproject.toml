@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-platform"
-version = "0.9.0b8"
+version = "0.10.0b1"
 description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
@@ -88,14 +88,14 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/cds"]
 
-# Static version. Previously used hatch-vcs + setuptools_scm with
-# `[tool.hatch.vcs] version-scheme = "release"`, but hatch-vcs 0.5.0
-# silently ignored the override (default `release-with-dev` produced
-# `0.9.0b5.dev0+g<sha>.d<date>` instead of `0.9.0b4`). The release tag
-# is the source of truth — the wheel filename reads the git tag, not
-# this file. Bump manually before tagging a new release, and keep
-# `src/cds/_version.py` in lockstep so mypy + `cds --version` see the
-# right value.
+# Static version. The release tag is the source of truth — the wheel
+# filename reads the git tag. Bump manually before tagging a new
+# release, and keep `src/cds/_version.py` in lockstep so mypy +
+# `cds --version` see the right value. (Previously we tried
+# hatch-vcs + setuptools_scm with `[tool.hatch.vcs] version-scheme =
+# "release"`, but hatch-vcs 0.5.0 silently ignored the override and
+# produced `0.9.0b5.dev0+g<sha>.d<date>` instead of the clean tag
+# version. Static versioning is what shipped.)
 #
 # Release checklist:
 #   1. Bump `version` below AND `__version__` in `src/cds/_version.py`

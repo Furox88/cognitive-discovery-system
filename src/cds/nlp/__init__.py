@@ -3,23 +3,28 @@
 Educational, from-scratch implementations of the building blocks used in
 modern language models — byte-pair encoding (BPE) tokenisation, the
 sinusoidal token / positional embeddings from the original Transformer
-paper, scaled dot-product and multi-head self-attention, and the
-Transformer encoder block (GeLU FFN, LayerNorm, residual).
+paper, scaled dot-product and multi-head self-attention, the
+Transformer encoder block (GeLU FFN, LayerNorm, residual), a
+scalar-valued reverse-mode autograd engine with SGD/Adam optimisers,
+and a high-level training helper.
 
 Designed for teaching, prototyping, and small-model experiments, not
 for production-scale training (no NumPy, no BLAS — performance is
-deliberately the trade-off for full transparency).
+deliberately the trade-off for full transparency). The optional
+``cds[fast-jit]`` extra brings in Numba for the matmul hot-path
+without changing the public surface.
 
 Why this module exists inside CDS:
 - Demonstrates that the *core ideas* of transformer-era NLP are short,
   readable pure-Python code.
 - Provides a reproducible playground for tokenisation experiments
   without pulling in tokenizers / sentencepiece / torch.
-- Pairs naturally with :mod:`cds.optimization` (loss + LR schedule)
-  and :mod:`cds.probability` (softmax, sampling) when the autograd
-  module lands in Sprint 3.
+- Closes the loop on the educational NLP track: BPE + embeddings +
+  attention + autograd = a learner can now train a tiny GPT and
+  *see* every gradient flowing back through the graph because the
+  engine is ~250 lines, not 50,000.
 
-Scope (Sprint 1+2 — v0.9.0b8):
+Scope (Sprints 1-3 — v0.10.0b1):
 
 * :func:`~cds.nlp.bpe.train_bpe` — train a BPE vocabulary from a corpus
 * :class:`~cds.nlp.bpe.BPETokenizer` — encode / decode / save / load
@@ -31,11 +36,14 @@ Scope (Sprint 1+2 — v0.9.0b8):
 * :func:`~cds.nlp.layers.gelu` / :func:`~cds.nlp.layers.layer_norm`
 * :func:`~cds.nlp.layers.feed_forward`
 * :func:`~cds.nlp.layers.transformer_block`
+* :class:`~cds.nlp.autograd.Tensor` / :class:`Parameter` — scalar autograd
+* :func:`~cds.nlp.autograd.matmul` — nested-Tensor matmul
+* :class:`~cds.nlp.optim.SGD` / :class:`Adam` — optimisers
+* :func:`~cds.nlp.training.cross_entropy` / :func:`train_step` — loss + loop
 
 Out of scope for the educational track:
-- Backpropagation / autograd (lives in Sprint 3, with Numba as
-  optional JIT acceleration behind ``cds[fast-jit]``; the core
-  stays pure Python).
+- Mixed precision (FP16 / bfloat16) — meaningful only with the
+  Numba backend, deferred to a later sprint.
 - Dropout, ALiBi, RoPE, GQA / MQA — modern attention refinements
   tracked for a later educational add-on.
 - Subword sampling tricks (BPE-Dropout, Unigram LM).
@@ -47,17 +55,34 @@ References:
     - Vaswani, A. et al. (2017). "Attention Is All You Need." NeurIPS.
     - Gage, P. (1994). "A New Algorithm for Data Compression." C
       Users Journal.
+    - Kingma, D. P., & Ba, J. (2014). "Adam: A Method for Stochastic
+      Optimization." arXiv:1412.6980.
+    - Karpathy, A. (2020). micrograd — the scalar autograd engine
+      this module imitates.
 """
 
 from cds.nlp.attention import (
     causal_mask,
-    matmul,
     merge_heads,
     multi_head_attention,
     scaled_dot_product_attention,
-    softmax,
+    softmax,  # scalar softmax (also re-exported from training)
     split_heads,
     transpose,
+)
+from cds.nlp.autograd import (
+    Parameter,
+    Tensor,
+    add,
+    div,
+    exp,
+    log,
+    matmul,
+    mul,
+    neg,
+    no_grad,
+    relu,
+    sub,
 )
 from cds.nlp.bpe import (
     BOS,
@@ -80,6 +105,8 @@ from cds.nlp.layers import (
     layer_norm,
     transformer_block,
 )
+from cds.nlp.optim import SGD, Adam, parameters
+from cds.nlp.training import cross_entropy, train_step
 
 __all__ = [
     # bpe
@@ -109,4 +136,23 @@ __all__ = [
     "layer_norm",
     "feed_forward",
     "transformer_block",
+    # autograd
+    "Tensor",
+    "Parameter",
+    "add",
+    "sub",
+    "mul",
+    "div",
+    "neg",
+    "exp",
+    "log",
+    "relu",
+    "no_grad",
+    # optim
+    "SGD",
+    "Adam",
+    "parameters",
+    # training
+    "cross_entropy",
+    "train_step",
 ]
