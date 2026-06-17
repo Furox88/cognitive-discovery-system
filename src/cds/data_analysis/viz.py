@@ -53,7 +53,7 @@ def plot_line(
     if not y_values:
         return "No data to plot."
 
-    # Safety fix for auditor: ensure width is at least 2 for sampling logic
+    # Guard: width must be at least 2; otherwise stride below divides by zero.
     eff_width = max(2, width)
 
     # Sample/Interpolate to fit width

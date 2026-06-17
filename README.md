@@ -25,7 +25,7 @@ The platform also includes built-in support for structured hypothesis generation
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** Achieved **100% Test Coverage** with 570 tests! Fixed a hang in `adaptive_simpson` on NaN/divergent integrands (early-exit instead of recursing to `max_depth`). Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
+🚀 **Latest Update:** Achieved **100% Test Coverage** with 572 tests! Fixed a hang in `adaptive_simpson` on NaN/divergent integrands (early-exit instead of recursing to `max_depth`). Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
 ---
 
 ## Contents
@@ -387,7 +387,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 570 tests (see CI)
+tests/              # 572 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 
