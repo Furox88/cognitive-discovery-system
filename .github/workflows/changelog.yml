@@ -6,16 +6,17 @@ on:
       - "v*"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   changelog:
-    name: Generate CHANGELOG.md
+    name: Generate CHANGELOG
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # full history for git-cliff
+          fetch-depth: 0
 
       - name: Install git-cliff
         uses: orhun/git-cliff-action@v4
@@ -23,18 +24,25 @@ jobs:
           config: cliff.toml
           args: --verbose --output CHANGELOG.md
 
-      - name: Commit updated CHANGELOG
+      - name: Check for changes
+        id: check
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # The checkout is on a detached HEAD (the tag); switch to main so we
-          # can push the regenerated CHANGELOG.md back to the branch.
-          git checkout main
-          git pull --ff-only
-          git add CHANGELOG.md
-          if git diff --cached --quiet; then
-            echo "CHANGELOG.md is up to date"
-            exit 0
+          if git diff --quiet CHANGELOG.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-          git commit -m "docs(changelog): regenerate for ${GITHUB_REF_NAME}"
-          git push origin main
+
+      - name: Open PR with regenerated CHANGELOG
+        if: steps.check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs(changelog): regenerate for ${{ github.ref_name }}"
+          title: "docs(changelog): regenerate for ${{ github.ref_name }}"
+          body: |
+            Auto-generated CHANGELOG update from git history.
+            Triggered by: tag push `${{ github.ref_name }}`
+          branch: chore/changelog-${{ github.ref_name }}
+          delete-branch: true
+          add-paths: CHANGELOG.md
