@@ -43,7 +43,7 @@ jobs:
     - name: Type check with Mypy (tests)
       run: mypy tests/
 
-    - name: Run tests with pytest (reference cell: coverage gate)
+    - name: "Run tests with pytest (reference cell: coverage gate)"
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: |
         # Reference cell: Linux + Python 3.12. The coverage gate
@@ -52,7 +52,7 @@ jobs:
         # reported but not gated (see the comment in pyproject.toml).
         pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
 
-    - name: Run tests with pytest (other matrix cells: report only)
+    - name: "Run tests with pytest (other matrix cells: report only)"
       if: !(matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12')
       run: |
         # Non-reference cells run the test suite for cross-platform coverage.
