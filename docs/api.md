@@ -43,3 +43,6 @@ This page contains automatically generated documentation for the Cognitive Disco
 
 ## Graph Theory
 ::: cds.graph
+
+## Educational NLP (BPE + Embeddings)
+::: cds.nlp
