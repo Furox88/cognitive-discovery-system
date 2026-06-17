@@ -1,6 +1,7 @@
 """Tests for deterministic numerical quadrature."""
 
 import math
+from collections.abc import Callable
 from typing import Any
 
 import pytest
@@ -223,10 +224,11 @@ class TestLegendreEdgeCases:
 
         from cds.numerical_integration.quadrature import _legendre as _L
 
-        # Local import returns Any for mypy; the actual function returns
-        # tuple[float, float]. Suppress the no-any-return on all Python
-        # versions.
-        return _L(n, x)  # type: ignore[no-any-return]
+        # Type the local import explicitly so mypy on every Python version
+        # agrees on the return type. The actual function returns
+        # tuple[float, float].
+        _legendre_helper: Callable[[int, float], tuple[float, float]] = _L
+        return _legendre_helper(n, x)
 
     def test_legendre_n0(self) -> None:
         # P_0(x) = 1, P_0'(x) = 0
