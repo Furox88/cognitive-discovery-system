@@ -5,6 +5,35 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.0b2] - 2026-06-17
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix: sync test count to 803, add nlp to CLI/modules, fix lint, neutralize AI marketing language ([af94f0f](af94f0f))
+
+
+### <!-- 2 -->🚜 Refactor
+
+
+- Refactor: extract magic-number constants, clean Any types, split autograd into package ([aa69001](aa69001))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.10.0b1 (#18) ([0b38ba9](0b38ba9))
+
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Chore: bump version to 0.10.0b2 ([5e3dea2](5e3dea2))
+
+- Chore: fix README coverage claim (~99% not 100%), ignore .zcode/ session state ([d992381](d992381))
+
+
 ## [v0.10.0b1] - 2026-06-17
 
 
