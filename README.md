@@ -7,7 +7,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-655-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-721-brightgreen.svg)](#)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
@@ -25,7 +25,7 @@ The platform also includes built-in support for structured hypothesis generation
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** Achieved **100% Test Coverage** with 655 tests! Fixed a hang in `adaptive_simpson` on NaN/divergent integrands (early-exit instead of recursing to `max_depth`). Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
+🚀 **Latest Update:** Achieved **100% Test Coverage** with 721 tests! Fixed a hang in `adaptive_simpson` on NaN/divergent integrands (early-exit instead of recursing to `max_depth`). Refactored the core with **O(N³) pure-Python Partial Pivoting LU decomposition**, **vectorized machine learning optimizers**, and **parallelized Multi-Core Monte Carlo engines**—all while maintaining strict zero-dependency architecture and resolving numerical instability risks.
 ---
 
 ## Contents
@@ -55,7 +55,7 @@ The platform also includes built-in support for structured hypothesis generation
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 16 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, and educational NLP (BPE + embeddings)
-- **655 tests** (see CI) — thoroughly tested with **100% code coverage**
+- **721 tests** (see CI) — thoroughly tested with **100% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 
 ### CDS vs other libraries
@@ -388,7 +388,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 655 tests (see CI)
+tests/              # 721 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 
