@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.python-version }} / ${{ matrix.os }}
+    name: ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,9 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # full history for setuptools_scm
+        fetch-depth: 0
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
@@ -43,22 +43,20 @@ jobs:
     - name: Type check with Mypy (tests)
       run: mypy tests/
 
-    - name: "Run tests with pytest (reference cell: coverage gate)"
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+    - name: Run tests with pytest
+      shell: bash
       run: |
-        # Reference cell: Linux + Python 3.12. The coverage gate
-        # (--cov-fail-under) is enforced here via pyproject.toml
-        # [tool.coverage.report] fail_under = 99. Branch coverage is
-        # reported but not gated (see the comment in pyproject.toml).
-        pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
-
-    - name: "Run tests with pytest (other matrix cells: report only)"
-      if: !(matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12')
-      run: |
-        # Non-reference cells run the test suite for cross-platform coverage.
-        # They do not enforce the coverage gate; --no-cov-on-fail keeps a
-        # single 1-line branch miss from breaking the whole matrix.
-        pytest tests/ --cov=cds --cov-branch --cov-report=term --no-cov-on-fail
+        set -e
+        # Reference cell (Linux + Python 3.12) enforces the coverage gate.
+        # Other cells run the test suite for cross-platform coverage but
+        # don't enforce the gate; --no-cov-on-fail keeps a single 1-line
+        # branch miss from breaking the whole matrix. The gate is set in
+        # pyproject.toml [tool.coverage.report] fail_under = 99.
+        if [ "$RUNNER_OS" = "Linux" ] && [ "${{ matrix.python-version }}" = "3.12" ]; then
+          pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
+        else
+          pytest tests/ --cov=cds --cov-branch --cov-report=term --no-cov-on-fail
+        fi
 
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
@@ -73,7 +71,7 @@ jobs:
       run: mkdocs build --strict
 
   pre-commit:
-    name: pre-commit (Linux + 3.12)
+    name: pre-commit on Linux with Python 3.12
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
