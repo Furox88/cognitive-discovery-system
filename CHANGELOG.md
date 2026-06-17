@@ -5,6 +5,21 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.0b6] - 2026-06-17
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix: sync test count 572 to 655 across all surfaces ([952ffe0](952ffe0))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.9.0b5 (#14) ([f7a037b](f7a037b))
+
+
 ## [v0.9.0b5] - 2026-06-17
 
 
