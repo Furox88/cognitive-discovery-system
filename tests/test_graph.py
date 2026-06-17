@@ -1,13 +1,11 @@
 """Tests for graph theory algorithms."""
 
-from typing import Any
-
 import pytest
 
 from cds.graph import Graph, bfs, dfs, dijkstra, has_cycle, kruskal_mst, topological_sort
 
 
-def _make_undirected_graph() -> Any:
+def _make_undirected_graph() -> Graph:
     """Simple undirected graph:
     0 --1-- 1
     |       |
@@ -23,7 +21,7 @@ def _make_undirected_graph() -> Any:
     return g
 
 
-def _make_directed_dag() -> Any:
+def _make_directed_dag() -> Graph:
     """DAG: 0->1, 0->2, 1->3, 2->3"""
     g = Graph(n_vertices=4, directed=True)
     g.add_edge(0, 1)

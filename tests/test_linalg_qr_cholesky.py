@@ -1,12 +1,12 @@
-from typing import Any, cast
+from collections.abc import Sequence
 
 import pytest
 
 from cds.math_utils import cholesky, mat_mul, qr_decomposition, transpose
 
 
-def _max_err(a: Any, b: Any) -> float:
-    return cast(float, max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0]))))
+def _max_err(a: Sequence[Sequence[float]], b: Sequence[Sequence[float]]) -> float:
+    return max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0])))
 
 
 class TestQRDecomposition:

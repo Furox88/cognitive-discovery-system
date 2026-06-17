@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import math
 
+from cds.core._numeric import NEAR_ZERO
+
 
 def mean(data: list[float]) -> float:
     """Calculate the arithmetic mean of a list of numbers.
@@ -95,4 +97,4 @@ def correlation(x: list[float], y: list[float]) -> float:
     num = sum((xi - mx) * (yi - my) for xi, yi in zip(x, y))
     den = math.sqrt(sum((xi - mx) ** 2 for xi in x) * sum((yi - my) ** 2 for yi in y))
 
-    return num / den if den > 1e-15 else 0.0
+    return num / den if den > NEAR_ZERO else 0.0

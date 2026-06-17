@@ -19,6 +19,8 @@ import math
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from cds.core._numeric import NEAR_ZERO
+
 
 @dataclass
 class QuadratureResult:
@@ -224,7 +226,7 @@ def _gauss_legendre_nodes(n: int) -> tuple[tuple[float, float], ...]:
             p, dp = _legendre(n, x)
             dx = p / dp
             x -= dx
-            if abs(dx) < 1e-15:
+            if abs(dx) < NEAR_ZERO:
                 break
         w = 2.0 / ((1.0 - x * x) * dp * dp)
         pairs.append((x, w))

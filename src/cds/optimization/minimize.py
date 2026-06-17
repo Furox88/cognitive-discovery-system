@@ -5,22 +5,49 @@ from __future__ import annotations
 import math
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import TypedDict, cast
+
+from cds.core._numeric import (
+    ADAM_DEFAULT_BETAS,
+    ADAM_DEFAULT_EPS,
+    ADAM_DEFAULT_LR,
+    DEFAULT_FD_STEP,
+    DEFAULT_TOLERANCE,
+    GD_DEFAULT_LR,
+    NEAR_ZERO,
+    NEWTON_DERIVATIVE_STEP,
+    NEWTON_TOLERANCE,
+)
+
+
+# Adam optimizer state shape: {"m": float|[float], "v": float|[float], "t": int}.
+# The scalar and vector variants are tracked separately so callers that resume a
+# scalar run get a scalar back, and vice versa.
+class AdamState(TypedDict, total=False):
+    """State checkpoint for resuming an Adam run.
+
+    ``m`` / ``v`` are floats for scalar optimization and lists for vector
+    optimization; ``t`` is the last completed iteration (0-based).
+    """
+
+    m: float | list[float]
+    v: float | list[float]
+    t: int
 
 
 @dataclass
 class OptResult:
     """Result of an optimization run."""
 
-    x: Any
+    x: float | list[float]
     value: float
     iterations: int
     converged: bool
-    state: dict[str, Any] | None = None
+    state: AdamState | None = None
 
 
 def _compute_gradient(
-    f: Callable[..., float], x: float | list[float], h_base: float = 1e-7
+    f: Callable[..., float], x: float | list[float], h_base: float = DEFAULT_FD_STEP
 ) -> float | list[float]:
     """Compute numerical gradient with adaptive step size for precision."""
     if isinstance(x, (int, float)):
@@ -44,9 +71,10 @@ def _update_x(
 ) -> float | list[float]:
     """Apply gradient update step for scalar or vector inputs."""
     if isinstance(x, (int, float)):
-        return x - step * cast(float, grad)
+        # grad is the scalar branch here (see _compute_gradient return type)
+        return x - step * (grad if isinstance(grad, float) else grad[0])
 
-    grad_list = cast(list[float], grad)
+    grad_list: list[float] = grad if isinstance(grad, list) else [grad]
     return [xi - step * gi for xi, gi in zip(x, grad_list)]
 
 
@@ -60,10 +88,10 @@ def _magnitude(vec: float | list[float]) -> float:
 def gradient_descent(
     f: Callable[..., float],
     x0: float | list[float],
-    lr: float = 0.01,
-    tol: float = 1e-8,
+    lr: float = GD_DEFAULT_LR,
+    tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 10000,
-    h: float = 1e-7,
+    h: float = DEFAULT_FD_STEP,
 ) -> OptResult:
     """Minimize a scalar or vector function using gradient descent.
 
@@ -87,9 +115,9 @@ def gradient_descent(
 def newton_method(
     f: Callable[[float], float],
     x0: float,
-    tol: float = 1e-10,
+    tol: float = NEWTON_TOLERANCE,
     max_iter: int = 1000,
-    h_base: float = 1e-5,
+    h_base: float = NEWTON_DERIVATIVE_STEP,
 ) -> OptResult:
     """Find a root of f using Newton-Raphson method with adaptive step size.
 
@@ -110,7 +138,7 @@ def newton_method(
         h = h_base * max(1.0, abs(x))
         dfx = (f(x + h) - f(x - h)) / (2 * h)
 
-        if abs(dfx) < 1e-15:
+        if abs(dfx) < NEAR_ZERO:
             break
         x -= fx / dfx
     return OptResult(
@@ -124,14 +152,14 @@ def newton_method(
 def adam(
     f: Callable[..., float],
     x0: float | list[float],
-    lr: float = 0.01,
-    beta1: float = 0.9,
-    beta2: float = 0.999,
-    eps: float = 1e-8,
-    tol: float = 1e-8,
+    lr: float = ADAM_DEFAULT_LR,
+    beta1: float = ADAM_DEFAULT_BETAS[0],
+    beta2: float = ADAM_DEFAULT_BETAS[1],
+    eps: float = ADAM_DEFAULT_EPS,
+    tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 10000,
-    h: float = 1e-7,
-    state: dict[str, Any] | None = None,
+    h: float = DEFAULT_FD_STEP,
+    state: AdamState | None = None,
     grad_f: Callable[..., float | list[float]] | None = None,
 ) -> OptResult:
     """Minimize using Adam optimizer (adaptive learning rate) for scalars or vectors.
@@ -157,17 +185,17 @@ def adam(
             v_s = 0.0
             t_start = 1
         else:
-            m_s = float(state["m"])
-            v_s = float(state["v"])
+            m_s = float(cast(float, state["m"]))
+            v_s = float(cast(float, state["v"]))
             t_start = int(state["t"]) + 1
 
         last_t = t_start - 1
         for i in range(t_start, t_start + max_iter):
             last_t = i
             if grad_f:
-                grad_s = cast(float, grad_f(x_scalar))
+                grad_s: float = float(cast(float, grad_f(x_scalar)))
             else:
-                grad_s = cast(float, _compute_gradient(f, x_scalar, h))
+                grad_s = float(cast(float, _compute_gradient(f, x_scalar, h)))
 
             if abs(grad_s) < tol:
                 return OptResult(
@@ -198,17 +226,17 @@ def adam(
             v_l = [0.0] * len(x_list)
             t_start = 1
         else:
-            m_l = cast(list[float], state["m"])
-            v_l = cast(list[float], state["v"])
+            m_l = list(cast(list[float], state["m"]))
+            v_l = list(cast(list[float], state["v"]))
             t_start = int(state["t"]) + 1
 
         last_t = t_start - 1
         for i in range(t_start, t_start + max_iter):
             last_t = i
             if grad_f:
-                grad_l = cast(list[float], grad_f(x_list))
+                grad_l: list[float] = list(cast(list[float], grad_f(x_list)))
             else:
-                grad_l = cast(list[float], _compute_gradient(f, x_list, h))
+                grad_l = list(cast(list[float], _compute_gradient(f, x_list, h)))
 
             if _magnitude(grad_l) < tol:
                 return OptResult(
@@ -239,7 +267,7 @@ def line_search(
     f: Callable[[float], float],
     a: float,
     b: float,
-    tol: float = 1e-8,
+    tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 100,
 ) -> OptResult:
     """Golden section search for minimum in [a, b].

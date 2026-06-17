@@ -1,7 +1,6 @@
 """Tests for ODE solvers."""
 
 import math
-from typing import Any
 
 from cds.diffeq import euler_method, midpoint_method, rk4, rk45, solve_system
 
@@ -48,7 +47,7 @@ class TestRK4:
         assert sol.method == "rk4"
 
     def test_better_than_euler(self) -> None:
-        def f(t: Any, y: Any) -> Any:
+        def f(t: float, y: float) -> float:
             return -y
 
         sol_euler = euler_method(f, 0, 1.0, 1.0, dt=0.1)
@@ -84,7 +83,7 @@ class TestSolveSystem:
     def test_harmonic_oscillator(self) -> None:
         # x'' = -x  =>  [x, v]' = [v, -x]
         # x(0)=1, v(0)=0  =>  x(t) = cos(t)
-        def f(t: Any, y: Any) -> Any:
+        def f(t: float, y: list[float]) -> list[float]:
             return [y[1], -y[0]]
 
         t_vals, y_vals = solve_system(f, 0, [1.0, 0.0], math.pi, dt=0.001)
@@ -93,7 +92,7 @@ class TestSolveSystem:
 
     def test_coupled_decay(self) -> None:
         # y1' = -y1, y2' = -2*y2
-        def f(t: Any, y: Any) -> Any:
+        def f(t: float, y: list[float]) -> list[float]:
             return [-y[0], -2 * y[1]]
 
         t_vals, y_vals = solve_system(f, 0, [1.0, 1.0], 1.0, dt=0.01)

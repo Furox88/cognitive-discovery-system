@@ -9,7 +9,6 @@ Covers edge cases in:
 """
 
 import math
-from typing import Any
 
 import pytest
 
@@ -164,7 +163,7 @@ class TestAdamScalarStateResume:
     def test_adam_resume_from_state(self) -> None:
         """Adam scalar: run for a few iterations, then resume with state."""
 
-        def f(x: Any) -> Any:
+        def f(x: float) -> float:
             return (x - 5.0) ** 2
 
         # First run: state=None, should return state dict
@@ -179,13 +178,14 @@ class TestAdamScalarStateResume:
     def test_adam_scalar_custom_grad(self) -> None:
         """Adam scalar with explicit gradient function."""
 
-        def f(x: Any) -> Any:
+        def f(x: float) -> float:
             return (x - 3.0) ** 2
 
-        def grad_f(x: Any) -> Any:
+        def grad_f(x: float) -> float:
             return 2 * (x - 3.0)
 
         result = adam(f, x0=10.0, lr=0.1, max_iter=200, grad_f=grad_f)
+        assert isinstance(result.x, float)
         assert abs(result.x - 3.0) < 0.1
 
 
@@ -193,13 +193,14 @@ class TestAdamVectorStateResume:
     def test_adam_vector_resume(self) -> None:
         """Adam vector: run, then resume with state."""
 
-        def f(x: Any) -> Any:
+        def f(x: list[float]) -> float:
             return x[0] ** 2 + (x[1] - 4) ** 2
 
         # First run: state=None
         r1 = adam(f, x0=[0.0, 0.0], lr=0.1, max_iter=5, state=None)
         assert r1.state is not None
         assert "m" in r1.state and "v" in r1.state and "t" in r1.state
+        assert isinstance(r1.x, list)
         # Second run: resume
         r2 = adam(f, x0=list(r1.x), lr=0.1, max_iter=5, state=r1.state)
         assert r2.state is not None
@@ -208,13 +209,14 @@ class TestAdamVectorStateResume:
     def test_adam_vector_custom_grad(self) -> None:
         """Adam vector with explicit gradient function."""
 
-        def f(x: Any) -> Any:
+        def f(x: list[float]) -> float:
             return x[0] ** 2 + x[1] ** 2
 
-        def grad_f(x: Any) -> Any:
+        def grad_f(x: list[float]) -> list[float]:
             return [2 * x[0], 2 * x[1]]
 
         result = adam(f, x0=[5.0, 5.0], lr=0.1, max_iter=200, grad_f=grad_f)
+        assert isinstance(result.x, list)
         assert abs(result.x[0]) < 0.1
         assert abs(result.x[1]) < 0.1
 

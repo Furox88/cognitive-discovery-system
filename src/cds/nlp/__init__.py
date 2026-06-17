@@ -124,7 +124,6 @@ __all__ = [
     "add_positional",
     # attention
     "softmax",
-    "matmul",
     "transpose",
     "scaled_dot_product_attention",
     "split_heads",
@@ -148,6 +147,7 @@ __all__ = [
     "log",
     "relu",
     "no_grad",
+    "matmul",
     # optim
     "SGD",
     "Adam",

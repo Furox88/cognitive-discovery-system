@@ -1,8 +1,6 @@
 """Tests for deterministic numerical quadrature."""
 
 import math
-from collections.abc import Callable
-from typing import Any
 
 import pytest
 
@@ -220,15 +218,10 @@ class TestLegendreEdgeCases:
     """Cover the n=0 and n=1 branches of the internal _legendre helper."""
 
     @staticmethod
-    def _legendre(n: Any, x: Any) -> tuple[float, float]:
+    def _legendre(n: int, x: float) -> tuple[float, float]:
+        from cds.numerical_integration.quadrature import _legendre
 
-        from cds.numerical_integration.quadrature import _legendre as _L
-
-        # Type the local import explicitly so mypy on every Python version
-        # agrees on the return type. The actual function returns
-        # tuple[float, float].
-        _legendre_helper: Callable[[int, float], tuple[float, float]] = _L
-        return _legendre_helper(n, x)
+        return _legendre(n, x)
 
     def test_legendre_n0(self) -> None:
         # P_0(x) = 1, P_0'(x) = 0

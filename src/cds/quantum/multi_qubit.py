@@ -6,6 +6,8 @@ import math
 import random
 from dataclasses import dataclass
 
+from cds.core._numeric import CONCURRENCE_THRESHOLD
+
 
 @dataclass
 class QuantumRegister:
@@ -250,4 +252,4 @@ def is_entangled(reg: QuantumRegister) -> bool:
         raise ValueError("entanglement check only for 2-qubit states")
     a, b, c, d = reg.amplitudes
     concurrence = 2 * abs(a * d - b * c)
-    return concurrence > 1e-9
+    return concurrence > CONCURRENCE_THRESHOLD

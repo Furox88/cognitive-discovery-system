@@ -3,7 +3,15 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import TypeAlias
+
+# A cell value in a DataSet row. Tabular data here is expected to be scalar
+# primitives — numbers, strings, booleans, or null — rather than nested
+# containers, which keeps column extraction and aggregation type-safe.
+Scalar: TypeAlias = int | float | str | bool | None
+
+# A single row maps column name -> cell value.
+Row: TypeAlias = dict[str, Scalar]
 
 
 class DataSet:
@@ -12,7 +20,7 @@ class DataSet:
     Data is stored internally as a list of dictionaries where keys are column names.
     """
 
-    def __init__(self, data: list[dict[str, Any]]):
+    def __init__(self, data: list[Row]):
         self.data = data
         self._columns = list(data[0].keys()) if data else []
 
@@ -29,16 +37,16 @@ class DataSet:
     def __len__(self) -> int:
         return len(self.data)
 
-    def __getitem__(self, idx: int) -> dict[str, Any]:
+    def __getitem__(self, idx: int) -> Row:
         return self.data[idx]
 
-    def column(self, name: str) -> list[Any]:
+    def column(self, name: str) -> list[Scalar]:
         """Extract a single column as a list."""
         if name not in self._columns:
             raise ValueError(f"Column '{name}' not found. Available: {self._columns}")
         return [row[name] for row in self.data]
 
-    def filter(self, predicate: Callable[[dict[str, Any]], bool]) -> DataSet:
+    def filter(self, predicate: Callable[[Row], bool]) -> DataSet:
         """Filter the dataset based on a predicate function."""
         filtered_data = [row for row in self.data if predicate(row)]
         return DataSet(filtered_data)
@@ -65,7 +73,7 @@ class DataSet:
         if column_name not in self._columns:
             raise ValueError(f"Column '{column_name}' not found.")
 
-        groups: dict[Any, list[dict[str, Any]]] = {}
+        groups: dict[Scalar, list[Row]] = {}
         for row in self.data:
             key = row[column_name]
             if key not in groups:
@@ -74,7 +82,7 @@ class DataSet:
 
         return DataGroup(groups, column_name)
 
-    def to_list(self) -> list[dict[str, Any]]:
+    def to_list(self) -> list[Row]:
         """Export data as a list of dictionaries."""
         return [row.copy() for row in self.data]
 
@@ -87,16 +95,18 @@ class DataSet:
 class DataGroup:
     """Helper class for grouped data aggregations."""
 
-    def __init__(self, groups: dict[Any, list[dict[str, Any]]], group_col: str):
+    def __init__(self, groups: dict[Scalar, list[Row]], group_col: str):
         self.groups = groups
         self.group_col = group_col
 
-    def mean(self, numeric_col: str) -> dict[Any, float]:
+    def mean(self, numeric_col: str) -> dict[Scalar, float]:
         """Calculate the mean of a numeric column for each group."""
-        result = {}
+        result: dict[Scalar, float] = {}
         for key, rows in self.groups.items():
-            values = [
-                row[numeric_col] for row in rows if isinstance(row.get(numeric_col), (int, float))
+            values: list[float] = [
+                float(v)
+                for row in rows
+                if isinstance((v := row.get(numeric_col)), (int, float))
             ]
             if values:
                 result[key] = sum(values) / len(values)
@@ -104,6 +114,6 @@ class DataGroup:
                 result[key] = 0.0
         return result
 
-    def count(self) -> dict[Any, int]:
+    def count(self) -> dict[Scalar, int]:
         """Count the number of rows in each group."""
         return {key: len(rows) for key, rows in self.groups.items()}

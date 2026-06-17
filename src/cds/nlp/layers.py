@@ -34,6 +34,7 @@ from __future__ import annotations
 import math
 from typing import TypedDict
 
+from cds.core._numeric import LAYERNORM_EPS
 from cds.nlp.attention import matmul, multi_head_attention
 
 __all__ = [
@@ -88,7 +89,7 @@ def layer_norm(
     x: list[list[float]],
     gamma: list[float],
     beta: list[float],
-    eps: float = 1e-5,
+    eps: float = LAYERNORM_EPS,
 ) -> list[list[float]]:
     """Layer normalisation over the last dimension.
 

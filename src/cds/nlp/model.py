@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import math
 
+from cds.core._numeric import LAYERNORM_EPS, SAMPLING_TEMPERATURE_EPS
 from cds.nlp.attention import causal_mask
 from cds.nlp.autograd import Parameter, Tensor, exp, log
 from cds.nlp.embed import PositionalEncoding
@@ -235,7 +236,7 @@ class MiniGPT:
                 # Drop the graph — we only need the numbers.
                 vals = [li.data for li in logits]
                 if temperature != 1.0:
-                    vals = [v / max(temperature, 1e-8) for v in vals]
+                    vals = [v / max(temperature, SAMPLING_TEMPERATURE_EPS) for v in vals]
                 probs = softmax(vals)
                 # Deterministic argmax for the educational default;
                 # callers that want sampling can pass a temperature
@@ -265,7 +266,7 @@ def _layer_norm(
         mean = _sum_tensors(row) * inv_d
         diffs = [row[j] - mean for j in range(d)]
         var = _sum_tensors([diffs[j] * diffs[j] for j in range(d)]) * inv_d
-        std = _exp(0.5 * _log(var + 1e-5))
+        std = _exp(0.5 * _log(var + LAYERNORM_EPS))
         out.append([gamma[j] * diffs[j] / std + beta[j] for j in range(d)])
     return out
 

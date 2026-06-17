@@ -13,6 +13,16 @@ import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from cds.core._numeric import (
+    LOOP_EPSILON,
+    RK45_DEFAULT_ATOL,
+    RK45_DEFAULT_DT,
+    RK45_DEFAULT_RTOL,
+    RK45_STEP_GROW,
+    RK45_STEP_SAFETY,
+    RK45_STEP_SHRINK,
+)
+
 
 @dataclass
 class ODESolution:
@@ -29,7 +39,7 @@ def euler_method(
     t0: float,
     y0: float,
     t_end: float,
-    dt: float = 0.01,
+    dt: float = RK45_DEFAULT_DT,
 ) -> ODESolution:
     """Euler's method for dy/dt = f(t, y).
 
@@ -48,7 +58,7 @@ def euler_method(
     t, y = t0, y0
     steps = 0
 
-    while t < t_end - 1e-12:
+    while t < t_end - LOOP_EPSILON:
         h = min(dt, t_end - t)
         y = y + h * f(t, y)
         t = t + h
@@ -64,7 +74,7 @@ def rk4(
     t0: float,
     y0: float,
     t_end: float,
-    dt: float = 0.01,
+    dt: float = RK45_DEFAULT_DT,
 ) -> ODESolution:
     """Classical 4th-order Runge-Kutta method.
 
@@ -90,7 +100,7 @@ def rk4(
     t, y = t0, y0
     steps = 0
 
-    while t < t_end - 1e-12:
+    while t < t_end - LOOP_EPSILON:
         h = min(dt, t_end - t)
         k1 = f(t, y)
         k2 = f(t + h / 2, y + h * k1 / 2)
@@ -110,7 +120,7 @@ def midpoint_method(
     t0: float,
     y0: float,
     t_end: float,
-    dt: float = 0.01,
+    dt: float = RK45_DEFAULT_DT,
 ) -> ODESolution:
     """Explicit midpoint method (2nd-order Runge-Kutta).
 
@@ -128,7 +138,7 @@ def midpoint_method(
     t, y = t0, y0
     steps = 0
 
-    while t < t_end - 1e-12:
+    while t < t_end - LOOP_EPSILON:
         h = min(dt, t_end - t)
         k1 = f(t, y)
         k2 = f(t + h / 2, y + h * k1 / 2)
@@ -146,9 +156,9 @@ def rk45(
     t0: float,
     y0: float,
     t_end: float,
-    dt: float = 0.01,
-    atol: float = 1e-6,
-    rtol: float = 1e-3,
+    dt: float = RK45_DEFAULT_DT,
+    atol: float = RK45_DEFAULT_ATOL,
+    rtol: float = RK45_DEFAULT_RTOL,
 ) -> ODESolution:
     """Dormand-Prince (RK45) adaptive step-size method.
 
@@ -190,7 +200,7 @@ def rk45(
     span = abs(t_end - t0) if t_end != t0 else 1.0
     eps_floor = 16 * sys.float_info.epsilon * max(abs(t), span)
 
-    while t < t_end - 1e-12:
+    while t < t_end - LOOP_EPSILON:
         if t + h > t_end:
             h = t_end - t
 
@@ -219,7 +229,7 @@ def rk45(
         # Adjust step size
         if error > 0:
             h_opt = h * (tolerance / error) ** 0.2
-            h = min(max(0.1 * h, 0.9 * h_opt), 10 * h)
+            h = min(max(RK45_STEP_SHRINK * h, RK45_STEP_SAFETY * h_opt), RK45_STEP_GROW * h)
         else:
             h *= 10.0  # Error is zero, aggressively increase step up to max scale
 
@@ -237,7 +247,7 @@ def solve_system(
     t0: float,
     y0: list[float],
     t_end: float,
-    dt: float = 0.01,
+    dt: float = RK45_DEFAULT_DT,
 ) -> tuple[list[float], list[list[float]]]:
     """RK4 for systems of ODEs: dy/dt = f(t, y) where y is a vector.
 
@@ -257,7 +267,7 @@ def solve_system(
     t = t0
     y = list(y0)
 
-    while t < t_end - 1e-12:
+    while t < t_end - LOOP_EPSILON:
         h = min(dt, t_end - t)
 
         k1 = f(t, y)

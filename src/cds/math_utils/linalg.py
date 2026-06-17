@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import math
 
+from cds.core._numeric import NEAR_ZERO, NEWTON_TOLERANCE
+
 Matrix = list[list[float]]
 Vector = list[float]
 
@@ -125,7 +127,7 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
                 max_val = abs(U[i][k])
                 pivot_idx = i
 
-        if max_val < 1e-15:
+        if max_val < NEAR_ZERO:
             raise ValueError(
                 f"zero pivot at column {k} — the input matrix is singular or nearly singular; try regularizing or checking your data"
             )
@@ -167,7 +169,7 @@ def solve_linear(A: Matrix, b: Vector) -> Vector:
     # backward: Ux = y
     x = [0.0] * n
     for i in range(n - 1, -1, -1):
-        if abs(U[i][i]) < 1e-15:
+        if abs(U[i][i]) < NEAR_ZERO:
             raise ValueError(
                 f"singular matrix — LU backward substitution failed at row {i}; matrix has no unique inverse"
             )
@@ -205,7 +207,7 @@ def matrix_inverse(m: Matrix) -> Matrix:
         # backward: Ux = y
         x = [0.0] * n
         for i in range(n - 1, -1, -1):
-            if abs(U[i][i]) < 1e-15:
+            if abs(U[i][i]) < NEAR_ZERO:
                 raise ValueError(
                     f"singular matrix — LU backward substitution failed at row {i} (during inverse computation); matrix has no unique inverse"
                 )
@@ -220,7 +222,7 @@ def matrix_inverse(m: Matrix) -> Matrix:
 def power_iteration(
     m: Matrix,
     max_iter: int = 1000,
-    tol: float = 1e-10,
+    tol: float = NEWTON_TOLERANCE,
 ) -> tuple[float, Vector]:
     """Find dominant eigenvalue and eigenvector using power iteration.
 
@@ -260,7 +262,7 @@ def power_iteration(
                 # Defensive: still raised on some platforms for subnormal inputs
                 norm = max(abs(x) for x in w)
 
-        if norm < 1e-15:
+        if norm < NEAR_ZERO:
             break
 
         v_new = [x / norm for x in w]
@@ -269,7 +271,7 @@ def power_iteration(
         # Accurate for any normalization (L2 or L-inf)
         numerator = sum(v_new[i] * sum(m[i][j] * v_new[j] for j in range(n)) for i in range(n))
         denominator = sum(vi * vi for vi in v_new)
-        new_eigenvalue = numerator / denominator if denominator > 1e-15 else 0.0
+        new_eigenvalue = numerator / denominator if denominator > NEAR_ZERO else 0.0
 
         if abs(new_eigenvalue - eigenvalue) < tol:
             return new_eigenvalue, v_new
@@ -298,7 +300,7 @@ def gram_schmidt(vectors: list[Vector]) -> list[Vector]:
             proj = sum(u[i] * q[i] for i in range(len(u)))
             u = [u[i] - proj * q[i] for i in range(len(u))]
         norm = math.sqrt(sum(x * x for x in u))
-        if norm < 1e-15:
+        if norm < NEAR_ZERO:
             continue
         ortho.append([x / norm for x in u])
     return ortho
@@ -330,14 +332,14 @@ def qr_decomposition(m: Matrix) -> tuple[Matrix, Matrix]:
         # column vector x = R[k:, k]
         x = [R[i][k] for i in range(k, n)]
         norm_x = math.sqrt(sum(xi * xi for xi in x))
-        if norm_x < 1e-15:
+        if norm_x < NEAR_ZERO:
             continue
         # Householder vector v
         alpha = -norm_x if x[0] >= 0 else norm_x
         v = x[:]
         v[0] -= alpha
         norm_v = math.sqrt(sum(vi * vi for vi in v))
-        if norm_v < 1e-15:  # pragma: no cover - unreachable: norm_x>0 implies norm_v>0
+        if norm_v < NEAR_ZERO:  # pragma: no cover - unreachable: norm_x>0 implies norm_v>0
             continue
         v = [vi / norm_v for vi in v]
 

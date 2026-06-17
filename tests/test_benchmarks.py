@@ -6,7 +6,9 @@ so CI stays fast. Timing correctness is validated manually via
 """
 
 from collections import OrderedDict
-from typing import Any, cast
+from importlib import import_module
+from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -15,9 +17,7 @@ class TestBenchmarkStructure:
     """Each bench_* function must return OrderedDict[str, str]."""
 
     def _import_and_call(self, func_name: str, module_path: str) -> OrderedDict[str, str]:
-        import importlib
-
-        mod = importlib.import_module(module_path)
+        mod = import_module(module_path)
         return cast(OrderedDict[str, str], getattr(mod, func_name)())
 
     @pytest.mark.parametrize(
@@ -31,7 +31,7 @@ class TestBenchmarkStructure:
             ("bench_numerical_integration", "benchmarks.run_benchmarks"),
         ],
     )
-    def test_returns_ordered_dict_of_strings(self, func: Any, module: Any) -> None:
+    def test_returns_ordered_dict_of_strings(self, func: str, module: str) -> None:
         result = self._import_and_call(func, module)
         assert isinstance(result, OrderedDict)
         for k, v in result.items():
@@ -48,15 +48,15 @@ class TestBenchmarkStructure:
             ("bench_numerical_integration", "benchmarks.run_benchmarks", "Romberg (auto tol)"),
         ],
     )
-    def test_contains_expected_keys(self, func: Any, module: Any, required_key: Any) -> None:
+    def test_contains_expected_keys(self, func: str, module: str, required_key: str) -> None:
         result = self._import_and_call(func, module)
         assert required_key in result
 
-    def test_run_all_generates_report(self, tmp_path: Any, monkeypatch: Any) -> None:
+    def test_run_all_generates_report(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """run_all writes a valid markdown report with all six sections."""
-        import importlib
-
-        mod = importlib.import_module("benchmarks.run_benchmarks")
+        mod = import_module("benchmarks.run_benchmarks")
         monkeypatch.setattr(mod, "_bench", lambda _func, number=1, repeat=1: 0.0)
         monkeypatch.chdir(tmp_path)
         mod.run_all()

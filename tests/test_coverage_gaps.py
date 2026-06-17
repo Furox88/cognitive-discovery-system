@@ -10,12 +10,13 @@ import math
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
 
+import pytest
 from typer.testing import CliRunner
 
 from cds import __version__
 from cds.cli import app
+from cds.core.models import Hypothesis
 from cds.hypothesis import Domain, HypothesisEvaluator, HypothesisStatus, generate_hypotheses
 from cds.montecarlo import buffon_needle, estimate_pi
 from cds.montecarlo.methods import _pi_worker
@@ -84,7 +85,7 @@ def test_main_module_runs() -> None:
 # ---------------------------------------------------------------------------
 # Evaluator: new dispatch paths
 # ---------------------------------------------------------------------------
-def _make_hypothesis() -> Any:
+def _make_hypothesis() -> Hypothesis:
     hypos = generate_hypotheses("Test question?", Domain.GENERAL_SCIENCE, n=1)
     return hypos[0]
 
@@ -218,7 +219,7 @@ def test_cli_constants() -> None:
     assert "Physical Constants" in result.stdout
 
 
-def test_cli_dashboard_missing_file(monkeypatch: Any) -> None:
+def test_cli_dashboard_missing_file(monkeypatch: pytest.MonkeyPatch) -> None:
     """Dashboard command reports an error when the app file is absent."""
     monkeypatch.setattr(Path, "exists", lambda self: False)
     result = _runner.invoke(app, ["dashboard"])
@@ -244,7 +245,7 @@ def test_cli_hypothesis_show_prompt() -> None:
     assert "Prompt Template" in result.stdout
 
 
-def test_cli_calc_input_error(monkeypatch: Any) -> None:
+def test_cli_calc_input_error(monkeypatch: pytest.MonkeyPatch) -> None:
     """calc command with non-numeric input prints error."""
     monkeypatch.setattr("typer.prompt", lambda _: "not_a_number")
     result = _runner.invoke(app, ["calc", "ke"])
@@ -252,10 +253,10 @@ def test_cli_calc_input_error(monkeypatch: Any) -> None:
     assert "Error" in result.stdout
 
 
-def test_cli_calc_generic_exception(monkeypatch: Any) -> None:
+def test_cli_calc_generic_exception(monkeypatch: pytest.MonkeyPatch) -> None:
     """calc command with an unexpected exception prints error."""
 
-    def bad_prompt(_: Any) -> None:
+    def bad_prompt(_: str) -> None:
         raise RuntimeError("surprise")
 
     monkeypatch.setattr("typer.prompt", bad_prompt)
@@ -264,10 +265,10 @@ def test_cli_calc_generic_exception(monkeypatch: Any) -> None:
     assert "Error" in result.stdout
 
 
-def test_cli_dashboard_launch(monkeypatch: Any) -> None:
+def test_cli_dashboard_launch(monkeypatch: pytest.MonkeyPatch) -> None:
     """Dashboard command: mock subprocess so streamlit is not actually launched."""
 
-    def fake_run(cmd: list[str], **kwargs: Any) -> None:
+    def fake_run(cmd: list[str], **kwargs: object) -> None:
         raise KeyboardInterrupt()
 
     monkeypatch.setattr(subprocess, "run", fake_run)
@@ -276,10 +277,10 @@ def test_cli_dashboard_launch(monkeypatch: Any) -> None:
     assert "Dashboard stopped" in result.stdout
 
 
-def test_cli_dashboard_streamlit_missing(monkeypatch: Any) -> None:
+def test_cli_dashboard_streamlit_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     """Dashboard command: FileNotFoundError when streamlit is not installed."""
 
-    def fake_run(cmd: list[str], **kwargs: Any) -> None:
+    def fake_run(cmd: list[str], **kwargs: object) -> None:
         raise FileNotFoundError("streamlit not found")
 
     monkeypatch.setattr(subprocess, "run", fake_run)

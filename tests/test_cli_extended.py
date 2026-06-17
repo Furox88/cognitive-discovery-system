@@ -1,8 +1,9 @@
 """Extended tests for the CLI to achieve high coverage."""
 
 import json
-from typing import Any
+from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from cds.cli import app
@@ -49,7 +50,7 @@ def test_cli_prompt() -> None:
     assert "Research Question: How to fix gravity?" in result.stdout
 
 
-def test_cli_hypothesize_output(tmp_path: Any) -> None:
+def test_cli_hypothesize_output(tmp_path: Path) -> None:
     output_file = tmp_path / "hypo.json"
     result = runner.invoke(app, ["hypothesis", "Test", "--num", "1", "--output", str(output_file)])
     assert result.exit_code == 0
@@ -61,7 +62,7 @@ def test_cli_hypothesize_output(tmp_path: Any) -> None:
         assert "statement" in data[0]
 
 
-def test_cli_calc_ke(monkeypatch: Any) -> None:
+def test_cli_calc_ke(monkeypatch: pytest.MonkeyPatch) -> None:
     # Mock user input for mass and velocity
     inputs = iter(["10", "5"])
     monkeypatch.setattr("typer.prompt", lambda _: next(inputs))
@@ -84,7 +85,7 @@ def test_cli_hypothesis_basic() -> None:
     assert "H-" in result.stdout  # Panel title contains H-ID
 
 
-def test_cli_calc_gravity(monkeypatch: Any) -> None:
+def test_cli_calc_gravity(monkeypatch: pytest.MonkeyPatch) -> None:
     inputs = iter(["5.97e24", "7.35e22", "3.84e8"])
     monkeypatch.setattr("typer.prompt", lambda _: next(inputs))
     result = runner.invoke(app, ["calc", "gravity"])
@@ -92,14 +93,14 @@ def test_cli_calc_gravity(monkeypatch: Any) -> None:
     assert "Force =" in result.stdout
 
 
-def test_cli_calc_wave(monkeypatch: Any) -> None:
+def test_cli_calc_wave(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("typer.prompt", lambda _: "500e-9")
     result = runner.invoke(app, ["calc", "wave"])
     assert result.exit_code == 0
     assert "Frequency =" in result.stdout
 
 
-def test_cli_calc_gas(monkeypatch: Any) -> None:
+def test_cli_calc_gas(monkeypatch: pytest.MonkeyPatch) -> None:
     inputs = iter(["1", "300", "0.024"])
     monkeypatch.setattr("typer.prompt", lambda _: next(inputs))
     result = runner.invoke(app, ["calc", "gas"])

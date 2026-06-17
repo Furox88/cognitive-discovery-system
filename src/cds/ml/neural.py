@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Any, cast
+from typing import cast
 
-from cds.optimization.minimize import adam
+from cds.core._numeric import GD_DEFAULT_LR
+from cds.optimization.minimize import AdamState, adam
 
 
 class Layer:
@@ -100,7 +101,7 @@ class MLP:
 
     def __init__(self, layers: list[Layer]):
         self.layers = layers
-        self.optimizer_state: dict[str, Any] | None = None
+        self.optimizer_state: AdamState | None = None
 
     def predict(self, x: list[float]) -> list[float]:
         """Compute the network output."""
@@ -149,8 +150,8 @@ class MLP:
                 layer.grad_biases[i] = 0.0
 
     def train(
-        self, X: list[list[float]], y: list[list[float]], epochs: int = 100, lr: float = 0.01
-    ) -> dict[str, Any]:
+        self, X: list[list[float]], y: list[list[float]], epochs: int = 100, lr: float = GD_DEFAULT_LR
+    ) -> dict[str, float | bool]:
         """Train the network using the Adam optimizer with backpropagation and state persistence."""
 
         def loss_fn(params: list[float]) -> float:

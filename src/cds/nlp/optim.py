@@ -30,6 +30,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from cds.core._numeric import ADAM_DEFAULT_BETAS, ADAM_DEFAULT_EPS, ADAM_DEFAULT_LR, SGD_DEFAULT_LR
+
 if TYPE_CHECKING:
     from cds.nlp.autograd import Tensor
 
@@ -54,7 +56,7 @@ class SGD:
     """
 
     params: list[Tensor]
-    lr: float = 0.01
+    lr: float = SGD_DEFAULT_LR
     momentum: float = 0.0
     weight_decay: float = 0.0
     _velocities: list[float] = field(init=False, default_factory=list)
@@ -109,9 +111,9 @@ class Adam:
     """
 
     params: list[Tensor]
-    lr: float = 1e-3
-    betas: tuple[float, float] = (0.9, 0.999)
-    eps: float = 1e-8
+    lr: float = ADAM_DEFAULT_LR
+    betas: tuple[float, float] = ADAM_DEFAULT_BETAS
+    eps: float = ADAM_DEFAULT_EPS
     weight_decay: float = 0.0
     _t: int = field(init=False, default=0)
     _m: list[float] = field(init=False, default_factory=list)

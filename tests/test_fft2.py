@@ -1,12 +1,14 @@
-from typing import Any, cast
+from collections.abc import Sequence
 
 import pytest
 
 from cds.signals import fft2, ifft2
 
 
-def _max_err(a: Any, b: Any) -> float:
-    return cast(float, max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0]))))
+def _max_err(
+    a: Sequence[Sequence[float | complex]], b: Sequence[Sequence[float | complex]]
+) -> float:
+    return max(abs(a[i][j] - b[i][j]) for i in range(len(a)) for j in range(len(a[0])))
 
 
 class TestFFT2:
