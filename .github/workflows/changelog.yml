@@ -13,16 +13,17 @@ jobs:
     name: Generate CHANGELOG
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout main (not the tag, to avoid detached HEAD)
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Install git-cliff
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --verbose --output CHANGELOG.md
+          args: --verbose --tag ${{ github.ref_name }} --output CHANGELOG.md
 
       - name: Check for changes
         id: check
