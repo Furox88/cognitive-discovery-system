@@ -53,6 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Docs(changelog): regenerate for v0.9.0b3 (#8) ([3a8ef95](3a8ef95))
 
+- Docs(changelog): regenerate for v0.9.0b3 (#9) ([c4fcb9b](c4fcb9b))
+
 - Docs: add threat model, signed commits guide, Why CDS comparison, Turkish i18n; update ROADMAP ([0ba07cf](0ba07cf))
 
 - Docs: update SECURITY.md supported versions (0.6.x → 0.8.x) ([b42cf5f](b42cf5f))
