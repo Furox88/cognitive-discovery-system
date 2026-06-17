@@ -8,10 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v0.9.0b4] - 2026-06-17
 
 
+### <!-- 10 -->💼 Other
+
+
+- Build: drop hatch-vcs + setuptools_scm, switch to static versioning ([6e04d31](6e04d31))
+
+
+## [v0.9.0b4] - 2026-06-17
+
+
 ### <!-- 1 -->🐛 Bug Fixes
 
 
 - Fix: drop stale 'auditor' comment + sync 570 to 572 across docs and cli ([0dcaba6](0dcaba6))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.9.0b4 (#11) ([b1eda78](b1eda78))
 
 
 ## [v0.9.0b3] - 2026-06-17
