@@ -58,6 +58,64 @@ pre-commit install
 pre-commit run --all-files
 
 # Skip hooks for a single commit (use sparingly)
+git commit --no-verify -m "wip: ..."
+```
+
+## Signed Commits (recommended)
+
+Signed commits give cryptographic proof that you authored the change. The maintainer's commits are signed; we encourage contributors to do the same but do not require it.
+
+### Option A: SSH signing (simplest)
+
+```bash
+# 1. Generate an SSH key (or reuse an existing one)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# 2. Add the PUBLIC key to GitHub: Settings → SSH and GPG keys → New SSH key
+#    Paste the contents of ~/.ssh/id_ed25519.pub
+
+# 3. Tell Git to use this key for signing
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
+# Or for SSH auth keys: ~/.ssh/id_ed25519
+
+# 4. Sign your commits
+git commit -S -m "fix: ..."
+```
+
+### Option B: GPG signing
+
+```bash
+# 1. Generate a GPG key
+gpg --full-generate-key
+# Choose RSA 4096, set Name/Email matching your git config.
+
+# 2. Get the key ID
+gpg --list-secret-keys --keyid-format=long
+
+# 3. Export the public key
+gpg --armor --export <KEY_ID> > gpg-pubkey.asc
+# Add this to GitHub: Settings → SSH and GPG keys → New GPG key
+
+# 4. Tell Git to use this key
+git config --global user.signingkey <KEY_ID>
+
+# 5. Sign your commits
+git commit -S -m "fix: ..."
+```
+
+### Verifying signatures
+
+After pushing, your commits will show a "Verified" badge on GitHub. To verify locally:
+
+```bash
+git log --show-signature -1
+# gpg: Good signature from ...
+```
+
+CI does not enforce signed commits; this is a courtesy recommendation.
+
+
 git commit --no-verify
 ```
 
