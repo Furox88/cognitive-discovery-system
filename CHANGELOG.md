@@ -5,6 +5,21 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.0b1] - 2026-06-17
+
+
+### <!-- 0 -->🚀 Features
+
+
+- Feat(nlp): Sprint 3+4 — autograd engine + MiniGPT-from-scratch ([5e0d308](5e0d308))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.9.0b8 (#17) ([2b0a7d3](2b0a7d3))
+
+
 ## [v0.9.0b8] - 2026-06-17
 
 
