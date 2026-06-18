@@ -207,7 +207,9 @@ def main() -> int:
                 "create",
                 tag,
                 "--generate-notes",
-                *(str(p) for p in artifacts if p.suffix in {".whl", ".tar.gz"}),
+                # ``Path.suffix`` is the part after the last dot, so it returns
+                # ``.gz`` (not ``.tar.gz``) for sdists — match on the full suffix.
+                *(str(p) for p in artifacts if p.suffix == ".whl" or p.name.endswith(".tar.gz")),
             ],
             check=True,
         )
