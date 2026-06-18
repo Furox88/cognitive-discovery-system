@@ -5,6 +5,43 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.0] - 2026-06-18
+
+### 🚀 1.0 — Stable release
+
+Cognitive Discovery Platform reaches its first stable release. All five
+subsystems of the v1.0 completion spec are implemented, gated, and
+verified: 99.16% statement coverage (845 tests passing), zero mypy
+errors, clean ruff, and a strict mkdocs build.
+
+### <!-- 0 -->🚀 Features
+
+- Feat(nlp): Sprint 5 visualisation module — attention heatmap, PCA projection, training curve ([7956597](7956597))
+- Feat(benchmarks): emit results.json with timestamp + git SHA provenance, add CI workflow ([4e18500](4e18500))
+
+### <!-- 6 -->🧪 Testing
+
+- Test(coverage): close NLP edge-case gaps — tensor/ops/optim/bpe/layers/model/attention; reach 99.16% statement coverage ([6f0a487](6f0a487))
+- Style(tests): ruff format cleanup — collapse over-split listcomp, expand train() signature, remove duplicate inline imports ([36f4ee4](36f4ee4))
+
+### <!-- 3 -->📚 Documentation
+
+- Docs(examples): add 9 module demos + matching tutorials ([9f00fc5](9f00fc5))
+- Docs(api): restructure mkdocs nav, add api.md lead-ins, fix stale test counts ([4cad8be](4cad8be))
+- Docs(nlp): fix griffe warnings — split combined params in docstrings ([3aedff4](3aedff4))
+- Docs(build): exclude internal superpowers/ planning artifacts from mkdocs --strict ([c0c68e7](c0c68e7))
+- Docs(plans): A–E implementation plans for v1.0 completion spec ([a5da8b8](a5da8b8))
+- Docs(spec): project completion design — 5 subsystems to v1.0 readiness ([42a02f5](42a02f5))
+- Docs(benchmarks): regenerate results.json with current SHA provenance ([69c5a88](69c5a88))
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- Chore: bump version to 1.0.0 + Production/Stable classifier; sync _version.py
+
+### <!-- 10 -->💼 Other
+
+- Promoted from `Development Status :: 4 - Beta` to `Development Status :: 5 - Production/Stable`.
+
 ## [v0.10.0b1] - 2026-06-17
 
 

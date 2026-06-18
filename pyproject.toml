@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-platform"
-version = "0.10.0b2"
+version = "1.0.0"
 description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
@@ -10,7 +10,7 @@ authors = [
 ]
 keywords = ["quantum", "fft", "optimization", "probability", "statistics", "scientific-computing", "signal-processing", "pure-python", "graph-theory", "monte-carlo", "differential-equations", "linear-algebra"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
