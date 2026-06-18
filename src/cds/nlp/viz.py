@@ -187,7 +187,8 @@ def render_embedding_projection(
         labels: optional per-vector label. If ``None``, the row index is used.
         top_n: render at most this many points (highest-variance first along PC1)
             so large vocabularies stay readable. ``<= 0`` renders all.
-        width, height: canvas size in characters.
+        width: canvas width in characters.
+        height: canvas height in characters.
 
     Returns:
         A multi-line ``str`` with x/y axis labels and one character per point.

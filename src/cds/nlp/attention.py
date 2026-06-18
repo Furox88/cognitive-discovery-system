@@ -235,8 +235,9 @@ def multi_head_attention(
 
     Args:
         x: Input sequence, shape ``(n, d_model)``.
-        w_q, w_k, w_v: Projection matrices for queries / keys / values,
-            each ``(d_model, d_model)``.
+        w_q: Projection matrix for queries, shape ``(d_model, d_model)``.
+        w_k: Projection matrix for keys, shape ``(d_model, d_model)``.
+        w_v: Projection matrix for values, shape ``(d_model, d_model)``.
         w_o: Output projection, shape ``(d_model, d_model)``.
         n_heads: Number of attention heads. Must divide ``d_model``.
         mask: Optional additive mask broadcast across all heads,
