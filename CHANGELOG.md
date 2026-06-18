@@ -5,6 +5,34 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.4] - 2026-06-18
+
+### 🔒 Security & Tooling — CI hardening
+
+A follow-up patch to v1.0.3. No behavior changes to the published package;
+fully backward compatible. Adds continuous dependency-vulnerability scanning
+to CI, tightens the type-check configuration, and resynchronizes docs that
+had drifted after v1.0.0.
+
+### <!-- 4 -->🔧 Maintenance
+
+- Chore(ci): add a `pip-audit` job to the CI workflow (`tests.yml`). Runs
+  once on the reference cell (Linux + Python 3.12) against the PyPI Advisory
+  database. Currently `continue-on-error: true` — the dev/docs/test toolchain
+  (jupyter, mkdocs, build, twine, pillow, lxml, ...) carries transitive deps
+  with open CVEs unrelated to the published runtime (typer/pydantic/rich,
+  which audit clean). Surfacing them every run gives visibility without
+  red-flashing the matrix on a fresh advisory.
+- Chore(types): remove the global `ignore_missing_imports = true` from
+  `[tool.mypy]`. CDS only depends on PEP 561 typed runtime libs (typer,
+  pydantic, rich), all of which resolve cleanly under strict mypy (98 files,
+  0 errors). Dropping the escape hatch means a future un-stubbed dependency
+  surfaces a real error instead of being silently typed as `Any`.
+- Chore(repo): delete a stray Windows `nul` artifact left in the working tree.
+- Docs: resync README + `docs/` after v1.0.0 — test count 845→878, version
+  strings updated, `CITATION.cff` bumped to 1.0.4. Keep `pyproject.toml` +
+  `src/cds/_version.py` lockstepped at 1.0.4.
+
 ## [v1.0.3] - 2026-06-18
 
 ### 🧹 Hygiene — test-suite type correctness

@@ -70,6 +70,38 @@ jobs:
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: mkdocs build --strict
 
+  audit:
+    # Security scan of the resolved dependency environment with pip-audit.
+    # Runs once on the reference cell (Linux + Python 3.12), installing the
+    # project the same way the test job does, then auditing the installed
+    # environment against the PyPI Advisory database.
+    #
+    # Currently NON-BLOCKING (continue-on-error): the dev/docs/test
+    # toolchain (jupyter, mkdocs, build, twine, pillow, lxml, ...) carries
+    # transitive deps with open CVEs that are unrelated to the published
+    # runtime (typer/pydantic/rich, which audit clean). Surfacing them in
+    # every CI run gives visibility without red-flashing the matrix on a
+    # fresh advisory. Flip to blocking once requirements.lock is regenerated.
+    name: pip-audit on Linux with Python 3.12
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ".[test,dev,docs]"
+        pip install pip-audit
+
+    - name: Audit installed environment for known vulnerabilities
+      run: pip-audit --strict
+
   pre-commit:
     name: pre-commit on Linux with Python 3.12
     runs-on: ubuntu-latest

@@ -8,7 +8,7 @@
 [![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 [![Typed](https://img.shields.io/badge/typed-PEP%20561-success.svg)](https://peps.python.org/pep-0561/)
-[![Tests](https://img.shields.io/badge/tests-845-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-878-brightgreen.svg)](#)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
@@ -21,12 +21,12 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> **v1.0.0 stable release.** Contributions welcome!
+> **v1.0.4 stable release.** Contributions welcome!
 
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** **v1.0.0 stable** — the `cds.nlp` module ships educational, from-scratch implementations of modern NLP building blocks: BPE tokenization, sinusoidal embeddings, scaled dot-product / multi-head attention, a Transformer block, a scalar reverse-mode autograd engine with SGD/Adam, and a MiniGPT training demo. Plus an NLP visualisation toolkit (attention heatmap, PCA projection, training curves). All in readable pure Python, with **845 tests** and **99.16%** coverage.
+🚀 **Latest Update:** **v1.0.4 stable** — the `cds.nlp` module ships educational, from-scratch implementations of modern NLP building blocks: BPE tokenization, sinusoidal embeddings, scaled dot-product / multi-head attention, a Transformer block, a scalar reverse-mode autograd engine with SGD/Adam, and a MiniGPT training demo. Plus an NLP visualisation toolkit (attention heatmap, PCA projection, training curves). All in readable pure Python, with **878 tests** and **99.16%** coverage.
 ---
 
 ## Contents
@@ -56,7 +56,7 @@ The platform also includes built-in support for structured hypothesis generation
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 16 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, and educational NLP (BPE + embeddings)
-- **845 tests** (see CI) — thoroughly tested with **~99% code coverage**
+- **878 tests** (see CI) — thoroughly tested with **~99% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 
 ### CDS vs other libraries
@@ -391,7 +391,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 845 tests (see CI)
+tests/              # 878 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 

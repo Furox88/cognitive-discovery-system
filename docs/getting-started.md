@@ -90,7 +90,7 @@ print(x)  # [2.0, 1.0]
 ## Running Tests
 
 ```bash
-pytest           # run all 845 tests (see CI)
+pytest           # run all 878 tests (see CI)
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -134,6 +134,6 @@ src/cds/
 └── cli.py               # Command-line interface
 
 examples/                # Runnable demo scripts
-tests/                   # 845 tests (see CI)
+tests/                   # 878 tests (see CI)
 docs/                    # Documentation, API reference, benchmarks
 ```
