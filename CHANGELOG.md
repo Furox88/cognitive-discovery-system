@@ -5,197 +5,215 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.1.0] - 2026-06-19
-
-### ✨ Minor — two new modules (symbolic math + knowledge organization)
-
-A backward-compatible feature release. Adds two new public subpackages
-(`cds.modeling`, `cds.knowledge`) without changing any existing API. The
-platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage.
-
-### <!-- 1 -->🎉 Added
-
-- **`cds.modeling`** — symbolic algebra for equation development:
-  - An expression tree (`+`, `-`, `*`, `/`, `**`, unary `-`, variables,
-    numbers) built by overloading Python operators on a `Var`/`Const` AST.
-  - Symbolic differentiation (`diff`), algebraic simplification
-    (`simplify`), substitution (`subs`), evaluation (`evalf`), and
-    LaTeX export (`to_latex`).
-  - A `MathModel` for equation systems with `solve_equation` (bisection
-    / Newton-style root finding) and `fit_parameters` (least-squares
-    parameter fitting to observations).
-  - Runnable demo (`examples/modeling_demo.md`) + tutorial.
-- **`cds.knowledge`** — a knowledge-organization layer in three pure-Python,
-  dependency-free files:
-  - `graph.py`: `Concept`, `Relation` (typed directed edges), and a
-    `KnowledgeGraph` with undirected traversal (shortest path via BFS,
-    transitive closure, cycle detection), neighbors, and JSON persistence.
-  - `notes.py`: `Note` + `Notebook` research notebook with tag and
-    concept lookups, and JSON persistence.
-  - `retrieval.py`: `search()` producing ranked `SearchResult` hits across
-    both concepts and notes (matched field + normalized score).
-  - Runnable demo (`examples/knowledge_demo.py`) + tutorial.
-- Both modules are wired into the package `__all__`, the CLI `modules`
-  listing, and the API reference (`docs/api.md`).
-
-### <!-- 4 -->🔧 Maintenance
-
-- Docs: resync README, `docs/index.md`, getting-started (EN + TR), and
-  CITATION.cff to v1.1.0 — module count 16→17, test count 883→1164,
-  coverage 99.48%→99.59%. Keep `pyproject.toml` + `src/cds/_version.py`
-  lockstepped at 1.1.0.
-- Chore(repo): ignore the `_demo_*.json` runtime artifacts the
-  knowledge demo writes next to its script, so a demo run no longer
-  dirties the working tree.
-
 ## [v1.0.4] - 2026-06-18
 
-### 🔒 Security & Tooling — CI hardening
-
-A follow-up patch to v1.0.3. No behavior changes to the published package;
-fully backward compatible. Adds continuous dependency-vulnerability scanning
-to CI, tightens the type-check configuration, and resynchronizes docs that
-had drifted after v1.0.0.
-
-### <!-- 4 -->🔧 Maintenance
-
-- Chore(ci): add a `pip-audit` job to the CI workflow (`tests.yml`). Runs
-  once on the reference cell (Linux + Python 3.12) against the PyPI Advisory
-  database. Currently `continue-on-error: true` — the dev/docs/test toolchain
-  (jupyter, mkdocs, build, twine, pillow, lxml, ...) carries transitive deps
-  with open CVEs unrelated to the published runtime (typer/pydantic/rich,
-  which audit clean). Surfacing them every run gives visibility without
-  red-flashing the matrix on a fresh advisory.
-- Chore(types): remove the global `ignore_missing_imports = true` from
-  `[tool.mypy]`. CDS only depends on PEP 561 typed runtime libs (typer,
-  pydantic, rich), all of which resolve cleanly under strict mypy (98 files,
-  0 errors). Dropping the escape hatch means a future un-stubbed dependency
-  surfaces a real error instead of being silently typed as `Any`.
-- Chore(repo): delete a stray Windows `nul` artifact left in the working tree.
-- Docs: resync README + `docs/` after v1.0.0 — test count 845→878, version
-  strings updated, `CITATION.cff` bumped to 1.0.4. Keep `pyproject.toml` +
-  `src/cds/_version.py` lockstepped at 1.0.4.
-
-## [v1.0.3] - 2026-06-18
-
-### 🧹 Hygiene — test-suite type correctness
-
-A follow-up patch to v1.0.2. No behavior changes to the published package;
-fully backward compatible. Brings `tests/` to the same mypy baseline as
-`src/` so the full type-check (`mypy src/ tests/`) is green, and resolves
-post-release lint/test/publish findings caught after v1.0.2 shipped.
-
-### <!-- 6 -->🧪 Testing
-
-- Test(types): clear all remaining mypy errors across `tests/` (39 files,
-  0 errors). Fixes list-variance issues (`Parameter <: Tensor`), redundant
-  `type: ignore` comments, and intentional error-path `**` operands.
-- Test(benchmarks): isolate benchmark test artifacts — `run_all()` /
-  `_write_json()` accept an `output_dir` parameter so `pytest` no longer
-  clobbers the committed `benchmarks/results.json`.
-
-### <!-- 4 -->🔧 Maintenance
-
-- Chore(ci): resolve post-1.0.2 lint/test/publish findings (commit 5e429ec).
-- Docs: keep `pyproject.toml` + `src/cds/_version.py` lockstepped at 1.0.3.
-
-## [v1.0.2] - 2026-06-18
-
-### 🧹 Hygiene — test isolation for benchmark artifacts
-
-A follow-up patch to v1.0.1. No behavior changes to the published package;
-fully backward compatible. Resolves a repo-hygiene issue where running the
-benchmark test suite silently clobbered the committed
-`benchmarks/results.json` artifact (and `docs/benchmarks.md`) on every
-`pytest` invocation.
 
 ### <!-- 1 -->🐛 Bug Fixes
 
-- Fix(tests): `test_run_all_generates_report` no longer writes into the
-  working tree. `run_all()` and `_write_json()` now accept an optional
-  `output_dir` parameter; the test passes its `tmp_path`, so the committed
-  `benchmarks/results.json` and `docs/benchmarks.md` are never modified by a
-  test run. Verified: object hash of `results.json` is byte-identical before
-  and after `pytest`.
 
-### <!-- 6 -->🧪 Testing
+- Fix(ci): benchmarks workflow can't push to protected main ([5428452](5428452))
 
-- Test(benchmarks): added a regression assertion that `results.json` lands
-  in `tmp_path` (not `benchmarks/`) after `run_all(output_dir=...)`.
+- Fix(ci): benchmarks workflow push to detached HEAD on tag push ([83f12a5](83f12a5))
 
-### <!-- 0 -->🚀 Features
+- Fix(ci): changelog workflow no longer opens duplicate PRs ([616dbed](616dbed))
 
-- Feat(benchmarks): `run_all(output_dir=None)` and
-  `_write_json(record, output_dir=None)` — new optional parameter for
-  redirecting artifact output. Defaults preserve existing CLI behaviour.
+- Fix(publish): attach sdist to GitHub release (Path.suffix bug) ([068e4eb](068e4eb))
 
-## [v1.0.1] - 2026-06-18
 
-### 🔧 Maintenance — typed, documented, hardened
+### <!-- 7 -->⚙️ Miscellaneous Tasks
 
-A follow-up to the v1.0 stable release focused on packaging quality and
-numerical correctness guarantees. No behavior changes; fully backward
-compatible.
+
+- Ci(benchmarks): regenerate report and results.json (#25) ([389cdef](389cdef))
+
+
+## [v1.1.0] - 2026-06-18
+
 
 ### <!-- 0 -->🚀 Features
 
-- Feat(packaging): declare PEP 561 type information — ship `src/cds/py.typed`
-  marker and force-include it in the wheel so downstream users get full
-  static type-checking support out of the box.
-- Feat(docs): add "type checked" badge to the README.
 
-### <!-- 6 -->🧪 Testing
+- Feat(knowledge): concept graph, notebook, ranked retrieval (17 modules) ([24b22a6](24b22a6))
 
-- Test(invariants): add `tests/test_numerical_invariants.py` — 32
-  property-based numerical invariants across 8 modules (linalg, signals,
-  stats, quadrature, quantum, diffeq, monte carlo, probability). Fixed
-  seed, fully reproducible, zero new dev dependencies.
+- Feat(modeling): symbolic AST, MathModel, solvers (solve_equation + fit_parameters) ([92150f7](92150f7))
 
-### <!-- 3 -->📚 Documentation
-
-- Docs(api): add docstrings to all 51 previously-undocumented public
-  functions identified via AST scan (3 empty-docstring gaps closed).
 
 ### <!-- 1 -->🐛 Bug Fixes
 
-- Chore: bump version to 1.0.1.
 
-## [v1.0.0] - 2026-06-18
+- Fix(tests): annotate to_dict() payloads for mypy (tests/) strict ([32270a1](32270a1))
 
-### 🚀 1.0 — Stable release
-
-Cognitive Discovery Platform reaches its first stable release. All five
-subsystems of the v1.0 completion spec are implemented, gated, and
-verified: 99.16% statement coverage (845 tests passing), zero mypy
-errors, clean ruff, and a strict mkdocs build.
-
-### <!-- 0 -->🚀 Features
-
-- Feat(nlp): Sprint 5 visualisation module — attention heatmap, PCA projection, training curve ([7956597](7956597))
-- Feat(benchmarks): emit results.json with timestamp + git SHA provenance, add CI workflow ([4e18500](4e18500))
-
-### <!-- 6 -->🧪 Testing
-
-- Test(coverage): close NLP edge-case gaps — tensor/ops/optim/bpe/layers/model/attention; reach 99.16% statement coverage ([6f0a487](6f0a487))
-- Style(tests): ruff format cleanup — collapse over-split listcomp, expand train() signature, remove duplicate inline imports ([36f4ee4](36f4ee4))
-
-### <!-- 3 -->📚 Documentation
-
-- Docs(examples): add 9 module demos + matching tutorials ([9f00fc5](9f00fc5))
-- Docs(api): restructure mkdocs nav, add api.md lead-ins, fix stale test counts ([4cad8be](4cad8be))
-- Docs(nlp): fix griffe warnings — split combined params in docstrings ([3aedff4](3aedff4))
-- Docs(build): exclude internal superpowers/ planning artifacts from mkdocs --strict ([c0c68e7](c0c68e7))
-- Docs(plans): A–E implementation plans for v1.0 completion spec ([a5da8b8](a5da8b8))
-- Docs(spec): project completion design — 5 subsystems to v1.0 readiness ([42a02f5](42a02f5))
-- Docs(benchmarks): regenerate results.json with current SHA provenance ([69c5a88](69c5a88))
-
-### <!-- 1 -->🐛 Bug Fixes
-
-- Chore: bump version to 1.0.0 + Production/Stable classifier; sync _version.py
 
 ### <!-- 10 -->💼 Other
 
-- Promoted from `Development Status :: 4 - Beta` to `Development Status :: 5 - Production/Stable`.
+
+- Release: v1.1.0 — cds.modeling + cds.knowledge (17 modules) ([156723b](156723b))
+
+
+### <!-- 2 -->🚜 Refactor
+
+
+- Refactor(tests): rename test_coverage_*.py to meaningful edge-case names ([80b5fed](80b5fed))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(badge): drop static tests-878 badge, sync live doc counts to 883 ([4f00101](4f00101))
+
+
+### <!-- 6 -->🧪 Testing
+
+
+- Test(coverage): close branch gaps in core.models + nlp.autograd.tensor ([482c46c](482c46c))
+
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Ci(audit): make pip-audit blocking and lock-file based (v1.0.4 follow-up) ([2b79f16](2b79f16))
+
+- Ci(changelog): switch tag-push trigger to manual workflow_dispatch ([985d679](985d679))
+
+
+## [v1.0.4] - 2026-06-18
+
+
+### <!-- 10 -->💼 Other
+
+
+- Release: v1.0.4 — CI security scan + type-check tightening ([aa3f131](aa3f131))
+
+
+## [v1.0.3] - 2026-06-18
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix(ci): resolve post-1.0.2 lint/test/publish findings ([5e429ec](5e429ec))
+
+- Fix(tests): resolve all mypy errors in test suite ([405b1f5](405b1f5))
+
+
+### <!-- 10 -->💼 Other
+
+
+- Release: v1.0.3 — test-suite type correctness ([4d2b616](4d2b616))
+
+
+## [v1.0.2] - 2026-06-18
+
+
+### <!-- 10 -->💼 Other
+
+
+- Release: v1.0.2 — benchmark test isolation (no more clobbered results.json) ([a1b3cd8](a1b3cd8))
+
+
+## [v1.0.1] - 2026-06-18
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix(ci): resolve 4 mypy errors in tests/ caught by CI matrix ([49e4fc5](49e4fc5))
+
+- Fix(pre-commit): add trailing newline to examples/_demo_tokenizer.json ([ba17681](ba17681))
+
+
+### <!-- 10 -->💼 Other
+
+
+- Chore: bump version to 1.0.1 — PEP 561 typed, docstrings, numerical invariant tests ([9787afe](9787afe))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(post-1.0): sync ROADMAP/SECURITY/index to v1.0.0 stable ([5e12589](5e12589))
+
+
+## [v1.0.0] - 2026-06-18
+
+
+### <!-- 0 -->🚀 Features
+
+
+- Feat(benchmarks): emit results.json with timestamp + git SHA provenance, add CI workflow ([4e18500](4e18500))
+
+- Feat(nlp): Sprint 5 viz module — attention heatmap, PCA projection, training curve ([7956597](7956597))
+
+
+### <!-- 10 -->💼 Other
+
+
+- Release: v1.0.0 — stable release, Production/Stable classifier ([e1d3a55](e1d3a55))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(api): Plan B — nav restructure, api.md lead-ins, fix stale test counts ([4cad8be](4cad8be))
+
+- Docs(benchmarks): regenerate results from latest run (a5da8b8) ([76d4264](76d4264))
+
+- Docs(benchmarks): regenerate results.json ([e36184b](e36184b))
+
+- Docs(benchmarks): regenerate results.json with current SHA provenance ([69c5a88](69c5a88))
+
+- Docs(build): exclude internal superpowers/ planning artifacts from mkdocs ([c0c68e7](c0c68e7))
+
+- Docs(examples): add 9 module demos + matching tutorials (Plan A) ([9f00fc5](9f00fc5))
+
+- Docs(nlp): fix griffe warnings — split combined params in docstrings ([3aedff4](3aedff4))
+
+- Docs(plans): A-E implementation plans for v1.0 completion spec ([a5da8b8](a5da8b8))
+
+- Docs(spec): project completion design — 5 subsystems to v1.0 readiness ([42a02f5](42a02f5))
+
+
+### <!-- 5 -->🎨 Styling
+
+
+- Style(examples): apply ruff format + fix f-string-without-placeholder in nlp_bpe_demo ([102953f](102953f))
+
+- Style(tests): ruff format cleanup — collapse over-split listcomp, expand train() signature ([36f4ee4](36f4ee4))
+
+
+### <!-- 6 -->🧪 Testing
+
+
+- Test(coverage): close NLP edge-case gaps — tensor/ops/optim/bpe/layers/model/attention ([6f0a487](6f0a487))
+
+
+## [v0.10.0b2] - 2026-06-17
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix: sync test count to 803, add nlp to CLI/modules, fix lint, neutralize AI marketing language ([af94f0f](af94f0f))
+
+
+### <!-- 2 -->🚜 Refactor
+
+
+- Refactor: extract magic-number constants, clean Any types, split autograd into package ([aa69001](aa69001))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.10.0b1 (#18) ([0b38ba9](0b38ba9))
+
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Chore: bump version to 0.10.0b2 ([5e3dea2](5e3dea2))
+
+- Chore: fix README coverage claim (~99% not 100%), ignore .zcode/ session state ([d992381](d992381))
+
 
 ## [v0.10.0b1] - 2026-06-17
 
