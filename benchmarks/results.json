@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-06-18T00:49:47+00:00",
+  "timestamp_utc": "2026-06-18T01:02:53+00:00",
   "git_sha": "unknown",
   "metrics": {
     "Linear Algebra (Approaching C-Speed)": {
@@ -16,14 +16,14 @@
       "Complexity": "O(N^3) PLU"
     },
     "Monte Carlo (Hardware Saturation)": {
-      "Parallel Pi (100k samples)": 0.9551,
+      "Parallel Pi (100k samples)": 0.7791,
       "CPU Cores Saturated": 22.0,
       "Estimate error vs \u03c0": 0.01235
     },
     "Quantum (Algorithmic Intelligence)": {
-      "Intelligent O(1) Sampling": 0.0154,
-      "Naive Brute Force (Est.)": 1.39,
-      "Intelligence Speedup": "90.5x Faster"
+      "Intelligent O(1) Sampling": 0.0308,
+      "Naive Brute Force (Est.)": 1.3,
+      "Intelligence Speedup": "42.2x Faster"
     },
     "Signal Processing (FFT vs DFT)": {
       "Signal length": "1024 samples",
