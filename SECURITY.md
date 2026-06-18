@@ -2,15 +2,14 @@
 
 ## Supported Versions
 
-| Version | Supported | Notes |
-|---------|-----------|-------|
-| 0.9.x   | Yes       | Beta; current development line |
-| 0.8.x   | Yes       | Last alpha release; security fixes only |
-| 0.7.x   | Yes       | Stable; security fixes only |
-| 0.6.x   | Yes       | Stable; security fixes only |
-| < 0.6   | No        | EOL |
+| Version | Supported          | Notes |
+|---------|--------------------|-------|
+| 1.0.x   | Yes                | Stable; current release line |
+| 0.9.x   | Yes                | Last beta; security fixes only |
+| 0.8.x   | Yes (until 1.1.0)  | Last alpha; security fixes only |
+| < 0.8   | No                 | EOL |
 
-Stable releases (1.0.0+) will follow a stricter support window (current + 2 previous minor versions).
+Stable releases (1.0.0+) follow a stricter support window: the current minor version plus the 2 previous minor versions.
 
 ## Reporting a Vulnerability
 

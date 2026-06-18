@@ -29,16 +29,16 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - [x] ~~Türkçe başlangıç rehberi~~ (`docs/getting-started.tr.md`)
 - [x] ~~Signed commits guide in CONTRIBUTING.md~~ (SSH or GPG)
 
-## v1.0.0 — Stability Release (Next)
+## v1.0.0 — Stability Release (Released 2026-06-18)
 
-- [ ] Freeze public API — backward-compatible guarantees for all `cds.*` exports
-- [ ] Full API reference documentation on GitHub Pages (auto-generated via mkdocstrings; needs polish)
-- [ ] Type stubs (`.pyi`) for IDE autocompletion (deferred — pure-Python with full type hints doesn't need them per project policy)
-- [ ] Security audit (dependency pinning, signed releases — `requirements.lock` already pinned, sigstore attestation live)
-- [ ] **Mark as stable** — remove alpha/beta labels, bump to 1.0.0
+- [x] ~~Freeze public API — backward-compatible guarantees for all `cds.*` exports~~
+- [x] ~~Full API reference documentation on GitHub Pages (auto-generated via mkdocstrings)~~
+- [x] ~~Type stubs (`.pyi`) for IDE autocompletion~~ (skipped — pure-Python with full type hints doesn't need them per project policy)
+- [x] ~~Security audit~~ (dependency pinning, signed releases — `requirements.lock` pinned, sigstore attestation live)
+- [x] ~~**Mark as stable** — remove alpha/beta labels, bump to 1.0.0~~ (Development Status `5 - Production/Stable`)
 - [ ] Optional: enable `required_signatures` in branch protection (after maintainer configures GPG/SSH signing key)
 - [ ] Optional: Enable Dependabot security-only updates (currently weekly, can switch to security-only mode)
-- [ ] Automated benchmark regeneration on releases + weekly schedule (`.github/workflows/benchmarks.yml`) — CI artifact `benchmarks/results.json` for regression tracking
+- [x] ~~Automated benchmark regeneration on releases + weekly schedule~~ (`.github/workflows/benchmarks.yml`) — CI artifact `benchmarks/results.json` for regression tracking
 
 ## Longer Term
 
@@ -46,12 +46,12 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - Notebook templates (Jupyter) for non-CLI users
 - Community-contributed domain modules (bioinformatics, finance)
 - Education-focused "tour of numerical methods" guide
-- **Educational NLP track** (Sprint 1+ — see `cds.nlp`):
+- **Educational NLP track** (see `cds.nlp` — shipped in v1.0.0):
   - Sprint 1 ✅ BPE tokenizer + token / positional embeddings (v0.9.0b5)
-  - Sprint 2 Multi-head self-attention block (Sprint 2 — pure-Python, slow on purpose)
-  - Sprint 3 Pure-Python autograd with optional `cds[fast-jit]` Numba backend (kept opt-in so the core stays zero-dep)
-  - Sprint 4 Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
-  - Sprint 5 Attention / embedding visualisations for the educational narrative
+  - Sprint 2 ✅ Multi-head self-attention block (pure-Python, slow on purpose)
+  - Sprint 3 ✅ Pure-Python autograd with optional `cds[fast-jit]` Numba backend (kept opt-in so the core stays zero-dep)
+  - Sprint 4 ✅ Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
+  - Sprint 5 ✅ Attention / embedding visualisations for the educational narrative
   - Scope explicitly excludes production-scale training — that belongs in PyTorch / JAX / MLX.
 - **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2))
 - **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3))
