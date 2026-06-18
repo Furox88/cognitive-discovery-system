@@ -38,6 +38,7 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - [ ] **Mark as stable** — remove alpha/beta labels, bump to 1.0.0
 - [ ] Optional: enable `required_signatures` in branch protection (after maintainer configures GPG/SSH signing key)
 - [ ] Optional: Enable Dependabot security-only updates (currently weekly, can switch to security-only mode)
+- [ ] Automated benchmark regeneration on releases + weekly schedule (`.github/workflows/benchmarks.yml`) — CI artifact `benchmarks/results.json` for regression tracking
 
 ## Longer Term
 

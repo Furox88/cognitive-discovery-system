@@ -1,0 +1,59 @@
+name: Benchmarks
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmarks-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    name: Regenerate benchmark report
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout (full history for SHA)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[all]"
+
+      - name: Run benchmarks
+        run: python benchmarks/run_benchmarks.py
+
+      - name: Verify artifacts changed
+        id: changed
+        run: |
+          if git diff --quiet docs/benchmarks.md benchmarks/results.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit regenerated artifacts
+        if: steps.changed.outputs.changed == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci(benchmarks): regenerate report and results.json"
+          file_pattern: "docs/benchmarks.md benchmarks/results.json"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"

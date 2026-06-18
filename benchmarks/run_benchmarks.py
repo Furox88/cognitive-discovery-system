@@ -2,19 +2,28 @@
 Performance benchmark suite for CDS.
 
 Measures execution time for core scientific modules and optionally compares with
-NumPy. Run directly to regenerate ``docs/benchmarks.md``:
+NumPy. Run directly to regenerate ``docs/benchmarks.md`` and the
+machine-readable ``benchmarks/results.json`` (timestamped + git-SHA-stamped for
+regression tracking):
 
     python benchmarks/run_benchmarks.py
+
+In CI, the ``Benchmarks`` workflow (``.github/workflows/benchmarks.yml``)
+runs this automatically on ``v*`` tag pushes and weekly (Monday 03:00 UTC),
+committing both artifacts back to ``main``.
 
 Each ``bench_*`` function returns an ordered dict of ``{metric: value}`` so the
 report stays deterministic.
 """
 
+import json
 import math
 import multiprocessing
+import subprocess
 import time
 import timeit
 from collections import OrderedDict
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Try to import industry standards for comparison (Optional)
@@ -24,6 +33,67 @@ try:
     HAS_NUMPY = True
 except ImportError:
     HAS_NUMPY = False
+
+
+def _git_sha() -> str:
+    """Return the current commit SHA, or ``"unknown"`` if git is unavailable.
+
+    CI runs inside a checkout; local runs may not have git on PATH. Failure
+    must never break a benchmark run, so every error path returns a sentinel.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        if out.returncode == 0:
+            return out.stdout.strip() or "unknown"
+    except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+        pass
+    return "unknown"
+
+
+def _coerce_metric(value: str) -> float | str:
+    """Best-effort parse of a metric string into a number.
+
+    Benchmark values are formatted as ``"0.0423s"``, ``"727.3x"``, ``"22"``
+    (CPU cores), ``"8.0x"``, etc. We strip a trailing unit and try ``float``;
+    anything that doesn't parse stays a string (e.g. ``"O(N^3) PLU"``).
+    """
+    s = value.strip()
+    stripped = s.rstrip()
+    if stripped and stripped[-1].isalpha():
+        stripped = stripped[:-1].strip()
+    try:
+        return float(stripped)
+    except ValueError:
+        return s
+
+
+def _build_json_record(
+    results: dict[str, "OrderedDict[str, str]"],
+) -> dict[str, object]:
+    """Assemble the machine-readable artifact: provenance + metric tree."""
+    numeric: dict[str, dict[str, float | str]] = {}
+    for category, metrics in results.items():
+        numeric[category] = {k: _coerce_metric(v) for k, v in metrics.items()}
+    return {
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "git_sha": _git_sha(),
+        "metrics": numeric,
+    }
+
+
+def _write_json(record: dict[str, object]) -> Path:
+    """Write the JSON artifact next to the script and return its path."""
+    out = Path(__file__).resolve().parent / "results.json"
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(record, f, indent=2, sort_keys=False)
+        f.write("\n")
+    return out
 
 
 def _bench(func, number: int, repeat: int = 1) -> float:
@@ -222,7 +292,14 @@ def run_all() -> None:
     results["Numerical Integration (Convergence)"] = bench_numerical_integration()
 
     # Generate Report Table with Visuals
+    sha = _git_sha()
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     report = "# CDS Performance & Intelligence Report\n\n"
+    report += (
+        f"> **Last measured:** `{sha}` on {ts}. Regenerated automatically by "
+        f"the `benchmarks` GitHub Actions workflow (weekly + on release tags). "
+        f"Raw data: `benchmarks/results.json`.\n\n"
+    )
     report += (
         "This report measures both raw speed and algorithmic scaling. Pure "
         "Python is slower than C-extensions for dense numerics, so rather "
@@ -262,7 +339,12 @@ def run_all() -> None:
     with open(docs_dir / "benchmarks.md", "w", encoding="utf-8") as f:
         f.write(report)
 
+    # Machine-readable artifact for regression tracking (spec §E).
+    record = _build_json_record(results)
+    json_path = _write_json(record)
+
     print(f"Benchmarks completed. Report saved to {docs_dir / 'benchmarks.md'}")
+    print(f"JSON artifact saved to {json_path}")
 
 
 if __name__ == "__main__":
