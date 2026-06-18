@@ -11,6 +11,7 @@
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/codeql.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/codeql.yml)
 [![Docs](https://img.shields.io/badge/docs-mkdocs-teal.svg)](https://furox88.github.io/cognitive-discovery-system/)
 [![GitHub stars](https://img.shields.io/github/stars/Furox88/cognitive-discovery-system.svg?style=social)](https://github.com/Furox88/cognitive-discovery-system)
 

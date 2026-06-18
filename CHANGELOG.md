@@ -5,6 +5,42 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.1] - 2026-06-19
+
+### 🔒 Patch — supply-chain & CI hardening
+
+A patch release: no API changes, no behavior changes. Strengthens release
+integrity and CI correctness so downstream consumers and contributors get
+verifiable, low-churn workflows.
+
+### 🔒 Security
+
+- **CodeQL static analysis** (`codeql.yml`) — runs `security-and-quality`
+  query pack on every push/PR into `main` plus a weekly schedule; findings
+  surface as code-scanning alerts under the Security tab. Complements
+  `attest.yml` (which signs release artifacts with build provenance) and
+  `dependabot.yml` (dependency CVEs).
+- **README security badge** — live CodeQL status added next to the CI badge.
+
+### 🛠️ Changed
+
+- **`changelog.yml` made idempotent** — all dispatches now target a single
+  fixed branch (`chore/changelog-regen`); `peter-evans/create-pull-request`
+  updates the existing open PR instead of opening a duplicate per tag.
+  Previously up to 6 stale changelog PRs accumulated; now only one is ever
+  open. Also bumped the action `v6 → v7` and added a `concurrency` group to
+  serialize simultaneous dispatches.
+- **`benchmarks.yml` respects branch protection** — switched from a direct
+  bot push (rejected on protected `main`) to opening a PR via
+  `peter-evans/create-pull-request@v7`, so regenerated artifacts merge
+  through the normal review flow without breaking protection rules.
+
+### 🧹 Removed
+
+- 6 stale auto-generated changelog PRs (#10, #19, #20, #21, #22, #23) and
+  their per-tag branches — all superseded by the hand-curated CHANGELOG on
+  `main`.
+
 ## [v1.1.0] - 2026-06-19
 
 ### ✨ Minor — two new modules (symbolic math + knowledge organization)

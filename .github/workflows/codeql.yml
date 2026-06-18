@@ -1,0 +1,53 @@
+name: CodeQL
+
+# Static security analysis via GitHub's CodeQL. Runs on every push to main,
+# every PR into main, and weekly on schedule so new CodeQL query packs and
+# newly-written code are both covered. Results surface as code-scanning
+# alerts under the repo's Security tab.
+#
+# Complements (does not replace) attest.yml: that workflow signs release
+# artifacts with build provenance; this one analyzes the source for vulns.
+# Dependabot (.github/dependabot.yml) handles dependency CVEs separately.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "37 4 * * 1"  # weekly, off-peak
+
+permissions:
+  contents: read
+  security-events: write  # required to upload CodeQL results
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # CDS is pure Python; no native extensions to scan with cpp.
+        language: [python]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # security-and-quality = default + maintainability/reliability queries.
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
