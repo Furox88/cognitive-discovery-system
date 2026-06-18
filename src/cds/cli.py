@@ -316,7 +316,11 @@ def modules() -> None:
         ("cds.montecarlo", "π estimation, integration, random walks"),
         ("cds.diffeq", "Euler, RK4, midpoint, ODE system solvers"),
         ("cds.graph", "BFS/DFS, Dijkstra, Kruskal MST, topological sort"),
-        ("cds.modeling", "Symbolic math: expressions, MathModel, equation solving, parameter fitting"),
+        (
+            "cds.modeling",
+            "Symbolic math: expressions, MathModel, equation solving, parameter fitting",
+        ),
+        ("cds.knowledge", "Knowledge graph, concept mapping, research notes, structured retrieval"),
         ("cds.ml", "Neural networks (MLP), backpropagation, activation functions"),
         ("cds.scientific", "Physical constants + common formulas"),
         ("cds.data_analysis", "CSV loading, normalization, z-score, moving average"),

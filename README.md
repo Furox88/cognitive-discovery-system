@@ -54,8 +54,8 @@ The platform also includes built-in support for structured hypothesis generation
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
-- **Broad scope** — 16 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, and educational NLP (BPE + embeddings)
-- **883 tests** (see CI) — thoroughly tested with **~99% code coverage**
+- **Broad scope** — 17 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
+- **1164 tests** (see CI) — thoroughly tested with **~99% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 
 ### CDS vs other libraries
@@ -95,6 +95,7 @@ If CDS is useful in your research or publications, please cite it using the info
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
 | `cds.modeling` | **NEW:** Symbolic algebra — expressions, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
+| `cds.knowledge` | **NEW:** Knowledge organization — concept graph with typed relations, research notes notebook, ranked structured retrieval (JSON persistence) |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
 | `cds.numerical_integration` | **NEW:** Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
@@ -337,6 +338,27 @@ print(root.x)                 # ~1.4142
 print(root.converged)         # True
 ```
 
+### Knowledge Organization
+```python
+from cds.knowledge import KnowledgeGraph, Notebook, search
+
+kg = KnowledgeGraph(name="Cosmology")
+kg.link_concepts("Dark Energy", "Hubble Constant", kind="affects")
+kg.link_concepts("Hubble Constant", "CMB", kind="constrains")
+
+# Shortest path across the (undirected) graph
+print(kg.find_path("Dark Energy", "CMB"))
+# ['Dark Energy', 'Hubble Constant', 'CMB']
+
+nb = Notebook(name="Lab Book")
+nb.add_note("n1", "Hubble Tension", "Local vs CMB H0 disagree.",
+            tags=["experiment"], linked_concepts=["Hubble Constant"])
+
+# Ranked retrieval across both concepts and notes
+for hit in search(kg, nb, query="hubble"):
+    print(hit.concept_name or hit.note_id, hit.score)
+```
+
 ### Monte Carlo Simulation
 ```python
 import math
@@ -399,6 +421,7 @@ src/cds/
 ├── scientific/     # Physical constants & formulas
 ├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal MST)
 ├── modeling/       # Symbolic math (expressions, MathModel, solvers)
+├── knowledge/      # Knowledge graph, concepts, notes, structured retrieval
 ├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
 ├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
 ├── numerical_integration/  # Deterministic quadrature (trapezoid, Simpson, Romberg, Gauss-Legendre)
@@ -408,7 +431,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 883 tests (see CI)
+tests/              # 1164 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 

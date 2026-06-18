@@ -92,6 +92,12 @@ Symbolic algebra for equation development: an expression tree (`+`, `-`, `*`, `/
 
 ::: cds.modeling
 
+## Knowledge Organization
+
+A knowledge graph of named concepts connected by typed, directed relations (`is-a`, `depends-on`, …) with undirected traversal (shortest path, transitive closure, cycle detection), a notebook of research notes linked to concept names, and ranked structured retrieval across both. Persistence is JSON via the stdlib.
+
+::: cds.knowledge
+
 ## Data Analysis
 
 CSV loading, normalisation, smoothing, and ASCII visualisation.

@@ -164,6 +164,9 @@ data/external/
 .cds/
 *.hypo.json
 
+# Demo runtime artifacts (examples/ write these next to the script)
+_demo_*.json
+
 # ZCode agent session state (local only, never commit)
 .zcode/
 
