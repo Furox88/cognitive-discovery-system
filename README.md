@@ -7,6 +7,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
+[![Typed](https://img.shields.io/badge/typed-PEP%20561-success.svg)](https://peps.python.org/pep-0561/)
 [![Tests](https://img.shields.io/badge/tests-845-brightgreen.svg)](#)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

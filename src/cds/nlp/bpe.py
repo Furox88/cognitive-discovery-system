@@ -139,10 +139,17 @@ class BPEMerge:
     new_token: str
 
     def to_dict(self) -> dict[str, object]:
+        """Serialize this merge to a JSON-friendly dict."""
         return {"pair": list(self.pair), "rank": self.rank, "new_token": self.new_token}
 
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> BPEMerge:
+        """Reconstruct a :class:`BPEMerge` from :meth:`to_dict` output.
+
+        Raises:
+            ValueError: if ``data`` is missing keys, has the wrong types,
+                or the ``pair`` does not contain exactly two strings.
+        """
         pair_raw = data["pair"]
         if not isinstance(pair_raw, list) or len(pair_raw) != 2:
             raise ValueError(f"Invalid pair in BPE merge: {pair_raw!r}")

@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-platform"
-version = "1.0.0"
+version = "1.0.1"
 description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
@@ -87,6 +87,11 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/cds"]
+# PEP 561 marker — tells type checkers / IDEs that the wheel ships
+# inline type annotations. Hatchling picks up non-.py files in the
+# package dir by default, but declaring it explicitly is safer and
+# documents intent.
+force-include = { "src/cds/py.typed" = "cds/py.typed" }
 
 # Static version. The release tag is the source of truth — the wheel
 # filename reads the git tag. Bump manually before tagging a new

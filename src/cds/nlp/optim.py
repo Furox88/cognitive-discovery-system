@@ -146,6 +146,7 @@ class Adam:
             p.data -= self.lr * m_hat / (math.sqrt(v_hat) + self.eps)
 
     def zero_grad(self) -> None:
+        """Reset ``.grad`` to ``0.0`` on every managed parameter."""
         for p in self.params:
             p.grad = 0.0
 

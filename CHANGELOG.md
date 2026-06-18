@@ -5,6 +5,37 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.1] - 2026-06-18
+
+### 🔧 Maintenance — typed, documented, hardened
+
+A follow-up to the v1.0 stable release focused on packaging quality and
+numerical correctness guarantees. No behavior changes; fully backward
+compatible.
+
+### <!-- 0 -->🚀 Features
+
+- Feat(packaging): declare PEP 561 type information — ship `src/cds/py.typed`
+  marker and force-include it in the wheel so downstream users get full
+  static type-checking support out of the box.
+- Feat(docs): add "type checked" badge to the README.
+
+### <!-- 6 -->🧪 Testing
+
+- Test(invariants): add `tests/test_numerical_invariants.py` — 32
+  property-based numerical invariants across 8 modules (linalg, signals,
+  stats, quadrature, quantum, diffeq, monte carlo, probability). Fixed
+  seed, fully reproducible, zero new dev dependencies.
+
+### <!-- 3 -->📚 Documentation
+
+- Docs(api): add docstrings to all 51 previously-undocumented public
+  functions identified via AST scan (3 empty-docstring gaps closed).
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- Chore: bump version to 1.0.1.
+
 ## [v1.0.0] - 2026-06-18
 
 ### 🚀 1.0 — Stable release
