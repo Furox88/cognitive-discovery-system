@@ -7,101 +7,117 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v1.0.2] - 2026-06-18
 
-### 🧹 Hygiene — test isolation for benchmark artifacts
-
-A follow-up patch to v1.0.1. No behavior changes to the published package;
-fully backward compatible. Resolves a repo-hygiene issue where running the
-benchmark test suite silently clobbered the committed
-`benchmarks/results.json` artifact (and `docs/benchmarks.md`) on every
-`pytest` invocation.
-
-### <!-- 1 -->🐛 Bug Fixes
-
-- Fix(tests): `test_run_all_generates_report` no longer writes into the
-  working tree. `run_all()` and `_write_json()` now accept an optional
-  `output_dir` parameter; the test passes its `tmp_path`, so the committed
-  `benchmarks/results.json` and `docs/benchmarks.md` are never modified by a
-  test run. Verified: object hash of `results.json` is byte-identical before
-  and after `pytest`.
-
-### <!-- 6 -->🧪 Testing
-
-- Test(benchmarks): added a regression assertion that `results.json` lands
-  in `tmp_path` (not `benchmarks/`) after `run_all(output_dir=...)`.
-
-### <!-- 0 -->🚀 Features
-
-- Feat(benchmarks): `run_all(output_dir=None)` and
-  `_write_json(record, output_dir=None)` — new optional parameter for
-  redirecting artifact output. Defaults preserve existing CLI behaviour.
-
-## [v1.0.1] - 2026-06-18
-
-### 🔧 Maintenance — typed, documented, hardened
-
-A follow-up to the v1.0 stable release focused on packaging quality and
-numerical correctness guarantees. No behavior changes; fully backward
-compatible.
-
-### <!-- 0 -->🚀 Features
-
-- Feat(packaging): declare PEP 561 type information — ship `src/cds/py.typed`
-  marker and force-include it in the wheel so downstream users get full
-  static type-checking support out of the box.
-- Feat(docs): add "type checked" badge to the README.
-
-### <!-- 6 -->🧪 Testing
-
-- Test(invariants): add `tests/test_numerical_invariants.py` — 32
-  property-based numerical invariants across 8 modules (linalg, signals,
-  stats, quadrature, quantum, diffeq, monte carlo, probability). Fixed
-  seed, fully reproducible, zero new dev dependencies.
-
-### <!-- 3 -->📚 Documentation
-
-- Docs(api): add docstrings to all 51 previously-undocumented public
-  functions identified via AST scan (3 empty-docstring gaps closed).
-
-### <!-- 1 -->🐛 Bug Fixes
-
-- Chore: bump version to 1.0.1.
-
-## [v1.0.0] - 2026-06-18
-
-### 🚀 1.0 — Stable release
-
-Cognitive Discovery Platform reaches its first stable release. All five
-subsystems of the v1.0 completion spec are implemented, gated, and
-verified: 99.16% statement coverage (845 tests passing), zero mypy
-errors, clean ruff, and a strict mkdocs build.
-
-### <!-- 0 -->🚀 Features
-
-- Feat(nlp): Sprint 5 visualisation module — attention heatmap, PCA projection, training curve ([7956597](7956597))
-- Feat(benchmarks): emit results.json with timestamp + git SHA provenance, add CI workflow ([4e18500](4e18500))
-
-### <!-- 6 -->🧪 Testing
-
-- Test(coverage): close NLP edge-case gaps — tensor/ops/optim/bpe/layers/model/attention; reach 99.16% statement coverage ([6f0a487](6f0a487))
-- Style(tests): ruff format cleanup — collapse over-split listcomp, expand train() signature, remove duplicate inline imports ([36f4ee4](36f4ee4))
-
-### <!-- 3 -->📚 Documentation
-
-- Docs(examples): add 9 module demos + matching tutorials ([9f00fc5](9f00fc5))
-- Docs(api): restructure mkdocs nav, add api.md lead-ins, fix stale test counts ([4cad8be](4cad8be))
-- Docs(nlp): fix griffe warnings — split combined params in docstrings ([3aedff4](3aedff4))
-- Docs(build): exclude internal superpowers/ planning artifacts from mkdocs --strict ([c0c68e7](c0c68e7))
-- Docs(plans): A–E implementation plans for v1.0 completion spec ([a5da8b8](a5da8b8))
-- Docs(spec): project completion design — 5 subsystems to v1.0 readiness ([42a02f5](42a02f5))
-- Docs(benchmarks): regenerate results.json with current SHA provenance ([69c5a88](69c5a88))
-
-### <!-- 1 -->🐛 Bug Fixes
-
-- Chore: bump version to 1.0.0 + Production/Stable classifier; sync _version.py
 
 ### <!-- 10 -->💼 Other
 
-- Promoted from `Development Status :: 4 - Beta` to `Development Status :: 5 - Production/Stable`.
+
+- Release: v1.0.2 — benchmark test isolation (no more clobbered results.json) ([a1b3cd8](a1b3cd8))
+
+
+## [v1.0.1] - 2026-06-18
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix(ci): resolve 4 mypy errors in tests/ caught by CI matrix ([49e4fc5](49e4fc5))
+
+- Fix(pre-commit): add trailing newline to examples/_demo_tokenizer.json ([ba17681](ba17681))
+
+
+### <!-- 10 -->💼 Other
+
+
+- Chore: bump version to 1.0.1 — PEP 561 typed, docstrings, numerical invariant tests ([9787afe](9787afe))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(post-1.0): sync ROADMAP/SECURITY/index to v1.0.0 stable ([5e12589](5e12589))
+
+
+## [v1.0.0] - 2026-06-18
+
+
+### <!-- 0 -->🚀 Features
+
+
+- Feat(benchmarks): emit results.json with timestamp + git SHA provenance, add CI workflow ([4e18500](4e18500))
+
+- Feat(nlp): Sprint 5 viz module — attention heatmap, PCA projection, training curve ([7956597](7956597))
+
+
+### <!-- 10 -->💼 Other
+
+
+- Release: v1.0.0 — stable release, Production/Stable classifier ([e1d3a55](e1d3a55))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(api): Plan B — nav restructure, api.md lead-ins, fix stale test counts ([4cad8be](4cad8be))
+
+- Docs(benchmarks): regenerate results from latest run (a5da8b8) ([76d4264](76d4264))
+
+- Docs(benchmarks): regenerate results.json ([e36184b](e36184b))
+
+- Docs(benchmarks): regenerate results.json with current SHA provenance ([69c5a88](69c5a88))
+
+- Docs(build): exclude internal superpowers/ planning artifacts from mkdocs ([c0c68e7](c0c68e7))
+
+- Docs(examples): add 9 module demos + matching tutorials (Plan A) ([9f00fc5](9f00fc5))
+
+- Docs(nlp): fix griffe warnings — split combined params in docstrings ([3aedff4](3aedff4))
+
+- Docs(plans): A-E implementation plans for v1.0 completion spec ([a5da8b8](a5da8b8))
+
+- Docs(spec): project completion design — 5 subsystems to v1.0 readiness ([42a02f5](42a02f5))
+
+
+### <!-- 5 -->🎨 Styling
+
+
+- Style(examples): apply ruff format + fix f-string-without-placeholder in nlp_bpe_demo ([102953f](102953f))
+
+- Style(tests): ruff format cleanup — collapse over-split listcomp, expand train() signature ([36f4ee4](36f4ee4))
+
+
+### <!-- 6 -->🧪 Testing
+
+
+- Test(coverage): close NLP edge-case gaps — tensor/ops/optim/bpe/layers/model/attention ([6f0a487](6f0a487))
+
+
+## [v0.10.0b2] - 2026-06-17
+
+
+### <!-- 1 -->🐛 Bug Fixes
+
+
+- Fix: sync test count to 803, add nlp to CLI/modules, fix lint, neutralize AI marketing language ([af94f0f](af94f0f))
+
+
+### <!-- 2 -->🚜 Refactor
+
+
+- Refactor: extract magic-number constants, clean Any types, split autograd into package ([aa69001](aa69001))
+
+
+### <!-- 3 -->📚 Documentation
+
+
+- Docs(changelog): regenerate for v0.10.0b1 (#18) ([0b38ba9](0b38ba9))
+
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Chore: bump version to 0.10.0b2 ([5e3dea2](5e3dea2))
+
+- Chore: fix README coverage claim (~99% not 100%), ignore .zcode/ session state ([d992381](d992381))
+
 
 ## [v0.10.0b1] - 2026-06-17
 
