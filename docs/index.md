@@ -10,13 +10,14 @@ CDS is an open-source computational science platform designed for research, simu
 - **Quantum Simulation:** Full state-vector simulation for single and multi-qubit circuits with entanglement and O(1) sampling.
 - **Advanced Mathematics:** O(N³) Partial Pivoting LU decomposition, vectorized optimizers, and adaptive ODE solvers (RK45).
 - **Hypothesis Engine:** Built-in tools for generating and statistically validating scientific hypotheses.
-- **High Reliability:** 803 tests with 100% code coverage.
+- **High Reliability:** 845 tests with 99% code coverage.
 - **Interactive Tools:** Beautiful CLI and a Streamlit-based web dashboard.
 
 ## Overview of Modules
 
 | Module | Description |
 |--------|-------------|
+| `cds.core` | Shared data models (`Domain`, `Hypothesis`, `HypothesisStatus`) |
 | `cds.quantum` | Single & multi-qubit quantum circuit simulation |
 | `cds.optimization` | Gradient-based and numerical optimizers |
 | `cds.ml` | Pure Python Neural Networks (MLP, Adam-based training) |

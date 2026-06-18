@@ -38,7 +38,11 @@ plugins:
             show_source: true
             show_root_heading: true
             show_category_heading: true
-            import_column_cols: 0
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
 
 nav:
   - Home: index.md
@@ -47,8 +51,18 @@ nav:
       - Türkçe: getting-started.tr.md
   - Tutorials:
       - Quick Start: tutorials/quick_start.md
+      - Core Data Models: tutorials/core_demo.md
+      - Scientific Formulas: tutorials/scientific_demo.md
+      - Math Utilities: tutorials/math_utils_demo.md
+      - Numerical Integration: tutorials/numerical_integration_demo.md
+      - Differential Equations: tutorials/diffeq_demo.md
+      - Monte Carlo: tutorials/montecarlo_demo.md
+      - Probability: tutorials/probability_demo.md
+      - Graph Algorithms: tutorials/graph_demo.md
+      - Data Analysis: tutorials/data_analysis_demo.md
       - Hypothesis Engine: tutorials/hypothesis_demo.md
       - Quantum Lab: tutorials/quantum_demo.md
+      - NLP Visualisation: tutorials/nlp_viz.md
   - API Reference: api.md
   - Case Studies:
       - Hubble Tension: CASE_STUDY_HUBBLE.md

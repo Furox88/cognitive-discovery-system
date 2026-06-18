@@ -52,7 +52,7 @@ print(render_embedding_projection(emb, labels=labels, top_n=6))
 
 The projection is **real PCA**, not a placeholder: the covariance matrix of
 the embeddings is built in pure Python, then
-[`cds.math_utils.linalg.power_iteration`](../api.md#cds.math_utils.linalg.power_iteration)
+[`cds.math_utils.linalg.power_iteration`](../api.md#cds.math_utils.power_iteration)
 recovers the top-2 eigenvectors (the second via deflation). This is the
 project's signature "slow but honest" trade-off — the math is exactly what
 `sklearn.decomposition.PCA` does, just without the BLAS.
