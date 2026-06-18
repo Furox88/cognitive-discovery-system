@@ -20,12 +20,12 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> **v1.0.4 stable release.** Contributions welcome!
+> **v1.1.0 stable release.** Contributions welcome!
 
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** **v1.0.4 stable** — the `cds.nlp` module ships educational, from-scratch implementations of modern NLP building blocks: BPE tokenization, sinusoidal embeddings, scaled dot-product / multi-head attention, a Transformer block, a scalar reverse-mode autograd engine with SGD/Adam, and a MiniGPT training demo. Plus an NLP visualisation toolkit (attention heatmap, PCA projection, training curves). All in readable pure Python, with **883 tests** and **99.48%** coverage.
+🚀 **Latest Update:** **v1.1.0** — two new modules. `cds.modeling` brings symbolic algebra (expression tree, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting). `cds.knowledge` adds a knowledge-organization layer: a concept graph with typed relations (shortest path, transitive closure, cycle detection), a research-notes notebook, and ranked structured retrieval — all JSON-persisted via the stdlib. Platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage, all in readable pure Python.
 ---
 
 ## Contents

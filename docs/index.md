@@ -2,7 +2,7 @@
 
 Welcome to the official documentation for the **Cognitive Discovery Platform (CDS)**.
 
-CDS is an open-source computational science platform designed for research, simulation, and discovery. It provides a lightweight, dependency-free environment for scientific exploration, featuring 16 modules covering everything from quantum simulation to educational NLP primitives and automated hypothesis generation.
+CDS is an open-source computational science platform designed for research, simulation, and discovery. It provides a lightweight, dependency-free environment for scientific exploration, featuring 17 modules covering everything from quantum simulation to symbolic math, knowledge organization, educational NLP primitives, and automated hypothesis generation.
 
 ## Key Features
 
@@ -10,7 +10,7 @@ CDS is an open-source computational science platform designed for research, simu
 - **Quantum Simulation:** Full state-vector simulation for single and multi-qubit circuits with entanglement and O(1) sampling.
 - **Advanced Mathematics:** O(N³) Partial Pivoting LU decomposition, vectorized optimizers, and adaptive ODE solvers (RK45).
 - **Hypothesis Engine:** Built-in tools for generating and statistically validating scientific hypotheses.
-- **High Reliability:** 883 tests with 99% code coverage.
+- **High Reliability:** 1164 tests with 99% code coverage.
 - **Interactive Tools:** Beautiful CLI and a Streamlit-based web dashboard.
 
 ## Overview of Modules
@@ -28,6 +28,8 @@ CDS is an open-source computational science platform designed for research, simu
 | `cds.data_analysis` | Structured data management and visualization |
 | `cds.scientific` | Physical constants & scientific formulas |
 | `cds.graph` | Graph algorithms (BFS, DFS, Dijkstra, Kruskal MST) |
+| `cds.modeling` | Symbolic algebra — expressions, differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
+| `cds.knowledge` | Knowledge organization — concept graph with typed relations, research notes notebook, ranked structured retrieval (JSON persistence) |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, random walks |
 | `cds.diffeq` | ODE solvers (Euler, RK4, midpoint) |
 | `cds.numerical_integration` | Deterministic quadrature (trapezoid, Simpson, Romberg) |
@@ -42,4 +44,4 @@ CDS is an open-source computational science platform designed for research, simu
 - [Benchmarks](benchmarks.md)
 
 ---
-*CDS v1.0.4 is stable and actively developed. Contributions are welcome!*
+*CDS v1.1.0 is stable and actively developed. Contributions are welcome!*

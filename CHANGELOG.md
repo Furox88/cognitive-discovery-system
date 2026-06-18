@@ -5,6 +5,49 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.0] - 2026-06-19
+
+### ✨ Minor — two new modules (symbolic math + knowledge organization)
+
+A backward-compatible feature release. Adds two new public subpackages
+(`cds.modeling`, `cds.knowledge`) without changing any existing API. The
+platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage.
+
+### <!-- 1 -->🎉 Added
+
+- **`cds.modeling`** — symbolic algebra for equation development:
+  - An expression tree (`+`, `-`, `*`, `/`, `**`, unary `-`, variables,
+    numbers) built by overloading Python operators on a `Var`/`Const` AST.
+  - Symbolic differentiation (`diff`), algebraic simplification
+    (`simplify`), substitution (`subs`), evaluation (`evalf`), and
+    LaTeX export (`to_latex`).
+  - A `MathModel` for equation systems with `solve_equation` (bisection
+    / Newton-style root finding) and `fit_parameters` (least-squares
+    parameter fitting to observations).
+  - Runnable demo (`examples/modeling_demo.md`) + tutorial.
+- **`cds.knowledge`** — a knowledge-organization layer in three pure-Python,
+  dependency-free files:
+  - `graph.py`: `Concept`, `Relation` (typed directed edges), and a
+    `KnowledgeGraph` with undirected traversal (shortest path via BFS,
+    transitive closure, cycle detection), neighbors, and JSON persistence.
+  - `notes.py`: `Note` + `Notebook` research notebook with tag and
+    concept lookups, and JSON persistence.
+  - `retrieval.py`: `search()` producing ranked `SearchResult` hits across
+    both concepts and notes (matched field + normalized score).
+  - Runnable demo (`examples/knowledge_demo.py`) + tutorial.
+- Both modules are wired into the package `__all__`, the CLI `modules`
+  listing, and the API reference (`docs/api.md`).
+
+### <!-- 4 -->🔧 Maintenance
+
+- Docs: resync README, `docs/index.md`, getting-started (EN + TR), and
+  CITATION.cff to v1.1.0 — module count 16→17, test count 883→1164,
+  coverage 99.48%→99.59%. Keep `pyproject.toml` + `src/cds/_version.py`
+  lockstepped at 1.1.0.
+- Chore(repo): ignore the `_demo_*.json` runtime artifacts the
+  knowledge demo writes next to its script, so a demo run no longer
+  dirties the working tree.
+
 ## [v1.0.4] - 2026-06-18
 
 ### 🔒 Security & Tooling — CI hardening
