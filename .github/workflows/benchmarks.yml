@@ -22,10 +22,31 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Resolve target branch
+        # On tag pushes the checkout lands in detached HEAD at the tag, so
+        # there is no branch to commit back to. Resolve the default branch
+        # up front: tag push -> github.event.base_ref (refs/heads/main),
+        # schedule/dispatch -> github.ref_name (main). The base_ref JSON
+        # field is passed through $TARGET_BRANCH_REF (env auto-mapping only
+        # covers a fixed set of fields, so set it explicitly below).
+        id: target
+        env:
+          TARGET_BRANCH_REF: ${{ github.event.base_ref }}
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "push" ] && [ -n "${TARGET_BRANCH_REF:-}" ]; then
+            # base_ref comes back as refs/heads/<name>; strip the prefix.
+            branch="${TARGET_BRANCH_REF#refs/heads/}"
+          else
+            branch="${GITHUB_REF_NAME}"
+          fi
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+          echo "Resolved target branch: ${branch}"
+
       - name: Checkout (full history for SHA)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ steps.target.outputs.branch }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -57,3 +78,4 @@ jobs:
           file_pattern: "docs/benchmarks.md benchmarks/results.json"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          branch: ${{ steps.target.outputs.branch }}
