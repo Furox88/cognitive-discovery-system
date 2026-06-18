@@ -40,6 +40,9 @@ Scope (Sprints 1-3 — v0.10.0b1):
 * :func:`~cds.nlp.autograd.matmul` — nested-Tensor matmul
 * :class:`~cds.nlp.optim.SGD` / :class:`Adam` — optimisers
 * :func:`~cds.nlp.training.cross_entropy` / :func:`train_step` — loss + loop
+* :func:`~cds.nlp.viz.render_attention_heatmap`   — ASCII attention heatmap
+* :func:`~cds.nlp.viz.render_embedding_projection` — ASCII 2-D PCA scatter
+* :func:`~cds.nlp.viz.render_training_curve`      — ASCII loss curve
 
 Out of scope for the educational track:
 - Mixed precision (FP16 / bfloat16) — meaningful only with the
@@ -107,6 +110,11 @@ from cds.nlp.layers import (
 )
 from cds.nlp.optim import SGD, Adam, parameters
 from cds.nlp.training import cross_entropy, train_step
+from cds.nlp.viz import (
+    render_attention_heatmap,
+    render_embedding_projection,
+    render_training_curve,
+)
 
 __all__ = [
     # bpe
@@ -155,4 +163,8 @@ __all__ = [
     # training
     "cross_entropy",
     "train_step",
+    # viz
+    "render_attention_heatmap",
+    "render_embedding_projection",
+    "render_training_curve",
 ]
