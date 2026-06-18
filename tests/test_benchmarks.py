@@ -52,14 +52,16 @@ class TestBenchmarkStructure:
         result = self._import_and_call(func, module)
         assert required_key in result
 
-    def test_run_all_generates_report(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """run_all writes a valid markdown report with all six sections."""
+    def test_run_all_generates_report(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """run_all writes a valid markdown report with all six sections.
+
+        Output is redirected to ``tmp_path`` so the committed
+        ``benchmarks/results.json`` and ``docs/benchmarks.md`` are never
+        clobbered by a test run.
+        """
         mod = import_module("benchmarks.run_benchmarks")
         monkeypatch.setattr(mod, "_bench", lambda _func, number=1, repeat=1: 0.0)
-        monkeypatch.chdir(tmp_path)
-        mod.run_all()
+        mod.run_all(output_dir=tmp_path)
         report = (tmp_path / "docs" / "benchmarks.md").read_text(encoding="utf-8")
         assert "# CDS Performance & Intelligence Report" in report
         assert "Signal Processing" in report
@@ -67,3 +69,5 @@ class TestBenchmarkStructure:
         assert "Algorithmic Intelligence" in report
         assert "Quantum Intelligence" in report
         assert "Convergence" in report
+        # And the JSON artifact lands in tmp_path too, not in benchmarks/.
+        assert (tmp_path / "results.json").exists()

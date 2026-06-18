@@ -87,9 +87,18 @@ def _build_json_record(
     }
 
 
-def _write_json(record: dict[str, object]) -> Path:
-    """Write the JSON artifact next to the script and return its path."""
-    out = Path(__file__).resolve().parent / "results.json"
+def _write_json(record: dict[str, object], output_dir: Path | None = None) -> Path:
+    """Write the JSON artifact and return its path.
+
+    Args:
+        record: the assembled metric tree from :func:`_build_json_record`.
+        output_dir: where to write ``results.json``. Defaults to the directory
+            containing this script (``benchmarks/``), preserving the CLI
+            behaviour. Tests pass a ``tmp_path`` so they don't clobber the
+            committed artifact.
+    """
+    out_dir = output_dir if output_dir is not None else Path(__file__).resolve().parent
+    out = out_dir / "results.json"
     with open(out, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=2, sort_keys=False)
         f.write("\n")
@@ -281,7 +290,16 @@ def _bar(value: float, max_value: float, width: int = 40) -> str:
     return "#" * n
 
 
-def run_all() -> None:
+def run_all(output_dir: Path | None = None) -> None:
+    """Run every benchmark and emit the markdown + JSON artifacts.
+
+    Args:
+        output_dir: root directory under which ``docs/benchmarks.md`` and
+            ``results.json`` are written. Defaults to the current working
+            directory, preserving CLI behaviour. Tests pass a ``tmp_path`` so
+            they don't clobber the committed artifacts.
+    """
+    root = Path.cwd() if output_dir is None else output_dir
     print("Running Benchmarks & Intelligence Tests...")
     results: dict[str, OrderedDict[str, str]] = {}
     results["Linear Algebra (Approaching C-Speed)"] = bench_linalg()
@@ -334,14 +352,14 @@ def run_all() -> None:
     )
     report += "```\n"
 
-    docs_dir = Path("docs")
-    docs_dir.mkdir(exist_ok=True)
+    docs_dir = root / "docs"
+    docs_dir.mkdir(parents=True, exist_ok=True)
     with open(docs_dir / "benchmarks.md", "w", encoding="utf-8") as f:
         f.write(report)
 
     # Machine-readable artifact for regression tracking (spec §E).
     record = _build_json_record(results)
-    json_path = _write_json(record)
+    json_path = _write_json(record, output_dir=root)
 
     print(f"Benchmarks completed. Report saved to {docs_dir / 'benchmarks.md'}")
     print(f"JSON artifact saved to {json_path}")

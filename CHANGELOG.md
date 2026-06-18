@@ -5,6 +5,36 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.2] - 2026-06-18
+
+### 🧹 Hygiene — test isolation for benchmark artifacts
+
+A follow-up patch to v1.0.1. No behavior changes to the published package;
+fully backward compatible. Resolves a repo-hygiene issue where running the
+benchmark test suite silently clobbered the committed
+`benchmarks/results.json` artifact (and `docs/benchmarks.md`) on every
+`pytest` invocation.
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- Fix(tests): `test_run_all_generates_report` no longer writes into the
+  working tree. `run_all()` and `_write_json()` now accept an optional
+  `output_dir` parameter; the test passes its `tmp_path`, so the committed
+  `benchmarks/results.json` and `docs/benchmarks.md` are never modified by a
+  test run. Verified: object hash of `results.json` is byte-identical before
+  and after `pytest`.
+
+### <!-- 6 -->🧪 Testing
+
+- Test(benchmarks): added a regression assertion that `results.json` lands
+  in `tmp_path` (not `benchmarks/`) after `run_all(output_dir=...)`.
+
+### <!-- 0 -->🚀 Features
+
+- Feat(benchmarks): `run_all(output_dir=None)` and
+  `_write_json(record, output_dir=None)` — new optional parameter for
+  redirecting artifact output. Defaults preserve existing CLI behaviour.
+
 ## [v1.0.1] - 2026-06-18
 
 ### 🔧 Maintenance — typed, documented, hardened
