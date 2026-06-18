@@ -5,6 +5,29 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.3] - 2026-06-18
+
+### 🧹 Hygiene — test-suite type correctness
+
+A follow-up patch to v1.0.2. No behavior changes to the published package;
+fully backward compatible. Brings `tests/` to the same mypy baseline as
+`src/` so the full type-check (`mypy src/ tests/`) is green, and resolves
+post-release lint/test/publish findings caught after v1.0.2 shipped.
+
+### <!-- 6 -->🧪 Testing
+
+- Test(types): clear all remaining mypy errors across `tests/` (39 files,
+  0 errors). Fixes list-variance issues (`Parameter <: Tensor`), redundant
+  `type: ignore` comments, and intentional error-path `**` operands.
+- Test(benchmarks): isolate benchmark test artifacts — `run_all()` /
+  `_write_json()` accept an `output_dir` parameter so `pytest` no longer
+  clobbers the committed `benchmarks/results.json`.
+
+### <!-- 4 -->🔧 Maintenance
+
+- Chore(ci): resolve post-1.0.2 lint/test/publish findings (commit 5e429ec).
+- Docs: keep `pyproject.toml` + `src/cds/_version.py` lockstepped at 1.0.3.
+
 ## [v1.0.2] - 2026-06-18
 
 ### 🧹 Hygiene — test isolation for benchmark artifacts
