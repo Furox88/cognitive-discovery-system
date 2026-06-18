@@ -94,6 +94,7 @@ If CDS is useful in your research or publications, please cite it using the info
 | `cds.data_analysis` | **NEW:** Mini-Pandas `DataSet` for filtering/grouping, CSV loading, ASCII visualization |
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
+| `cds.modeling` | **NEW:** Symbolic algebra — expressions, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
 | `cds.numerical_integration` | **NEW:** Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
@@ -320,6 +321,22 @@ edges, total = kruskal_mst(g)
 print(f"MST weight: {total}")  # 6.0
 ```
 
+### Mathematical Modeling
+```python
+from cds.modeling import Variable, Sin, Exp, solve_equation
+
+x = Variable("x")
+expr = Sin(x) * Exp(x)        # sin(x) * e^x
+
+# Symbolic derivative (chain + product rules)
+print(expr.diff("x").to_str())
+
+# Solve x^2 - 2 = 0  =>  x = sqrt(2)
+root = solve_equation(Variable("x") ** 2 - 2, variable="x", x0=1.0)
+print(root.x)                 # ~1.4142
+print(root.converged)         # True
+```
+
 ### Monte Carlo Simulation
 ```python
 import math
@@ -381,6 +398,7 @@ src/cds/
 ├── data_analysis/  # Mini-Pandas DataSet, CSV loading, ASCII viz
 ├── scientific/     # Physical constants & formulas
 ├── graph/          # Graph algorithms (Dijkstra, BFS, DFS, Kruskal MST)
+├── modeling/       # Symbolic math (expressions, MathModel, solvers)
 ├── montecarlo/     # Monte Carlo methods (π, integration, random walks)
 ├── diffeq/         # ODE solvers (Euler, RK4, midpoint)
 ├── numerical_integration/  # Deterministic quadrature (trapezoid, Simpson, Romberg, Gauss-Legendre)

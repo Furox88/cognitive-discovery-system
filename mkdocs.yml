@@ -65,6 +65,7 @@ nav:
       - Monte Carlo: tutorials/montecarlo_demo.md
       - Probability: tutorials/probability_demo.md
       - Graph Algorithms: tutorials/graph_demo.md
+      - Mathematical Modeling: tutorials/modeling_demo.md
       - Data Analysis: tutorials/data_analysis_demo.md
       - Hypothesis Engine: tutorials/hypothesis_demo.md
       - Quantum Lab: tutorials/quantum_demo.md

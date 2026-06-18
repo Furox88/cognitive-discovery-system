@@ -86,6 +86,12 @@ BFS, DFS, Dijkstra shortest paths, Kruskal MST, topological sort, cycle detectio
 
 ::: cds.graph
 
+## Mathematical Modeling
+
+Symbolic algebra for equation development: an expression tree (`+`, `-`, `*`, `/`, `**`, `sin`, `cos`, `exp`, `log`, `sqrt`) with symbolic differentiation, simplification, LaTeX export, named `MathModel` systems of equations, and numeric solvers (root finding and parameter fitting) built on `cds.optimization`.
+
+::: cds.modeling
+
 ## Data Analysis
 
 CSV loading, normalisation, smoothing, and ASCII visualisation.
