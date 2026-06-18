@@ -391,4 +391,4 @@ class TestPow:
         a = Tensor(data=2.0, requires_grad=True)
         b = Tensor(data=3.0, requires_grad=True)
         with pytest.raises(TypeError, match="constant"):
-            a**b
+            a**b  # type: ignore[operator]

@@ -117,7 +117,7 @@ class TestMiniGPT:
         model = MiniGPT(vocab_size=vocab_size, d_model=16, n_heads=2, d_ff=32, max_len=64)
         # Use a 32-char window so the input fits well within max_len.
         ids = encode(TEXT[:33])
-        opt = Adam(params=model.parameters(), lr=0.01)
+        opt = Adam(params=list(model.parameters()), lr=0.01)
         losses: list[float] = []
         for _ in range(15):
             loss = train_step(model.forward, ids[:-1], ids[-1], opt)

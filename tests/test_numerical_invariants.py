@@ -178,7 +178,7 @@ class TestSignalInvariants:
         for _ in range(N):
             n = 1 << rng.randint(1, 6)  # 2..64, power of two
             x = [rng.uniform(-2, 2) for _ in range(n)]
-            recon = ifft_func(fft_func(x))
+            recon = ifft_func(fft_func(list(x)))
             # Round-trip recovers the input (within float noise).
             assert all(
                 math.isclose(r.real, xi, rel_tol=REL, abs_tol=ABS) for r, xi in zip(recon, x)
@@ -190,7 +190,7 @@ class TestSignalInvariants:
         for _ in range(N):
             n = rng.randint(2, 13)  # non-power-of-two lengths too
             x = [rng.uniform(-1, 1) for _ in range(n)]
-            recon = idft(dft(x))
+            recon = idft(dft(list(x)))
             assert all(
                 math.isclose(r.real, xi, rel_tol=1e-7, abs_tol=1e-7) for r, xi in zip(recon, x)
             )
@@ -201,7 +201,7 @@ class TestSignalInvariants:
         for _ in range(N):
             n = 1 << rng.randint(2, 6)
             x = [rng.uniform(-1, 1) for _ in range(n)]
-            spec = fft_radix2(x)
+            spec = fft_radix2(list(x))
             time_energy = sum(abs(xi) ** 2 for xi in x)
             freq_energy = sum(abs(xk) ** 2 for xk in spec) / n
             assert math.isclose(time_energy, freq_energy, rel_tol=1e-6)
@@ -212,7 +212,7 @@ class TestSignalInvariants:
             rows = 1 << rng.randint(1, 4)
             cols = 1 << rng.randint(1, 4)
             mat = [[rng.uniform(-1, 1) for _ in range(cols)] for _ in range(rows)]
-            recon = ifft2(fft2_func(mat))
+            recon = ifft2(fft2_func([[complex(v) for v in row] for row in mat]))
             for i in range(rows):
                 for j in range(cols):
                     assert math.isclose(recon[i][j].real, mat[i][j], rel_tol=1e-6, abs_tol=1e-7)
@@ -503,7 +503,7 @@ class TestProbabilityInvariants:
 
     @staticmethod
     def _discrete_pmf(rng: random.Random) -> tuple[list[float], list[float]]:
-        xs = list(range(rng.randint(2, 8)))
+        xs = [float(i) for i in range(rng.randint(2, 8))]
         weights = [rng.uniform(0.1, 5.0) for _ in xs]
         total = sum(weights)
         pmf = [w / total for w in weights]

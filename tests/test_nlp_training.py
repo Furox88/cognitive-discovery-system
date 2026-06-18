@@ -52,7 +52,7 @@ class TestCrossEntropy:
         (push it up); gradient on others should be positive (push them
         down)."""
         # Three logits, all equal → uniform softmax = [1/3, 1/3, 1/3].
-        logits = [Parameter(0.0), Parameter(0.0), Parameter(0.0)]
+        logits: list[Tensor] = [Parameter(0.0), Parameter(0.0), Parameter(0.0)]
         loss = cross_entropy(logits, target=1)
         loss.backward()
         # Gradient on target logit: p_target - 1 = 1/3 - 1 = -2/3.

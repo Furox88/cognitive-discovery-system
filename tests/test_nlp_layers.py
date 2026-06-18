@@ -110,27 +110,28 @@ class TestLayerNorm:
 
 class TestFeedForward:
     @staticmethod
-    def _build(d_model: int = 4, d_ff: int = 8) -> dict[str, object]:
+    def _build(
+        d_model: int = 4, d_ff: int = 8
+    ) -> tuple[list[list[float]], list[float], list[list[float]], list[float]]:
         """Tiny FFN: weights=1, biases=0 → pure GeLU + linear projection."""
-        return {
-            "w1": [[1.0] * d_ff for _ in range(d_model)],
-            "b1": [0.0] * d_ff,
-            "w2": [[1.0 / d_ff] * d_model for _ in range(d_ff)],
-            "b2": [0.0] * d_model,
-        }
+        w1: list[list[float]] = [[1.0] * d_ff for _ in range(d_model)]
+        b1: list[float] = [0.0] * d_ff
+        w2: list[list[float]] = [[1.0 / d_ff] * d_model for _ in range(d_ff)]
+        b2: list[float] = [0.0] * d_model
+        return w1, b1, w2, b2
 
     def test_shape(self) -> None:
         x = [[1.0, 2.0, 3.0, 4.0]]
-        w = self._build()
-        out = feed_forward(x, w["w1"], w["b1"], w["w2"], w["b2"])
+        w1, b1, w2, b2 = self._build()
+        out = feed_forward(x, w1, b1, w2, b2)
         assert len(out) == 1
         assert len(out[0]) == 4
 
     def test_zero_input_gelu_zero(self) -> None:
         """All-zero input → GeLU(0)=0 everywhere → final output is 0."""
         x = [[0.0, 0.0, 0.0, 0.0]]
-        w = self._build()
-        out = feed_forward(x, w["w1"], w["b1"], w["w2"], w["b2"])
+        w1, b1, w2, b2 = self._build()
+        out = feed_forward(x, w1, b1, w2, b2)
         for v in out[0]:
             assert abs(v) < 1e-12
 

@@ -221,7 +221,7 @@ class TestLegendreEdgeCases:
     def _legendre(n: int, x: float) -> tuple[float, float]:
         from cds.numerical_integration.quadrature import _legendre
 
-        return _legendre(n, x)  # type: ignore[no-any-return]
+        return _legendre(n, x)
 
     def test_legendre_n0(self) -> None:
         # P_0(x) = 1, P_0'(x) = 0

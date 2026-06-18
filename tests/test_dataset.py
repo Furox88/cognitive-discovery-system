@@ -1,10 +1,10 @@
 """Tests for the DataSet (Mini-Pandas) implementation."""
 
-from cds.data_analysis import DataSet
+from cds.data_analysis.dataset import DataSet, Row
 
 
 def test_dataset_basic() -> None:
-    data = [
+    data: list[Row] = [
         {"name": "Alice", "age": 25, "score": 88},
         {"name": "Bob", "age": 30, "score": 92},
         {"name": "Charlie", "age": 25, "score": 70},
@@ -18,13 +18,14 @@ def test_dataset_basic() -> None:
 
 
 def test_dataset_filter() -> None:
-    data = [
+    data: list[Row] = [
         {"name": "Alice", "age": 25},
         {"name": "Bob", "age": 30},
         {"name": "Charlie", "age": 22},
     ]
     ds = DataSet(data)
-    filtered = ds.filter(lambda x: x["age"] >= 25)
+    # ``age`` is Scalar; narrow to a number before comparing.
+    filtered = ds.filter(lambda x: isinstance(x["age"], (int, float)) and x["age"] >= 25)
 
     assert len(filtered) == 2
     assert "Bob" in filtered.column("name")
@@ -32,7 +33,7 @@ def test_dataset_filter() -> None:
 
 
 def test_dataset_group_by() -> None:
-    data = [
+    data: list[Row] = [
         {"city": "NYC", "temp": 20},
         {"city": "NYC", "temp": 22},
         {"city": "LA", "temp": 30},
@@ -51,7 +52,7 @@ def test_dataset_group_by() -> None:
 
 
 def test_dataset_select() -> None:
-    data = [{"a": 1, "b": 2, "c": 3}]
+    data: list[Row] = [{"a": 1, "b": 2, "c": 3}]
     ds = DataSet(data)
     selected = ds.select("a", "c")
 
@@ -75,7 +76,7 @@ def test_dataset_empty_repr() -> None:
 
 
 def test_dataset_to_list() -> None:
-    data = [{"a": 1}, {"a": 2}]
+    data: list[Row] = [{"a": 1}, {"a": 2}]
     ds = DataSet(data)
     lst = ds.to_list()
     assert lst == data
@@ -83,7 +84,7 @@ def test_dataset_to_list() -> None:
 
 
 def test_dataset_group_by_empty() -> None:
-    data = [{"cat": "A", "val": "not_a_number"}]
+    data: list[Row] = [{"cat": "A", "val": "not_a_number"}]
     ds = DataSet(data)
     grouped = ds.group_by("cat")
     # Mean of non-numeric should return 0.0 per our implementation
