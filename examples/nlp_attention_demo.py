@@ -43,11 +43,15 @@ def ascii_heatmap(matrix: list[list[float]], width: int = 40) -> str:
         if len(row) > width:
             indices = [int(i * (len(row) - 1) / (width - 1)) for i in range(width)]
             row = [row[i] for i in indices]
-        out_lines.append("".join(blocks[min(len(blocks) - 1, int(v * (len(blocks) - 1)))] for v in row))
+        out_lines.append(
+            "".join(blocks[min(len(blocks) - 1, int(v * (len(blocks) - 1)))] for v in row)
+        )
     return "\n".join(out_lines)
 
 
-def _build_block(d_model: int = 16, n_heads: int = 2) -> tuple[
+def _build_block(
+    d_model: int = 16, n_heads: int = 2
+) -> tuple[
     list[list[list[float]]],  # w_q
     list[list[list[float]]],  # w_k
     list[list[list[float]]],  # w_v
@@ -109,9 +113,15 @@ def main() -> None:
     #    `get_attention_weights` API — keeps the public surface tiny.)
     from cds.nlp.attention import scaled_dot_product_attention, split_heads
 
-    qh = split_heads(__import__("cds.nlp.attention", fromlist=["matmul"]).matmul(combined, w_q), n_heads)
-    kh = split_heads(__import__("cds.nlp.attention", fromlist=["matmul"]).matmul(combined, w_k), n_heads)
-    vh = split_heads(__import__("cds.nlp.attention", fromlist=["matmul"]).matmul(combined, w_v), n_heads)
+    qh = split_heads(
+        __import__("cds.nlp.attention", fromlist=["matmul"]).matmul(combined, w_q), n_heads
+    )
+    kh = split_heads(
+        __import__("cds.nlp.attention", fromlist=["matmul"]).matmul(combined, w_k), n_heads
+    )
+    vh = split_heads(
+        __import__("cds.nlp.attention", fromlist=["matmul"]).matmul(combined, w_v), n_heads
+    )
 
     print("\nattention weights, head 0 (rows = query position):")
     d_head = d_model // n_heads
@@ -121,7 +131,9 @@ def main() -> None:
     d_k = d_head
     scale = 1.0 / math.sqrt(d_k)
     for i, q_row in enumerate(head0_q):
-        scores = [sum(q_row[j] * head0_k[t][j] for j in range(d_k)) * scale for t in range(len(head0_k))]
+        scores = [
+            sum(q_row[j] * head0_k[t][j] for j in range(d_k)) * scale for t in range(len(head0_k))
+        ]
         for j in range(i + 1, len(scores)):
             scores[j] = float("-inf")
         weights_0.append(softmax(scores))
@@ -138,14 +150,11 @@ def main() -> None:
     # Deep-copy then perturb vh[1] at positions > 0 only — position 0's
     # output must stay identical because the causal mask limits its
     # attention to v at position 0 across all heads.
-    vh_alt: list[list[list[float]]] = [
-        [list(r) for r in head] for head in vh
-    ]
+    vh_alt: list[list[list[float]]] = [[list(r) for r in head] for head in vh]
     for i in range(1, len(vh_alt[1])):
         vh_alt[1][i] = [rng.uniform(-1.0, 1.0) for _ in range(d_head)]
     alt_head_outputs = [
-        scaled_dot_product_attention(qh[h], kh[h], vh_alt[h], mask)
-        for h in range(n_heads)
+        scaled_dot_product_attention(qh[h], kh[h], vh_alt[h], mask) for h in range(n_heads)
     ]
     from cds.nlp.attention import merge_heads
 

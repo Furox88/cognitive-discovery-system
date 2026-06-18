@@ -60,7 +60,7 @@ def main() -> None:
     tokens = table.forward(ids)
     combined = add_positional(tokens, pe)
     print(f"\nembedding shape: {len(combined)} x {len(combined[0])}")
-    print(f"first token position vector (first 4 dims):")
+    print("first token position vector (first 4 dims):")
     print(f"  token:  {tokens[0][:4]}")
     print(f"  pos:    {pe.forward(1)[0][:4]}")
     print(f"  sum:    {combined[0][:4]}")
