@@ -1,9 +1,24 @@
 name: Generate CHANGELOG
 
+# Manual-only trigger. Previously fired on every `v*` tag push, but the
+# `git cliff --output CHANGELOG.md` invocation rewrites the ENTIRE file from
+# git history and discards the hand-curated narrative entries (see PR #24,
+# which was closed because it regressed v1.0.4/v1.0.3/v1.0.2 sections back to
+# commit-hash-only stubs). cliff.toml groups by commit-message prefix while the
+# repo uses hand-written descriptive sections — the two styles conflict.
+#
+# To regenerate locally for review only (without overwriting the curated file):
+#   git cliff --tag vX.Y.Z            # preview to stdout
+#   git cliff --latest                # preview latest tag's section
+# Run this workflow manually only if you intend to review the diff carefully
+# and reconcile the generated output with the hand-written sections.
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to generate the changelog for (e.g. v1.0.4)"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -24,7 +39,7 @@ jobs:
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --verbose --tag ${{ github.ref_name }} --output CHANGELOG.md
+          args: --verbose --tag ${{ inputs.tag }} --output CHANGELOG.md
 
       - name: Check for changes
         id: check
@@ -40,12 +55,18 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs(changelog): regenerate for ${{ github.ref_name }}"
-          title: "docs(changelog): regenerate for ${{ github.ref_name }}"
+          commit-message: "docs(changelog): regenerate for ${{ inputs.tag }}"
+          title: "docs(changelog): regenerate for ${{ inputs.tag }} (MANUAL — review carefully)"
           body: |
             Auto-generated CHANGELOG update from git history.
-            Triggered by: tag push `${{ github.ref_name }}`
-          branch: chore/changelog-${{ github.ref_name }}
+            Triggered by MANUAL workflow_dispatch for tag `${{ inputs.tag }}`.
+
+            ⚠️  REVIEW THE DIFF CAREFULLY before merging. git-cliff rewrites the
+            entire CHANGELOG.md from commit history; hand-curated narrative
+            entries (like the v1.0.4 "Security & Tooling" block) may be dropped
+            and need to be reconciled manually. See PR #24 for the regression
+            this caused under the previous tag-push trigger.
+          branch: chore/changelog-${{ inputs.tag }}
           base: main
           delete-branch: true
           add-paths: CHANGELOG.md
