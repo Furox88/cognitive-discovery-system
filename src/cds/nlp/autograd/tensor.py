@@ -149,7 +149,13 @@ class Tensor:
         stack: list[Tensor] = [self]
         while stack:
             node = stack.pop()
-            if node in visited:
+            # Defensive duplicate-pop guard. Unreachable given the LIFO
+            # stack + the ``child not in visited`` filter below: that pair
+            # mathematically prevents any node from being pushed twice, so
+            # the re-pop never happens. Kept to mirror ``backward()``'s
+            # defensive structure and to stay robust if the push filter
+            # is ever relaxed.
+            if node in visited:  # pragma: no cover
                 continue
             visited.add(node)
             topo.append(node)

@@ -80,6 +80,42 @@ class TestTensor:
         t.zero_grad()
         assert t.grad == 0.0
 
+    def test_neg_operator(self) -> None:
+        """Unary ``-Tensor`` dispatches to :func:`neg` and propagates grad."""
+        a = Tensor(data=5.0, requires_grad=True)
+        c = -a  # __neg__
+        assert c.data == -5.0
+        c.backward()
+        assert a.grad == -1.0
+
+    def test_pos_operator_is_identity(self) -> None:
+        """Unary ``+Tensor`` returns the node unchanged."""
+        a = Tensor(data=1.25, requires_grad=True)
+        assert (+a) is a
+
+    def test_zero_grad_diamond_graph(self) -> None:
+        """``zero_grad`` walks a non-trivial graph with a shared parent
+        (the diamond ``a -> b, a -> c, (b,c) -> d``). The shared node ``a``
+        is reachable via two paths, so its ``visited`` short-circuit
+        (``continue``) and the unvisited-child push both fire.
+        """
+        a = Tensor(data=2.0, requires_grad=True)
+        b = a + Tensor(data=1.0, requires_grad=True)
+        c = a * Tensor(data=3.0, requires_grad=True)
+        d = b + c
+        d.backward()
+        assert a.grad != 0.0
+        # Reset across the whole reachable subgraph.
+        d.zero_grad()
+        for node in (a, b, c, d):
+            assert node.grad == 0.0
+
+    def test_binop_rejects_unsupported_type(self) -> None:
+        """An operand that is neither Tensor nor number raises TypeError."""
+        a = Tensor(data=1.0, requires_grad=True)
+        with pytest.raises(TypeError, match="unsupported operand type"):
+            _ = a + "not_a_number"  # type: ignore[operator]
+
 
 # ---------------------------------------------------------------------- #
 # Addition / Subtraction

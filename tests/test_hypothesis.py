@@ -70,6 +70,30 @@ def test_hypothesis_to_markdown() -> None:
     assert "p1" in md
 
 
+def test_hypothesis_to_markdown_minimal() -> None:
+    """to_markdown() with no rationale / assumptions / predictions / tags.
+
+    Exercises every ``if <field>:`` False-branch in the renderer so the
+    minimal hypothesis (only the required fields) renders without the
+    optional sections.
+    """
+    h = Hypothesis(
+        id="minimal-1",
+        statement="Bare statement",
+        domain=Domain.MATHEMATICS,
+        research_question="bare question",
+        confidence=0.5,
+    )
+    md = h.to_markdown()
+    assert "Bare statement" in md
+    assert "mathematics" in md
+    # None of the optional sections should appear
+    assert "## Rationale" not in md
+    assert "## Assumptions" not in md
+    assert "## Predictions" not in md
+    assert "**Tags**" not in md
+
+
 def test_hypothesis_model_fields() -> None:
     h = Hypothesis(
         id="h-1",
