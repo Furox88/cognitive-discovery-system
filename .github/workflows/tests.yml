@@ -71,20 +71,17 @@ jobs:
       run: mkdocs build --strict
 
   audit:
-    # Security scan of the resolved dependency environment with pip-audit.
-    # Runs once on the reference cell (Linux + Python 3.12), installing the
-    # project the same way the test job does, then auditing the installed
-    # environment against the PyPI Advisory database.
+    # Security scan of the committed lock files with pip-audit. Audits both
+    # the runtime lock (requirements.lock → typer/pydantic/rich) and the
+    # dev/docs/test lock (requirements-dev.lock → full toolchain) directly
+    # against the PyPI Advisory database, so no install step is needed and
+    # the result is environment-independent.
     #
-    # Currently NON-BLOCKING (continue-on-error): the dev/docs/test
-    # toolchain (jupyter, mkdocs, build, twine, pillow, lxml, ...) carries
-    # transitive deps with open CVEs that are unrelated to the published
-    # runtime (typer/pydantic/rich, which audit clean). Surfacing them in
-    # every CI run gives visibility without red-flashing the matrix on a
-    # fresh advisory. Flip to blocking once requirements.lock is regenerated.
+    # BLOCKING: as of v1.0.4 both lock files regenerate clean (0 CVEs).
+    # A fresh advisory will now fail CI until `pip-compile --upgrade` is
+    # run — that is the intended signal to rotate the pins.
     name: pip-audit on Linux with Python 3.12
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v4
 
@@ -93,14 +90,16 @@ jobs:
       with:
         python-version: "3.12"
 
-    - name: Install dependencies
+    - name: Install pip-audit
       run: |
         python -m pip install --upgrade pip
-        pip install ".[test,dev,docs]"
         pip install pip-audit
 
-    - name: Audit installed environment for known vulnerabilities
-      run: pip-audit --strict
+    - name: Audit runtime lock (requirements.lock)
+      run: pip-audit -r requirements.lock --strict
+
+    - name: Audit dev/docs/test lock (requirements-dev.lock)
+      run: pip-audit -r requirements-dev.lock --strict
 
   pre-commit:
     name: pre-commit on Linux with Python 3.12
