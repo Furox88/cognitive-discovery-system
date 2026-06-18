@@ -17,10 +17,14 @@ from __future__ import annotations
 
 import pytest
 
-from cds.nlp import BPEMerge, BPETokenizer, Tensor
+from cds.nlp import BPEMerge, BPETokenizer
+from cds.nlp.attention import merge_heads
 from cds.nlp.autograd import Tensor as AGTensor
 from cds.nlp.autograd import log as ag_log
-
+from cds.nlp.bpe import train_bpe
+from cds.nlp.layers import _add
+from cds.nlp.model import MiniGPT, sample
+from cds.nlp.optim import Adam
 
 # ---------------------------------------------------------------------------
 # 1. tensor.py — reflected operators + __pos__ + cycle skip + TypeError
@@ -102,9 +106,6 @@ class TestLogZeroGradient:
 # ---------------------------------------------------------------------------
 
 
-from cds.nlp.optim import Adam
-
-
 class TestAdamValidation:
     """Cover Adam.__post_init__ error branches."""
 
@@ -120,9 +121,6 @@ class TestAdamValidation:
 # ---------------------------------------------------------------------------
 # 4. layers.py — _add internal helper (lines 175, 179)
 # ---------------------------------------------------------------------------
-
-
-from cds.nlp.layers import _add
 
 
 class TestLayersAddHelper:
@@ -141,9 +139,6 @@ class TestLayersAddHelper:
 # ---------------------------------------------------------------------------
 # 5. bpe.py — decode non-EOS branch (line 301) + train progress print (431)
 # ---------------------------------------------------------------------------
-
-
-from cds.nlp.bpe import train_bpe
 
 
 class TestBPEDecodeProgress:
@@ -187,9 +182,6 @@ class TestBPEDecodeProgress:
 # ---------------------------------------------------------------------------
 
 
-from cds.nlp.model import MiniGPT, sample
-
-
 class TestMiniGPTSampling:
     """Cover temperature != 1.0 in sample() and the module-level sample()."""
 
@@ -223,9 +215,6 @@ class TestMiniGPTAttentionMaskBranch:
 # ---------------------------------------------------------------------------
 # 7. attention.py — merge_heads empty-rows branch (line 214)
 # ---------------------------------------------------------------------------
-
-
-from cds.nlp.attention import merge_heads
 
 
 class TestMergeHeadsEmptyRows:

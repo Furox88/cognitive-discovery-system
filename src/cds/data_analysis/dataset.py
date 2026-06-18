@@ -104,9 +104,7 @@ class DataGroup:
         result: dict[Scalar, float] = {}
         for key, rows in self.groups.items():
             values: list[float] = [
-                float(v)
-                for row in rows
-                if isinstance((v := row.get(numeric_col)), (int, float))
+                float(v) for row in rows if isinstance((v := row.get(numeric_col)), (int, float))
             ]
             if values:
                 result[key] = sum(values) / len(values)

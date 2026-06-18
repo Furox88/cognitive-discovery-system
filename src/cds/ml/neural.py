@@ -150,7 +150,11 @@ class MLP:
                 layer.grad_biases[i] = 0.0
 
     def train(
-        self, X: list[list[float]], y: list[list[float]], epochs: int = 100, lr: float = GD_DEFAULT_LR
+        self,
+        X: list[list[float]],
+        y: list[list[float]],
+        epochs: int = 100,
+        lr: float = GD_DEFAULT_LR,
     ) -> dict[str, float | bool]:
         """Train the network using the Adam optimizer with backpropagation and state persistence."""
 
