@@ -3,6 +3,12 @@ site_url: https://Furox88.github.io/cognitive-discovery-system/
 repo_url: https://github.com/Furox88/cognitive-discovery-system
 repo_name: Furox88/cognitive-discovery-system
 
+# Internal planning artifacts (specs, plans) live under docs/superpowers/
+# but are not part of the published site. Excluding them keeps `mkdocs build
+# --strict` clean: orphan-page warnings are treated as errors under --strict.
+exclude_docs: |
+  superpowers/**
+
 theme:
   name: material
   palette:
