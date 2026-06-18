@@ -486,8 +486,10 @@ class TestGraphRendering:
         kg.link_concepts("a", "b", "is-a")
         d = kg.to_dict()
         assert d["name"] == "g"
-        assert [c["name"] for c in d["concepts"]] == ["a", "b"]
-        assert d["relations"][0]["kind"] == "is-a"
+        concepts = cast(list[dict[str, object]], d["concepts"])
+        assert [c["name"] for c in concepts] == ["a", "b"]
+        relations = cast(list[dict[str, object]], d["relations"])
+        assert relations[0]["kind"] == "is-a"
 
     def test_from_dict_roundtrip(self) -> None:
         kg = KnowledgeGraph(name="g")
