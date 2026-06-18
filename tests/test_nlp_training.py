@@ -137,7 +137,7 @@ class TestAdam:
         p = Parameter(1.0)
 
         def loss_fn() -> Tensor:
-            return p * p  # type: ignore[return-value]
+            return p * p
 
         opt = Adam(params=[p], lr=0.1)
         for _ in range(50):

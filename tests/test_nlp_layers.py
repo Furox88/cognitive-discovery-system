@@ -122,7 +122,7 @@ class TestFeedForward:
     def test_shape(self) -> None:
         x = [[1.0, 2.0, 3.0, 4.0]]
         w = self._build()
-        out = feed_forward(x, w["w1"], w["b1"], w["w2"], w["b2"])  # type: ignore[arg-type]
+        out = feed_forward(x, w["w1"], w["b1"], w["w2"], w["b2"])
         assert len(out) == 1
         assert len(out[0]) == 4
 
@@ -130,7 +130,7 @@ class TestFeedForward:
         """All-zero input → GeLU(0)=0 everywhere → final output is 0."""
         x = [[0.0, 0.0, 0.0, 0.0]]
         w = self._build()
-        out = feed_forward(x, w["w1"], w["b1"], w["w2"], w["b2"])  # type: ignore[arg-type]
+        out = feed_forward(x, w["w1"], w["b1"], w["w2"], w["b2"])
         for v in out[0]:
             assert abs(v) < 1e-12
 
