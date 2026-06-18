@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Local PyPI publish script for cognitive-discovery-system.
+"""Local PyPI publish script for cognitive-discovery-platform.
 
 Usage:
     python scripts/publish.py                   # use latest git tag as version
-    python scripts/publish.py --tag v0.9.0b1    # use a specific tag
+    python scripts/publish.py --tag v1.0.2      # use a specific tag
     python scripts/publish.py --dry-run         # build but do not upload
     python scripts/publish.py --skip-tests      # skip the pytest step
     python scripts/publish.py --skip-docs       # skip mkdocs gh-deploy
 
-Versioning: handled by `hatch-vcs` reading the latest `v*` git tag. The
-script reads the version from the built wheel filename (e.g.
-``cognitive_discovery_platform-0.9.0b1-py3-none-any.whl``) and uses it for
-verification, tag creation, and release notes.
+Versioning: static. ``version`` lives in ``pyproject.toml`` and is mirrored
+in ``src/cds/_version.py`` (kept in lockstep — bump both before tagging).
+The script reads the version from the built wheel filename (e.g.
+``cognitive_discovery_platform-1.0.2-py3-none-any.whl``) and uses it for
+verification, tag creation, and release notes. (Previously we tried
+hatch-vcs, but 0.5.0 silently ignored the version-scheme override; static
+versioning is what shipped — see ``pyproject.toml`` release checklist.)
 
 Why local-only: this project does not auto-publish from CI. Tag pushes stay
 clean. The wheel + sdist are pushed manually after a green local test pass.
@@ -60,8 +63,8 @@ def latest_tag() -> str | None:
 def version_from_wheel(path: Path) -> str | None:
     """Extract the version from a built wheel filename.
 
-    ``cds-0.9.0b1-py3-none-any.whl`` -> ``0.9.0b1``
-    ``cds-0.9.0b1.post1-py3-none-any.whl`` -> ``0.9.0b1.post1``
+    ``cognitive_discovery_platform-1.0.2-py3-none-any.whl`` -> ``1.0.2``
+    ``cognitive_discovery_platform-1.0.2.post1-py3-none-any.whl`` -> ``1.0.2.post1``
     """
     m = re.search(r"-([\w.+]+)-py\d", path.name)
     return m.group(1) if m else None
@@ -89,11 +92,11 @@ def main() -> int:
 
     os.chdir(PROJECT_ROOT)
 
-    # 1. Sanity: clean working tree (modulo the build-generated _version.py),
-    #    on main
+    # 1. Sanity: clean working tree, on main. ``src/cds/_version.py`` is a
+    #    committed static file (lockstepped with ``pyproject.toml`` version),
+    #    so a dirty tree there MUST block publish — a forgotten bump would
+    #    otherwise ship a version mismatch.
     status = git("status", "--porcelain")
-    # Filter out src/cds/_version.py — hatch-vcs regenerates it on every build.
-    status = "\n".join(line for line in status.splitlines() if "src/cds/_version.py" not in line)
     if status:
         print("Working tree is dirty. Commit/stash first:\n", status, file=sys.stderr)
         return 1

@@ -52,7 +52,9 @@ class TestBenchmarkStructure:
         result = self._import_and_call(func, module)
         assert required_key in result
 
-    def test_run_all_generates_report(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_run_all_generates_report(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """run_all writes a valid markdown report with all six sections.
 
         Output is redirected to ``tmp_path`` so the committed

@@ -360,18 +360,31 @@ class TestDecodeCoverage:
         assert "\ufffd" in decoded
 
     def test_decode_mixed_eow_and_non_eow_tokens(self) -> None:
-        """Decoding a literal ``</w>`` token emits a word boundary."""
+        """EOW-suffixed tokens flush as word boundaries when decoding.
+
+        ``train_bpe`` never produces a standalone ``</w>`` token (the marker
+        only lives as a suffix of merged word tokens like ``"low</w>"``), so
+        this exercises the real code path: an EOW-suffixed token flushes the
+        pending char buffer into a completed word.
+        """
         tk = train_bpe("low low low lower lower", vocab_size=30)
-        eow_id = tk.vocab.get("</w>")
-        if eow_id is None:
-            pytest.skip("</w> not in vocab — corpus too small")
-        # Two eow tokens in a row → empty words, joined → empty string.
-        out = tk.decode([eow_id, eow_id])
-        assert out == ""
-        # eow with leading char tokens → the chars get flushed as a word.
+        low_eow_id = tk.vocab["low</w>"]
+        # Two completed words back-to-back → joined with a single space.
+        assert tk.decode([low_eow_id, low_eow_id]) == "low low"
+        # A bare char followed by an EOW-suffixed token: the pending char
+        # is flushed into the SAME word as the EOW stem (chars concatenate
+        # into the word, no space inserted), producing "l" + "low" = "llow".
+        # This documents decode's word-assembly contract: an EOW-suffixed
+        # token completes the current word, it does not start a new one.
         char_id = tk.vocab["l"]
-        out2 = tk.decode([char_id, eow_id])
-        assert out2 == "l"
+        assert tk.decode([char_id, low_eow_id]) == "llow"
+        # Two EOW-suffixed tokens that both flush empty stems collapse
+        # to a single empty word — assert no spurious spaces leak in.
+        # Inject a literal "</w>" id to cover the empty-stem branch of
+        # ``decode`` (unreachable from ``train_bpe`` output alone).
+        tk.vocab["</w>"] = len(tk.vocab)
+        tk._id_to_token[tk.vocab["</w>"]] = "</w>"
+        assert tk.decode([tk.vocab["</w>"], tk.vocab["</w>"]]) == ""
 
 
 # ---------------------------------------------------------------------- #
