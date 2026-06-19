@@ -65,7 +65,9 @@ class TestTensorPosAndPowType:
     def test_pow_rejects_tensor_exponent(self) -> None:
         t = AGTensor(data=2.0)
         with pytest.raises(TypeError):
-            _ = t ** AGTensor(data=3.0)
+            # __pow__ is typed as float-only, so mypy flags this statically;
+            # the test asserts it fails at runtime via NotImplemented.
+            _ = t ** AGTensor(data=3.0)  # type: ignore[operator]
 
 
 class TestBackwardCycleSkip:

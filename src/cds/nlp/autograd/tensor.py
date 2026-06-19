@@ -10,7 +10,6 @@ avoids a ``tensor <-> ops`` import cycle.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import overload
 
 from cds.nlp.autograd._grad import BackwardFn, Scalar, _track, _unbroadcast
 
@@ -80,12 +79,7 @@ class Tensor:
     def __pos__(self) -> Tensor:
         return self
 
-    @overload
-    def __pow__(self, exponent: int | float) -> Tensor: ...
-    @overload
-    def __pow__(self, exponent: object) -> Tensor: ...
-
-    def __pow__(self, exponent: object) -> Tensor:
+    def __pow__(self, exponent: float) -> Tensor:
         # Return ``NotImplemented`` for unsupported operand types instead of
         # raising — this is the Pythonic contract for arithmetic dunders
         # (lets Python try the reflected ``__rpow__`` and only raise a real
@@ -93,6 +87,11 @@ class Tensor:
         # ``unexpected-raise-in-special-method`` flags ``raise`` in dunders
         # precisely because it short-circuits that reflection protocol.
         if not isinstance(exponent, (int, float)):
+            # Returning NotImplemented is correct here even though the declared
+            # return type is Tensor: CPython's binary-operator dispatch
+            # consumes the value (it never reaches user code), and mypy
+            # models NotImplemented as compatible with arithmetic-dunder
+            # return types for exactly this reason.
             return NotImplemented
         c = float(exponent)
 

@@ -428,5 +428,8 @@ class TestPow:
         b = Tensor(data=3.0, requires_grad=True)
         # ``__pow__`` returns ``NotImplemented`` for non-numeric exponents, so
         # Python's ``**`` operator raises ``TypeError`` itself (not the dunder).
+        # The type-ignore is needed because __pow__ is typed as float-only, so
+        # mypy (correctly) flags Tensor**Tensor at the static level — even
+        # though the whole point of this test is that it fails at runtime.
         with pytest.raises(TypeError, match="unsupported operand"):
-            a**b
+            a**b  # type: ignore[operator]
