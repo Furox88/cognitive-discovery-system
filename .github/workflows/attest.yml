@@ -14,6 +14,11 @@ name: Attest Release Artifacts
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to attest (e.g. v1.1.4)'
+        required: true
 
 permissions:
   contents: read
@@ -28,11 +33,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Download release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release download "${{ github.event.release.tag_name }}" \
+          gh release download "${{ steps.tag.outputs.tag }}" \
             --dir dist \
             --pattern "*.tar.gz" \
             --pattern "*.whl" \
