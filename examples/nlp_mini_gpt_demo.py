@@ -24,7 +24,6 @@ from cds.nlp.training import train_step
 # mypy flags it because list is invariant. We import Tensor for typing.
 
 
-
 def main() -> None:
     # 1. Encode the corpus.
     ids = encode(TEXT)
