@@ -84,7 +84,7 @@ frekans = fft([1.0, 0.0, -1.0, 0.0])
 ## Sıkça Sorulan Sorular
 
 **S: Neden "cds" olarak import ediliyor, paket adı farklıyken?**
-Y: Paket adı `cognitive-discovery-platform` (PyPI için uzun açıklayıcı isim), import ismi `cds` (kısa ve kullanışlı). `pip install cognitive-discovery-platform` ile kurulur, `import cds` ile kullanılır.
+Y: Paket adı `cognitive-discovery-system` (PyPI için uzun açıklayıcı isim), import ismi `cds` (kısa ve kullanışlı). `pip install cognitive-discovery-system` ile kurulur, `import cds` ile kullanılır.
 
 **S: NumPy/SciPy yok mu?**
 Y: CDS saf Python. Performans için ödün vermeden eğitim ve araştırma için ideal. NumPy tabanlı iş istasyonları için: ileride `cds[numpy]` gibi opsiyonel bir ekstra planlanıyor (ROADMAP).

@@ -20,7 +20,7 @@ def test_cli_version() -> None:
 def test_cli_info() -> None:
     result = runner.invoke(app, ["info"])
     assert result.exit_code == 0
-    assert "Platform" in result.stdout
+    assert "System" in result.stdout
     assert "Architecture" in result.stdout
 
 
@@ -75,7 +75,7 @@ def test_cli_calc_ke(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_cli_benchmark() -> None:
     result = runner.invoke(app, ["benchmark"])
     assert result.exit_code == 0
-    assert "Benchmarking Platform" in result.stdout
+    assert "Benchmarking System" in result.stdout
 
 
 def test_cli_hypothesis_basic() -> None:

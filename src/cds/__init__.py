@@ -1,7 +1,7 @@
 """
-cognitive-discovery-platform
+cognitive-discovery-system
 
-Pure Python computational science platform for research, simulation,
+Pure Python computational science system for research, simulation,
 and scientific discovery.
 
 Key features:

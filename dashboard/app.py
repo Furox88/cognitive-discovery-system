@@ -22,11 +22,11 @@ except ImportError:
     )
     st.stop()
 
-st.set_page_config(page_title="Platform Interactive Dashboard", layout="wide")
+st.set_page_config(page_title="System Interactive Dashboard", layout="wide")
 
-st.title("Cognitive Discovery Platform")
+st.title("Cognitive Discovery System")
 st.markdown("""
-Welcome to the interactive showcase of the **Platform**.
+Welcome to the interactive showcase of the **System**.
 Everything you see here is powered by **Pure Python** algorithms, built from scratch without NumPy, SciPy, or other heavy numerical dependencies.
 """)
 
@@ -192,9 +192,9 @@ with tabs[3]:
             st.error(f"Visualization failed: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.title("Platform Status")
+st.sidebar.title("System Status")
 st.sidebar.success(f"Core: v{__version__}")
 st.sidebar.info("Dependencies: Standard Library + Typer/Rich/Pydantic")
 st.sidebar.markdown("""
-[View Source on GitHub](https://github.com/Furox88/cognitive-discovery-platform)
+[View Source on GitHub](https://github.com/Furox88/cognitive-discovery-system)
 """)

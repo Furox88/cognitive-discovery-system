@@ -6,7 +6,7 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 
 - [x] ~~Push test coverage to **97%+** across every module~~ — achieved **100%**
 - [x] ~~Add `typing.Protocol`-based extension points for custom hypothesis generators~~ — shipped as `HypothesisGenerator` Protocol
-- [x] ~~Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md~~ — already documented in §"Package Name vs Repository Name"
+- [x] ~~Document the PyPI package name (`cognitive-discovery-platform`) vs repo name (`cognitive-discovery-system`) distinction in CONTRIBUTING.md~~ — superseded: the package was renamed to `cognitive-discovery-system`, so PyPI and repo names now match (see §"Package Name")
 - [x] ~~Replace remaining generic error messages with actionable guidance~~ — updated 11 messages in linalg, signals, and stats modules
 
 ## v0.8.x — Performance & Benchmarks (Released 2026-06-16)

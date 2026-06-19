@@ -1,4 +1,4 @@
-"""Platform Command Line Interface."""
+"""System command-line interface."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from cds.hypothesis.generator import PromptTemplate, generate_hypotheses
 
 app = typer.Typer(
     name="cds",
-    help="Cognitive Discovery Platform — computational science platform.",
+    help="Cognitive Discovery System — computational science platform.",
     add_completion=False,
     invoke_without_command=True,
 )
@@ -30,7 +30,7 @@ def _version_callback(value: bool) -> None:
     if value:
         from cds import __version__
 
-        console.print(f"[bold]Platform[/] version [cyan]{__version__}[/]")
+        console.print(f"[bold]System[/] version [cyan]{__version__}[/]")
         raise typer.Exit()
 
 
@@ -43,10 +43,10 @@ def main(
         "-v",
         callback=_version_callback,
         is_eager=True,
-        help="Show Platform version and exit",
+        help="Show System version and exit",
     ),
 ) -> None:
-    """Platform CLI entrypoint."""
+    """System CLI entrypoint."""
     if ctx.invoked_subcommand is None:
         # No subcommand given, show help
         console.print(ctx.get_help())
@@ -66,10 +66,10 @@ class DomainChoice(str, Enum):
 
 @app.command()
 def version() -> None:
-    """Show Platform version."""
+    """Show System version."""
     from cds import __version__
 
-    console.print(f"[bold]Platform[/] version [cyan]{__version__}[/]")
+    console.print(f"[bold]System[/] version [cyan]{__version__}[/]")
 
 
 @app.command()
@@ -157,20 +157,20 @@ def prompt(
 
 @app.command()
 def info() -> None:
-    """Show Platform info, module status, and Platform health."""
+    """Show System info, module status, and System health."""
     from rich.columns import Columns
     from rich.text import Text
 
     from cds import __version__
 
     status_panel = Panel.fit(
-        "[bold]Platform (CDS)[/]\n"
-        "[dim]Pure Python scientific computing platform[/]\n\n"
-        "[bold green]Status:[/] Beta\n"
+        "[bold]System (CDS)[/]\n"
+        "[dim]Pure Python scientific computing system[/]\n\n"
+        "[bold green]Status:[/] Stable\n"
         "[bold blue]Tests:[/] 1165 Passing\n"
         "[bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"[bold cyan]Version:[/] {__version__}",
-        title="Platform Info",
+        title="System Info",
         border_style="green",
     )
 
@@ -192,7 +192,7 @@ def info() -> None:
 
 @app.command()
 def dashboard() -> None:
-    """Launch the interactive Platform dashboard."""
+    """Launch the interactive System dashboard."""
     import os
     import subprocess
     import sys
@@ -204,7 +204,7 @@ def dashboard() -> None:
         console.print("[red]Error:[/] Dashboard file not found at " + str(dashboard_path))
         return
 
-    console.print("[yellow]Launching Platform Interactive Dashboard...[/]")
+    console.print("[yellow]Launching System Interactive Dashboard...[/]")
 
     # Ensure src is in PYTHONPATH so dashboard can import cds
     env = os.environ.copy()
@@ -229,7 +229,7 @@ def dashboard() -> None:
 @app.command()
 def benchmark() -> None:
     """Run built-in benchmarks to verify performance."""
-    console.print("[yellow]Benchmarking Platform performance...[/]")
+    console.print("[yellow]Benchmarking System performance...[/]")
     console.print("Run 'python benchmarks/run_benchmarks.py' for detailed results.")
 
 
@@ -299,10 +299,10 @@ def calc(
 
 @app.command()
 def modules() -> None:
-    """List all scientific modules available in the Platform."""
+    """List all scientific modules available in the System."""
     from rich import box
 
-    table = Table(title="Platform Scientific Modules", box=box.SIMPLE_HEAVY)
+    table = Table(title="System Scientific Modules", box=box.SIMPLE_HEAVY)
     table.add_column("Module", style="cyan bold")
     table.add_column("Key Capabilities", style="white")
 

@@ -22,7 +22,7 @@ We'll acknowledge receipt within 48 hours and aim to provide a fix or mitigation
 
 ## Threat Model
 
-`cognitive-discovery-platform` is a pure-Python scientific computing library distributed via PyPI.
+`cognitive-discovery-system` is a pure-Python scientific computing library distributed via PyPI.
 The threat model below describes what we consider in scope and out of scope.
 
 ### In Scope
@@ -33,7 +33,7 @@ The threat model below describes what we consider in scope and out of scope.
 | **Supply chain: malicious release artifact** | PyPI releases uploaded via local `scripts/publish.py` only; each release attaches the sdist + wheel to a GitHub Release; GitHub Actions `attest-build-provenance@v2` produces a sigstore attestation that any consumer can verify. |
 | **Code execution from package install** | Build backend is `hatchling` (no setup.py execution); `setuptools_scm` is used for version derivation only (no runtime code execution on install). |
 | **Untrusted input in scientific functions** | All numerical kernels are pure-Python implementations; no `eval`/`exec` of user input; CLI (`cds` command) uses Typer with strict parsing. |
-| **Dependency confusion** | PyPI project name `cognitive-discovery-platform` is unique; the import name `cds` is short enough to be susceptible but we document it in the README. |
+| **Dependency confusion** | PyPI project name `cognitive-discovery-system` is unique; the import name `cds` is short enough to be susceptible but we document it in the README. |
 
 ### Out of Scope
 
@@ -52,7 +52,7 @@ The threat model below describes what we consider in scope and out of scope.
 
 ## Security Best Practices for Users
 
-1. **Pin versions**: Always pin `cognitive-discovery-platform==X.Y.Z` in `requirements.txt` rather than using `>=` or unpinned ranges.
+1. **Pin versions**: Always pin `cognitive-discovery-system==X.Y.Z` in `requirements.txt` rather than using `>=` or unpinned ranges.
 2. **Verify releases**: For high-assurance environments, verify the sigstore attestation on the GitHub Release against the published wheel/sdist hashes.
 3. **Keep dependencies fresh**: Run `pip install --upgrade` regularly; Dependabot PRs are opened weekly.
 4. **Audit lockfiles**: `requirements.lock` and `requirements-dev.lock` are committed; diff them on every PR to spot unexpected changes.

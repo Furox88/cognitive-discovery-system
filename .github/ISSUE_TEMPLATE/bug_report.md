@@ -40,7 +40,7 @@ Paste the full error or unexpected output here.
 - CDS version: `cds --version` →
 - Python version:
 - OS:
-- How installed: `pip install cognitive-discovery-platform` / from source / other
+- How installed: `pip install cognitive-discovery-system` / from source / other
 
 ## Module / function affected
 e.g. `cds.quantum`, `cds.numerical_integration.simpson`, `cds.cli`

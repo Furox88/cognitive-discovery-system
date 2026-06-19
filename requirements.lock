@@ -15,19 +15,19 @@ markdown-it-py==4.2.0
 mdurl==0.1.2
     # via markdown-it-py
 pydantic==2.13.4
-    # via cognitive-discovery-platform (pyproject.toml)
+    # via cognitive-discovery-system (pyproject.toml)
 pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
     # via rich
 rich==15.0.0
     # via
-    #   cognitive-discovery-platform (pyproject.toml)
+    #   cognitive-discovery-system (pyproject.toml)
     #   typer
 shellingham==1.5.4
     # via typer
 typer[all]==0.26.7
-    # via cognitive-discovery-platform (pyproject.toml)
+    # via cognitive-discovery-system (pyproject.toml)
 typing-extensions==4.15.0
     # via
     #   pydantic

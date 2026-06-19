@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="cognitive-discovery-platform" width="640">
+  <img src="assets/logo.svg" alt="cognitive-discovery-system" width="640">
 </p>
 
-# cognitive-discovery-platform
+# cognitive-discovery-system
 
-[![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
-[![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-platform.svg)](https://pypi.org/project/cognitive-discovery-platform/)
+[![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-system.svg)](https://pypi.org/project/cognitive-discovery-system/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-system.svg)](https://pypi.org/project/cognitive-discovery-system/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
 [![Typed](https://img.shields.io/badge/typed-PEP%20561-success.svg)](https://peps.python.org/pep-0561/)
 [![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
@@ -19,14 +19,14 @@
 
 CDS brings together quantum computing simulation, statistical analysis, signal processing, optimization, probability, and scientific computing in a single, dependency-light Python package. Every module is pure Python — no NumPy or SciPy required.
 
-The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
+The system also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> **v1.1.2 stable release.** Contributions welcome!
+> **v1.1.4 stable release.** Contributions welcome!
 
 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-**Latest Update:** **v1.1.2** — security hardening. `main` branch protection now requires status checks for `CI` and `CodeQL`; the remaining CodeQL alerts were addressed by switching Enum iteration to `Domain.__members__.values()` (the standard member-collection view); security-reporting guidance was added to the README and bug-report template; `CITATION.cff` version was refreshed. No API or behavior changes. The platform spans **17 modules**, **1164 tests**, and **99.59%** coverage, all in readable pure Python.
+**Latest Update:** **v1.1.4** — documentation, CI, and housekeeping cleanup. No API or behavior changes: removed cosmetic distractions from issue templates/docs, fixed CI workflow schemas, deleted ~3 500 lines of no-op autograd shim code never exercised at runtime, and aligned the PyPI distribution name (`cognitive-discovery-system`) with the repository name. The system spans **17 modules**, **1165 tests**, and **~99.6%** coverage, all in readable pure Python.
 ---
 
 ## Contents
@@ -57,7 +57,7 @@ The platform also includes built-in support for structured hypothesis generation
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 17 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
-- **1164 tests** (see CI) — thoroughly tested with **~99% code coverage**
+- **1165 tests** (see CI) — thoroughly tested with **~99% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 - **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
@@ -150,7 +150,7 @@ cds plot "1, 5, 3, 8, 4, 9" --title "My Data"
 CDS includes an **Interactive Web Dashboard** for scientific exploration. Launch it from your terminal:
 
 ```bash
-pip install "cognitive-discovery-platform[dashboard]"
+pip install "cognitive-discovery-system[dashboard]"
 cds dashboard
 ```
 
@@ -433,7 +433,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 1164 tests (see CI)
+tests/              # 1165 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 
@@ -479,7 +479,7 @@ A few GitHub Actions handle repetitive aspects of keeping the project running:
 
 - Dependabot for regular updates to dependencies and GitHub Actions
 - Automatic labeling and review checklists for pull requests
-- A release process that builds and publishes on version tags
+- An automated release pipeline: pushing a version tag builds, publishes to PyPI via Trusted Publishing (OIDC), cuts a GitHub Release with artifacts, and attests build provenance (sigstore)
 
 These help ensure that time spent on the project goes more toward developing new modules, improving hypothesis tools, and supporting research use cases rather than manual upkeep.
 

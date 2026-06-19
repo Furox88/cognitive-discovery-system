@@ -1,7 +1,7 @@
 [project]
-name = "cognitive-discovery-platform"
+name = "cognitive-discovery-system"
 version = "1.1.4"
-description = "Pure Python computational science platform — quantum simulation, FFT, optimization, probability, statistics, and more."
+description = "Pure Python computational science system — quantum simulation, FFT, optimization, probability, statistics, and more."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
@@ -30,7 +30,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # Meta-package: every extras group in one install.
-# Use as: `pip install cognitive-discovery-platform[all]`
+# Use as: `pip install cognitive-discovery-system[all]`
 all = [
     "streamlit>=1.30.0",
     "pandas",
@@ -77,7 +77,7 @@ cds = "cds.cli:app"
 Homepage = "https://github.com/Furox88/cognitive-discovery-system"
 Repository = "https://github.com/Furox88/cognitive-discovery-system"
 Documentation = "https://furox88.github.io/cognitive-discovery-system/"
-"PyPI" = "https://pypi.org/project/cognitive-discovery-platform/"
+"PyPI" = "https://pypi.org/project/cognitive-discovery-system/"
 Issues = "https://github.com/Furox88/cognitive-discovery-system/issues"
 Changelog = "https://github.com/Furox88/cognitive-discovery-system/releases"
 
