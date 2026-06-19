@@ -4,6 +4,7 @@ This shows how the cognitive discovery tools can be paired with
 statistical modules for quick research prototyping.
 """
 
+from cds.core.models import Domain
 from cds.hypothesis import generate_hypotheses
 from cds.stats import mean, one_sample_ttest, stdev
 
@@ -15,7 +16,7 @@ def main() -> None:
 
     print(f"Research question: {question}\n")
 
-    hypos = generate_hypotheses(question, domain="chemistry", n=2)
+    hypos = generate_hypotheses(question, domain=Domain.CHEMISTRY, n=2)
 
     for h in hypos:
         print(f"Hypothesis: {h.statement}")

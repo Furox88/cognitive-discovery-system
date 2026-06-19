@@ -11,6 +11,7 @@ or tests.
 """
 
 import uuid
+from typing import Any
 
 from cds.hypothesis import (
     Domain,
@@ -32,10 +33,13 @@ class ToyPhysicsGenerator:
     def generate(
         self,
         research_question: str,
-        domain: Domain = Domain.GENERAL_SCIENCE,
+        domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[Hypothesis]:
+        # Normalise the domain: callers may pass either a Domain enum or
+        # its string value (the HypothesisGenerator Protocol allows both).
+        domain_enum = domain if isinstance(domain, Domain) else Domain(domain)
         # Toy domain-specific ideas for illustration.
         # In practice these would come from more sophisticated sources.
         ideas = [
@@ -64,7 +68,7 @@ class ToyPhysicsGenerator:
                 ],
                 status=HypothesisStatus.NEW,
                 confidence=0.55 + i * 0.05,
-                tags=[domain.value, "custom-example"],
+                tags=[domain_enum.value, "custom-example"],
             )
             hypos.append(h)
         # Pad if fewer ideas than requested
@@ -82,7 +86,7 @@ class ToyPhysicsGenerator:
                 predictions=["Measurable deviation in observable O."],
                 status=HypothesisStatus.NEW,
                 confidence=0.4,
-                tags=[domain.value, "custom-example"],
+                tags=[domain_enum.value, "custom-example"],
             )
             hypos.append(h)
         return hypos

@@ -13,10 +13,16 @@ Run::
 
 from __future__ import annotations
 
+from cds.nlp.autograd.tensor import Tensor
 from cds.nlp.data import TEXT, decode, encode, vocab_size
 from cds.nlp.model import MiniGPT
 from cds.nlp.optim import Adam
 from cds.nlp.training import train_step
+
+# MiniGPT.parameters() returns list[Parameter], a subclass of Tensor.
+# Adam.params is list[Tensor]; the assignment is sound at runtime but
+# mypy flags it because list is invariant. We import Tensor for typing.
+
 
 
 def main() -> None:
@@ -41,7 +47,10 @@ def main() -> None:
     # 3. Train: slide a window of length ``T`` over the corpus, predict
     #    the next char, update the model.
     T = 24
-    optimiser = Adam(params=model.parameters(), lr=0.005)
+    # Adam expects list[Tensor]; MiniGPT.parameters() returns list[Parameter],
+    # a Tensor subclass. Cast widens the invariant list for mypy.
+    params: list[Tensor] = model.parameters()  # type: ignore[assignment]
+    optimiser = Adam(params=params, lr=0.005)
     n_steps = 200
     losses: list[float] = []
     for step in range(n_steps):

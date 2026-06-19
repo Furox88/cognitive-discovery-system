@@ -34,18 +34,25 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 TOKEN_FILE = Path.home() / ".pypi-token"
 
 
-def run(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
-    """Run a subprocess, inheriting stdout/stderr. Raise on non-zero exit."""
+def run(cmd: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+    """Run a subprocess, inheriting stdout/stderr. Raise on non-zero exit.
+
+    ``**kwargs`` is typed ``Any`` rather than ``object`` because it forwards
+    into :func:`subprocess.run`, whose keyword parameters span many distinct
+    types (``cwd: str | None``, ``env: Mapping``, ``check: bool`` …). A
+    narrower annotation would reject valid forwards.
+    """
     print(f"\n$ {' '.join(cmd)}", flush=True)
     return subprocess.run(cmd, check=True, **kwargs)
 
 
-def run_capture(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+def run_capture(cmd: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
     """Run a subprocess, capture output, return result without raising."""
     return subprocess.run(cmd, capture_output=True, text=True, **kwargs)
 

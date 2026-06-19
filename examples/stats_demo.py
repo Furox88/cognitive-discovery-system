@@ -23,7 +23,7 @@ def main() -> None:
 
     # --- Correlation ---
     print("\n=== Correlation ===")
-    x = [1, 2, 3, 4, 5, 6, 7, 8]
+    x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
     y = [2.1, 4.3, 5.8, 8.1, 9.7, 12.2, 13.8, 16.1]
     r = correlation(x, y)
     print(f"r = {r:.4f}  (1.0 = perfect positive)")

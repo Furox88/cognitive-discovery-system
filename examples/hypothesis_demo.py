@@ -1,5 +1,6 @@
 """Demonstration of the hypothesis generation module for cognitive discovery."""
 
+from cds.core.models import Domain
 from cds.hypothesis import PromptTemplate, generate_hypotheses
 
 
@@ -12,7 +13,7 @@ def main() -> None:
     print(f"Research question: {question}\n")
 
     # Generate hypotheses using the built-in offline generator
-    hypos = generate_hypotheses(question, domain="cosmology", n=2)
+    hypos = generate_hypotheses(question, domain=Domain.COSMOLOGY, n=2)
 
     for h in hypos:
         print(f"ID: {h.id}")

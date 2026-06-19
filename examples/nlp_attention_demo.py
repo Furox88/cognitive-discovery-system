@@ -52,10 +52,10 @@ def ascii_heatmap(matrix: list[list[float]], width: int = 40) -> str:
 def _build_block(
     d_model: int = 16, n_heads: int = 2
 ) -> tuple[
-    list[list[list[float]]],  # w_q
-    list[list[list[float]]],  # w_k
-    list[list[list[float]]],  # w_v
-    list[list[list[float]]],  # w_o
+    list[list[float]],  # w_q
+    list[list[float]],  # w_k
+    list[list[float]],  # w_v
+    list[list[float]],  # w_o
 ]:
     """Build a small but expressive set of attention weights.
 

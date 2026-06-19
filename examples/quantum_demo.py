@@ -25,8 +25,8 @@ def main() -> None:
     print("=== Bell State |Φ+⟩ ===")
     phi_plus = bell_state(0)
     print(f"Entangled? {is_entangled(phi_plus)}")
-    counts = phi_plus.measure_shots(shots=10000, seed=42)
-    print(f"Measurements: {counts}\n")
+    bell_counts = phi_plus.measure_shots(shots=10000, seed=42)
+    print(f"Measurements: {bell_counts}\n")
 
     # --- GHZ state ---
     print("=== 4-Qubit GHZ State ===")
@@ -34,8 +34,8 @@ def main() -> None:
     probs = ghz.probabilities()
     print(f"P(|0000⟩) = {probs[0]:.3f}")
     print(f"P(|1111⟩) = {probs[15]:.3f}")
-    counts = ghz.measure_shots(shots=10000, seed=7)
-    print(f"Measurements: {counts}")
+    ghz_counts = ghz.measure_shots(shots=10000, seed=7)
+    print(f"Measurements: {ghz_counts}")
 
 
 if __name__ == "__main__":

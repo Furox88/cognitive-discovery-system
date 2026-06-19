@@ -12,6 +12,7 @@ from cds.data_analysis import (
     plot_line,
     z_score,
 )
+from cds.data_analysis.dataset import Scalar
 
 
 def main() -> None:
@@ -45,8 +46,12 @@ def main() -> None:
     plot_bar({"Mon": 100.0, "Tue": 110.0, "Wed": 140.0, "Thu": 135.0, "Fri": 160.0})
 
     print("\n=== DataSet helper ===")
-    # DataSet expects a list of row-dicts.
-    data = [{"day": i, "temp": t} for i, t in enumerate(temps)]
+    # DataSet expects a list of row-dicts; annotate so mypy widens the
+    # value type to Scalar (int | float | str | bool | None) instead of
+    # narrowing it to float, which would clash with the invariant list.
+    data: list[dict[str, Scalar]] = [
+        {"day": i, "temp": float(t)} for i, t in enumerate(temps)
+    ]
     ds = DataSet(data=data)
     print(f"columns: {ds.columns}")
     print(f"shape: {ds.shape}")

@@ -121,8 +121,8 @@ with tabs[2]:
     if st.button("Train XOR Model", type="primary"):
         try:
             # Training data
-            X = [[0, 0], [0, 1], [1, 0], [1, 1]]
-            y = [[0], [1], [1], [0]]  # XOR
+            X = [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]]
+            y = [[0.0], [1.0], [1.0], [0.0]]  # XOR
 
             net = MLP([Layer(2, 4, activation="relu"), Layer(4, 1, activation="sigmoid")])
 
@@ -132,10 +132,10 @@ with tabs[2]:
             # Simple training loop with UI updates
             losses = []
             for epoch in range(1, 101):
-                res = net.train(X, y, epochs=5, lr=0.1)
-                losses.append(res["final_loss"])
+                train_res = net.train(X, y, epochs=5, lr=0.1)
+                losses.append(train_res["final_loss"])
                 progress_bar.progress(epoch)
-                status_text.text(f"Epoch {epoch * 5}/500 - Loss: {res['final_loss']:.6f}")
+                status_text.text(f"Epoch {epoch * 5}/500 - Loss: {train_res['final_loss']:.6f}")
 
             st.success("Model Trained!")
             st.line_chart(losses, use_container_width=True)
@@ -147,7 +147,7 @@ with tabs[2]:
                 cols[i].metric(
                     f"Input {xi}",
                     f"{pred:.4f}",
-                    delta="Expected 1" if y[i][0] == 1 else "Expected 0",
+                    delta="Expected 1" if y[i][0] == 1.0 else "Expected 0",
                 )
         except Exception as e:
             st.error(f"Training failed: {str(e)}")
@@ -170,9 +170,9 @@ with tabs[3]:
         data2 = [random.gauss(mu2, 8) for _ in range(50)]
 
         try:
-            from cds.stats import two_sample_ttest
+            from cds.stats import TestResult, two_sample_ttest
 
-            res = two_sample_ttest(data1, data2, equal_var=False)
+            res: TestResult = two_sample_ttest(data1, data2, equal_var=False)
 
             st.metric("p-value", f"{res.p_value:.4f}")
             if res.p_value < 0.05:

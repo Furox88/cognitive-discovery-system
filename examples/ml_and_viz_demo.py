@@ -7,13 +7,13 @@ from cds.data_analysis import plot_bar, plot_line
 from cds.ml import MLP, Layer
 
 
-def run_demo():
+def run_demo() -> None:
     print("--- 🧠 Pure Python Neural Network Demo ---")
 
     # Simple XOR-like logic training data
     # Input: [x1, x2], Output: [x1 OR x2]
-    X = [[0, 0], [0, 1], [1, 0], [1, 1]]
-    y = [[0], [1], [1], [1]]
+    X = [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]]
+    y = [[0.0], [1.0], [1.0], [1.0]]
 
     # Create a simple MLP: 2 inputs -> 4 hidden (ReLU) -> 1 output (Sigmoid)
     net = MLP([Layer(2, 4, activation="relu"), Layer(4, 1, activation="sigmoid")])
