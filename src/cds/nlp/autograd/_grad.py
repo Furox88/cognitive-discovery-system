@@ -111,13 +111,3 @@ def _track(out: _T, children: Iterable[_Trackable], backward: BackwardFn) -> _T:
         out._prev = children_set
         out._backward = backward
     return out
-
-
-def _unbroadcast(grad: Scalar, target_shape: tuple[int, ...]) -> Scalar:
-    """Compatibility shim — scalar autograd doesn't broadcast.
-
-    Kept as a no-op identity to make the vector-tensor migration
-    straightforward later: the scalar engine ignores shapes, but
-    vector code that calls this through a hook will keep working.
-    """
-    return grad

@@ -49,9 +49,7 @@ def main() -> None:
     # DataSet expects a list of row-dicts; annotate so mypy widens the
     # value type to Scalar (int | float | str | bool | None) instead of
     # narrowing it to float, which would clash with the invariant list.
-    data: list[dict[str, Scalar]] = [
-        {"day": i, "temp": float(t)} for i, t in enumerate(temps)
-    ]
+    data: list[dict[str, Scalar]] = [{"day": i, "temp": float(t)} for i, t in enumerate(temps)]
     ds = DataSet(data=data)
     print(f"columns: {ds.columns}")
     print(f"shape: {ds.shape}")

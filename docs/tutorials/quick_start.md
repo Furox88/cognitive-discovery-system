@@ -1,4 +1,4 @@
-# 🚀 CDS Quick Start Tutorial
+# CDS Quick Start Tutorial
 
 Welcome to the **Cognitive Discovery Platform (CDS)**. This guide will show you how to perform scientific calculations with **Zero Dependencies**.
 

@@ -1,4 +1,4 @@
-# 🎰 Monte Carlo Methods Tutorial
+# Monte Carlo Methods Tutorial
 
 `cds.montecarlo` estimates integrals, π, and random walks by sampling.
 

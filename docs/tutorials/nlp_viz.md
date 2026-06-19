@@ -1,4 +1,4 @@
-# Visualising NLP Internals (Sprint 5)
+# Visualising NLP Internals
 
 The `cds.nlp.viz` module renders the three things a learner most wants to
 *see* when reading about transformers — attention, embeddings, and the

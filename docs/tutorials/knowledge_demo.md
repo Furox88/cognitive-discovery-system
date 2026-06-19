@@ -1,4 +1,4 @@
-# 🧠 Knowledge Organization Tutorial
+# Knowledge Organization Tutorial
 
 `cds.knowledge` is a self-contained subsystem for organising research knowledge: a **knowledge graph** of named concepts connected by typed, directed relations, a **notebook** of free-form notes linked to concept names, and **ranked structured retrieval** across both. Everything is pure Python (stdlib `json` for persistence) and decoupled from `cds.graph`, whose dense integer-vertex model is a poor fit for named concepts with typed relationships.
 

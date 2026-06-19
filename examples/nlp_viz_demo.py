@@ -1,4 +1,4 @@
-"""End-to-end demo of ``cds.nlp`` visualisation primitives (Sprint 5).
+"""End-to-end demo of ``cds.nlp`` visualisation primitives.
 
 Trains a tiny BPE tokenizer, runs a short attention + embedding forward
 pass, then renders all three ASCII visualisations. Runs in under 2s with

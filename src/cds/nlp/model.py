@@ -1,4 +1,4 @@
-"""A minimal GPT-from-scratch model in pure Python (Sprint 4).
+"""A minimal GPT-from-scratch model in pure Python.
 
 :class:`MiniGPT` is the smallest possible decoder-only transformer
 that still does the right thing: a token embedding, a single causal
@@ -13,7 +13,7 @@ multi-head block + reverse-mode autograd + SGD/Adam + MiniGPT =
 a learner can now watch a tiny GPT actually fit a corpus and
 sample text from it, all in pure Python.
 
-Scope (Sprint 4):
+Scope:
 * :class:`MiniGPT` — token embedding + 1 causal block + LM head
 * :func:`cross_entropy` (re-exported from :mod:`cds.nlp.training`)
 * Inference via :meth:`MiniGPT.sample`
@@ -227,22 +227,21 @@ class MiniGPT:
         if n_tokens <= 0:
             return list(prompt_ids)
         ids = list(prompt_ids)
-        with _no_grad():
-            for _ in range(n_tokens):
-                # Trim to the last ``max_len`` tokens so we don't exceed
-                # the model's positional window.
-                ctx = ids[-self.max_len :]
-                logits = self.forward(ctx)
-                # Drop the graph — we only need the numbers.
-                vals = [li.data for li in logits]
-                if temperature != 1.0:
-                    vals = [v / max(temperature, SAMPLING_TEMPERATURE_EPS) for v in vals]
-                probs = softmax(vals)
-                # Deterministic argmax for the educational default;
-                # callers that want sampling can pass a temperature
-                # and a custom sampler via the public hooks.
-                nxt = max(range(len(probs)), key=lambda i: probs[i])
-                ids.append(nxt)
+        for _ in range(n_tokens):
+            # Trim to the last ``max_len`` tokens so we don't exceed
+            # the model's positional window.
+            ctx = ids[-self.max_len :]
+            logits = self.forward(ctx)
+            # Drop the graph — we only need the numbers.
+            vals = [li.data for li in logits]
+            if temperature != 1.0:
+                vals = [v / max(temperature, SAMPLING_TEMPERATURE_EPS) for v in vals]
+            probs = softmax(vals)
+            # Deterministic argmax for the educational default;
+            # callers that want sampling can pass a temperature
+            # and a custom sampler via the public hooks.
+            nxt = max(range(len(probs)), key=lambda i: probs[i])
+            ids.append(nxt)
         return ids
 
 
@@ -440,19 +439,6 @@ def _feed_forward(
 
 def _gelu_scalar(x: float) -> float:
     return 0.5 * x * (1.0 + math.erf(x / math.sqrt(2.0)))
-
-
-class _no_grad:
-    """Mini context manager — no actual autograd context isolation,
-    but kept for forward-compat with the real ``cds.nlp.autograd.no_grad``
-    once a graph-pruning pass is added.
-    """
-
-    def __enter__(self) -> _no_grad:
-        return self
-
-    def __exit__(self, *exc: object) -> None:
-        return None
 
 
 # ---------------------------------------------------------------------- #

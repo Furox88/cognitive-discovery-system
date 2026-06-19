@@ -1,4 +1,4 @@
-# 📊 Data Analysis Tutorial
+# Data Analysis Tutorial
 
 `cds.data_analysis` loads small CSVs, normalises and smooths series, and renders ASCII plots.
 

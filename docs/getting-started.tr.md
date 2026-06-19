@@ -1,6 +1,6 @@
 # Başlangıç (Türkçe)
 
-> 🇹🇷 Bu, [İngilizce Getting Started](getting-started.md) belgesinin Türkçe çevirisidir. Çeviri güncel olmayabilir — İngilizce versiyon kanonik kaynaktır.
+> Bu, [İngilizce Getting Started](getting-started.md) belgesinin Türkçe çevirisidir. Çeviri güncel olmayabilir — İngilizce versiyon kanonik kaynaktır.
 
 ## Kurulum
 
@@ -76,10 +76,10 @@ frekans = fft([1.0, 0.0, -1.0, 0.0])
 
 ## Sonraki Adımlar
 
-- 📚 [Tutorial: Quantum](tutorials/quantum_demo.md) — Bell durumları, GHZ, ölçüm
-- 📊 [Tutorial: Hipotez Üretimi](tutorials/hypothesis_demo.md) — Araştırma sorularınızı yapılandırın
-- 🔬 [Vaka Çalışması: Hubble](CASE_STUDY_HUBBLE.md) — Gerçek bilim problemi örneği
-- 🧪 [Tutorial: Quick Start](tutorials/quick_start.md) — 5 dakikada temel kullanım
+- [Tutorial: Quantum](tutorials/quantum_demo.md) — Bell durumları, GHZ, ölçüm
+- [Tutorial: Hipotez Üretimi](tutorials/hypothesis_demo.md) — Araştırma sorularınızı yapılandırın
+- [Vaka Çalışması: Hubble](CASE_STUDY_HUBBLE.md) — Gerçek bilim problemi örneği
+- [Tutorial: Quick Start](tutorials/quick_start.md) — 5 dakikada temel kullanım
 
 ## Sıkça Sorulan Sorular
 
@@ -94,9 +94,9 @@ Y: v1.1.0 stabil sürüm. API kararlı, %99.59 test coverage, 1164 test, CI mult
 
 ## Topluluk
 
-- 🐛 [Issue aç](https://github.com/Furox88/cognitive-discovery-system/issues)
-- 💬 [Tartışmalar](https://github.com/Furox88/cognitive-discovery-system/discussions)
-- 📧 İletişim: furkanarkn1451@gmail.com
+- [Issue aç](https://github.com/Furox88/cognitive-discovery-system/issues)
+- [Tartışmalar](https://github.com/Furox88/cognitive-discovery-system/discussions)
+- İletişim: furkanarkn1451@gmail.com
 
 ## Katkıda Bulunma
 

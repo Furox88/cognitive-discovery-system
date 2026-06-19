@@ -1,6 +1,6 @@
-"""End-to-end demo of cds.nlp Sprint 2: tokenize → embed → attention.
+"""End-to-end demo of cds.nlp: tokenize → embed → attention.
 
-Extends the Sprint 1 demo by running the encoded tokens through a real
+Extends the BPE demo by running the encoded tokens through a real
 multi-head self-attention block (with a causal mask) and inspecting
 the attention weights for each head. The weights are dumped as a
 small ASCII heat map so the example is self-contained (no matplotlib
@@ -75,7 +75,7 @@ def _build_block(
 
 
 def main() -> None:
-    # 1. Train a tiny BPE tokenizer on the same Sprint 1 corpus.
+    # 1. Train a tiny BPE tokenizer on the same corpus as nlp_bpe_demo.
     corpus = (
         "the quick brown fox jumps over the lazy dog "
         "the quick brown fox jumps over the lazy dog "

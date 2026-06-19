@@ -1,4 +1,4 @@
-# 📈 Numerical Integration Tutorial
+# Numerical Integration Tutorial
 
 `cds.numerical_integration` provides deterministic quadrature rules. A canonical test: `∫_0^1 e^x dx = e - 1`.
 

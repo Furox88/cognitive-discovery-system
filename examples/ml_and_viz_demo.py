@@ -8,7 +8,7 @@ from cds.ml import MLP, Layer
 
 
 def run_demo() -> None:
-    print("--- 🧠 Pure Python Neural Network Demo ---")
+    print("--- Pure Python Neural Network Demo ---")
 
     # Simple XOR-like logic training data
     # Input: [x1, x2], Output: [x1 OR x2]
@@ -30,7 +30,7 @@ def run_demo() -> None:
     for xi in X:
         print(f"  In: {xi} -> Out: {net.predict(xi)[0]:.4f}")
 
-    print("\n--- 📈 ASCII Visualization Demo ---")
+    print("\n--- ASCII Visualization Demo ---")
 
     # 1. Bar Chart
     stats = {"Quantum": 95.5, "Signals": 88.2, "Math": 92.0, "ML": 99.1}

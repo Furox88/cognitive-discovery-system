@@ -1,4 +1,4 @@
-"""Tests for the Sprint 5 NLP visualisation primitives."""
+"""Tests for the NLP visualisation primitives."""
 
 from __future__ import annotations
 

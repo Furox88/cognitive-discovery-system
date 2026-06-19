@@ -166,10 +166,10 @@ def info() -> None:
     status_panel = Panel.fit(
         "[bold]Platform (CDS)[/]\n"
         "[dim]Pure Python scientific computing platform[/]\n\n"
-        "🚀 [bold green]Status:[/] Beta\n"
-        "🧪 [bold blue]Tests:[/] 803 Passing (100% Coverage)\n"
-        "📦 [bold magenta]Deps:[/] 0 External (Pure Python)\n"
-        f"🔗 [bold cyan]Version:[/] {__version__}",
+        "[bold green]Status:[/] Beta\n"
+        "[bold blue]Tests:[/] 1165 Passing\n"
+        "[bold magenta]Deps:[/] 0 External (Pure Python)\n"
+        f"[bold cyan]Version:[/] {__version__}",
         title="Platform Info",
         border_style="green",
     )

@@ -1,9 +1,9 @@
 """Pure-Python ASCII visualisation primitives for the educational NLP track.
 
-Sprint 5 of ``cds.nlp``: three renderers that let a learner *see* what the
-tokenizer, attention block, and training loop are doing, without pulling in
-matplotlib. All three return ``str`` (so they compose, log, and test cleanly)
-and never touch the network or optional dependencies.
+Three renderers that let a learner *see* what the tokenizer, attention block,
+and training loop are doing, without pulling in matplotlib. All three return
+``str`` (so they compose, log, and test cleanly) and never touch the network
+or optional dependencies.
 
 * :func:`render_training_curve`        — ASCII loss-vs-step plot
 * :func:`render_attention_heatmap`     — ASCII row x col attention grid

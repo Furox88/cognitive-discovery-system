@@ -21,12 +21,12 @@ Scope:
 - Position-wise feed-forward with one hidden expansion (typically
   ``d_ff = 4 * d_model``).
 
-Scope explicitly *out* for Sprint 2:
+Out of scope here:
 - Dropout, residual scaling, GQA / MQA, ALiBi, RoPE — all useful
   modern variants; tracked for a later educational add-on if the
   attention block is fast enough to use in demos.
 - Training-time autograd. The block is functional at inference
-  time; gradients land in Sprint 3.
+  time; gradients are handled by the autograd module.
 """
 
 from __future__ import annotations

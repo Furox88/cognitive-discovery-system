@@ -3,8 +3,8 @@
 Trains a small BPE vocabulary on a short corpus (so the example runs
 in <1s), encodes a sample sentence, then passes the resulting token
 ids through the token + positional embedding pipeline. The output is
-the per-position vector for each token — exactly what the (future)
-attention block will consume in Sprint 2.
+the per-position vector for each token — exactly what the
+attention block consumes downstream.
 
 Run::
 

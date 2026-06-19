@@ -1,4 +1,4 @@
-# 🧠 Cognitive Discovery: Hypothesis Generation
+# Hypothesis Generation
 
 This tutorial demonstrates the unique `cds.hypothesis` module, which automates the scientific reasoning process by generating structured hypotheses.
 

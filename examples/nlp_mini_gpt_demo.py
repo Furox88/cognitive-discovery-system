@@ -1,4 +1,4 @@
-"""End-to-end demo of cds.nlp Sprint 4: train MiniGPT on Shakespeare.
+"""End-to-end demo of cds.nlp: train MiniGPT on Shakespeare.
 
 The full pipeline:
 1. Load the Shakespeare excerpt from :mod:`cds.nlp.data`.
@@ -22,7 +22,6 @@ from cds.nlp.training import train_step
 # MiniGPT.parameters() returns list[Parameter], a subclass of Tensor.
 # Adam.params is list[Tensor]; the assignment is sound at runtime but
 # mypy flags it because list is invariant. We import Tensor for typing.
-
 
 
 def main() -> None:
