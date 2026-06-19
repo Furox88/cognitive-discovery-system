@@ -109,7 +109,11 @@ def test_hypothesis_model_fields() -> None:
 
 
 def test_prompt_template_different_domains() -> None:
-    for domain in Domain:
+    # Iterate the Enum's concrete member list rather than the EnumType
+    # itself. Functionally identical (EnumType __iter__ yields members),
+    # but unambiguous to static analysis — CodeQL's non-iterable query
+    # cannot resolve the EnumType across the cds.core re-export.
+    for domain in list(Domain):
         prompt = PromptTemplate.render("test", domain, n=1)
         assert domain.value in prompt
 

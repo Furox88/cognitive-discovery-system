@@ -38,7 +38,10 @@ class HypothesisGenerator(Protocol):
         **kwargs: Any,
     ) -> list[Hypothesis]:
         """Generate `n` hypotheses for the given research question."""
-        ...
+        # Protocol methods carry no body — the docstring alone satisfies the
+        # required suite (PEP 544). Previously a bare ``...`` here triggered
+        # CodeQL's ineffectual-statement query; the docstring is both clearer
+        # and the idiomatic body for an abstract/protocol method.
 
 
 class PromptTemplate:
