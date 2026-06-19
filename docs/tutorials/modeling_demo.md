@@ -1,4 +1,4 @@
-# 🧮 Mathematical Modeling Tutorial
+# Mathematical Modeling Tutorial
 
 `cds.modeling` provides a small symbolic algebra: build expressions, differentiate them symbolically, simplify, export to LaTeX, group them into a `MathModel`, and solve numerically.
 

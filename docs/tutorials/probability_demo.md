@@ -1,4 +1,4 @@
-# 🎲 Probability Distributions Tutorial
+# Probability Distributions Tutorial
 
 `cds.probability` covers common continuous PDFs and discrete PMFs, plus reproducible sampling.
 

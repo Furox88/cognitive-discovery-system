@@ -1,4 +1,4 @@
-# ⚛️ Quantum Lab: Circuit Simulation
+# Quantum Circuit Simulation
 
 Explore quantum mechanics using the `cds.quantum` module. This guide shows how to create Bell states and detect entanglement using our pure-Python simulator.
 

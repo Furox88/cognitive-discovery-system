@@ -1,4 +1,4 @@
-# 🧬 Differential Equations Tutorial
+# Differential Equations Tutorial
 
 `cds.diffeq` solves initial-value problems with classical schemes plus an adaptive RK45 integrator.
 

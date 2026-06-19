@@ -47,11 +47,11 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - Community-contributed domain modules (bioinformatics, finance)
 - Education-focused "tour of numerical methods" guide
 - **Educational NLP track** (see `cds.nlp` — shipped in v1.0.0):
-  - Sprint 1 ✅ BPE tokenizer + token / positional embeddings (v0.9.0b5)
-  - Sprint 2 ✅ Multi-head self-attention block (pure-Python, slow on purpose)
-  - Sprint 3 ✅ Pure-Python autograd with optional `cds[fast-jit]` Numba backend (kept opt-in so the core stays zero-dep)
-  - Sprint 4 ✅ Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
-  - Sprint 5 ✅ Attention / embedding visualisations for the educational narrative
+  - Phase 1 (released): BPE tokenizer + token / positional embeddings (v0.9.0b5)
+  - Phase 2 (released): Multi-head self-attention block (pure-Python, intentionally readable rather than fast)
+  - Phase 3 (released): Pure-Python autograd with optional `cds[fast-jit]` Numba backend (kept opt-in so the core stays zero-dep)
+  - Phase 4 (released): Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
+  - Phase 5 (released): Attention / embedding visualisations for the educational narrative
   - Scope explicitly excludes production-scale training — that belongs in PyTorch / JAX / MLX.
 - **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2))
 - **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3))
@@ -62,6 +62,6 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 Contributions and ideas are welcome — especially for cross-module demos, new algorithms, and the hypothesis generation system.
 
 **Status legend:**
-- ✅ Released
-- 🔄 In progress
-- 📋 Planned
+- `[x]` Released
+- `[~]` In progress
+- `[ ]` Planned

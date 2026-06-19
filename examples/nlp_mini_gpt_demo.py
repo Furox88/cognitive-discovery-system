@@ -1,4 +1,4 @@
-"""End-to-end demo of cds.nlp Sprint 4: train MiniGPT on Shakespeare.
+"""End-to-end demo of cds.nlp: train MiniGPT on Shakespeare.
 
 The full pipeline:
 1. Load the Shakespeare excerpt from :mod:`cds.nlp.data`.

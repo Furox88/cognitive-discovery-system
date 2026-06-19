@@ -23,10 +23,10 @@ The platform also includes built-in support for structured hypothesis generation
 
 > **v1.1.2 stable release.** Contributions welcome!
 
-📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
+**[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** **v1.1.2** — security hardening patch. Tightened `main` branch protection (required status checks for `CI` + `CodeQL`), closed the remaining CodeQL code-scanning alerts via a legitimate fix (Enum iteration now uses `Domain.__members__.values()` — the Enum API's official member-collection view, not a workaround), added security-reporting guidance to the README and bug-report template, and refreshed the stale `CITATION.cff` version. No API or behavior changes. Platform still spans **17 modules**, **1164 tests**, and **99.59%** coverage, all in readable pure Python.
+**Latest Update:** **v1.1.2** — security hardening. `main` branch protection now requires status checks for `CI` and `CodeQL`; the remaining CodeQL alerts were addressed by switching Enum iteration to `Domain.__members__.values()` (the standard member-collection view); security-reporting guidance was added to the README and bug-report template; `CITATION.cff` version was refreshed. No API or behavior changes. The platform spans **17 modules**, **1164 tests**, and **99.59%** coverage, all in readable pure Python.
 ---
 
 ## Contents
@@ -35,10 +35,10 @@ The platform also includes built-in support for structured hypothesis generation
 - [Citing CDS](#citing-cds)
 - [Modules](#modules)
 - [Quick Start](#quick-start)
-- [Intelligence over Brute Force](#-intelligence-over-brute-force)
-- [ASCII Visualization & Tools](#-ascii-visualization--tools)
-- [Interactive Dashboard](#-interactive-dashboard)
-- [Scientific Case Studies](#-scientific-case-studies)
+- [Intelligence over Brute Force](#intelligence-over-brute-force)
+- [ASCII Visualization & Tools](#ascii-visualization--tools)
+- [Interactive Dashboard](#interactive-dashboard)
+- [Scientific Case Studies](#scientific-case-studies)
 - [Examples](#examples)
 - [Architecture](#architecture)
 - [Vision](#vision)
@@ -59,24 +59,24 @@ The platform also includes built-in support for structured hypothesis generation
 - **Broad scope** — 17 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
 - **1164 tests** (see CI) — thoroughly tested with **~99% code coverage**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
+- **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
 ### CDS vs other libraries
 
 | Need | CDS | NumPy/SciPy | SymPy | PennyLane |
 |---|---|---|---|---|
-| Pure-Python (no compile, no binary) | ✅ | ❌ (C/Fortran) | ✅ | ❌ (needs Qiskit/Cirq) |
-| Quantum simulation | ✅ single/multi-qubit | ❌ | minimal | ✅ full SDK |
-| Hypothesis generation (structured) | ✅ | ❌ | ❌ | ❌ |
-| Educational NLP (BPE, embeddings) | ✅ from-scratch | ❌ | ❌ | ❌ |
-| Single-package umbrella (math+physics+stats+ML+signals+NLP) | ✅ | ❌ split across 6+ | partial | ❌ focused |
-| Production-ready CI/CD (multi-OS matrix, signed releases) | ✅ | n/a | partial | ✅ |
-| Educational / readable source | ✅ | ❌ large surface | ✅ | ❌ |
-| Edge runtime (no BLAS) | ✅ | ❌ | partial | ❌ |
-| Heavy numerical performance (>10⁷ ops) | ❌ use NumPy instead | ✅ | ❌ | ✅ (GPU) |
+| Pure-Python (no compile, no binary) | yes | no (C/Fortran) | yes | no (needs Qiskit/Cirq) |
+| Quantum simulation | yes, single/multi-qubit | no | minimal | yes, full SDK |
+| Hypothesis generation (structured) | yes | no | no | no |
+| Educational NLP (BPE, embeddings) | yes, from-scratch | no | no | no |
+| Single-package umbrella (math+physics+stats+ML+signals+NLP) | yes | no, split across 6+ | partial | no, focused |
+| Production-ready CI/CD (multi-OS matrix, signed releases) | yes | n/a | partial | yes |
+| Educational / readable source | yes | no, large surface | yes | no |
+| Edge runtime (no BLAS) | yes | no | partial | no |
+| Heavy numerical performance (>10⁷ ops) | no, use NumPy instead | yes | no | yes (GPU) |
 
 **When to use CDS:** teaching, prototyping, scientific exploration, edge deployments, custom algorithm development.
 **When to reach for NumPy/SciPy/PennyLane:** production HPC, GPU-accelerated quantum, distributed compute.
-- **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
 ## Citing CDS
 
@@ -88,20 +88,20 @@ If CDS is useful in your research or publications, please cite it using the info
 |--------|-------------|
 | `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli, CNOT, SWAP, Toffoli, Bell/GHZ states, entanglement detection |
 | `cds.optimization` | Gradient descent, Newton's method, Adam optimizer, golden section search |
-| `cds.ml` | **NEW:** Pure Python Neural Networks — MLP, dense layers, Adam-based training |
+| `cds.ml` | Pure Python Neural Networks — MLP, dense layers, Adam-based training |
 | `cds.signals` | DFT, radix-2 FFT/IFFT (O(N log N)), 2D FFT/IFFT, convolution, power spectrum, filtering |
 | `cds.probability` | Gaussian, uniform, exponential, binomial, Poisson distributions |
 | `cds.stats` | Descriptive stats, Pearson correlation, linear regression, t-test, chi-square, ANOVA |
 | `cds.math_utils` | Numerical calculus, O(N³) LU / QR / Cholesky, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
-| `cds.data_analysis` | **NEW:** Mini-Pandas `DataSet` for filtering/grouping, CSV loading, ASCII visualization |
+| `cds.data_analysis` | Mini-Pandas `DataSet` for filtering/grouping, CSV loading, ASCII visualization |
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
-| `cds.modeling` | **NEW:** Symbolic algebra — expressions, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
-| `cds.knowledge` | **NEW:** Knowledge organization — concept graph with typed relations, research notes notebook, ranked structured retrieval (JSON persistence) |
+| `cds.modeling` | Symbolic algebra — expressions, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
+| `cds.knowledge` | Knowledge organization — concept graph with typed relations, research notes notebook, ranked structured retrieval (JSON persistence) |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
-| `cds.numerical_integration` | **NEW:** Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
-| `cds.nlp` | **NEW:** Educational NLP from scratch — BPE tokenizer, sinusoidal embeddings, multi-head attention, Transformer block, scalar autograd (SGD/Adam), MiniGPT demo |
+| `cds.numerical_integration` | Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
+| `cds.nlp` | Educational NLP from scratch — BPE tokenizer, sinusoidal embeddings, multi-head attention, Transformer block, scalar autograd (SGD/Adam), MiniGPT demo |
 | `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
 
 ## Quick Start
@@ -124,39 +124,39 @@ cds modules
 cds hypothesis "What causes the Hubble tension?"
 ```
 
-## 🧠 Intelligence over Brute Force
+## Intelligence over Brute Force
 
-CDS is built on the philosophy that **smart algorithms beat brute force**. While pure Python cannot match C-extensions in raw loop speed, CDS closes the gap with mathematical intelligence:
+CDS is built on the principle that algorithmic improvements matter more than raw loop speed. Pure Python cannot match C-extensions for tight loops, so CDS closes the gap where it can through better algorithms:
 
-- **Quantum Simulation:** Instead of multiplying massive matrices for every shot, CDS uses **O(1) probabilistic sampling** with true state collapse, making it millions of times faster than naive approaches.
-- **Linear Algebra:** Replaced standard O(N!) determinants with **O(N³)** Partial Pivoting LU Decomposition.
-- **Signal Processing:** Uses zero-padded **O(N log N)** FFT and FFT-based Convolution Theorems.
-- **Neural Networks:** Features Adam optimizers with momentum state persistence.
+- **Quantum Simulation:** Instead of multiplying state matrices for every shot, CDS uses **O(1) probabilistic sampling** with explicit state collapse, which is significantly faster than the naive shot-by-shot approach.
+- **Linear Algebra:** Uses **O(N³)** Partial Pivoting LU Decomposition in place of the naive O(N!) determinant expansion.
+- **Signal Processing:** Zero-padded **O(N log N)** FFT and FFT-based convolution via the Convolution Theorem.
+- **Neural Networks:** Adam optimizers with momentum state persistence.
 
 See the full [Intelligence & Performance Benchmark Report](docs/benchmarks.md) for detailed figures.
 
-## 📊 ASCII Visualization & Tools
+## ASCII Visualization & Tools
 
-You don't need heavy plotting libraries to see your data. CDS includes a built-in terminal visualization engine:
+You don't need heavy plotting libraries to inspect your data. CDS includes a built-in terminal visualization engine:
 
 ```bash
-# Plot a sine wave or data series directly in your terminal!
+# Plot a sine wave or data series directly in your terminal
 cds plot "1, 5, 3, 8, 4, 9" --title "My Data"
 ```
-*Outputs clean, scale-aware ASCII line plots and bar charts.*
+*Outputs scale-aware ASCII line plots and bar charts.*
 
-## 🌐 Interactive Dashboard
+## Interactive Dashboard
 
-CDS now features an **Interactive Web Dashboard** for real-time scientific exploration. Launch it directly from your terminal:
+CDS includes an **Interactive Web Dashboard** for scientific exploration. Launch it from your terminal:
 
 ```bash
 pip install "cognitive-discovery-platform[dashboard]"
 cds dashboard
 ```
 
-*The dashboard includes a live Hypothesis Engine, Quantum Circuit Simulator, Neural Network training visualizer, and Statistical testing lab.*
+*The dashboard includes a Hypothesis Engine, Quantum Circuit Simulator, Neural Network training visualizer, and Statistical testing lab.*
 
-## 🧪 Scientific Case Studies
+## Scientific Case Studies
 
 Explore how CDS is used to solve real-world research problems:
 
@@ -495,7 +495,7 @@ MIT — see [LICENSE](LICENSE).
 - Issues & Discussions: [GitHub](https://github.com/Furox88/cognitive-discovery-system/issues)
 
 
-## 🔒 Security
+## Security
 
 Found a vulnerability? **Please do not open a public issue.** Report it privately:
 

@@ -1,4 +1,4 @@
-# 📐 Math Utilities (Calculus & Linear Algebra) Tutorial
+# Math Utilities (Calculus & Linear Algebra) Tutorial
 
 `cds.math_utils` provides pure-Python calculus primitives and a compact linear-algebra toolkit.
 

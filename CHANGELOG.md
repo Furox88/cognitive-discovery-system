@@ -7,21 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v1.1.2] - 2026-06-19
 
-### 🔒 Patch — security hardening & CodeQL closure
+### Patch — security hardening & CodeQL closure
 
 A patch release: no API changes, no behavior changes. Closes the remaining
-CodeQL code-scanning alerts with a legitimate fix (not a workaround),
+CodeQL code-scanning alerts with a fix (not a workaround),
 tightens `main` branch protection, and improves the discoverability of the
 vulnerability-reporting flow. Brings the repo to **0 open** code-scanning
 alerts (22/22 closed: 20 fixed by code, 2 dismissed as documented false
 positives).
 
-### 🔒 Security
+### Security
 
-- **CodeQL `py/non-iterable-in-for-loop` — legitimate fix.** Enum iteration
+- **CodeQL `py/non-iterable-in-for-loop` — fix.** Enum iteration
   in `examples/core_demo.py` and `tests/test_hypothesis.py` now uses
   `Domain.__members__.values()` instead of `for x in Domain:`. This is the
-  Enum API's official member-collection view: functionally identical (same
+  Enum API's standard member-collection view: functionally identical (same
   members, same insertion order — all 1164 tests pass) but the return type
   is an explicitly iterable mapping view that CodeQL's type resolver can
   follow. Previous attempts (idiomatic iteration, direct import from the
@@ -37,20 +37,20 @@ positives).
   opening public issues for vulnerabilities and redirects to private
   advisories.
 
-### 🛠️ Changed
+### Changed
 
 - **`CITATION.cff` version refresh.** Two stale `1.1.0` references (root and
   `preferred-citation` blocks) bumped to `1.1.2`. This was missed in v1.1.1.
 
 ## [v1.1.1] - 2026-06-19
 
-### 🔒 Patch — supply-chain & CI hardening
+### Patch — supply-chain & CI hardening
 
 A patch release: no API changes, no behavior changes. Strengthens release
 integrity and CI correctness so downstream consumers and contributors get
 verifiable, low-churn workflows.
 
-### 🔒 Security
+### Security
 
 - **CodeQL static analysis** (`codeql.yml`) — runs `security-and-quality`
   query pack on every push/PR into `main` plus a weekly schedule; findings
@@ -59,7 +59,7 @@ verifiable, low-churn workflows.
   `dependabot.yml` (dependency CVEs).
 - **README security badge** — live CodeQL status added next to the CI badge.
 
-### 🛠️ Changed
+### Changed
 
 - **`changelog.yml` made idempotent** — all dispatches now target a single
   fixed branch (`chore/changelog-regen`); `peter-evans/create-pull-request`
@@ -72,7 +72,7 @@ verifiable, low-churn workflows.
   `peter-evans/create-pull-request@v7`, so regenerated artifacts merge
   through the normal review flow without breaking protection rules.
 
-### 🧹 Removed
+### Removed
 
 - 6 stale auto-generated changelog PRs (#10, #19, #20, #21, #22, #23) and
   their per-tag branches — all superseded by the hand-curated CHANGELOG on
@@ -80,13 +80,13 @@ verifiable, low-churn workflows.
 
 ## [v1.1.0] - 2026-06-19
 
-### ✨ Minor — two new modules (symbolic math + knowledge organization)
+### Minor — two new modules (symbolic math + knowledge organization)
 
 A backward-compatible feature release. Adds two new public subpackages
 (`cds.modeling`, `cds.knowledge`) without changing any existing API. The
 platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage.
 
-### <!-- 1 -->🎉 Added
+### Added
 
 - **`cds.modeling`** — symbolic algebra for equation development:
   - An expression tree (`+`, `-`, `*`, `/`, `**`, unary `-`, variables,
@@ -111,7 +111,7 @@ platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage.
 - Both modules are wired into the package `__all__`, the CLI `modules`
   listing, and the API reference (`docs/api.md`).
 
-### <!-- 4 -->🔧 Maintenance
+### Maintenance
 
 - Docs: resync README, `docs/index.md`, getting-started (EN + TR), and
   CITATION.cff to v1.1.0 — module count 16→17, test count 883→1164,
@@ -123,14 +123,14 @@ platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage.
 
 ## [v1.0.4] - 2026-06-18
 
-### 🔒 Security & Tooling — CI hardening
+### Security & Tooling — CI hardening
 
 A follow-up patch to v1.0.3. No behavior changes to the published package;
 fully backward compatible. Adds continuous dependency-vulnerability scanning
 to CI, tightens the type-check configuration, and resynchronizes docs that
 had drifted after v1.0.0.
 
-### <!-- 4 -->🔧 Maintenance
+### Maintenance
 
 - Chore(ci): add a `pip-audit` job to the CI workflow (`tests.yml`). Runs
   once on the reference cell (Linux + Python 3.12) against the PyPI Advisory
@@ -151,14 +151,14 @@ had drifted after v1.0.0.
 
 ## [v1.0.3] - 2026-06-18
 
-### 🧹 Hygiene — test-suite type correctness
+### Hygiene — test-suite type correctness
 
 A follow-up patch to v1.0.2. No behavior changes to the published package;
 fully backward compatible. Brings `tests/` to the same mypy baseline as
 `src/` so the full type-check (`mypy src/ tests/`) is green, and resolves
 post-release lint/test/publish findings caught after v1.0.2 shipped.
 
-### <!-- 6 -->🧪 Testing
+### Testing
 
 - Test(types): clear all remaining mypy errors across `tests/` (39 files,
   0 errors). Fixes list-variance issues (`Parameter <: Tensor`), redundant
@@ -167,14 +167,14 @@ post-release lint/test/publish findings caught after v1.0.2 shipped.
   `_write_json()` accept an `output_dir` parameter so `pytest` no longer
   clobbers the committed `benchmarks/results.json`.
 
-### <!-- 4 -->🔧 Maintenance
+### Maintenance
 
 - Chore(ci): resolve post-1.0.2 lint/test/publish findings (commit 5e429ec).
 - Docs: keep `pyproject.toml` + `src/cds/_version.py` lockstepped at 1.0.3.
 
 ## [v1.0.2] - 2026-06-18
 
-### 🧹 Hygiene — test isolation for benchmark artifacts
+### Hygiene — test isolation for benchmark artifacts
 
 A follow-up patch to v1.0.1. No behavior changes to the published package;
 fully backward compatible. Resolves a repo-hygiene issue where running the
@@ -182,7 +182,7 @@ benchmark test suite silently clobbered the committed
 `benchmarks/results.json` artifact (and `docs/benchmarks.md`) on every
 `pytest` invocation.
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 - Fix(tests): `test_run_all_generates_report` no longer writes into the
   working tree. `run_all()` and `_write_json()` now accept an optional
@@ -191,12 +191,12 @@ benchmark test suite silently clobbered the committed
   test run. Verified: object hash of `results.json` is byte-identical before
   and after `pytest`.
 
-### <!-- 6 -->🧪 Testing
+### Testing
 
 - Test(benchmarks): added a regression assertion that `results.json` lands
   in `tmp_path` (not `benchmarks/`) after `run_all(output_dir=...)`.
 
-### <!-- 0 -->🚀 Features
+### Features
 
 - Feat(benchmarks): `run_all(output_dir=None)` and
   `_write_json(record, output_dir=None)` — new optional parameter for
@@ -204,82 +204,79 @@ benchmark test suite silently clobbered the committed
 
 ## [v1.0.1] - 2026-06-18
 
-### 🔧 Maintenance — typed, documented, hardened
+### Maintenance — typed, documented, hardened
 
 A follow-up to the v1.0 stable release focused on packaging quality and
 numerical correctness guarantees. No behavior changes; fully backward
 compatible.
 
-### <!-- 0 -->🚀 Features
+### Features
 
 - Feat(packaging): declare PEP 561 type information — ship `src/cds/py.typed`
   marker and force-include it in the wheel so downstream users get full
   static type-checking support out of the box.
 - Feat(docs): add "type checked" badge to the README.
 
-### <!-- 6 -->🧪 Testing
+### Testing
 
 - Test(invariants): add `tests/test_numerical_invariants.py` — 32
   property-based numerical invariants across 8 modules (linalg, signals,
   stats, quadrature, quantum, diffeq, monte carlo, probability). Fixed
   seed, fully reproducible, zero new dev dependencies.
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 - Docs(api): add docstrings to all 51 previously-undocumented public
   functions identified via AST scan (3 empty-docstring gaps closed).
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 - Chore: bump version to 1.0.1.
 
 ## [v1.0.0] - 2026-06-18
 
-### 🚀 1.0 — Stable release
+### 1.0 — Stable release
 
 Cognitive Discovery Platform reaches its first stable release. All five
 subsystems of the v1.0 completion spec are implemented, gated, and
 verified: 99.16% statement coverage (845 tests passing), zero mypy
 errors, clean ruff, and a strict mkdocs build.
 
-### <!-- 0 -->🚀 Features
+### Features
 
-- Feat(nlp): Sprint 5 visualisation module — attention heatmap, PCA projection, training curve ([7956597](7956597))
+- Feat(nlp): NLP visualisation module — attention heatmap, PCA projection, training curve ([7956597](7956597))
 - Feat(benchmarks): emit results.json with timestamp + git SHA provenance, add CI workflow ([4e18500](4e18500))
 
-### <!-- 6 -->🧪 Testing
+### Testing
 
 - Test(coverage): close NLP edge-case gaps — tensor/ops/optim/bpe/layers/model/attention; reach 99.16% statement coverage ([6f0a487](6f0a487))
 - Style(tests): ruff format cleanup — collapse over-split listcomp, expand train() signature, remove duplicate inline imports ([36f4ee4](36f4ee4))
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 - Docs(examples): add 9 module demos + matching tutorials ([9f00fc5](9f00fc5))
 - Docs(api): restructure mkdocs nav, add api.md lead-ins, fix stale test counts ([4cad8be](4cad8be))
 - Docs(nlp): fix griffe warnings — split combined params in docstrings ([3aedff4](3aedff4))
-- Docs(build): exclude internal superpowers/ planning artifacts from mkdocs --strict ([c0c68e7](c0c68e7))
-- Docs(plans): A–E implementation plans for v1.0 completion spec ([a5da8b8](a5da8b8))
-- Docs(spec): project completion design — 5 subsystems to v1.0 readiness ([42a02f5](42a02f5))
 - Docs(benchmarks): regenerate results.json with current SHA provenance ([69c5a88](69c5a88))
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 - Chore: bump version to 1.0.0 + Production/Stable classifier; sync _version.py
 
-### <!-- 10 -->💼 Other
+### Other
 
 - Promoted from `Development Status :: 4 - Beta` to `Development Status :: 5 - Production/Stable`.
 
 ## [v0.10.0b1] - 2026-06-17
 
 
-### <!-- 0 -->🚀 Features
+### Features
 
 
-- Feat(nlp): Sprint 3+4 — autograd engine + MiniGPT-from-scratch ([5e0d308](5e0d308))
+- Feat(nlp): autograd engine + MiniGPT-from-scratch ([5e0d308](5e0d308))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b8 (#17) ([2b0a7d3](2b0a7d3))
@@ -288,13 +285,13 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.9.0b8] - 2026-06-17
 
 
-### <!-- 0 -->🚀 Features
+### Features
 
 
-- Feat(nlp): add Sprint 2 — multi-head attention + transformer block ([4f38cae](4f38cae))
+- Feat(nlp): add multi-head attention + transformer block ([4f38cae](4f38cae))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b7 (#16) ([44ec93c](44ec93c))
@@ -303,13 +300,13 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.9.0b7] - 2026-06-17
 
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 
 - Fix: catch two more stale surfaces (CITATION.cff, mkdocs api.md) ([b59b6e3](b59b6e3))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b6 (#15) ([e1244ce](e1244ce))
@@ -318,13 +315,13 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.9.0b6] - 2026-06-17
 
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 
 - Fix: sync test count 572 to 655 across all surfaces ([952ffe0](952ffe0))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b5 (#14) ([f7a037b](f7a037b))
@@ -333,19 +330,19 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.9.0b5] - 2026-06-17
 
 
-### <!-- 0 -->🚀 Features
+### Features
 
 
 - Feat(nlp): add cds.nlp module — BPE tokenizer + sinusoidal embeddings ([045b9d1](045b9d1))
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Build: drop hatch-vcs + setuptools_scm, switch to static versioning ([6e04d31](6e04d31))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b4 (#13) ([da52ee0](da52ee0))
@@ -354,13 +351,13 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.9.0b4] - 2026-06-17
 
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 
 - Fix: drop stale 'auditor' comment + sync 570 to 572 across docs and cli ([0dcaba6](0dcaba6))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b4 (#11) ([b1eda78](b1eda78))
@@ -369,7 +366,7 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.9.0b3] - 2026-06-17
 
 
-### <!-- 1 -->🐛 Bug Fixes
+### Bug Fixes
 
 
 - Fix(docs): include getting-started.tr.md in mkdocs nav; fix broken CONTRIBUTING link ([85316fe](85316fe))
@@ -387,7 +384,7 @@ errors, clean ruff, and a strict mkdocs build.
 - Fix: use # type: ignore[no-any-return] instead of cast() for cross-Python compat ([bd3aaa8](bd3aaa8))
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Build: add setuptools_scm local-scheme config (no-local-version, fallback) ([82d07c9](82d07c9))
@@ -405,7 +402,7 @@ errors, clean ruff, and a strict mkdocs build.
 - Release: v0.9.0b3 - branch protection, threat model, i18n, signed commits guide ([31983fe](31983fe))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(changelog): regenerate for v0.9.0b1 ([44f7823](44f7823))
@@ -421,7 +418,7 @@ errors, clean ruff, and a strict mkdocs build.
 - Docs: update SECURITY.md supported versions (0.6.x → 0.8.x) ([b42cf5f](b42cf5f))
 
 
-### <!-- 5 -->🎨 Styling
+### Styling
 
 
 - Style: pre-commit auto-fix (trailing whitespace, import order, ruff format) ([9adbf5a](9adbf5a))
@@ -429,7 +426,7 @@ errors, clean ruff, and a strict mkdocs build.
 - Style: pre-commit auto-fix _version.py (add blank line before __version__) ([277b535](277b535))
 
 
-### <!-- 7 -->⚙️ Miscellaneous Tasks
+### Miscellaneous Tasks
 
 
 - Ci: changelog PR action needs explicit base branch (checked out on tag) ([b96d322](b96d322))
@@ -452,7 +449,7 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.8.5] - 2026-06-16
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Release: v0.8.5 - cds[all] extras, auto-generated API ref, docs deploy ([12b03b0](12b03b0))
@@ -461,7 +458,7 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.8.4] - 2026-06-16
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Release: v0.8.4 - pydantic upgrade ([58ee8d9](58ee8d9))
@@ -470,7 +467,7 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.8.3] - 2026-06-16
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Release: v0.8.3 - example guard consistency ([5017680](5017680))
@@ -479,7 +476,7 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.8.2] - 2026-06-16
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Release: v0.8.2 - docstrings, knowledge/ removal, CHANGELOG backfill ([f22150c](f22150c))
@@ -487,7 +484,7 @@ errors, clean ruff, and a strict mkdocs build.
 - Scripts: replace publish.ps1 with pure-Python publish.py ([c7c08e2](c7c08e2))
 
 
-### <!-- 7 -->⚙️ Miscellaneous Tasks
+### Miscellaneous Tasks
 
 
 - Ci: fix pre-commit and coverage gate for stable CI ([ca66c9f](ca66c9f))
@@ -498,13 +495,13 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.8.1] - 2026-06-16
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Release: v0.8.1 ([4dc49e2](4dc49e2))
 
 
-### <!-- 3 -->📚 Documentation
+### Documentation
 
 
 - Docs(roadmap): link open enhancement issues #2 and #3 under Longer Term ([ee6103b](ee6103b))
@@ -512,13 +509,13 @@ errors, clean ruff, and a strict mkdocs build.
 - Docs: mark v0.8.0 as released; move 3 pending perf items to v0.8.1 ([80e6afe](80e6afe))
 
 
-### <!-- 6 -->🧪 Testing
+### Testing
 
 
 - Test: hit 100% statement coverage; keep branch coverage off ([5c606c4](5c606c4))
 
 
-### <!-- 7 -->⚙️ Miscellaneous Tasks
+### Miscellaneous Tasks
 
 
 - Ci(pypi): fix pypi-publish workflow ([8335cb6](8335cb6))
@@ -533,7 +530,7 @@ errors, clean ruff, and a strict mkdocs build.
 ## [v0.8.0] - 2026-06-16
 
 
-### <!-- 10 -->💼 Other
+### Other
 
 
 - Squashed: collapse 108 commits into a single cohesive history ([d4e8aee](d4e8aee))
@@ -542,3 +539,4 @@ errors, clean ruff, and a strict mkdocs build.
 
 
 <!-- generated by git-cliff -->
+

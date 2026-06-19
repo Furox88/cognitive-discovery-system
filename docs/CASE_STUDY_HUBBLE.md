@@ -7,7 +7,7 @@ The discrepant measurements of the Hubble constant ($H_0$) from the early univer
 Measurements from the Planck satellite (CMB) suggest $H_0 \approx 67.4 \pm 0.5 \text{ km s}^{-1} \text{ Mpc}^{-1}$, while local observations using Type Ia supernovae (SH0ES) yield $H_0 \approx 73.0 \pm 1.4 \text{ km s}^{-1} \text{ Mpc}^{-1}$. The resulting $\sim 5\sigma$ tension suggests either undetected systematic errors or physics beyond the $\Lambda$CDM model.
 
 ## 2. Hypothesis Generation
-We utilize the `cds.hypothesis` module to explore theoretical extensions that could bridge this gap. By supplying the research question to the discovery engine, we can systematically categorize potential resolutions.
+We use the `cds.hypothesis` module to explore theoretical extensions that could bridge this gap. By supplying the research question to the hypothesis generator, we can systematically categorize potential resolutions.
 
 ```python
 from cds.hypothesis import generate_hypotheses, Domain
@@ -74,7 +74,7 @@ if result.p_value < 1e-5:
 ```
 
 ## 5. Conclusion
-The CDS framework allows researchers to transition from high-level theoretical exploration to rigorous data validation in a unified environment. By combining automated hypothesis generation with robust statistical tools, we can systematically approach the "Hubble Crisis" and evaluate the viability of new physics.
+The CDS framework lets researchers move from high-level theoretical exploration to data validation in a single environment. By combining automated hypothesis generation with statistical tools, we can approach the Hubble tension systematically and evaluate the viability of new physics.
 
 ---
 *This report was generated using the Cognitive Discovery Platform (CDS).*

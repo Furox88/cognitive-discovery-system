@@ -1,4 +1,4 @@
-# 🧱 Core Data Models Tutorial
+# Core Data Models Tutorial
 
 `cds.core` defines the `Domain`, `Hypothesis`, and `HypothesisStatus` types used across CDS — particularly by the hypothesis engine.
 

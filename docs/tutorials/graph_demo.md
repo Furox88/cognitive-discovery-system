@@ -1,4 +1,4 @@
-# 🕸️ Graph Algorithms Tutorial
+# Graph Algorithms Tutorial
 
 `cds.graph` implements traversal, shortest paths, MST, topo sort, and cycle detection on a small `Graph` class.
 
