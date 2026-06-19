@@ -33,10 +33,7 @@ from __future__ import annotations
 import math
 from typing import Final
 
-from cds.nlp.embed import (
-    _make_matrix,  # reuse the matrix allocator
-    add_positional,  # noqa: F401  (re-exported convenience)
-)
+from cds.nlp.embed import _make_matrix  # reuse the matrix allocator
 
 __all__ = [
     "softmax",

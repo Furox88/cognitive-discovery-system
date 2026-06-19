@@ -426,5 +426,7 @@ class TestPow:
     def test_non_constant_exponent_raises(self) -> None:
         a = Tensor(data=2.0, requires_grad=True)
         b = Tensor(data=3.0, requires_grad=True)
-        with pytest.raises(TypeError, match="constant"):
-            a**b  # type: ignore[operator]
+        # ``__pow__`` returns ``NotImplemented`` for non-numeric exponents, so
+        # Python's ``**`` operator raises ``TypeError`` itself (not the dunder).
+        with pytest.raises(TypeError, match="unsupported operand"):
+            a**b

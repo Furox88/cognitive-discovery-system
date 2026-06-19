@@ -20,7 +20,7 @@ from cds.math_utils import (
 def main() -> None:
     print("=== Calculus ===")
     d = derivative(lambda x: x**2, x=3.0)
-    i = integral(lambda x: math.sin(x), a=0.0, b=math.pi)
+    i = integral(math.sin, a=0.0, b=math.pi)
     g = gradient(lambda x, y: x**2 + y**2, point=[1.0, 2.0])
     print(f"d/dx(x^2) @ x=3  = {d:.4f}  (expect 6)")
     print(f"∫_0^π sin(x) dx   = {i:.4f}  (expect 2)")

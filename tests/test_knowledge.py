@@ -1084,7 +1084,12 @@ class TestPublicAPI:
         assert r.note_id == "n1"
 
     def test_all_documented_names_exported(self) -> None:
-        import cds.knowledge as mod
+        # cds.knowledge is already imported at module scope (above), so read
+        # it back from sys.modules instead of re-``import``-ing, which would
+        # mix ``import cds.knowledge`` with the module-scope ``from`` form.
+        import sys
+
+        mod = sys.modules["cds.knowledge"]
 
         expected = {
             "Concept",

@@ -21,7 +21,12 @@ class Qubit:
 
     def normalize(self) -> None:
         """Renormalize the state amplitudes in-place to unit length."""
-        norm = math.sqrt(abs(self.alpha) ** 2 + abs(self.beta) ** 2)
+        # Complex amplitudes: the norm is sqrt(|alpha|^2 + |beta|^2). We sum
+        # the squared magnitudes first and take a single sqrt — numerically
+        # equivalent to math.hypot for reals, but math.hypot rejects complex
+        # inputs, so this is the correct hypotenuse for the complex plane.
+        mag = (abs(self.alpha) ** 2) + (abs(self.beta) ** 2)
+        norm = math.sqrt(mag)
         if norm > 0:
             self.alpha /= norm
             self.beta /= norm

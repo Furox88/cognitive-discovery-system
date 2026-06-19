@@ -5,15 +5,42 @@ module global :data:`_GRAD_ENABLED`, flipped by :class:`_NoGrad` and
 read by :func:`_track`. Keeping these symbols in their own leaf module
 lets :mod:`cds.nlp.autograd.tensor` and :mod:`cds.nlp.autograd.ops`
 both depend on them without creating an import cycle.
+
+This module deliberately does **not** import :class:`~cds.nlp.autograd.tensor.Tensor`
+— not even under ``TYPE_CHECKING`` — because that would reintroduce the
+``tensor <-> _grad`` cycle. :func:`_track` is typed against a local
+:class:`_Trackable` protocol (structural typing), so the dependency graph
+stays a strict DAG: ``_grad`` is the leaf both ``tensor`` and ``ops``
+point at, with no edge back.
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from typing import TYPE_CHECKING
+from typing import Any, Protocol, TypeVar, runtime_checkable
 
-if TYPE_CHECKING:
-    from cds.nlp.autograd.tensor import Tensor
+
+@runtime_checkable
+class _Trackable(Protocol):
+    """Structural supertype of :class:`~cds.nlp.autograd.tensor.Tensor`.
+
+    Defines only the attributes :func:`_track` mutates, so the grad helper
+    can depend on a shape rather than the concrete ``Tensor`` class and the
+    ``tensor -> _grad -> tensor`` import cycle is broken.
+    """
+
+    requires_grad: bool
+    _prev: set[Any]
+    _backward: Callable[[], None] | None
+
+
+# ``_T`` is bound to :class:`_Trackable` so :func:`_track` is parametric:
+# whatever the caller passes in (in practice always :class:`Tensor`, but
+# the grad module can't name that type without re-importing it and
+# reintroducing the cycle) is the type returned. This is what lets the
+# op implementations stay typed as ``Tensor -> Tensor`` even though
+# ``_grad`` only knows the structural :class:`_Trackable` shape.
+_T = TypeVar("_T", bound=_Trackable)
 
 # ---------------------------------------------------------------------- #
 # Type aliases
@@ -68,7 +95,7 @@ def no_grad() -> _NoGrad:
 # ---------------------------------------------------------------------- #
 
 
-def _track(out: Tensor, children: Iterable[Tensor], backward: BackwardFn) -> Tensor:
+def _track(out: _T, children: Iterable[_Trackable], backward: BackwardFn) -> _T:
     """Attach a backward closure + parent set to a freshly created node.
 
     Respects :func:`no_grad`: if grad tracking is off, the new node

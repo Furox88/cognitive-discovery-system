@@ -202,15 +202,20 @@ def render_embedding_projection(
 
     pts = _pca_2d(embeddings)
     # Keep the ``top_n`` points with the largest |PC1| so the spread is visible.
-    pts.sort(key=lambda p: abs(p[0]), reverse=True)
-    pts = pts[:top_n]
+    # Tag each projected point with its original row index so a legend can map
+    # back to ``labels`` after the descending-|PC1| sort reorders them.
+    indexed = sorted(
+        ((p, k) for k, p in enumerate(pts)),
+        key=lambda item: abs(item[0][0]),
+        reverse=True,
+    )[:top_n]
     if labels is not None:
         labels = list(labels)
     else:
         labels = [str(i) for i in range(len(embeddings))]
 
-    xs = [p[0] for p in pts]
-    ys = [p[1] for p in pts]
+    xs = [p[0] for p, _ in indexed]
+    ys = [p[1] for p, _ in indexed]
     xlo, xhi = min(xs), max(xs)
     ylo, yhi = min(ys), max(ys)
     xspan = xhi - xlo if xhi > xlo else 1.0
@@ -218,13 +223,16 @@ def render_embedding_projection(
 
     grid: list[list[str]] = [[" "] * width for _ in range(height)]
     marks = "o*+x#@%&123456789abcdefghijklmnopqrstuvwxyz"
-    for k, (x, y) in enumerate(pts):
+    legend: list[str] = []
+    for k, ((x, y), orig_idx) in enumerate(indexed):
         col = int((x - xlo) / xspan * (width - 1))
         # Invert y so larger PC2 is at the top.
         row = int((yhi - y) / yspan * (height - 1))
         col = max(0, min(width - 1, col))
         row = max(0, min(height - 1, row))
-        grid[row][col] = marks[k % len(marks)]
+        mark = marks[k % len(marks)]
+        grid[row][col] = mark
+        legend.append(f"{mark}={labels[orig_idx]}")
 
     lines: list[str] = []
     lines.append(f"PC2 {yhi:.3g} |" + "".join(grid[0]))
@@ -237,4 +245,7 @@ def render_embedding_projection(
     left = f"{'PC1':>{3 + len(f'{yhi:.3g}')}} {xlo:.3g}"
     pad = max(0, width - len(left) - len(f"{xhi:.3g}"))
     lines.append(f"{left}{'':>{pad}}{xhi:.3g}")
+    # Mark→label legend so caller-supplied ``labels`` are actually surfaced.
+    if legend:
+        lines.append("  legend: " + "  ".join(legend))
     return "\n".join(lines) + "\n"

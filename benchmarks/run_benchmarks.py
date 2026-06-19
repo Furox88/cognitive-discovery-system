@@ -52,6 +52,7 @@ def _git_sha() -> str:
         if out.returncode == 0:
             return out.stdout.strip() or "unknown"
     except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+        # git missing or repo not available — fall back to "unknown".
         pass
     return "unknown"
 

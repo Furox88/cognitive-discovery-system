@@ -10,6 +10,7 @@ avoids a ``tensor <-> ops`` import cycle.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import overload
 
 from cds.nlp.autograd._grad import BackwardFn, Scalar, _track, _unbroadcast
 
@@ -79,9 +80,20 @@ class Tensor:
     def __pos__(self) -> Tensor:
         return self
 
-    def __pow__(self, exponent: float) -> Tensor:
+    @overload
+    def __pow__(self, exponent: int | float) -> Tensor: ...
+    @overload
+    def __pow__(self, exponent: object) -> Tensor: ...
+
+    def __pow__(self, exponent: object) -> Tensor:
+        # Return ``NotImplemented`` for unsupported operand types instead of
+        # raising — this is the Pythonic contract for arithmetic dunders
+        # (lets Python try the reflected ``__rpow__`` and only raise a real
+        # ``TypeError`` if neither side can handle it). CodeQL's
+        # ``unexpected-raise-in-special-method`` flags ``raise`` in dunders
+        # precisely because it short-circuits that reflection protocol.
         if not isinstance(exponent, (int, float)):
-            raise TypeError("Tensor.__pow__ only supports constant Python exponents")
+            return NotImplemented
         c = float(exponent)
 
         def _backward() -> None:

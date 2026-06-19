@@ -79,7 +79,7 @@ class TestRandomWalk2D:
     def test_step_distance(self) -> None:
         walk = random_walk_2d(1, step_size=1.0, seed=42)
         x, y = walk[1]
-        dist = math.sqrt(x**2 + y**2)
+        dist = math.hypot(x, y)
         assert abs(dist - 1.0) < 1e-10
 
 

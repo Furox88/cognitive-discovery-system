@@ -54,6 +54,7 @@ class DataTable:
                     "max": max(vals),
                 }
             except (ValueError, TypeError):
+                # Non-numeric column — skip aggregation, keep prior result.
                 pass
         return result
 

@@ -79,6 +79,11 @@ jobs:
         if: steps.changed.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
+          # On tag pushes the workspace is in detached HEAD at the tag, so
+          # create-pull-request can't infer the base branch and fails with
+          # "the 'base' input must be supplied". Pass the resolved target
+          # explicitly (main on schedule/dispatch, base_ref on tag push).
+          base: ${{ steps.target.outputs.branch }}
           commit-message: "ci(benchmarks): regenerate report and results.json"
           branch: ci/benchmark-regen
           title: "ci(benchmarks): regenerate report and results.json"

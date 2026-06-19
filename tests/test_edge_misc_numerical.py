@@ -540,14 +540,16 @@ class TestMainModuleRun:
     """Cover if __name__ == "__main__": app() in __main__.py (line 6)."""
 
     def test_main_module_via_subprocess(self) -> None:
-        main_path = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "src",
-            "cds",
-            "__main__.py",
+        main_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "src",
+                "cds",
+                "__main__.py",
+            )
         )
-        main_path = os.path.abspath(main_path)
+        assert os.path.isfile(main_path), f"missing entry point: {main_path}"
         result = subprocess.run(
             [sys.executable, "-m", "cds", "--help"],
             capture_output=True,

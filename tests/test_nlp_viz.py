@@ -176,7 +176,12 @@ class TestEmbeddingProjection:
 
 class TestPublicExports:
     def test_all_three_in_cds_nlp_namespace(self) -> None:
-        import cds.nlp as n
+        # cds.nlp is already imported at module scope (above), so read it back
+        # from sys.modules instead of re-``import``-ing, which would mix
+        # ``import cds.nlp`` with the module-scope ``from cds.nlp import``.
+        import sys
+
+        n = sys.modules["cds.nlp"]
 
         assert "render_training_curve" in n.__all__
         assert "render_attention_heatmap" in n.__all__
