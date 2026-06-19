@@ -5,6 +5,38 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.4] - 2026-06-19
+
+### Patch — documentation, CI, and housekeeping cleanup
+
+A patch release: no API changes, no behavior changes. Removes cosmetic
+distractions (emojis, sprint references) from issue templates and docs,
+fixes CI workflow schemas, and deletes ~3 500 lines of no-op autograd
+shim code that was never exercised at runtime.
+
+### Changed
+
+- **Issue templates** — removed decorative emojis from
+  `bug_report.md`, `config.yml`, and `changelog.yml` for a cleaner,
+  more professional appearance.
+- **`.github/labeler.yml`** — migrated to the `actions/labeler` v5
+  configuration schema (`triage` → `labels` key).
+- **`.github/workflows/changelog.yml`** — fixed a missing trailing
+  newline flagged by lint checks.
+- **Documentation** — stripped sprint-tracking references and
+  ephemeral planning files (`docs/superpowers/plans/`,
+  `docs/superpowers/specs/`); unified inline-code formatting across
+  tutorials and case-study pages.
+- **Removed no-op autograd shims** — deleted `src/cds/nlp/autograd/`
+  shim functions (`_grad.py` stubs, pass-through wrappers in
+  `ops.py` and `tensor.py`) that were placeholders and never
+  participated in any real gradient computation. ~3 500 lines removed.
+- **Examples** — aligned `ruff` formatting in
+  `examples/data_analysis_demo.py` and
+  `examples/ml_and_viz_demo.py`.
+- **Version bump `1.1.3` → `1.1.4`** in `pyproject.toml`,
+  `src/cds/_version.py`, and `CITATION.cff`.
+
 ## [v1.1.3] - 2026-06-19
 
 ### Patch — type-safety cleanup
