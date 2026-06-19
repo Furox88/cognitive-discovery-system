@@ -5,6 +5,7 @@ so CI stays fast. Timing correctness is validated manually via
 ``python benchmarks/run_benchmarks.py``.
 """
 
+import os
 from collections import OrderedDict
 from importlib import import_module
 from pathlib import Path
@@ -57,13 +58,14 @@ class TestBenchmarkStructure:
     ) -> None:
         """run_all writes a valid markdown report with all six sections.
 
-        Output is redirected to ``tmp_path`` so the committed
+        Output is redirected to ``tmp_path`` (``output_dir`` for the markdown,
+        ``json_dir`` for ``results.json``) so the committed
         ``benchmarks/results.json`` and ``docs/benchmarks.md`` are never
         clobbered by a test run.
         """
         mod = import_module("benchmarks.run_benchmarks")
         monkeypatch.setattr(mod, "_bench", lambda _func, number=1, repeat=1: 0.0)
-        mod.run_all(output_dir=tmp_path)
+        mod.run_all(output_dir=tmp_path, json_dir=tmp_path)
         report = (tmp_path / "docs" / "benchmarks.md").read_text(encoding="utf-8")
         assert "# CDS Performance & Intelligence Report" in report
         assert "Signal Processing" in report
@@ -71,5 +73,39 @@ class TestBenchmarkStructure:
         assert "Algorithmic Intelligence" in report
         assert "Quantum Intelligence" in report
         assert "Convergence" in report
-        # And the JSON artifact lands in tmp_path too, not in benchmarks/.
+        # results.json lands in json_dir (tmp_path here), not in benchmarks/.
         assert (tmp_path / "results.json").exists()
+
+    def test_write_json_default_dir_is_benchmarks(self, tmp_path: Path) -> None:
+        """_write_json defaults to the script's own dir (benchmarks/).
+
+        Regression guard for the bug where ``run_all`` passed the repo root as
+        the output dir, writing ``results.json`` to ``./results.json`` instead
+        of the canonical ``benchmarks/results.json`` that the workflow diffs
+        and the report references. The default ``json_dir=None`` MUST resolve
+        to the directory containing ``run_benchmarks.py`` (``benchmarks/``),
+        independent of the current working directory.
+
+        The committed ``benchmarks/results.json`` is backed up and restored so
+        this test leaves the working tree clean.
+        """
+        mod = import_module("benchmarks.run_benchmarks")
+        # __file__ is typed as str | None (a module could be a namespace pkg),
+        # but run_benchmarks.py is a regular file module — assert for mypy,
+        # which then narrows it to str with no cast needed.
+        assert mod.__file__ is not None
+        expected_dir = Path(mod.__file__).resolve().parent
+        canonical = expected_dir / "results.json"
+        backup = canonical.read_bytes() if canonical.exists() else None
+
+        prev = os.getcwd()
+        os.chdir(tmp_path)
+        try:
+            out = mod._write_json({"git_sha": "deadbeef", "metrics": {}})
+        finally:
+            os.chdir(prev)
+            if backup is not None:
+                canonical.write_bytes(backup)
+        assert out == canonical
+        # The cwd (tmp_path) must NOT have received a stray results.json.
+        assert not (tmp_path / "results.json").exists()

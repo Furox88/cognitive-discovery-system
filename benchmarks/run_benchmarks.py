@@ -23,6 +23,7 @@ import subprocess
 import time
 import timeit
 from collections import OrderedDict
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -88,17 +89,25 @@ def _build_json_record(
     }
 
 
-def _write_json(record: dict[str, object], output_dir: Path | None = None) -> Path:
+def _write_json(record: dict[str, object], json_dir: Path | None = None) -> Path:
     """Write the JSON artifact and return its path.
 
     Args:
         record: the assembled metric tree from :func:`_build_json_record`.
-        output_dir: where to write ``results.json``. Defaults to the directory
-            containing this script (``benchmarks/``), preserving the CLI
-            behaviour. Tests pass a ``tmp_path`` so they don't clobber the
-            committed artifact.
+        json_dir: directory to write ``results.json`` into. Defaults to the
+            directory containing this script (``benchmarks/``), so the
+            committed artifact lands at ``benchmarks/results.json`` regardless
+            of where the script is invoked from. Tests pass a ``tmp_path`` so
+            they don't clobber the committed artifact.
+
+    The canonical location is ``benchmarks/results.json`` — the workflow's
+    diff check and ``add-paths``, and the report's "Raw data" line, all
+    reference that path. Previously ``run_all`` passed ``output_dir=root``
+    (the repo root) here, which wrote to ``./results.json`` and silently
+    diverged from the tracked file. ``json_dir`` defaults to the script's own
+    directory so the two can never drift again.
     """
-    out_dir = output_dir if output_dir is not None else Path(__file__).resolve().parent
+    out_dir = json_dir if json_dir is not None else Path(__file__).resolve().parent
     out = out_dir / "results.json"
     with open(out, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=2, sort_keys=False)
@@ -106,7 +115,7 @@ def _write_json(record: dict[str, object], output_dir: Path | None = None) -> Pa
     return out
 
 
-def _bench(func, number: int, repeat: int = 1) -> float:
+def _bench(func: Callable[[], object], number: int, repeat: int = 1) -> float:
     """Return the mean wall-clock seconds per call of ``func`` over ``number`` runs."""
     best = math.inf
     for _ in range(repeat):
@@ -291,14 +300,26 @@ def _bar(value: float, max_value: float, width: int = 40) -> str:
     return "#" * n
 
 
-def run_all(output_dir: Path | None = None) -> None:
+def run_all(output_dir: Path | None = None, json_dir: Path | None = None) -> None:
     """Run every benchmark and emit the markdown + JSON artifacts.
 
     Args:
-        output_dir: root directory under which ``docs/benchmarks.md`` and
-            ``results.json`` are written. Defaults to the current working
-            directory, preserving CLI behaviour. Tests pass a ``tmp_path`` so
-            they don't clobber the committed artifacts.
+        output_dir: root directory under which ``docs/benchmarks.md`` is
+            written. Defaults to the current working directory, preserving CLI
+            behaviour. Tests pass a ``tmp_path`` so they don't clobber the
+            committed markdown.
+        json_dir: directory to write ``results.json`` into. Defaults to the
+            directory containing this script (``benchmarks/``), so the
+            committed artifact always lands at ``benchmarks/results.json``
+            regardless of ``output_dir``. Tests pass a ``tmp_path`` to keep
+            the committed JSON untouched.
+
+    The two outputs are intentionally decoupled: the markdown report is
+    generated into ``<output_dir>/docs/benchmarks.md`` (caller-controlled),
+    while ``results.json`` lives at a fixed canonical location next to the
+    script. Previously both were derived from ``output_dir``, which wrote
+    ``results.json`` to the repo root and silently diverged from the tracked
+    ``benchmarks/results.json`` that the workflow and report reference.
     """
     root = Path.cwd() if output_dir is None else output_dir
     print("Running Benchmarks & Intelligence Tests...")
@@ -359,8 +380,11 @@ def run_all(output_dir: Path | None = None) -> None:
         f.write(report)
 
     # Machine-readable artifact for regression tracking (spec §E).
+    # ``results.json`` always lands at benchmarks/results.json (the canonical
+    # path the workflow diffs and commits, and the report's "Raw data" line);
+    # ``json_dir`` lets tests redirect it to a tmp_path.
     record = _build_json_record(results)
-    json_path = _write_json(record, output_dir=root)
+    json_path = _write_json(record, json_dir=json_dir)
 
     print(f"Benchmarks completed. Report saved to {docs_dir / 'benchmarks.md'}")
     print(f"JSON artifact saved to {json_path}")
