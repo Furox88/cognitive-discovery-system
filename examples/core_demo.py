@@ -1,14 +1,14 @@
 """Core data-models demo — Domain, Hypothesis, HypothesisStatus."""
 
-from cds.core import Domain, Hypothesis, HypothesisStatus
+# Import directly from the defining module (not the cds.core re-export) to
+# give static analyzers the clearest possible view of these types.
+from cds.core.models import Domain, Hypothesis, HypothesisStatus
 
 
 def main() -> None:
     print("=== Domains ===")
-    # Iterate the concrete member list rather than the EnumType itself.
-    # Same runtime result, but unambiguous to static analysis tools that
-    # can't resolve the Enum across the cds.core re-export.
-    for d in list(Domain):
+    # Domain is an enum.Enum; iterating it yields its members (PEP 435).
+    for d in Domain:
         print(f"  {d.name} = {d.value}")
 
     print("\n=== Constructing a Hypothesis ===")
