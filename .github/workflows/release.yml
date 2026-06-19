@@ -1,0 +1,110 @@
+name: Release
+
+# Fully automated publish: pushing a `v*` tag builds the sdist + wheel,
+# uploads them to PyPI via Trusted Publishing (OIDC, no API token), and
+# creates a GitHub Release with the artifacts attached. The Attest Release
+# Artifacts workflow then fires on `release: published` and signs them.
+#
+# Trusted Publishing setup (one-time, in the PyPI UI):
+#   PyPI → account → Publishing → add a publisher for
+#   `cognitive-discovery-system`:
+#     environment: pypi
+#     owner:       Furox88
+#     repo:        cognitive-discovery-system
+#     workflow:    release.yml
+# Until that publisher is configured, the upload step fails with a clear
+# OIDC error — no secret is involved, so there is nothing to leak.
+#
+# Why OIDC over an API token: no long-lived secret in GitHub, per-workflow
+# scoping, and PyPI shows a "verified" publisher badge on the release.
+# Reference: https://docs.pypi.org/trusted-publishers/
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write   # create the GitHub Release + upload artifacts
+  id-token: write   # OIDC for PyPI Trusted Publishing
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build sdist + wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      - name: Verify the built package name
+        run: |
+          python - <<'PY'
+          import zipfile, pathlib, sys
+          wheels = list(pathlib.Path("dist").glob("*.whl"))
+          if not wheels:
+              sys.exit("No wheel produced")
+          meta = zipfile.ZipFile(wheels[0]).read(next(
+              n for n in zipfile.ZipFile(wheels[0]).namelist()
+              if n.endswith("METADATA")
+          )).decode()
+          name = dict(
+              line.split(": ", 1) for line in meta.splitlines()
+              if ": " in line and line.split(": ", 1)[0] in {"Name", "Version"}
+          )
+          print(f"Built: {name}")
+          if name["Name"] != "cognitive-discovery-system":
+              sys.exit(f"Unexpected package name: {name['Name']!r}")
+          print("Package name OK.")
+          PY
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI + GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi   # Required for Trusted Publishing
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI (Trusted Publishing / OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create GitHub Release with artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $tag exists; uploading artifacts."
+            gh release upload "$tag" --repo "$GITHUB_REPOSITORY" dist/* --clobber
+          else
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
+              --generate-notes --title "$tag" dist/*
+          fi
