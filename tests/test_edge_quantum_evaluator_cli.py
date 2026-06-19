@@ -72,11 +72,23 @@ def test_simulate_seed_reproducible() -> None:
 # ---------------------------------------------------------------------------
 def test_main_module_runs() -> None:
     """`python -m cds --version` exits 0 and prints the version."""
+    # Resolve `cds` from the source tree — a fresh subprocess does not
+    # inherit pytest's `pythonpath = ["src"]` config, so add src/ to
+    # PYTHONPATH explicitly so the local package wins over any stale install.
+    import os
+
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    src_path = os.path.join(root, "src")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = (
+        f"{src_path}{os.pathsep}{env['PYTHONPATH']}" if env.get("PYTHONPATH") else src_path
+    )
     result = subprocess.run(
         [sys.executable, "-m", "cds", "--version"],
         capture_output=True,
         text=True,
         timeout=30,
+        env=env,
     )
     assert result.returncode == 0
     assert __version__ in result.stdout

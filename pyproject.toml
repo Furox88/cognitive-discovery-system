@@ -69,6 +69,16 @@ docs = [
     "mkdocs-material>=9.0.0",
     "mkdocstrings[python]>=0.24.0",
 ]
+# Promo/asset build tooling. Used only by scripts/build_gif.py,
+# scripts/build_video.py, scripts/make_pi_gif.py, and scripts/render_promo.mjs
+# to regenerate the README/dashboard promo media. Never imported by the package
+# at runtime — the core stays zero-dependency pure Python.
+promo = [
+    "pillow>=10.0.0",
+    "imageio-ffmpeg>=0.5.1",
+    "matplotlib>=3.8.0",
+    "numpy>=1.26.0",
+]
 
 [project.scripts]
 cds = "cds.cli:app"
@@ -92,6 +102,34 @@ packages = ["src/cds"]
 # package dir by default, but declaring it explicitly is safer and
 # documents intent.
 force-include = { "src/cds/py.typed" = "cds/py.typed" }
+
+# Keep the sdist lean. By default Hatchling ships the whole repo tree,
+# which dragged in ~87 MB of promo/render artifacts (assets/_promo_frames/,
+# cds_promo.gif/.mp4/.webm) plus node_modules/ — none of which belong in a
+# source distribution. We enumerate only what an end user building from
+# sdist actually needs: the package source, the test suite, docs source,
+# and the project metadata files. See `.gitignore` for the corresponding
+# local excludes.
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "src/cds",
+  "tests",
+  "docs",
+  "scripts/publish.py",
+  "benchmarks",
+  "dashboard",
+  "examples",
+  "README.md",
+  "CHANGELOG.md",
+  "LICENSE",
+  "CONTRIBUTING.md",
+  "SECURITY.md",
+  "CITATION.cff",
+  "pyproject.toml",
+  "requirements.lock",
+  "requirements-dev.lock",
+  "mkdocs.yml",
+]
 
 # Static version. The release tag is the source of truth — the wheel
 # filename reads the git tag. Bump manually before tagging a new
@@ -124,6 +162,11 @@ ignore = ["E501"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
+# Resolve `cds` from the source tree, not site-packages. Without this, a
+# stray `pip install` of a built wheel (or a stale copy under site-packages)
+# would shadow `src/cds/` and tests would silently run against the wrong
+# code. `pythonpath` is prepended to `sys.path` ahead of site-packages.
+pythonpath = ["src"]
 addopts = ["--strict-markers", "--strict-config"]
 
 [tool.coverage.run]

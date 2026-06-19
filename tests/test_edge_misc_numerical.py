@@ -521,11 +521,21 @@ class TestCLIMainGuard:
             "cli.py",
         )
         cli_path = os.path.abspath(cli_path)
+        # cli.py imports `cds.*`; running the file directly does not put
+        # src/ on sys.path, so add it to PYTHONPATH so the in-tree package
+        # resolves instead of a stale install.
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        src_path = os.path.join(root, "src")
+        env = os.environ.copy()
+        env["PYTHONPATH"] = (
+            f"{src_path}{os.pathsep}{env['PYTHONPATH']}" if env.get("PYTHONPATH") else src_path
+        )
         result = subprocess.run(
             [sys.executable, cli_path, "--help"],
             capture_output=True,
             text=True,
             timeout=10,
+            env=env,
         )
         assert result.returncode == 0
         assert "Cognitive Discovery" in result.stdout or "cognitive" in result.stdout.lower()
@@ -550,12 +560,23 @@ class TestMainModuleRun:
             )
         )
         assert os.path.isfile(main_path), f"missing entry point: {main_path}"
+        # The test env resolves `cds` from the source tree via
+        # pyproject's `pythonpath = ["src"]`, but a fresh subprocess does
+        # not inherit that — add src/ to PYTHONPATH explicitly so
+        # `python -m cds` finds the local package, not a stale install.
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        env = os.environ.copy()
+        src_path = os.path.join(root, "src")
+        env["PYTHONPATH"] = (
+            f"{src_path}{os.pathsep}{env['PYTHONPATH']}" if env.get("PYTHONPATH") else src_path
+        )
         result = subprocess.run(
             [sys.executable, "-m", "cds", "--help"],
             capture_output=True,
             text=True,
             timeout=10,
-            cwd=os.path.join(os.path.dirname(__file__), ".."),
+            cwd=root,
+            env=env,
         )
         assert result.returncode == 0
         assert "Cognitive" in result.stdout or "cognitive" in result.stdout.lower()
