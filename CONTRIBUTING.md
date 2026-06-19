@@ -1,4 +1,4 @@
-# Contributing to Cognitive Discovery Platform
+# Contributing to Cognitive Discovery System
 
 Thank you for your interest! CDS is an open-source computational science platform. Your input — whether as a researcher, engineer, or domain expert — is valuable.
 
@@ -34,7 +34,7 @@ pip install -e ".[dev,test]"
 pip install pre-commit
 pre-commit install
 
-# Run tests (803 tests, see CI)
+# Run tests (1165 tests, see CI)
 pytest
 
 # Run linter
@@ -129,9 +129,11 @@ pip-compile pyproject.toml --output-file requirements.lock
 pip-compile pyproject.toml --extra dev --extra test --extra docs --output-file requirements-dev.lock
 ```
 
-## Package Name vs Repository Name
+## Package Name
 
-The **PyPI package** is published as `cognitive-discovery-platform` (installed via `pip install cognitive-discovery-platform`), while the **GitHub repository** is named `cognitive-discovery-system`. This is intentional — the repo name was chosen first, and the PyPI name was adjusted to better describe the platform's scope. Both refer to the same project.
+The project is published as `cognitive-discovery-system` on both **PyPI** (`pip install cognitive-discovery-system`) and **GitHub**. The Python **import name** is the short `cds` (e.g. `import cds`); the long `cognitive-discovery-system` is only the install/distribution name.
+
+> **History note:** earlier releases were published under the PyPI name `cognitive-discovery-platform`. That name is preserved on PyPI for historical installs but is no longer updated — always install the active `cognitive-discovery-system` package.
 
 ## Code Style
 

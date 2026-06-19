@@ -1,8 +1,13 @@
-# Cognitive Discovery Platform (CDS)
+# Cognitive Discovery System (CDS)
 
-Welcome to the official documentation for the **Cognitive Discovery Platform (CDS)**.
+Welcome to the official documentation for the **Cognitive Discovery System (CDS)**.
 
 CDS is an open-source computational science platform designed for research, simulation, and discovery. It provides a lightweight, dependency-free environment for scientific exploration, featuring 17 modules covering everything from quantum simulation to symbolic math, knowledge organization, educational NLP primitives, and automated hypothesis generation.
+
+<video controls loop muted autoplay playsinline poster="assets/cds_promo_poster.png" style="max-width:100%;border-radius:12px;border:1px solid rgba(148,163,184,.25)">
+  <source src="assets/cds_promo.mp4" type="video/mp4">
+  <source src="assets/cds_promo.webm" type="video/webm">
+</video>
 
 ## Key Features
 
@@ -10,7 +15,7 @@ CDS is an open-source computational science platform designed for research, simu
 - **Quantum Simulation:** Full state-vector simulation for single and multi-qubit circuits with entanglement and O(1) sampling.
 - **Advanced Mathematics:** O(N³) Partial Pivoting LU decomposition, vectorized optimizers, and adaptive ODE solvers (RK45).
 - **Hypothesis Engine:** Built-in tools for generating and statistically validating scientific hypotheses.
-- **High Reliability:** 1164 tests with 99% code coverage.
+- **High Reliability:** 1165 tests with 99% code coverage.
 - **Interactive Tools:** Beautiful CLI and a Streamlit-based web dashboard.
 
 ## Overview of Modules
@@ -44,4 +49,4 @@ CDS is an open-source computational science platform designed for research, simu
 - [Benchmarks](benchmarks.md)
 
 ---
-*CDS v1.1.0 is stable and actively developed. Contributions are welcome!*
+*CDS v1.1.4 is stable and actively developed. Contributions are welcome!*
