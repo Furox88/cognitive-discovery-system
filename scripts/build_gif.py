@@ -19,7 +19,7 @@ import glob
 import os
 import sys
 
-from PIL import Image, ImageSequence
+from PIL import Image
 
 # Must match assets/promo_hero.html CONFIG.fps and CONFIG.totalFrames.
 DEFAULT_FPS = 15
@@ -72,7 +72,9 @@ def build_palette_optimized(frames: list[Image.Image]) -> list[Image.Image]:
     # dark gradients with the sky/indigo accents.
     out: list[Image.Image] = []
     for im in frames:
-        q = im.quantize(colors=256, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.FLOYDSTEINBERG)
+        q = im.quantize(
+            colors=256, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.FLOYDSTEINBERG
+        )
         out.append(q)
     return out
 
@@ -90,8 +92,8 @@ def main() -> None:
         save_all=True,
         append_images=rest,
         duration=duration_ms,
-        loop=0,           # infinite loop
-        disposal=2,       # restore to bg between frames (clean redraws)
+        loop=0,  # infinite loop
+        disposal=2,  # restore to bg between frames (clean redraws)
         optimize=True,
     )
 
@@ -100,7 +102,9 @@ def main() -> None:
     print(f"  frames : {len(qframes)}")
     print(f"  fps    : {args.fps}  ({duration_ms}ms/frame)")
     print(f"  size   : {qframes[0].size[0]}x{qframes[0].size[1]}")
-    print(f"  bytes  : {size_mb:.2f} MB  {'(OK for X)' if size_mb < 15 else '(>15MB — reduce --scale)'}")
+    print(
+        f"  bytes  : {size_mb:.2f} MB  {'(OK for X)' if size_mb < 15 else '(>15MB — reduce --scale)'}"
+    )
 
 
 if __name__ == "__main__":

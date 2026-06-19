@@ -46,7 +46,9 @@ def parse_args() -> argparse.Namespace:
         default=1.0,
         help="resize factor (1.0 = 2560x1440 native; 0.5 = 1280x720)",
     )
-    p.add_argument("--crf", type=int, default=18, help="quality (lower=finer; 18 visually lossless, 23 ok)")
+    p.add_argument(
+        "--crf", type=int, default=18, help="quality (lower=finer; 18 visually lossless, 23 ok)"
+    )
     p.add_argument("--mp4", default=DEFAULT_MP4, help="output mp4 path")
     p.add_argument("--webm", default=DEFAULT_WEBM, help="output webm path")
     p.add_argument(
@@ -111,15 +113,34 @@ def build_mp4(frames: list[str], out: str, fps: int, crf: int, size: tuple[int, 
     w, h = size
     src_w, src_h = src_dims(frames)
     cmd = [
-        ffmpeg(), "-y",
-        "-f", "rawvideo", "-vcodec", "rawvideo",
-        "-s", f"{src_w}x{src_h}", "-pix_fmt", "rgba",
-        "-r", str(fps),
-        "-i", "-",
-        "-vf", f"scale={w}:{h},format=yuv420p",
-        "-c:v", "libx264", "-preset", "slow", "-crf", str(crf),
-        "-pix_fmt", "yuv420p", "-movflags", "+faststart",
-        "-an", out,
+        ffmpeg(),
+        "-y",
+        "-f",
+        "rawvideo",
+        "-vcodec",
+        "rawvideo",
+        "-s",
+        f"{src_w}x{src_h}",
+        "-pix_fmt",
+        "rgba",
+        "-r",
+        str(fps),
+        "-i",
+        "-",
+        "-vf",
+        f"scale={w}:{h},format=yuv420p",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "slow",
+        "-crf",
+        str(crf),
+        "-pix_fmt",
+        "yuv420p",
+        "-movflags",
+        "+faststart",
+        "-an",
+        out,
     ]
     run_piped(cmd, frames)
 
@@ -130,15 +151,32 @@ def build_webm(frames: list[str], out: str, fps: int, crf: int, size: tuple[int,
     src_w, src_h = src_dims(frames)
     vp_crf = min(63, crf + 13)
     cmd = [
-        ffmpeg(), "-y",
-        "-f", "rawvideo", "-vcodec", "rawvideo",
-        "-s", f"{src_w}x{src_h}", "-pix_fmt", "rgba",
-        "-r", str(fps),
-        "-i", "-",
-        "-vf", f"scale={w}:{h},format=yuva420p",
-        "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", str(vp_crf),
-        "-row-mt", "1",
-        "-an", out,
+        ffmpeg(),
+        "-y",
+        "-f",
+        "rawvideo",
+        "-vcodec",
+        "rawvideo",
+        "-s",
+        f"{src_w}x{src_h}",
+        "-pix_fmt",
+        "rgba",
+        "-r",
+        str(fps),
+        "-i",
+        "-",
+        "-vf",
+        f"scale={w}:{h},format=yuva420p",
+        "-c:v",
+        "libvpx-vp9",
+        "-b:v",
+        "0",
+        "-crf",
+        str(vp_crf),
+        "-row-mt",
+        "1",
+        "-an",
+        out,
     ]
     run_piped(cmd, frames)
 
