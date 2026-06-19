@@ -4,9 +4,8 @@ Implements the two embedding layers from Vaswani et al. (2017) "Attention
 Is All You Need" without depending on ``torch`` or any tensor library:
 
 * :class:`TokenEmbedding` — a learned lookup table mapping integer token
-  ids to dense vectors. Training is out of scope for Sprint 1; this is
-  the inference-time matrix multiply that the attention block will call
-  in Sprint 2.
+  ids to dense vectors. Training is out of scope here; this is the
+  inference-time matrix multiply that the attention block calls.
 * :class:`PositionalEncoding` — fixed sinusoidal position embeddings
   added to the token embeddings. No learnable parameters.
 
@@ -40,9 +39,9 @@ class TokenEmbedding:
 
     Initialised with small random values from a fixed RNG seed so the
     educational pipeline is reproducible. Training (gradient updates)
-    lands in Sprint 3 alongside the autograd module; until then this
-    is read-only — call :meth:`forward` to embed, then call
-    :meth:`set_value` to hand-write weights.
+    is handled by the autograd module; this layer is read-only until
+    then — call :meth:`forward` to embed, then call :meth:`set_value`
+    to hand-write weights.
 
     Attributes:
         vocab_size: Number of rows in the embedding table.

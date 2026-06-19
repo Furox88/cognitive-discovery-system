@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from cds.nlp.autograd._grad import BackwardFn, Scalar, _track, _unbroadcast
+from cds.nlp.autograd._grad import BackwardFn, Scalar, _track
 
 # ---------------------------------------------------------------------- #
 # Core value type
@@ -208,8 +208,8 @@ def add(a: Tensor, b: Tensor) -> Tensor:
     """``a + b`` with reverse-mode grad ``∂/∂a = ∂/∂b = out.grad``."""
 
     def _backward() -> None:
-        a.grad += _unbroadcast(out.grad, ())
-        b.grad += _unbroadcast(out.grad, ())
+        a.grad += out.grad
+        b.grad += out.grad
 
     out = Tensor(data=a.data + b.data)
     return _track(out, (a, b), _backward)

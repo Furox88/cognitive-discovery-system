@@ -48,8 +48,8 @@ from pathlib import Path
 from typing import Final
 
 # Reserved tokens. ``<unk>`` is mandatory (always id 0); the others are
-# included for forward-compatibility with the attention block in Sprint 2
-# but are not emitted by encode() unless ``add_specials=True``.
+# kept for forward-compatibility with the attention block but are not
+# emitted by encode() unless ``add_specials=True``.
 UNK: Final[str] = "<unk>"
 PAD: Final[str] = "<pad>"
 BOS: Final[str] = "<bos>"

@@ -24,7 +24,7 @@ Why this module exists inside CDS:
   *see* every gradient flowing back through the graph because the
   engine is ~250 lines, not 50,000.
 
-Scope (Sprints 1-3 — v0.10.0b1):
+Scope (v0.10.0b1):
 
 * :func:`~cds.nlp.bpe.train_bpe` — train a BPE vocabulary from a corpus
 * :class:`~cds.nlp.bpe.BPETokenizer` — encode / decode / save / load
@@ -46,7 +46,7 @@ Scope (Sprints 1-3 — v0.10.0b1):
 
 Out of scope for the educational track:
 - Mixed precision (FP16 / bfloat16) — meaningful only with the
-  Numba backend, deferred to a later sprint.
+  Numba backend, deferred for now.
 - Dropout, ALiBi, RoPE, GQA / MQA — modern attention refinements
   tracked for a later educational add-on.
 - Subword sampling tricks (BPE-Dropout, Unigram LM).

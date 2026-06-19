@@ -23,10 +23,9 @@ How it works:
 
 Why this lives in CDS:
 - Closes the loop on the educational NLP track: with BPE + embeddings
-  + attention (Sprints 1+2) in hand, a learner can now watch a
-  tiny GPT actually fit Shakespeare (Sprint 4) — and *see* every
-  gradient flowing back through the graph because the engine is ~250
-  lines, not 50,000.
+  + attention in hand, a learner can now watch a tiny GPT actually fit
+  Shakespeare — and *see* every gradient flowing back through the graph
+  because the engine is ~250 lines, not 50,000.
 - The optional ``cds[fast-jit]`` Numba backend swaps just the matmul
   hot-path for ~10× speed-up; the rest of the graph stays pure Python
   so the educational narrative is unbroken.

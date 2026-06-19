@@ -73,9 +73,9 @@ def matmul(a: list[list[Tensor]], b: list[list[Tensor]]) -> list[list[Tensor]]:
     in the result gets a backward fn that propagates to the
     contributing ``a`` and ``b`` entries.
 
-    For a 50K-param model this is the hot path — Sprint 3 leaves it
-    in pure Python; the optional ``cds[fast-jit]`` Numba backend
-    (Sprint 5) wraps the inner loop for ~10x speed-up without
+    For a 50K-param model this is the hot path — the pure-Python
+    implementation stays as-is; the optional ``cds[fast-jit]`` Numba
+    backend wraps the inner loop for ~10x speed-up without
     changing the autograd semantics.
     """
     if not a or not b or not a[0] or not b[0]:
