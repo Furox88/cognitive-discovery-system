@@ -109,8 +109,11 @@ def test_hypothesis_model_fields() -> None:
 
 
 def test_prompt_template_different_domains() -> None:
-    # Domain is an enum.Enum; iterating it yields its members (PEP 435).
-    for domain in Domain:
+    # __members__.values() is the Enum API's explicit member-collection view.
+    # Same members/order as iterating the EnumType, but a mapping view whose
+    # type CodeQL's non-iterable query can resolve (the EnumType iterator
+    # could not).
+    for domain in Domain.__members__.values():
         prompt = PromptTemplate.render("test", domain, n=1)
         assert domain.value in prompt
 

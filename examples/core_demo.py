@@ -7,8 +7,12 @@ from cds.core.models import Domain, Hypothesis, HypothesisStatus
 
 def main() -> None:
     print("=== Domains ===")
-    # Domain is an enum.Enum; iterating it yields its members (PEP 435).
-    for d in Domain:
+    # __members__.values() is the Enum API's explicit member-collection view
+    # (a Mapping's ValuesView). Functionally identical to iterating the
+    # EnumType itself (same 6 members, same order), but the return type is an
+    # unambiguously iterable mapping view — CodeQL's non-iterable-in-for-loop
+    # query can resolve it where the EnumType iterator could not.
+    for d in Domain.__members__.values():
         print(f"  {d.name} = {d.value}")
 
     print("\n=== Constructing a Hypothesis ===")
