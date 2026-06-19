@@ -5,6 +5,43 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.3] - 2026-06-19
+
+### Patch — type-safety cleanup
+
+A patch release: no API changes, no behavior changes. Resolves the final
+block of `mypy --strict` errors so the type checker reports **0 errors
+across 136 files**. No public surface changed; all 1165 tests pass and
+the suite is unchanged.
+
+### Fixed
+
+- **43 `mypy --strict` errors resolved** across `examples/`, `dashboard/`,
+  and `scripts/`. The fixes fall into five categories, none of which
+  alter runtime behavior:
+  - **`int` → `float` argument types** — numeric literals passed to APIs
+    typed as `float` (e.g. integration tolerances, attention scaling)
+    now use explicit `float` literals so the call matches the signature.
+  - **`Domain` enum usage** — iteration and membership checks against the
+    `Domain` enum now go through `Domain.__members__.values()` / explicit
+    member references, matching the pattern established in v1.1.2 for
+    CodeQL compatibility.
+  - **Attention tensor rank** — reshape/transpose calls in
+    `examples/nlp_attention_demo.py` and `examples/nlp_mini_gpt_demo.py`
+    annotated to reflect the actual tensor rank rather than an
+    over-narrow `Any`/scalar guess.
+  - **Invariant list widening** — a few demo helper functions that
+    return heterogeneous sequences now declare `list[object]` (or the
+    specific union) instead of an impossible precise element type.
+  - **`Protocol` signature alignment** — a duck-typed callback protocol
+    in `scripts/publish.py` had a signature that diverged from its
+    concrete implementations; the protocol and call sites now agree.
+
+### Changed
+
+- **Version bump `1.1.2` → `1.1.3`** in `pyproject.toml` and
+  `src/cds/_version.py`.
+
 ## [v1.1.2] - 2026-06-19
 
 ### Patch — security hardening & CodeQL closure

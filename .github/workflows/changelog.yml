@@ -81,7 +81,7 @@ jobs:
             Auto-generated CHANGELOG update from git history.
             Triggered by MANUAL workflow_dispatch for tag `${{ inputs.tag }}`.
 
-            ⚠️  REVIEW THE DIFF CAREFULLY before merging. git-cliff rewrites the
+            REVIEW THE DIFF CAREFULLY before merging. git-cliff rewrites the
             entire CHANGELOG.md from commit history; hand-curated narrative
             entries (like the v1.0.4 "Security & Tooling" block) may be dropped
             and need to be reconciled manually. See PR #24 for the regression
