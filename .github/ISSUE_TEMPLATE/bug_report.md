@@ -6,6 +6,13 @@ labels: bug
 assignees: ''
 ---
 
+> ⚠️ **Security vulnerability?** Do **not** open a public issue.
+> Report it via a [private GitHub advisory](https://github.com/Furox88/cognitive-discovery-system/security/advisories/new)
+> (or email the maintainer). See [SECURITY.md](../../SECURITY.md) for the policy, SLAs, and threat model.
+> Use this template only for ordinary bugs.
+
+---
+
 ## Describe the bug
 A clear and concise description of what the bug is.
 

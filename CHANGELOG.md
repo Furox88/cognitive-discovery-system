@@ -5,6 +5,43 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.2] - 2026-06-19
+
+### 🔒 Patch — security hardening & CodeQL closure
+
+A patch release: no API changes, no behavior changes. Closes the remaining
+CodeQL code-scanning alerts with a legitimate fix (not a workaround),
+tightens `main` branch protection, and improves the discoverability of the
+vulnerability-reporting flow. Brings the repo to **0 open** code-scanning
+alerts (22/22 closed: 20 fixed by code, 2 dismissed as documented false
+positives).
+
+### 🔒 Security
+
+- **CodeQL `py/non-iterable-in-for-loop` — legitimate fix.** Enum iteration
+  in `examples/core_demo.py` and `tests/test_hypothesis.py` now uses
+  `Domain.__members__.values()` instead of `for x in Domain:`. This is the
+  Enum API's official member-collection view: functionally identical (same
+  members, same insertion order — all 1164 tests pass) but the return type
+  is an explicitly iterable mapping view that CodeQL's type resolver can
+  follow. Previous attempts (idiomatic iteration, direct import from the
+  defining module) did not satisfy the analyzer; this does, with no
+  camouflage (`list()` wrapping) and no behavior change.
+- **`main` branch protection strengthened.** Added `required_status_checks`
+  for `CI` and `CodeQL` — a PR can no longer merge into `main` while those
+  checks are red. `enforce_admins` is left disabled so the maintainer
+  retains a direct-push path; everything else (linear history, conversation
+  resolution, no force-pushes, no deletions) is unchanged.
+- **Security-reporting guidance.** The README now links to `SECURITY.md`
+  and the private-advisory flow; the bug-report issue template warns against
+  opening public issues for vulnerabilities and redirects to private
+  advisories.
+
+### 🛠️ Changed
+
+- **`CITATION.cff` version refresh.** Two stale `1.1.0` references (root and
+  `preferred-citation` blocks) bumped to `1.1.2`. This was missed in v1.1.1.
+
 ## [v1.1.1] - 2026-06-19
 
 ### 🔒 Patch — supply-chain & CI hardening

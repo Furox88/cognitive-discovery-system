@@ -21,12 +21,12 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The platform also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> **v1.1.0 stable release.** Contributions welcome!
+> **v1.1.2 stable release.** Contributions welcome!
 
 📚 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | 🧪 **[Tutorials](docs/tutorials/)** | 🚀 **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-🚀 **Latest Update:** **v1.1.0** — two new modules. `cds.modeling` brings symbolic algebra (expression tree, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting). `cds.knowledge` adds a knowledge-organization layer: a concept graph with typed relations (shortest path, transitive closure, cycle detection), a research-notes notebook, and ranked structured retrieval — all JSON-persisted via the stdlib. Platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage, all in readable pure Python.
+🚀 **Latest Update:** **v1.1.2** — security hardening patch. Tightened `main` branch protection (required status checks for `CI` + `CodeQL`), closed the remaining CodeQL code-scanning alerts via a legitimate fix (Enum iteration now uses `Domain.__members__.values()` — the Enum API's official member-collection view, not a workaround), added security-reporting guidance to the README and bug-report template, and refreshed the stale `CITATION.cff` version. No API or behavior changes. Platform still spans **17 modules**, **1164 tests**, and **99.59%** coverage, all in readable pure Python.
 ---
 
 ## Contents
@@ -45,6 +45,7 @@ The platform also includes built-in support for structured hypothesis generation
 - [Recent Improvements](#recent-improvements)
 - [Contributing](#contributing)
 - [Automation and Maintenance Workflows](#automation-and-maintenance-workflows)
+- [Security](#security)
 - [License](#license)
 - [Contact](#contact)
 
@@ -492,6 +493,17 @@ MIT — see [LICENSE](LICENSE).
 
 - Maintainer: [@Furox88](https://github.com/Furox88)
 - Issues & Discussions: [GitHub](https://github.com/Furox88/cognitive-discovery-system/issues)
+
+
+## 🔒 Security
+
+Found a vulnerability? **Please do not open a public issue.** Report it privately:
+
+- GitHub private advisory: [Report a vulnerability](https://github.com/Furox88/cognitive-discovery-system/security/advisories/new)
+- Or email the maintainer directly.
+
+Acknowledgement target: **48 hours** · Fix SLA: **7 days**. Full threat model,
+supported versions, and out-of-scope items are in [SECURITY.md](SECURITY.md).
 
 
 ## Why These Automations Exist
