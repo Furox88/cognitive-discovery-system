@@ -57,16 +57,29 @@ def main() -> None:
     scatter_inside = ax.scatter([], [], s=6, c="#3fb950", alpha=0.75, label="inside circle")
     scatter_outside = ax.scatter([], [], s=6, c="#f85149", alpha=0.75, label="outside circle")
 
-    title = ax.set_title(
-        "", color="#c9d1d9", fontsize=15, fontweight="bold", pad=14
-    )
+    title = ax.set_title("", color="#c9d1d9", fontsize=15, fontweight="bold", pad=14)
     est_text = ax.text(
-        0.97, 0.05, "", transform=ax.transAxes, ha="right", va="bottom",
-        color="#58a6ff", fontsize=20, fontweight="bold", family="monospace",
+        0.97,
+        0.05,
+        "",
+        transform=ax.transAxes,
+        ha="right",
+        va="bottom",
+        color="#58a6ff",
+        fontsize=20,
+        fontweight="bold",
+        family="monospace",
     )
     true_text = ax.text(
-        0.03, 0.05, "", transform=ax.transAxes, ha="left", va="bottom",
-        color="#8b949e", fontsize=13, family="monospace",
+        0.03,
+        0.05,
+        "",
+        transform=ax.transAxes,
+        ha="left",
+        va="bottom",
+        color="#8b949e",
+        fontsize=13,
+        family="monospace",
     )
     legend = ax.legend(loc="upper left", frameon=False, fontsize=10, labelcolor="#c9d1d9")
     legend.get_frame().set_facecolor("#0d1117")
@@ -104,9 +117,7 @@ def main() -> None:
 
         return scatter_inside, scatter_outside, title, est_text
 
-    anim = FuncAnimation(
-        fig, update, frames=FRAMES, interval=120, blit=False, repeat=True
-    )
+    anim = FuncAnimation(fig, update, frames=FRAMES, interval=120, blit=False, repeat=True)
 
     out_path = "assets/monte_carlo_pi.gif"
     anim.save(
@@ -117,7 +128,9 @@ def main() -> None:
     )
     plt.close(fig)
     print(f"Saved: {out_path}")
-    print(f"Final estimate: 4 * {n_inside_cum[-1]}/{TOTAL_POINTS} = {4.0 * n_inside_cum[-1] / TOTAL_POINTS:.4f}")
+    print(
+        f"Final estimate: 4 * {n_inside_cum[-1]}/{TOTAL_POINTS} = {4.0 * n_inside_cum[-1] / TOTAL_POINTS:.4f}"
+    )
     print(f"True π: {math.pi:.4f}")
 
 
