@@ -22,15 +22,15 @@ except ImportError:
     )
     st.stop()
 
-st.set_page_config(page_title="Platform Interactive Dashboard", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Platform Interactive Dashboard", layout="wide")
 
-st.title("🚀 Cognitive Discovery Platform")
+st.title("Cognitive Discovery Platform")
 st.markdown("""
 Welcome to the interactive showcase of the **Platform**.
 Everything you see here is powered by **Pure Python** algorithms, built from scratch without NumPy, SciPy, or other heavy numerical dependencies.
 """)
 
-tabs = st.tabs(["🧠 Hypothesis Engine", "⚛️ Quantum Lab", "🤖 Neural Network", "📈 Math & Stats"])
+tabs = st.tabs(["Hypothesis Engine", "Quantum Lab", "Neural Network", "Math & Stats"])
 
 # --- Tab 1: Hypothesis Engine ---
 with tabs[0]:
