@@ -1,34 +1,51 @@
-# Labeler config for auto-labeling PRs based on paths
+# Labeler config for auto-labeling PRs based on paths.
+# v5 schema: each label maps to a list of config objects (changed from the
+# v4 flat `label: [paths]` form). `any` matches if the PR touches ANY of the
+# listed globs.
 # See https://github.com/actions/labeler
 
 ci:
-  - .github/workflows/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/workflows/**
 
 docs:
-  - docs/**
-  - README.md
-  - CONTRIBUTING.md
-  - CHANGELOG.md
-  - examples/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - README.md
+          - CONTRIBUTING.md
+          - CHANGELOG.md
+          - examples/**
 
 cli:
-  - src/cds/cli.py
-  - tests/test_cli.py
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/cds/cli.py
+          - tests/test_cli.py
 
 hypothesis:
-  - src/cds/hypothesis/**
-  - examples/hypothesis*.py
-  - tests/test_hypothesis*.py
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/cds/hypothesis/**
+          - examples/hypothesis*.py
+          - tests/test_hypothesis*.py
 
 core:
-  - src/cds/core/**
-  - src/cds/__init__.py
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/cds/core/**
+          - src/cds/__init__.py
 
 tests:
-  - tests/**
-  - pytest.ini
-  - pyproject.toml
+  - changed-files:
+      - any-glob-to-any-file:
+          - tests/**
+          - pytest.ini
+          - pyproject.toml
 
 dependencies:
-  - pyproject.toml
-  - setup_repo.sh
+  - changed-files:
+      - any-glob-to-any-file:
+          - pyproject.toml
+          - setup_repo.sh
