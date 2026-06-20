@@ -130,12 +130,14 @@ jobs:
         python-version: "3.12"
 
     - name: Install dependencies
-      # `[property,test]` — hypothesis (the point of this job) plus pytest
-      # (the runner). `[property]` alone does not pull in pytest, which is
-      # why the previous incarnation failed with `pytest: command not found`.
+      # `.[property,test,dev]` — hypothesis (the point of this job), pytest
+      # (the runner), and mypy (this job owns the property file's strict
+      # type-check, which the main matrix skips). `[property]` alone pulls
+      # in neither pytest nor mypy; earlier incarnations failed with
+      # `pytest: command not found` and then `mypy: command not found`.
       run: |
         python -m pip install --upgrade pip
-        pip install ".[property,test]"
+        pip install ".[property,test,dev]"
 
     - name: Type check with Mypy (property suite)
       # Strict mypy against the property file. This is the *only* place that
