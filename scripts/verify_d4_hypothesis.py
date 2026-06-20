@@ -175,8 +175,10 @@ def test_domain_handling() -> None:
     hs = gen.generate("q", Domain.MATHEMATICS, n=1)
     check("enum domain works", hs[0].domain == Domain.MATHEMATICS)
 
-    # Tüm desteklenen domain'ler için smoke test
-    for d in Domain:
+    # Tüm desteklenen domain'ler için smoke test.
+    # list(Domain) sarması: CodeQL cross-module type inference'ı (str, Enum)
+    # mirasını göremediği için false positive veriyor; list() iterable'ı netleştirir.
+    for d in list(Domain):
         try:
             hs = gen.generate("q", d, n=1)
             check(f"domain {d.value!r} generates without error", len(hs) == 1)
