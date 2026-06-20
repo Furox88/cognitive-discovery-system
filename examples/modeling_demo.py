@@ -39,7 +39,7 @@ def main() -> None:
     print("\n=== Simplify & LaTeX ===")
     print(f"(x + 0).simplify() = {(x + 0).simplify().to_str()}")  # x
     print(f"(x * 1).simplify() = {(x * 1).simplify().to_str()}")  # x
-    print(f"(x ** 0).simplify() = {(x ** 0).simplify().to_str()}")  # 1.0
+    print(f"(x ** 0).simplify() = {(x**0).simplify().to_str()}")  # 1.0
     expr = (Variable("x") ** Constant(2.0)) / Variable("y")
     print(f"expr.to_latex() = {expr.to_latex()}")  # \frac{x^{2}}{y}
 
