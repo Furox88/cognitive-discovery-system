@@ -16,7 +16,7 @@ Supported data formats for ``evaluate``:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import TypedDict
 
 from cds.core.models import Hypothesis, HypothesisStatus
 from cds.stats.hypothesis_tests import (
@@ -38,6 +38,44 @@ class EvaluationResult:
     p_value: float
     is_significant: bool
     conclusion: str
+
+
+class ChiSquareGofPayload(TypedDict, total=False):
+    """Nested payload under the ``chi_square_gof`` dispatch key.
+
+    ``expected`` is optional at the call site: the evaluator falls back to a
+    uniform distribution over the categories when it is missing. ``total=False``
+    makes both fields optional so callers can supply only ``observed``; the
+    ``in``-guards in :meth:`HypothesisEvaluator.evaluate` handle presence.
+    """
+
+    observed: list[float]
+    expected: list[float]
+
+
+class EvaluationData(TypedDict, total=False):
+    """Tagged-union payload selecting which statistical test ``evaluate`` runs.
+
+    Exactly one of the dispatch keys below should be set; ``evaluate`` checks
+    them in documented order and raises ``ValueError`` if none match. ``total=False``
+    mirrors the established ``AdamState`` convention (``optimization.minimize``):
+    every field is optional and presence is the dispatch signal, checked via
+    ``if "<key>" in data:`` in the method body (mypy narrows those accesses).
+
+    - ``groups``                  -> t-test (2) or ANOVA (3+); optional ``labels``
+    - ``one_sample`` + ``popmean``-> one-sample t-test vs a reference mean
+    - ``chi_square_gof``          -> ``{"observed": [...], "expected": [...]}``
+    - ``chi_square_independence`` -> 2D contingency table
+    - ``paired``                  -> tuple of two paired samples
+    """
+
+    groups: list[list[float]]
+    labels: list[str]
+    one_sample: list[float]
+    popmean: float
+    chi_square_gof: ChiSquareGofPayload
+    chi_square_independence: list[list[float]]
+    paired: tuple[list[float], list[float]]
 
 
 class HypothesisEvaluator:
@@ -143,7 +181,7 @@ class HypothesisEvaluator:
         res = chi_square_independence(table)
         return self._build_result(hypothesis, "Chi-square independence", res.statistic, res.p_value)
 
-    def evaluate(self, hypothesis: Hypothesis, data: dict[str, Any]) -> EvaluationResult:
+    def evaluate(self, hypothesis: Hypothesis, data: EvaluationData) -> EvaluationResult:
         """General evaluation entry point dispatching on the data format.
 
         Supported keys (checked in order):

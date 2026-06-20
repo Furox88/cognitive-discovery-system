@@ -11,7 +11,6 @@ or tests.
 """
 
 import uuid
-from typing import Any
 
 from cds.hypothesis import (
     Domain,
@@ -35,7 +34,7 @@ class ToyPhysicsGenerator:
         research_question: str,
         domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> list[Hypothesis]:
         # Normalise the domain: callers may pass either a Domain enum or
         # its string value (the HypothesisGenerator Protocol allows both).
