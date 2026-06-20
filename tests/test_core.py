@@ -135,9 +135,7 @@ class TestHypothesisDefaults:
         assert ts.tzinfo is not None
         assert ts.utcoffset() == timezone.utc.utcoffset(ts)
 
-    def test_list_defaults_are_not_shared(
-        self, make_hypothesis: Callable[..., Hypothesis]
-    ) -> None:
+    def test_list_defaults_are_not_shared(self, make_hypothesis: Callable[..., Hypothesis]) -> None:
         """``default_factory`` must give each instance its own list.
 
         A common pydantic footgun is ``default=[]`` (shared mutable default);
@@ -150,9 +148,7 @@ class TestHypothesisDefaults:
         assert b.assumptions == []
         assert a.assumptions == ["only-a"]
 
-    def test_dict_default_is_not_shared(
-        self, make_hypothesis: Callable[..., Hypothesis]
-    ) -> None:
+    def test_dict_default_is_not_shared(self, make_hypothesis: Callable[..., Hypothesis]) -> None:
         """Same isolation guarantee for the ``metadata`` dict default."""
         a = make_hypothesis(id="a")
         b = make_hypothesis(id="b")
