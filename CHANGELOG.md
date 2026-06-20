@@ -5,6 +5,41 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.6] - 2026-06-20
+
+### Patch — release pipeline fix (OIDC → scoped API token)
+
+A maintenance release with **no API or behavior changes**. Fixes the
+broken automated release pipeline: the previous Trusted Publishing (OIDC)
+path required a PyPI publisher configuration that was never set up, so
+the v1.1.5 tag push failed at the upload step with an `invalid-publisher`
+error. The pipeline now uses a scoped **PyPI API token** (stored as the
+`PYPI_API_TOKEN` repo secret), which is the sole publish authority.
+
+This is the first release actually published by the automated pipeline —
+v1.1.4 and v1.1.5 were uploaded manually before the pipeline existed.
+
+### Changed
+
+- **`release.yml`** — removed the `id-token: write` permission and the
+  Trusted Publishing path; publishes via `pypa/gh-action-pypi-publish`
+  with `password: ${{ secrets.PYPI_API_TOKEN }}`. The workflow now also
+  creates the GitHub Release (previously done by the local script).
+- **`scripts/publish.py`** — no longer uploads to PyPI or creates the
+  GitHub release. It now builds, verified the built version against the
+  tag, runs tests, and pushes the tag (which triggers CI). Removed the
+  `--skip-release` flag and the local `~/.pypi-token` handling.
+- **`pyproject.toml`** — dropped `twine` from the `[all]` and `[dev]`
+  extras (no longer needed locally).
+- **Version bump `1.1.5` → `1.1.6`** in `pyproject.toml`,
+  `src/cds/_version.py`, and `CITATION.cff`.
+
+### Documentation
+
+- **`README.md`** and **`docs/maintenance.md`** — updated the release
+  pipeline description to reflect the scoped-API-token flow and
+  `release.yml` as the sole publish authority.
+
 ## [v1.1.5] - 2026-06-20
 
 ### Patch — quality, type-safety, test depth, and a 100% coverage gate
