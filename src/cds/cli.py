@@ -167,7 +167,7 @@ def info() -> None:
         "[bold]System (CDS)[/]\n"
         "[dim]Pure Python scientific computing system[/]\n\n"
         "[bold green]Status:[/] Stable\n"
-        "[bold blue]Tests:[/] 1165 Passing\n"
+        "[bold blue]Tests:[/] 1230 Passing\n"
         "[bold magenta]Deps:[/] 0 External (Pure Python)\n"
         f"[bold cyan]Version:[/] {__version__}",
         title="System Info",
