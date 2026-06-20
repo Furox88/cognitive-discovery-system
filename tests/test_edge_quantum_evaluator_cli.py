@@ -10,6 +10,7 @@ import math
 import subprocess
 import sys
 from pathlib import Path
+from typing import cast
 
 import pytest
 from typer.testing import CliRunner
@@ -17,7 +18,13 @@ from typer.testing import CliRunner
 from cds import __version__
 from cds.cli import app
 from cds.core.models import Hypothesis
-from cds.hypothesis import Domain, HypothesisEvaluator, HypothesisStatus, generate_hypotheses
+from cds.hypothesis import (
+    Domain,
+    EvaluationData,
+    HypothesisEvaluator,
+    HypothesisStatus,
+    generate_hypotheses,
+)
 from cds.montecarlo import buffon_needle, estimate_pi
 from cds.montecarlo.methods import _pi_worker
 from cds.quantum import QuantumCircuit, hadamard, pauli_x
@@ -143,7 +150,7 @@ def test_evaluator_chi_square_independence() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     # Strong association between rows and columns
-    table = [[100, 10], [10, 100]]
+    table: list[list[float]] = [[100.0, 10.0], [10.0, 100.0]]
     result = evaluator.evaluate(hypo, {"chi_square_independence": table})
     assert result.test_name == "Chi-square independence"
     assert result.is_significant
@@ -164,7 +171,10 @@ def test_evaluator_unsupported_format_raises() -> None:
     hypo = _make_hypothesis()
     evaluator = HypothesisEvaluator()
     try:
-        evaluator.evaluate(hypo, {"unknown_key": [1, 2, 3]})
+        # ``EvaluationData`` is a TypedDict and rejects unknown keys at type-check
+        # time; this test deliberately exercises the runtime ValueError path, so
+        # ``cast`` bypasses the type checker on purpose.
+        evaluator.evaluate(hypo, cast(EvaluationData, {"unknown_key": [1, 2, 3]}))
         raise AssertionError("Expected ValueError for unsupported data format")
     except ValueError as exc:
         assert "Unsupported data format" in str(exc)
