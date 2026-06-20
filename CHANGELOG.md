@@ -5,6 +5,57 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.8] - 2026-06-21
+
+### Patch — ODE backward integration bug fix
+
+A user-facing **bug-fix release**. Forward integration is byte-identical
+to v1.1.7; only the previously-broken `t_end < t0` case changes behavior.
+Includes corrected deep-verification scripts and a docs sync — no new
+modules, no API additions.
+
+### Fixed
+
+- **`diffeq.solvers` — backward integration silently returned only the
+  initial value.** The fixed-step (`euler`, `rk4`, `midpoint`) and
+  adaptive (`rk45`) ODE solvers, plus `solve_system`, used a forward-only
+  loop guard `while t < t_end - LOOP_EPSILON`. When `t_end < t0` the
+  guard was immediately `False`, so the solvers did nothing and returned
+  only `y0`. The integration direction is now derived from
+  `copysign(1.0, t_end - t0)` and applied as
+  `direction * min(dt, abs(t_end - t0))`; `dt` stays an unambiguous
+  positive magnitude and the loop guard becomes
+  `(t_end - t) * direction > LOOP_EPSILON`. A zero-length span
+  (`t_end == t0`) still skips the loop because `copysign(1, 0) == +1`.
+  For `rk45`, step size is tracked as an always-positive `h_mag` so the
+  shrink/grow/snap logic keeps its forward semantics in either direction.
+  7 new `TestBackwardIntegration` regression tests cover all five
+  solvers.
+
+- **`hypothesis.generator` — confidence overflow past `n >= 12`.** The
+  generated-confidence formula `0.45 + i*0.05` overflowed the
+  `Hypothesis.confidence` `le=1.0` constraint for 12+ hypotheses,
+  raising `ValidationError`. Now clamped to `min(0.9, 0.4 + i*0.05)`.
+
+### Changed (verification tooling)
+
+- **`scripts/verify_d1_numerics.py`, `verify_d2_edge_cases.py`,
+  `verify_d4_hypothesis.py`** — stale reference values/thresholds that
+  produced spurious failures against correct code: D1.3 Romberg
+  monotone-decrease check only asserted above `1e-13`; D1.4 RK45
+  singularity now uses `t_end=2.0` (past the pole) so `RuntimeError` is
+  genuinely triggered; D1.7/D1.2 odd-degree Gauss-Legendre exact
+  integral corrected to `0`; Simpson `O(h^4)` thresholds loosened to
+  match the method's order; D4.2 confidence expectation updated to the
+  clamped formula. All three scripts now report **0 failures**.
+
+### Documentation
+
+- README "recent improvements" → v1.1.8 ODE fix entry; ROADMAP marks
+  hatch-vcs / git-cliff as tried-and-abandoned with the real rollback
+  reasons; SECURITY supported-versions refresh; dashboard UX
+  touch-ups; nav/cross-ref drift. **No code or behavior changes.**
+
 ## [v1.1.7] - 2026-06-20
 
 ### Patch — PEP 639 SPDX license metadata

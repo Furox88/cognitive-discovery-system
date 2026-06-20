@@ -458,6 +458,7 @@ Recent releases (v1.1.x) focused on reliability, type-safety, and a hardened rel
 - **Python 3.13 support** (v1.1.5) — the full suite is green on 3.10–3.13.
 - **Automated release pipeline** (v1.1.6) — pushing a `v*` tag now builds, publishes to PyPI via a scoped API token, cuts a GitHub Release, and attests build provenance (sigstore). `release.yml` is the sole publish authority.
 - **PEP 639 SPDX license metadata** (v1.1.7) — the license declaration is now a valid SPDX expression recognized on both PyPI and GitHub.
+- **ODE backward integration bug fix** (v1.1.8) — the fixed-step and adaptive ODE solvers (`euler`/`rk4`/`midpoint`/`rk45`/`solve_system`) silently returned only the initial value when `t_end < t0`; integration direction is now derived from `sign(t_end - t0)` so backward integration actually works. Forward behavior is unchanged. Includes 7 new regression tests and corrected deep-verification scripts.
 - **Tutorials & architecture docs** (v1.1.5) — guided walkthroughs for optimization, signals, ML, statistics, and an architecture section in `CONTRIBUTING.md`.
 
 See [`CHANGELOG.md`](CHANGELOG.md) for the full release history.
