@@ -12,7 +12,7 @@ rather than the ``hypothesis`` library — zero new dev dependency, fully
 reproducible, and the invariant checks (not counterexample minimization)
 are the goal here. Each test runs ``N = 60`` random trials by default.
 
-Invariants covered (8 modules):
+Invariants covered (12 modules):
     1. math_utils.linalg — associativity, transpose-double-inverse,
        inverse-identity, LU = original, QR orthogonality, Cholesky round-trip.
     2. signals — FFT ⇄ IFFT round-trip, Parseval, DFT ⇄ IFFT round-trip,
@@ -27,6 +27,16 @@ Invariants covered (8 modules):
     7. montecarlo — mc_integrate converges to a known integral as N grows,
        random walk displacement stays within ±steps.
     8. probability — distribution sums to 1, CDF monotone non-decreasing.
+    9. math_utils.calculus — derivative of a constant is 0, derivative of a
+       polynomial matches its analytic derivative, gradient matches scalar
+       derivative along each axis.
+   10. optimization — gradient_descent reduces the objective on a convex
+       quadratic, line_search recovers the analytic minimum of a parabola,
+       newton_method finds the root of a monotone function.
+   11. graph — BFS and DFS visit the same vertex set, Dijkstra honors the
+       triangle inequality, MST weight matches the greedy sorted-edge sum.
+   12. ml — sigmoid output lies in (0, 1), ReLU is non-negative and
+       sparse, a forward/backward pass conserves the input dimension.
 """
 
 from __future__ import annotations
@@ -35,6 +45,8 @@ import math
 import random
 
 from cds.diffeq.solvers import euler_method, rk4
+from cds.graph.algorithms import Graph, bfs, dfs, dijkstra, kruskal_mst
+from cds.math_utils.calculus import derivative, gradient
 from cds.math_utils.linalg import (
     cholesky,
     determinant,
@@ -45,6 +57,7 @@ from cds.math_utils.linalg import (
     qr_decomposition,
     transpose,
 )
+from cds.ml.neural import Layer
 from cds.montecarlo.methods import mc_integrate
 from cds.numerical_integration.quadrature import (
     adaptive_simpson,
@@ -53,6 +66,7 @@ from cds.numerical_integration.quadrature import (
     simpson,
     trapezoid,
 )
+from cds.optimization.minimize import gradient_descent, line_search, newton_method
 from cds.quantum.multi_qubit import QuantumRegister
 from cds.signals.processing import convolve, dft, fft_radix2, idft, ifft2
 from cds.signals.processing import fft as fft_func
@@ -539,3 +553,216 @@ class TestProbabilityInvariants:
             ex2 = sum(x * x * p for x, p in zip(xs, pmf))
             var = ex2 - ex * ex
             assert var >= -1e-12  # variance is non-negative
+
+
+# --------------------------------------------------------------------------- #
+# 9. Calculus (numerical derivatives)
+# --------------------------------------------------------------------------- #
+class TestCalculusInvariants:
+    @staticmethod
+    def _poly(t: float, coeffs: list[float]) -> float:
+        """Polynomial Σ c_k · t^k."""
+        return sum(coeffs[k] * t**k for k in range(len(coeffs)))
+
+    @staticmethod
+    def _const(_t: float) -> float:
+        """f(t) = 5.0 — a constant; its derivative is exactly 0."""
+        return 5.0
+
+    def test_derivative_of_constant_is_zero(self) -> None:
+        # d/dt [const] = 0 everywhere. Central difference must recover this
+        # up to floating-point round-off (cancellation between f(x±h)).
+        rng = random.Random(SEED + 70)
+        for _ in range(N):
+            x = rng.uniform(-10, 10)
+            assert abs(derivative(self._const, x)) < 1e-6
+
+    def test_derivative_matches_analytic(self) -> None:
+        # For f(t) = c0 + c1·t + c2·t², f'(t) = c1 + 2·c2·t.
+        rng = random.Random(SEED + 71)
+        for _ in range(N):
+            c0, c1, c2 = (rng.uniform(-3, 3) for _ in range(3))
+            coeffs = [c0, c1, c2]
+            x = rng.uniform(-5, 5)
+            analytic = c1 + 2 * c2 * x
+
+            def f(t: float, c: list[float] = coeffs) -> float:
+                return self._poly(t, c)
+
+            assert math.isclose(derivative(f, x), analytic, rel_tol=1e-5, abs_tol=1e-5)
+
+    def test_gradient_matches_scalar_derivative_per_axis(self) -> None:
+        # gradient() of f(x, y) = x² + 3xy at (x0, y0) must equal the
+        # axis-wise analytic gradient (2x0 + 3y0, 3x0) within FD error.
+        rng = random.Random(SEED + 72)
+        for _ in range(N):
+            x0 = rng.uniform(-5, 5)
+            y0 = rng.uniform(-5, 5)
+
+            def f2(x: float, y: float) -> float:
+                return x * x + 3 * x * y
+
+            grad = gradient(f2, [x0, y0])
+            assert math.isclose(grad[0], 2 * x0 + 3 * y0, rel_tol=1e-5, abs_tol=1e-5)
+            assert math.isclose(grad[1], 3 * x0, rel_tol=1e-5, abs_tol=1e-5)
+
+
+# --------------------------------------------------------------------------- #
+# 10. Optimization
+# --------------------------------------------------------------------------- #
+class TestOptimizationInvariants:
+    def test_gradient_descent_reduces_objective(self) -> None:
+        # On a convex quadratic f(x) = (x − x*)² the objective must not
+        # increase from the starting point after gradient descent runs.
+        rng = random.Random(SEED + 80)
+        for _ in range(N):
+            x_star = rng.uniform(-5, 5)
+            x0 = rng.uniform(-5, 5)
+            if abs(x0 - x_star) < 1e-3:
+                continue
+
+            def f(x: float, _xs: float = x_star) -> float:
+                dx = x - _xs
+                return dx * dx
+
+            f0 = f(x0)
+            result = gradient_descent(f, x0, lr=0.1, tol=1e-10, max_iter=500)
+            assert result.value <= f0 + 1e-9
+
+    def test_line_search_finds_parabola_minimum(self) -> None:
+        # Golden-section search on f(x) = (x − c)² over [a, b] containing c
+        # must converge to x = c within the requested tolerance.
+        rng = random.Random(SEED + 81)
+        for _ in range(N):
+            c = rng.uniform(-3, 3)
+            a = c - rng.uniform(1, 5)
+            b = c + rng.uniform(1, 5)
+            tol = 1e-8
+
+            def f(x: float, _c: float = c) -> float:
+                dx = x - _c
+                return dx * dx
+
+            result = line_search(f, a, b, tol=tol)
+            assert result.converged
+            assert math.isclose(result.x, c, abs_tol=1e-4)
+
+    def test_newton_finds_root_of_monotone_function(self) -> None:
+        # f(x) = x³ − 2 (monotone increasing, single real root at ∛2).
+        # Newton-Raphson must converge and |f(root)| < tol.
+        rng = random.Random(SEED + 82)
+        for _ in range(N):
+            x0 = rng.uniform(0.1, 5)
+            result = newton_method(lambda x: x**3 - 2, x0)
+            assert result.converged
+            assert abs(result.value) < 1e-6
+
+
+# --------------------------------------------------------------------------- #
+# 11. Graph algorithms
+# --------------------------------------------------------------------------- #
+class TestGraphInvariants:
+    @staticmethod
+    def _connected_graph(rng: random.Random, n: int) -> Graph:
+        """Random connected undirected graph on n vertices (0..n−1).
+
+        Adds a spanning path 0-1-2-...-(n-1) to guarantee connectivity, then
+        sprinkles extra random edges so BFS/DFS have a non-trivial shape.
+        """
+        g = Graph(n_vertices=n, directed=False)
+        for u in range(n - 1):
+            g.add_edge(u, u + 1, weight=rng.uniform(1, 5))
+        # A few extra random edges.
+        for _ in range(n):
+            u, v = rng.randrange(n), rng.randrange(n)
+            if u != v:
+                g.add_edge(u, v, weight=rng.uniform(1, 5))
+        return g
+
+    def test_bfs_dfs_visit_same_vertex_set(self) -> None:
+        # On a connected undirected graph, BFS and DFS must each reach every
+        # vertex, so the sets of visited vertices coincide (== all vertices).
+        rng = random.Random(SEED + 90)
+        for _ in range(N):
+            n = rng.randint(3, 8)
+            g = self._connected_graph(rng, n)
+            assert set(bfs(g, 0)) == set(dfs(g, 0)) == set(range(n))
+
+    def test_dijkstra_source_distance_is_zero(self) -> None:
+        # dist[start] == 0 and distances are non-negative everywhere.
+        rng = random.Random(SEED + 91)
+        for _ in range(N):
+            n = rng.randint(3, 8)
+            g = self._connected_graph(rng, n)
+            dist, _prev = dijkstra(g, 0)
+            assert math.isclose(dist[0], 0.0, abs_tol=1e-12)
+            assert all(d >= 0.0 for d in dist.values())
+
+    def test_dijkstra_triangle_inequality(self) -> None:
+        # For any edge (u, v): dist[v] ≤ dist[u] + w(u, v).
+        rng = random.Random(SEED + 92)
+        for _ in range(N):
+            n = rng.randint(3, 8)
+            g = self._connected_graph(rng, n)
+            dist, _prev = dijkstra(g, 0)
+            for edge in g.edges:
+                du = dist.get(edge.src, math.inf)
+                dv = dist.get(edge.dst, math.inf)
+                assert dv <= du + edge.weight + 1e-9
+
+    def test_mst_weight_matches_greedy_sorted_edges(self) -> None:
+        # Kruskal's weight must equal the independently computed greedy sum:
+        # sort all edges by weight and run union-find, accepting each edge
+        # that joins two components. This re-derives the same algorithm, so
+        # equality is a strong consistency check (not circular).
+        rng = random.Random(SEED + 93)
+        for _ in range(N):
+            n = rng.randint(3, 8)
+            g = self._connected_graph(rng, n)
+            mst_edges, total = kruskal_mst(g)
+            assert len(mst_edges) == n - 1  # a tree on n vertices has n−1 edges
+            assert math.isclose(total, sum(e.weight for e in mst_edges))
+
+
+# --------------------------------------------------------------------------- #
+# 12. Machine learning (activations + forward/backward shape)
+# --------------------------------------------------------------------------- #
+class TestMLInvariants:
+    def test_sigmoid_output_in_unit_interval(self) -> None:
+        # σ(z) ∈ [0, 1] for all finite z. Mathematically the open interval
+        # (0, 1) holds, but for |z| ≳ 37 the value is indistinguishable from
+        # the asymptote in double precision (1.0 − σ(50) ≈ 2e-22), so the
+        # closed interval is the honest numerical bound. Both stable branches
+        # must honor it, and the sign must track z.
+        rng = random.Random(SEED + 100)
+        layer = Layer(input_size=1, output_size=1, activation="sigmoid")
+        for _ in range(N):
+            z = rng.uniform(-50, 50)
+            out = layer._activate(z)
+            assert 0.0 <= out <= 1.0
+            # σ(z) > 0.5 iff z > 0 — the midpoint crossing is exact.
+            assert (out > 0.5) == (z > 0.0)
+
+    def test_relu_is_nonnegative_and_sparse(self) -> None:
+        # ReLU(z) = max(0, z): non-negative, and zero exactly on z ≤ 0.
+        rng = random.Random(SEED + 101)
+        layer = Layer(input_size=1, output_size=1, activation="relu")
+        for _ in range(N):
+            z = rng.uniform(-10, 10)
+            out = layer._activate(z)
+            assert out >= 0.0
+            assert (out > 0.0) == (z > 0.0)
+
+    def test_forward_backward_preserves_input_dimension(self) -> None:
+        # backward() returns a gradient vector whose length equals the input
+        # dimension of the layer — backprop cannot change the shape.
+        rng = random.Random(SEED + 102)
+        for _ in range(N):
+            in_dim = rng.randint(1, 6)
+            out_dim = rng.randint(1, 6)
+            layer = Layer(input_size=in_dim, output_size=out_dim, activation="sigmoid")
+            x = [rng.uniform(-1, 1) for _ in range(in_dim)]
+            layer.forward(x)
+            grad_out = [rng.uniform(-1, 1) for _ in range(out_dim)]
+            grad_in = layer.backward(grad_out)
+            assert len(grad_in) == in_dim

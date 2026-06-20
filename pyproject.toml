@@ -47,6 +47,7 @@ all = [
     "mkdocs>=1.5.0",
     "mkdocs-material>=9.0.0",
     "mkdocstrings[python]>=0.24.0",
+    "hypothesis>=6.100",
 ]
 dashboard = [
     "streamlit>=1.30.0",
@@ -55,6 +56,13 @@ dashboard = [
 test = [
     "pytest>=8.0",
     "pytest-cov",
+]
+# Property-based testing. Used only by tests/test_property_invariants.py
+# (hypothesis @given strategies exercising algebraic + numerical identities).
+# Kept out of the base `test` extra so a plain `pip install ".[test]"` stays
+# lean; opt in with `pip install ".[property]"` or via `[all]`.
+property = [
+    "hypothesis>=6.100",
 ]
 dev = [
     "ruff>=0.4",
@@ -215,3 +223,21 @@ strict = true
 # Mypy is run on both `src/` and `tests/` in CI (see .github/workflows/tests.yml).
 # Local pre-commit hook still skips mypy to keep the commit loop fast; CI is the
 # gate for test-code type safety.
+
+# Property-based tests under tests/test_property_invariants.py depend on the
+# `hypothesis` library, which lives in the optional `[property]` extra. The
+# main CI matrix installs only `[test,dev,docs]` — no hypothesis — so running
+# `mypy tests/` there would fail with `import-not-found` on the hypothesis
+# imports and, because the missing imports degrade to `Any`, a cascade of
+# `untyped-decorator` / `no-any-return` errors on every `@given` site. None of
+# that reflects a real type defect; it is purely the cost of mypy seeing a
+# module the environment chose not to install.
+#
+# Rather than weaken the global strict stance (e.g. `ignore_missing_imports`),
+# we exclude the file from the default `mypy tests/` run. The file is type-
+# checked properly in the dedicated `property-tests` CI job, where
+# `pip install ".[property,test]"` makes hypothesis resolvable and `strict`
+# mypy runs against it there. See .github/workflows/tests.yml.
+exclude = [
+    "tests/test_property_invariants\\.py",
+]

@@ -101,6 +101,58 @@ jobs:
     - name: Audit dev/docs/test lock (requirements-dev.lock)
       run: pip-audit -r requirements-dev.lock --strict
 
+  property-tests:
+    # Hypothesis-driven property tests. Lives in its own job (rather than the
+    # main `test` matrix) for two reasons:
+    #   1. It installs the optional `[property]` extra (hypothesis), which the
+    #      base `test` extra deliberately omits to keep that matrix lean. This
+    #      job is what actually proves the extra resolves and is usable.
+    #   2. Property tests are slower (Hypothesis searches + shrinks the input
+    #      space) and don't need to run across the full 4×3 OS/Python matrix —
+    #      the invariants are platform-independent. One Linux + 3.12 cell is
+    #      the reference cell, matching the coverage-gating job's choice.
+    # The suite itself (tests/test_property_invariants.py) skips gracefully via
+    # pytest.importorskip when hypothesis is absent, so the main matrix's
+    # `pytest tests/` run is unaffected even though it collects the file.
+    #
+    # Mypy note: the main matrix excludes this file from `mypy tests/` (see
+    # pyproject.toml [tool.mypy].exclude) because hypothesis is absent there
+    # and the missing-import noise is not a real defect. This job installs
+    # hypothesis, so it owns the strict type-check for this file.
+    name: property tests on Linux with Python 3.12
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      # `.[property,test,dev]` — hypothesis (the point of this job), pytest
+      # (the runner), and mypy (this job owns the property file's strict
+      # type-check, which the main matrix skips). `[property]` alone pulls
+      # in neither pytest nor mypy; earlier incarnations failed with
+      # `pytest: command not found` and then `mypy: command not found`.
+      run: |
+        python -m pip install --upgrade pip
+        pip install ".[property,test,dev]"
+
+    - name: Type check with Mypy (property suite)
+      # Strict mypy against the property file. This is the *only* place that
+      # type-checks it, because the main matrix excludes it (hypothesis
+      # absent). `--strict` is explicit so the check does not silently relax
+      # if the global config ever changes.
+      run: mypy --strict tests/test_property_invariants.py
+
+    - name: Run property-based tests
+      # Run ONLY the property suite here — the main matrix already covers the
+      # example-based suite. Isolating it keeps this job's signal clean: a
+      # failure here means a Hypothesis search found a counterexample, not a
+      # regression in an unrelated test.
+      run: pytest tests/test_property_invariants.py -v
+
   pre-commit:
     name: pre-commit on Linux with Python 3.12
     runs-on: ubuntu-latest
