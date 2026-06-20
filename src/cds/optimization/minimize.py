@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TypedDict, cast
+from typing import Generic, TypedDict, TypeVar, cast, overload
 
 from cds.core._numeric import (
     ADAM_DEFAULT_BETAS,
@@ -19,10 +19,21 @@ from cds.core._numeric import (
     NEWTON_TOLERANCE,
 )
 
+# Type parameter for the minimizer payload: a single scalar (``float``) or a
+# vector of scalars (``list[float]``). Constraining ``T`` to these two keeps
+# :class:`OptResult` honest about what the minimizers actually return and lets
+# callers read ``OptResult[float].x`` as a ``float`` without narrowing the union.
+_T = TypeVar("_T", float, list[float])
+
 
 # Adam optimizer state shape: {"m": float|[float], "v": float|[float], "t": int}.
 # The scalar and vector variants are tracked separately so callers that resume a
 # scalar run get a scalar back, and vice versa.
+#
+# Deliberately *not* generic: ``TypedDict`` + ``Generic`` inheritance raises
+# ``TypeError: metaclass conflict`` on Python 3.10 (fixed upstream only in
+# 3.11+, see CPython issue #89026), and CDS supports ``>=3.10``. The
+# ``m``/``v`` union is narrowed inside :func:`adam` via ``cast`` instead.
 class AdamState(TypedDict, total=False):
     """State checkpoint for resuming an Adam run.
 
@@ -36,14 +47,34 @@ class AdamState(TypedDict, total=False):
 
 
 @dataclass
-class OptResult:
-    """Result of an optimization run."""
+class OptResult(Generic[_T]):
+    """Result of an optimization run.
 
-    x: float | list[float]
+    Parameterized over the ``x`` payload so the scalar and vector minimizers
+    each advertise the concrete type they return: :func:`newton_method` and
+    :func:`line_search` always return :class:`OptResult`\\ ``[float]``, while
+    :func:`gradient_descent` and :func:`adam` return ``OptResult[float]`` or
+    ``OptResult[list[float]]`` depending on whether ``x0`` was a scalar or a
+    list (see their overloads).
+    """
+
+    x: _T
     value: float
     iterations: int
     converged: bool
     state: AdamState | None = None
+
+
+@overload
+def _compute_gradient(
+    f: Callable[..., float], x: float, h_base: float = DEFAULT_FD_STEP
+) -> float: ...
+
+
+@overload
+def _compute_gradient(
+    f: Callable[..., float], x: list[float], h_base: float = DEFAULT_FD_STEP
+) -> list[float]: ...
 
 
 def _compute_gradient(
@@ -66,6 +97,14 @@ def _compute_gradient(
     return grad
 
 
+@overload
+def _update_x(x: float, grad: float, step: float) -> float: ...
+
+
+@overload
+def _update_x(x: list[float], grad: list[float], step: float) -> list[float]: ...
+
+
 def _update_x(
     x: float | list[float], grad: float | list[float], step: float
 ) -> float | list[float]:
@@ -85,6 +124,28 @@ def _magnitude(vec: float | list[float]) -> float:
     return math.sqrt(sum(vi * vi for vi in vec))
 
 
+@overload
+def gradient_descent(
+    f: Callable[..., float],
+    x0: float,
+    lr: float = GD_DEFAULT_LR,
+    tol: float = DEFAULT_TOLERANCE,
+    max_iter: int = 10000,
+    h: float = DEFAULT_FD_STEP,
+) -> OptResult[float]: ...
+
+
+@overload
+def gradient_descent(
+    f: Callable[..., float],
+    x0: list[float],
+    lr: float = GD_DEFAULT_LR,
+    tol: float = DEFAULT_TOLERANCE,
+    max_iter: int = 10000,
+    h: float = DEFAULT_FD_STEP,
+) -> OptResult[list[float]]: ...
+
+
 def gradient_descent(
     f: Callable[..., float],
     x0: float | list[float],
@@ -92,7 +153,7 @@ def gradient_descent(
     tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 10000,
     h: float = DEFAULT_FD_STEP,
-) -> OptResult:
+) -> OptResult[float] | OptResult[list[float]]:
     """Minimize a scalar or vector function using gradient descent.
 
     Args:
@@ -103,13 +164,27 @@ def gradient_descent(
         max_iter: iteration limit
         h: step size for numerical gradient
     """
-    x = x0 if isinstance(x0, (int, float)) else list(x0)
+    if isinstance(x0, (int, float)):
+        # Scalar branch — typed so OptResult[float] is returned without a cast.
+        x: float = x0
+        for i in range(max_iter):
+            grad = _compute_gradient(f, x, h)
+            if _magnitude(grad) < tol:
+                return OptResult(x=x, value=f(x), iterations=i, converged=True)
+            x = _update_x(x, grad, lr)
+        return OptResult(x=x, value=f(x), iterations=max_iter, converged=False)
+
+    # Vector branch — typed so OptResult[list[float]] is returned without a cast.
+    # ``grad_vec`` (not ``grad``) so mypy keeps the scalar/vector types separate:
+    # the scalar branch above binds the name ``grad`` to ``float``, and a single
+    # function scope can't hold both ``float`` and ``list[float]`` for one name.
+    x_vec: list[float] = list(x0)
     for i in range(max_iter):
-        grad = _compute_gradient(f, x, h)
-        if _magnitude(grad) < tol:
-            return OptResult(x=x, value=f(x), iterations=i, converged=True)
-        x = _update_x(x, grad, lr)
-    return OptResult(x=x, value=f(x), iterations=max_iter, converged=False)
+        grad_vec = _compute_gradient(f, x_vec, h)
+        if _magnitude(grad_vec) < tol:
+            return OptResult(x=x_vec, value=f(x_vec), iterations=i, converged=True)
+        x_vec = _update_x(x_vec, grad_vec, lr)
+    return OptResult(x=x_vec, value=f(x_vec), iterations=max_iter, converged=False)
 
 
 def newton_method(
@@ -118,7 +193,7 @@ def newton_method(
     tol: float = NEWTON_TOLERANCE,
     max_iter: int = 1000,
     h_base: float = NEWTON_DERIVATIVE_STEP,
-) -> OptResult:
+) -> OptResult[float]:
     """Find a root of f using Newton-Raphson method with adaptive step size.
 
     Args:
@@ -149,6 +224,38 @@ def newton_method(
     )
 
 
+@overload
+def adam(
+    f: Callable[..., float],
+    x0: float,
+    lr: float = ADAM_DEFAULT_LR,
+    beta1: float = ADAM_DEFAULT_BETAS[0],
+    beta2: float = ADAM_DEFAULT_BETAS[1],
+    eps: float = ADAM_DEFAULT_EPS,
+    tol: float = DEFAULT_TOLERANCE,
+    max_iter: int = 10000,
+    h: float = DEFAULT_FD_STEP,
+    state: AdamState | None = None,
+    grad_f: Callable[..., float | list[float]] | None = None,
+) -> OptResult[float]: ...
+
+
+@overload
+def adam(
+    f: Callable[..., float],
+    x0: list[float],
+    lr: float = ADAM_DEFAULT_LR,
+    beta1: float = ADAM_DEFAULT_BETAS[0],
+    beta2: float = ADAM_DEFAULT_BETAS[1],
+    eps: float = ADAM_DEFAULT_EPS,
+    tol: float = DEFAULT_TOLERANCE,
+    max_iter: int = 10000,
+    h: float = DEFAULT_FD_STEP,
+    state: AdamState | None = None,
+    grad_f: Callable[..., float | list[float]] | None = None,
+) -> OptResult[list[float]]: ...
+
+
 def adam(
     f: Callable[..., float],
     x0: float | list[float],
@@ -161,7 +268,7 @@ def adam(
     h: float = DEFAULT_FD_STEP,
     state: AdamState | None = None,
     grad_f: Callable[..., float | list[float]] | None = None,
-) -> OptResult:
+) -> OptResult[float] | OptResult[list[float]]:
     """Minimize using Adam optimizer (adaptive learning rate) for scalars or vectors.
 
     Args:
@@ -195,7 +302,7 @@ def adam(
             if grad_f:
                 grad_s: float = float(cast(float, grad_f(x_scalar)))
             else:
-                grad_s = float(cast(float, _compute_gradient(f, x_scalar, h)))
+                grad_s = _compute_gradient(f, x_scalar, h)
 
             if abs(grad_s) < tol:
                 return OptResult(
@@ -236,7 +343,7 @@ def adam(
             if grad_f:
                 grad_l: list[float] = list(cast(list[float], grad_f(x_list)))
             else:
-                grad_l = list(cast(list[float], _compute_gradient(f, x_list, h)))
+                grad_l = _compute_gradient(f, x_list, h)
 
             if _magnitude(grad_l) < tol:
                 return OptResult(
@@ -269,7 +376,7 @@ def line_search(
     b: float,
     tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 100,
-) -> OptResult:
+) -> OptResult[float]:
     """Golden section search for minimum in [a, b].
 
     Args:

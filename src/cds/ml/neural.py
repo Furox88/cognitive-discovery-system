@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 import random
-from typing import cast
 
 from cds.core._numeric import GD_DEFAULT_LR
 from cds.optimization.minimize import AdamState, adam
@@ -183,8 +182,9 @@ class MLP:
         p0 = self.get_parameters()
         res = adam(loss_fn, p0, lr=lr, max_iter=epochs, state=self.optimizer_state, grad_f=grad_fn)
 
-        # res.x is float | list[float], but for MLP it's guaranteed to be a list
-        final_params = cast(list[float], res.x)
+        # adam()'s overload for a list x0 returns OptResult[list[float]], so
+        # res.x is statically a list[float] — no cast or isinstance narrowing.
+        final_params = res.x
         self.set_parameters(final_params)
         self.optimizer_state = res.state  # Store state for next training call
 

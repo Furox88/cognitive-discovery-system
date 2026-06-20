@@ -87,11 +87,10 @@ def solve_equation(
     """
     f = expr.to_func(variable)
     opt = newton_method(f, x0=x0, tol=tol, max_iter=max_iter)
-    # newton_method is a scalar root-finder (x0: float), so opt.x is a float;
-    # narrow the union OptResult.x type accordingly.
-    root = opt.x if isinstance(opt.x, float) else float(opt.x[0])
+    # newton_method returns OptResult[float] (scalar root-finder), so opt.x is
+    # statically a float — no runtime narrowing needed.
     return SolveResult(
-        x=root,
+        x=opt.x,
         residual=abs(opt.value),
         iterations=opt.iterations,
         converged=opt.converged,
@@ -167,9 +166,10 @@ def fit_parameters(
 
     start = list(x0) if x0 is not None else [0.0] * len(names)
     opt = gradient_descent(objective, x0=start, lr=lr, tol=tol, max_iter=max_iter)
-    fitted = list(opt.x) if isinstance(opt.x, list) else [opt.x]
+    # gradient_descent's list-input overload returns OptResult[list[float]], so
+    # opt.x is statically a list[float] — no runtime narrowing needed.
     return FitResult(
-        parameters=dict(zip(names, fitted)),
+        parameters=dict(zip(names, opt.x)),
         residual=opt.value,
         iterations=opt.iterations,
         converged=opt.converged,
