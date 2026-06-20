@@ -21,15 +21,15 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - [x] ~~Multi-OS CI matrix~~ (Linux + Windows + macOS × Python 3.10/3.11/3.12)
 - [x] ~~Branch coverage enabled~~ (`branch = true` in coverage config)
 - [x] ~~Mypy `--strict` on both `src/` and `tests/`~~ (0 issues, 73 files)
-- [x] ~~Hatch-vcs dynamic versioning~~ (version derived from git tags, no manual bumps)
-- [x] ~~Git-cliff auto-CHANGELOG on tag push~~ (no manual CHANGELOG edits)
+- [~] ~~Hatch-vcs dynamic versioning~~ — **tried and abandoned**: hatch-vcs 0.5.0 silently ignored the `version-scheme = "release"` override, so static versioning (`version` in `pyproject.toml` mirrored in `src/cds/_version.py`) was shipped instead. See `pyproject.toml` release checklist.
+- [~] ~~Git-cliff auto-CHANGELOG on tag push~~ — **rolled back to manual**: the tag-push trigger rewrote the entire `CHANGELOG.md` from commit history and discarded hand-curated narrative entries (see PR #24). `changelog.yml` is now `workflow_dispatch` only; `CHANGELOG.md` is hand-curated.
 - [x] ~~Sigstore release attestation~~ (`actions/attest-build-provenance@v2`)
 - [x] ~~Branch protection on main~~ (1 PR reviewer, linear history, no force push, no deletes)
 - [x] ~~Threat model in SECURITY.md~~ (in-scope vs out-of-scope, user best practices)
 - [x] ~~Türkçe başlangıç rehberi~~ (`docs/getting-started.tr.md`)
 - [x] ~~Signed commits guide in CONTRIBUTING.md~~ (SSH or GPG)
 
-## v1.0.0 — Stability Release (Released 2026-06-18)
+## v1.0.0 — Stability RELEASE (Released 2026-06-18)
 
 - [x] ~~Freeze public API — backward-compatible guarantees for all `cds.*` exports~~
 - [x] ~~Full API reference documentation on GitHub Pages (auto-generated via mkdocstrings)~~
@@ -40,22 +40,46 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
 - [ ] Optional: Enable Dependabot security-only updates (currently weekly, can switch to security-only mode)
 - [x] ~~Automated benchmark regeneration on releases + weekly schedule~~ (`.github/workflows/benchmarks.yml`) — CI artifact `benchmarks/results.json` for regression tracking
 
+## v1.0.1 – v1.0.4 — Post-Stable Hardening (Released 2026-06-18)
+
+Backward-compatible patch train after the stable cut. No API or behavior changes.
+
+- [x] ~~**v1.0.1** — PEP 561 type marker~~ (`src/cds/py.typed` shipped in the wheel) + 32 property-based numerical invariants (`tests/test_numerical_invariants.py`) + docstrings for all 51 previously-undocumented public functions (AST-scanned, 3 gaps closed)
+- [x] ~~**v1.0.2** — benchmark artifact isolation~~: `run_all(output_dir=...)` so `pytest` no longer clobbers the committed `benchmarks/results.json` / `docs/benchmarks.md` (byte-identical verified)
+- [x] ~~**v1.0.3** — `tests/` brought to the same mypy baseline as `src/`~~ (`mypy src/ tests/` green across 39 test files) + benchmark test artifact isolation in `tmp_path`
+- [x] ~~**v1.0.4** — CI pip-audit job + drop the global `ignore_missing_imports = true`~~ from `[tool.mypy]` so future un-stubbed dependencies surface real errors instead of silently typing as `Any`
+
+## v1.1.0 — Modeling & Knowledge Modules (Released 2026-06-19)
+
+A backward-compatible **minor** release. Adds two new public subpackages; the platform now spans 17 modules. Tracked under issues [#2](https://github.com/Furox88/cognitive-discovery-system/issues/2) and [#3](https://github.com/Furox88/cognitive-discovery-system/issues/3).
+
+- [x] ~~**`cds.modeling`** — symbolic algebra~~: expression-tree AST (`+ - * / **`, unary `-`, `Variable`/`Constant`), `diff`, `simplify`, `subs`, `evaluate`, `to_latex`; `MathModel` with `solve_equation` (Newton-Raphson) and `fit_parameters` (least squares). See `examples/modeling_demo.py`.
+- [x] ~~**`cds.knowledge`** — knowledge organization layer~~: `KnowledgeGraph` (`Concept`/`Relation`, BFS shortest path, transitive closure, cycle detection, JSON persistence), `Notebook` (`Note` with tag/concept lookups), `retrieval.search()` ranked across concepts+notes. See `examples/knowledge_demo.py`.
+- [x] ~~Both modules wired into `__all__`, CLI `modules` listing, and `docs/api.md`~~
+
+## v1.1.1 – v1.1.7 — Polish & Release Pipeline (Released 2026-06-19 → 2026-06-20)
+
+Backward-compatible patches. Highlights:
+
+- [x] ~~**v1.1.5** — type-safety sweep + 100% coverage gate~~: blended statement+branch coverage at 100% across 1230 tests, property-based invariant tests, shared fixtures, expanded docs (tutorials + architecture guide)
+- [x] ~~**v1.1.6** — release pipeline fix~~: switched from Trusted Publishing (OIDC, never configured) to a scoped `PYPI_API_TOKEN`; first release actually published by the automated pipeline
+- [x] ~~**v1.1.7** — PEP 639 SPDX license metadata~~: `license = "MIT"` expression replaces the legacy table form so PyPI/GitHub recognize the license; removed drift-prone hardcoded numbers from README
+
 ## Longer Term
+
+Open ideas — not version-committed. Contributions welcome.
 
 - Optional lightweight extras: `cds[plot]` for matplotlib integration, `cds[pandas]` for DataFrame interop
 - Notebook templates (Jupyter) for non-CLI users
 - Community-contributed domain modules (bioinformatics, finance)
 - Education-focused "tour of numerical methods" guide
-- **Educational NLP track** (see `cds.nlp` — shipped in v1.0.0):
-  - Phase 1 (released): BPE tokenizer + token / positional embeddings (v0.9.0b5)
-  - Phase 2 (released): Multi-head self-attention block (pure-Python, intentionally readable rather than fast)
-  - Phase 3 (released): Pure-Python autograd with optional `cds[fast-jit]` Numba backend (kept opt-in so the core stays zero-dep)
-  - Phase 4 (released): Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
-  - Phase 5 (released): Attention / embedding visualisations for the educational narrative
-  - Scope explicitly excludes production-scale training — that belongs in PyTorch / JAX / MLX.
-- **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2)) — shipped in v1.0.0 as `cds.modeling` (symbolic algebra, `MathModel` equation systems, `solve_equation`, `fit_parameters`; see `examples/modeling_demo.py`)
-- **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3)) — shipped in v1.0.0 as `cds.knowledge` (`KnowledgeGraph`, `Concept`/`Relation`, research notes, structured retrieval; see `examples/knowledge_demo.py`)
 - **CDS Script Templates** — domain-specific scientific workflows (quantum chemistry, signal processing demos)
+
+### Completed tracks (graduated out of this section)
+
+- **Educational NLP track** — shipped across v0.9.0b5 → v1.0.0 (now `cds.nlp`): BPE tokenizer + embeddings, multi-head self-attention, pure-Python autograd with optional `cds[fast-jit]` Numba backend, tiny GPT-from-scratch, attention/embedding visualisations. Scope explicitly excludes production-scale training (PyTorch / JAX / MLX territory).
+- **Mathematical Modeling Framework** ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2)) — shipped in v1.1.0 as `cds.modeling`.
+- **Knowledge Organization System** ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3)) — shipped in v1.1.0 as `cds.knowledge`.
 
 ---
 

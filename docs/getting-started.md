@@ -98,14 +98,41 @@ pytest -x        # stop on first failure
 ## Running Examples
 
 ```bash
-python examples/quantum_demo.py
-python examples/optimization_demo.py
-python examples/signals_demo.py
-python examples/stats_demo.py
-python examples/fft2_demo.py
-python examples/hypothesis_tests_demo.py
+# Core models & data
+python examples/core_demo.py
+python examples/data_analysis_demo.py
+python examples/graph_demo.py
+python examples/knowledge_demo.py
+python examples/modeling_demo.py
+
+# Math & numerics
+python examples/math_utils_demo.py
 python examples/linalg_demo.py
+python examples/numerical_integration_demo.py
+python examples/diffeq_demo.py
+python examples/montecarlo_demo.py
+python examples/probability_demo.py
+python examples/optimization_demo.py
+python examples/scientific_demo.py
+
+# Signals & ML
+python examples/signals_demo.py
+python examples/fft2_demo.py
+python examples/ml_and_viz_demo.py
+
+# NLP (educational)
+python examples/nlp_bpe_demo.py
+python examples/nlp_attention_demo.py
+python examples/nlp_mini_gpt_demo.py
+python examples/nlp_viz_demo.py
+
+# Quantum
+python examples/quantum_demo.py
+
+# Statistics & hypothesis engine
+python examples/stats_demo.py
 python examples/hypothesis_demo.py
+python examples/hypothesis_tests_demo.py
 python examples/hypothesis_with_stats_demo.py
 python examples/hypothesis_custom_generator.py
 ```

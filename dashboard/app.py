@@ -60,14 +60,25 @@ with tabs[0]:
 
                         if not hypos:
                             st.warning("No hypotheses were generated. Try a different question.")
+                            st.session_state.pop("hypotheses", None)
                         else:
-                            for h in hypos:
-                                with st.expander(
-                                    f"ID: {h.id} - {h.statement[:50]}...", expanded=True
-                                ):
-                                    st.markdown(h.to_markdown())
+                            # Persist across reruns so the result survives the
+                            # next widget interaction (Streamlit reruns the whole
+                            # script on every input change).
+                            st.session_state["hypotheses"] = hypos
                     except Exception as e:
                         st.error(f"Error generating hypotheses: {str(e)}")
+                        st.session_state.pop("hypotheses", None)
+
+        # Render whatever is cached (survives unrelated widget reruns).
+        cached_hypos = st.session_state.get("hypotheses")
+        if cached_hypos:
+            st.caption(f"Showing {len(cached_hypos)} hypothesis(ies).")
+            for h in cached_hypos:
+                with st.expander(
+                    f"ID: {h.id} - {h.statement[:50]}...", expanded=True
+                ):
+                    st.markdown(h.to_markdown())
 
     with col2:
         st.info(
@@ -106,8 +117,12 @@ with tabs[1]:
         st.subheader("Measurement Statistics")
         if "q_counts" in st.session_state:
             counts = st.session_state["q_counts"]
-            st.bar_chart(counts)
-            st.json(counts)
+            # ``simulate`` returns int-keyed counts {0: n, 1: n}. Relabel to
+            # Dirac notation so the bar chart reads |0> / |1> instead of bare
+            # integers, and sort by bitstring for a stable left-to-right order.
+            labeled = {f"|{k}⟩": v for k, v in sorted(counts.items())}
+            st.bar_chart(labeled)
+            st.json(labeled)
         else:
             st.info("Construct a circuit and click 'Run Simulation' to see results.")
 
@@ -165,9 +180,14 @@ with tabs[3]:
 
         mu1 = st.slider("Mean 1", 50.0, 100.0, 70.0)
         mu2 = st.slider("Mean 2", 50.0, 100.0, 75.0)
+        seed = st.slider("Random Seed", 0, 100, 42, help="Pin the seed so tweaking the means doesn't redraw the samples.")
 
-        data1 = [random.gauss(mu1, 5) for _ in range(50)]
-        data2 = [random.gauss(mu2, 8) for _ in range(50)]
+        # Seeded RNG: without this, every slider movement regenerated fresh
+        # samples and the p-value jittered even when only the seed-irrelevant
+        # widget changed. Pinning the seed keeps the comparison reproducible.
+        rng = random.Random(seed)
+        data1 = [rng.gauss(mu1, 5) for _ in range(50)]
+        data2 = [rng.gauss(mu2, 8) for _ in range(50)]
 
         try:
             from cds.stats import TestResult, two_sample_ttest

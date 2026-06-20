@@ -58,4 +58,4 @@ The `attest.yml` workflow then fires on `release: published` to sign the artifac
 
 ## Documentation Deployment
 
-The MkDocs site is automatically built and deployed to GitHub Pages via the `CI` workflow.
+The MkDocs site is deployed to GitHub Pages via `scripts/publish.py`, which runs `mkdocs gh-deploy --force --no-history` locally after the release tag is pushed (use `--skip-docs` to opt out). The `CI` workflow (`tests.yml`) only runs `mkdocs build --strict` as a link/reference lint — it does **not** deploy. This keeps the canonical docs build on the local toolchain, matching `publish.py`'s role as the local half of the two-stage release.
