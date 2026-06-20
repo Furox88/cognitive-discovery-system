@@ -5,6 +5,33 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.7] - 2026-06-20
+
+### Patch — PEP 639 SPDX license metadata
+
+A maintenance release with **no API or behavior changes**. Standardizes
+the license declaration so it is recognized as a valid SPDX identifier
+both on PyPI and in package metadata, and removes drift-prone
+hardcoded numbers from the README.
+
+### Changed
+
+- **`pyproject.toml`** — adopted [PEP 639](https://peps.python.org/pep-0639/):
+  replaced the legacy `license = {text = "MIT"}` table form with the
+  SPDX `license = "MIT"` expression plus `license-files = ["LICENSE"]`.
+  The wheel/sdist METADATA now emit `License-Expression: MIT` and
+  `License-File: LICENSE`, which PyPI and GitHub recognize as a valid
+  SPDX id (the old table form was not parsed, so the license read as
+  unrecognized). Removed the now-redundant `License :: OSI Approved ::
+  MIT License` classifier (deprecated under PEP 639; would trigger a
+  metadata warning).
+
+### Documentation
+
+- **`README.md`** — removed hardcoded, drift-prone numbers (version
+  tag, test count, module count) in favor of the existing PyPI / CI /
+  codecov badges, so the docs no longer go stale between releases.
+
 ## [v1.1.6] - 2026-06-20
 
 ### Patch — release pipeline fix (OIDC → scoped API token)
