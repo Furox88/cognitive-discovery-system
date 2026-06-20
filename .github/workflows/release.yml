@@ -1,23 +1,21 @@
 name: Release
 
 # Fully automated publish: pushing a `v*` tag builds the sdist + wheel,
-# uploads them to PyPI via Trusted Publishing (OIDC, no API token), and
-# creates a GitHub Release with the artifacts attached. The Attest Release
-# Artifacts workflow then fires on `release: published` and signs them.
+# uploads them to PyPI using a scoped API token (PYPI_API_TOKEN repo
+# secret), and creates a GitHub Release with the artifacts attached. The
+# Attest Release Artifacts workflow then fires on `release: published`
+# and signs them.
 #
-# Trusted Publishing setup (one-time, in the PyPI UI):
-#   PyPI → account → Publishing → add a publisher for
-#   `cognitive-discovery-system`:
-#     environment: pypi
-#     owner:       Furox88
-#     repo:        cognitive-discovery-system
-#     workflow:    release.yml
-# Until that publisher is configured, the upload step fails with a clear
-# OIDC error — no secret is involved, so there is nothing to leak.
+# Setup (one-time): create a PyPI API token scoped to
+# `cognitive-discovery-system` (Account → API tokens), then add it as a
+# repository secret named `PYPI_API_TOKEN`:
+#   gh secret set PYPI_API_TOKEN < ~/.pypi-token
 #
-# Why OIDC over an API token: no long-lived secret in GitHub, per-workflow
-# scoping, and PyPI shows a "verified" publisher badge on the release.
-# Reference: https://docs.pypi.org/trusted-publishers/
+# This is the sole publish authority: `scripts/publish.py` no longer
+# uploads to PyPI or creates the GitHub release — it only builds, tests,
+# pushes the tag (which triggers this workflow), and deploys docs.
+# Reference: https://docs.pypi.org/trusted-publishers/using-no-api-key/
+#            (token path: https://packaging.python.org/en/latest/tutorials/packaging-projects/#uploading-the-distribution-archives)
 
 on:
   push:
@@ -26,7 +24,6 @@ on:
 
 permissions:
   contents: write   # create the GitHub Release + upload artifacts
-  id-token: write   # OIDC for PyPI Trusted Publishing
 
 concurrency:
   group: release-${{ github.ref }}
@@ -85,7 +82,7 @@ jobs:
     name: Publish to PyPI + GitHub Release
     needs: build
     runs-on: ubuntu-latest
-    environment: pypi   # Required for Trusted Publishing
+    environment: pypi   # Creates the pypi deployment record (green on next release)
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -93,8 +90,10 @@ jobs:
           name: dist
           path: dist/
 
-      - name: Publish to PyPI (Trusted Publishing / OIDC)
+      - name: Publish to PyPI (API token)
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Create GitHub Release with artifacts
         env:

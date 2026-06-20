@@ -1,28 +1,34 @@
 #!/usr/bin/env python3
-"""Local PyPI publish script for cognitive-discovery-system.
+"""Local release driver for cognitive-discovery-system.
 
 Usage:
     python scripts/publish.py                   # use latest git tag as version
-    python scripts/publish.py --tag v1.0.2      # use a specific tag
-    python scripts/publish.py --dry-run         # build but do not upload
+    python scripts/publish.py --tag v1.1.6      # use a specific tag
+    python scripts/publish.py --dry-run         # build + verify, but push nothing
     python scripts/publish.py --skip-tests      # skip the pytest step
     python scripts/publish.py --skip-docs       # skip mkdocs gh-deploy
+
+Role of this script: it is the LOCAL half of a two-stage release. It
+verifies a clean tree on ``main``, runs the test suite, builds the sdist
++ wheel, confirms the built version matches the tag, then **pushes the
+tag**. Pushing a ``v*`` tag triggers ``.github/workflows/release.yml``,
+which is the SOLE authority for the PyPI upload and the GitHub Release —
+this script does not touch PyPI or create the release, so there is no
+double-upload and no long-lived token handled locally.
+
+Docs are deployed here (``mkdocs gh-deploy``) rather than in CI, because
+the canonical docs build lives on the local toolchain.
 
 Versioning: static. ``version`` lives in ``pyproject.toml`` and is mirrored
 in ``src/cds/_version.py`` (kept in lockstep — bump both before tagging).
 The script reads the version from the built wheel filename (e.g.
 ``cognitive_discovery_system-1.0.2-py3-none-any.whl``) and uses it for
-verification, tag creation, and release notes. (Previously we tried
-hatch-vcs, but 0.5.0 silently ignored the version-scheme override; static
-versioning is what shipped — see ``pyproject.toml`` release checklist.)
-
-Why local-only: this project does not auto-publish from CI. Tag pushes stay
-clean. The wheel + sdist are pushed manually after a green local test pass.
+verification and tag creation. (Previously we tried hatch-vcs, but 0.5.0
+silently ignored the version-scheme override; static versioning is what
+shipped — see ``pyproject.toml`` release checklist.)
 
 Requirements (install once):
-    pip install build twine
-    # Token: stored at ~/.pypi-token (PyPI API token, pypi-...).
-    #   echo 'pypi-Ag...' > ~/.pypi-token && chmod 600 ~/.pypi-token
+    pip install build
 """
 
 from __future__ import annotations
@@ -37,7 +43,6 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TOKEN_FILE = Path.home() / ".pypi-token"
 
 
 def run(cmd: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
@@ -83,17 +88,12 @@ def main() -> int:
         "--tag",
         help="Git tag to publish (e.g. v0.9.0b1). Defaults to the latest v* tag.",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Build but skip upload")
+    parser.add_argument("--dry-run", action="store_true", help="Build + verify, but push nothing")
     parser.add_argument("--skip-tests", action="store_true", help="Skip pytest step")
     parser.add_argument(
         "--skip-docs",
         action="store_true",
-        help="Skip mkdocs gh-deploy (Pages not updated after PyPI upload).",
-    )
-    parser.add_argument(
-        "--skip-release",
-        action="store_true",
-        help="Skip the GitHub release creation step (PyPI + tag push only).",
+        help="Skip mkdocs gh-deploy (Pages not updated after the tag push).",
     )
     args = parser.parse_args()
 
@@ -134,7 +134,8 @@ def main() -> int:
         print("\n=== Running tests ===", flush=True)
         run([sys.executable, "-m", "pytest", "-q"])
 
-    # 4. Clean dist, build
+    # 4. Clean dist, build (the wheel is needed to verify the version the
+    #    tag will publish; CI rebuilds independently from a clean checkout).
     dist = PROJECT_ROOT / "dist"
     if dist.exists():
         shutil.rmtree(dist)
@@ -163,35 +164,18 @@ def main() -> int:
         )
         return 1
 
-    # 6. Upload (unless dry-run)
+    # 6. Stop here on a dry run — nothing is pushed, no release is triggered.
     if args.dry_run:
-        print("\nDry run: skipping upload.", flush=True)
+        print("\nDry run: skipping tag push and docs deploy.", flush=True)
         return 0
 
-    if not TOKEN_FILE.exists():
-        print(
-            f"No token file at {TOKEN_FILE}. See script header for setup.",
-            file=sys.stderr,
-        )
-        return 1
-
-    token = TOKEN_FILE.read_text(encoding="utf-8").strip()
-    env = os.environ.copy()
-    env["TWINE_USERNAME"] = "__token__"
-    env["TWINE_PASSWORD"] = token
-
-    print(f"\n=== Uploading {tag} to PyPI ===", flush=True)
-    subprocess.run(
-        [sys.executable, "-m", "twine", "upload", "dist/*"],
-        check=True,
-        env=env,
-    )
-
-    # 7. Push tag (if not already pushed)
-    print(f"\n=== Pushing tag {tag} ===", flush=True)
+    # 7. Push tag. This triggers release.yml, which uploads to PyPI and
+    #    creates the GitHub Release. The local script stays out of both.
+    print(f"\n=== Pushing tag {tag} (triggers CI release.yml) ===", flush=True)
     run(["git", "push", "origin", tag])
 
-    # 8. Deploy docs to GitHub Pages (legacy mode: push to gh-pages branch)
+    # 8. Deploy docs to GitHub Pages (legacy mode: push to gh-pages branch).
+    #    Kept local on purpose — docs deploy is not part of release.yml.
     if not args.skip_docs:
         print("\n=== Deploying docs to GitHub Pages ===", flush=True)
         try:
@@ -199,29 +183,19 @@ def main() -> int:
         except subprocess.CalledProcessError as exc:
             print(
                 f"  mkdocs gh-deploy failed (exit {exc.returncode}). "
-                "PyPI upload already succeeded; you can retry with --skip-docs off later.",
+                "The tag push already succeeded and release.yml is running; "
+                "you can retry the docs deploy later with --skip-tests.",
                 file=sys.stderr,
             )
 
-    # 9. Create GitHub release (attaches sdist + wheel so the attestation
-    #    workflow can sign them)
-    if not args.skip_release:
-        print(f"\n=== Creating GitHub release {tag} ===", flush=True)
-        subprocess.run(
-            [
-                "gh",
-                "release",
-                "create",
-                tag,
-                "--generate-notes",
-                # ``Path.suffix`` is the part after the last dot, so it returns
-                # ``.gz`` (not ``.tar.gz``) for sdists — match on the full suffix.
-                *(str(p) for p in artifacts if p.suffix == ".whl" or p.name.endswith(".tar.gz")),
-            ],
-            check=True,
-        )
-
-    print(f"\nDone. {tag} published to PyPI, tagged, and released on GitHub.", flush=True)
+    print(
+        f"\nDone. {tag} pushed; CI release.yml will publish to PyPI and create the GitHub Release.",
+        flush=True,
+    )
+    print(
+        "Watch: https://github.com/Furox88/cognitive-discovery-system/actions/workflows/release.yml",
+        flush=True,
+    )
     return 0
 
 
