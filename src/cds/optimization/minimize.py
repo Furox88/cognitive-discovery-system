@@ -18,6 +18,7 @@ from cds.core._numeric import (
     NEWTON_DERIVATIVE_STEP,
     NEWTON_TOLERANCE,
 )
+from cds.math_utils.calculus import derivative as _central_difference
 
 # Type parameter for the minimizer payload: a single scalar (``float``) or a
 # vector of scalars (``list[float]``). Constraining ``T`` to these two keeps
@@ -80,11 +81,17 @@ def _compute_gradient(
 def _compute_gradient(
     f: Callable[..., float], x: float | list[float], h_base: float = DEFAULT_FD_STEP
 ) -> float | list[float]:
-    """Compute numerical gradient with adaptive step size for precision."""
+    """Compute numerical gradient with adaptive step size for precision.
+
+    The scalar branch delegates to :func:`cds.math_utils.calculus.derivative`
+    so the central-difference formula ``(f(x+h) - f(x-h)) / (2h)`` with an
+    ``x``-scaled step lives in exactly one place. The vector branch is kept
+    here because it uses the ``f(list)`` calling convention (positional index
+    access), whereas :func:`cds.math_utils.calculus.gradient` expects
+    ``f(*coords)`` — they are genuinely different APIs, not duplicates.
+    """
     if isinstance(x, (int, float)):
-        # Adaptive h based on x scale
-        h = h_base * max(1.0, abs(x))
-        return float((f(x + h) - f(x - h)) / (2 * h))
+        return _central_difference(f, x, h_base)
 
     grad = [0.0] * len(x)
     for i in range(len(x)):
@@ -209,9 +216,10 @@ def newton_method(
         if abs(fx) < tol:
             return OptResult(x=x, value=fx, iterations=i, converged=True)
 
-        # Adaptive h based on x scale
-        h = h_base * max(1.0, abs(x))
-        dfx = (f(x + h) - f(x - h)) / (2 * h)
+        # Newton's derivative comes from the same central-difference kernel as
+        # the gradient methods (``h_base`` defaults to NEWTON_DERIVATIVE_STEP,
+        # finer than the gradient DEFAULT_FD_STEP).
+        dfx = _compute_gradient(f, x, h_base)
 
         if abs(dfx) < NEAR_ZERO:
             break
