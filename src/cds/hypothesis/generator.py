@@ -22,7 +22,7 @@ provide a custom generator.
 from __future__ import annotations
 
 import uuid
-from typing import Any, Protocol
+from typing import Protocol
 
 from cds.core.models import Domain, Hypothesis, HypothesisStatus
 
@@ -35,7 +35,7 @@ class HypothesisGenerator(Protocol):
         research_question: str,
         domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> list[Hypothesis]:
         """Generate `n` hypotheses for the given research question."""
         # Protocol methods carry no body — the docstring alone satisfies the
@@ -142,7 +142,7 @@ class SimpleOfflineGenerator:
         research_question: str,
         domain: Domain | str = Domain.GENERAL_SCIENCE,
         n: int = 3,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> list[Hypothesis]:
         """Generate `n` hypotheses from the built-in domain templates."""
         # Ensure domain is a Domain enum instance

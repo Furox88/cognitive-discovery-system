@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -47,7 +46,7 @@ class Hypothesis(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     tags: list[str] = Field(default_factory=list)
     sources: list[str] = Field(default_factory=list, description="References or retrieval sources")
-    metadata: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, str] = Field(default_factory=dict)
 
     def to_markdown(self) -> str:
         """Render this hypothesis as a structured Markdown document."""
