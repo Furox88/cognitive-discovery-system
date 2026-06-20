@@ -53,8 +53,8 @@ Planned direction for CDS. All work maintains the **zero-dependency, pure Python
   - Phase 4 (released): Tiny GPT-from-scratch training run on a public char-level corpus (Karpathy Shakespeare-style)
   - Phase 5 (released): Attention / embedding visualisations for the educational narrative
   - Scope explicitly excludes production-scale training — that belongs in PyTorch / JAX / MLX.
-- **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2))
-- **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3))
+- **Mathematical Modeling Framework** — model creation, analysis, equation development ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2)) — shipped in v1.0.0 as `cds.modeling` (symbolic algebra, `MathModel` equation systems, `solve_equation`, `fit_parameters`; see `examples/modeling_demo.py`)
+- **Knowledge Organization System** — knowledge graph, concept mapping, structured research notes ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3)) — shipped in v1.0.0 as `cds.knowledge` (`KnowledgeGraph`, `Concept`/`Relation`, research notes, structured retrieval; see `examples/knowledge_demo.py`)
 - **CDS Script Templates** — domain-specific scientific workflows (quantum chemistry, signal processing demos)
 
 ---
