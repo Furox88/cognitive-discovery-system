@@ -47,14 +47,15 @@ print(expr.to_latex())                 # \frac{x^{2}}{y}
 from cds.modeling import MathModel, Variable
 
 t, a = Variable("t"), Variable("a")
+v0 = Variable("v0")
 model = MathModel(
     name="Kinematics",
     description="Constant-acceleration motion",
     parameters={"a": 9.81},
     variables=["t", "v0", "x0"],
 )
-model.add_equation("velocity", v0 := Variable("v0") + a * t)
-model.add_equation("position", v0 * t + Variable("x0"))
+model.add_equation("velocity", v0 + a * t)
+model.add_equation("position", Variable("x0") + v0 * t + 0.5 * a * t**2)
 
 print(model.evaluate({"t": 2.0, "v0": 0.0, "x0": 0.0}))
 # {'velocity': 19.62, 'position': 19.62}
