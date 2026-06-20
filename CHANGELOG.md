@@ -159,14 +159,15 @@ platform now spans **17 modules**, **1164 tests**, and **99.59%** coverage.
 
 - **`cds.modeling`** — symbolic algebra for equation development:
   - An expression tree (`+`, `-`, `*`, `/`, `**`, unary `-`, variables,
-    numbers) built by overloading Python operators on a `Var`/`Const` AST.
+    numbers) built by overloading Python operators on a `Variable`/`Constant`
+    AST.
   - Symbolic differentiation (`diff`), algebraic simplification
-    (`simplify`), substitution (`subs`), evaluation (`evalf`), and
+    (`simplify`), substitution (`subs`), evaluation (`evaluate`), and
     LaTeX export (`to_latex`).
-  - A `MathModel` for equation systems with `solve_equation` (bisection
-    / Newton-style root finding) and `fit_parameters` (least-squares
-    parameter fitting to observations).
-  - Runnable demo (`examples/modeling_demo.md`) + tutorial.
+  - A `MathModel` for equation systems with `solve_equation` (Newton-Raphson
+    root finding) and `fit_parameters` (least-squares parameter fitting to
+    observations).
+  - Runnable demo (`examples/modeling_demo.py`) + tutorial.
 - **`cds.knowledge`** — a knowledge-organization layer in three pure-Python,
   dependency-free files:
   - `graph.py`: `Concept`, `Relation` (typed directed edges), and a
