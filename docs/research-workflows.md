@@ -71,7 +71,7 @@ If you use CDS in a paper, thesis, or research pipeline, please cite it using th
 ## Next Steps
 
 - Browse the full example set in `examples/`.
-- Read the module reference in `docs/api-reference.md`.
+- Read the module reference in `docs/api.md`.
 - See current performance numbers in `docs/benchmarks.md`.
 - Check `ROADMAP.md` for planned directions.
 

@@ -34,7 +34,7 @@ pip install -e ".[dev,test]"
 pip install pre-commit
 pre-commit install
 
-# Run tests (1165 tests, see CI)
+# Run tests (1192 tests, see CI)
 pytest
 
 # Run linter
@@ -45,6 +45,75 @@ ruff format --check src/ tests/
 cds --help
 cds constants
 ```
+
+## Architecture Overview
+
+CDS is organized as a flat package of domain modules under `src/cds/`, each one
+self-contained and importable as `cds.<module>`. There is no deep inheritance
+hierarchy — a module exposes plain functions and small dataclasses. This keeps
+the surface readable and the import cost low.
+
+### Layers
+
+```
+src/cds/
+├── __init__.py          # Top-level re-exports (cds.core, cds.stats, …)
+├── __main__.py          # `python -m cds` entry point
+├── cli.py               # Typer + Rich CLI (cds <command>)
+├── core/                # Shared primitives: numeric helpers, models
+├── scientific/          # constants.py, formulas.py (physics)
+├── quantum/             # Single- & multi-qubit simulation, entanglement
+├── signals/             # DFT/FFT, 2-D FFT, convolution, filtering
+├── optimization/        # gradient_descent, newton, adam, line_search
+├── stats/               # Descriptive stats, regression, hypothesis tests
+├── probability/         # Distributions and sampling
+├── montecarlo/          # Monte Carlo estimation
+├── diffeq/              # ODE solvers
+├── numerical_integration/  # Quadrature rules
+├── graph/               # Graph algorithms
+├── ml/                  # Dependency-free MLP (Layer, Adam-based training)
+├── modeling/            # Curve / model fitting
+├── nlp/                 # Tokenizers, attention, mini GPT
+├── data_analysis/       # DataSet / DataTable containers
+├── hypothesis/          # Research hypothesis generation engine
+└── knowledge/           # Knowledge-representation helpers
+```
+
+`core/` holds shared building blocks reused across modules; everything else is a
+peer. Cross-module dependencies point *toward* `core/` — a domain module may
+import from `core/` but `core/` does not import domain modules.
+
+### Dependency contract
+
+- **Runtime dependencies are intentionally minimal:** only `typer`, `pydantic`,
+  and `rich` (for the CLI). The numerical modules are **pure Python** — no NumPy,
+  no SciPy. This is a hard constraint: do not add a heavy dependency to a module
+  in `src/cds/` to make a function "faster". If a feature genuinely needs one,
+  gate it behind an optional extra (see `pyproject.toml` `[project.optional-dependencies]`).
+- **Typed:** `src/cds/py.typed` marks the package as PEP 561 typed. Keep public
+  signatures annotated; `mypy` runs in pre-commit and CI.
+
+### Result types
+
+Several modules return small dataclasses instead of bare tuples, so callers bind
+to named fields (`res.value`, `res.iterations`, `res.converged`) rather than
+positions. Examples: `optimization.OptResult`, `stats.TestResult` /
+`RegressionResult`. When adding a function that returns several related values,
+prefer a frozen dataclass over a tuple.
+
+### Tests
+
+Tests live in `tests/` (one `test_<module>.py` per module, plus `conftest.py`
+for shared fixtures). Run the full suite with `pytest`. Property-based tests use
+[Hypothesis](https://hypothesis.readthedocs.io/) (see `tests/` for examples) —
+prefer a property test over a hand-picked example when an invariant holds across
+the input domain.
+
+### CLI
+
+`cli.py` registers Typer commands. New commands take primitive arguments (parsed
+by Typer) and delegate to the relevant module — keep the CLI thin and push logic
+into the domain module so it stays callable from Python directly.
 
 ## Pre-commit Hooks
 
@@ -115,10 +184,6 @@ git log --show-signature -1
 
 CI does not enforce signed commits; this is a courtesy recommendation.
 
-
-git commit --no-verify
-```
-
 ## Dependency Lockfile
 
 `requirements.lock` (production) and `requirements-dev.lock` (dev/test/docs) are committed to the repo. To regenerate after editing `pyproject.toml`:
@@ -172,7 +237,7 @@ python examples/hypothesis_custom_generator.py
 - Add clear docstrings (Args, Returns, Raises)
 - Write tests in `tests/test_*.py`
 - Add a runnable example in `examples/`
-- Update `docs/api-reference.md` and README module table if needed
+- Update `docs/api.md` and README module table if needed
 - Add entry to CHANGELOG under Unreleased
 - Run `ruff check` and `pytest` before PR
 
