@@ -65,6 +65,10 @@ nav:
       - Hypothesis Engine: tutorials/hypothesis_demo.md
       - Quantum Lab: tutorials/quantum_demo.md
       - NLP Visualisation: tutorials/nlp_viz.md
+      - Optimization: tutorials/optimization_demo.md
+      - Signal Processing: tutorials/signals_demo.md
+      - Machine Learning: tutorials/ml_demo.md
+      - Statistics: tutorials/stats_demo.md
   - API Reference: api.md
   - Case Studies:
       - Hubble Tension: CASE_STUDY_HUBBLE.md
