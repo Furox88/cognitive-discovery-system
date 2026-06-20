@@ -9,6 +9,7 @@ References:
 
 from __future__ import annotations
 
+import math
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -50,16 +51,22 @@ def euler_method(
         f: right-hand side function f(t, y)
         t0: initial time
         y0: initial value y(t0)
-        t_end: end time
-        dt: time step
+        t_end: end time (may be less than ``t0`` for backward integration)
+        dt: time step (always positive; direction follows the sign of ``t_end - t0``)
     """
+    # Direction of integration: +1 forward, -1 backward. ``copysign(1, 0)``
+    # is +1, so a zero-length span (``t_end == t0``) still skips the loop and
+    # returns just the initial condition. Without this, ``t_end < t0`` made the
+    # ``while t < t_end`` guard immediately False and the solver silently
+    # returned the initial value instead of integrating backward.
+    direction = math.copysign(1.0, t_end - t0)
     t_vals = [t0]
     y_vals = [y0]
     t, y = t0, y0
     steps = 0
 
-    while t < t_end - LOOP_EPSILON:
-        h = min(dt, t_end - t)
+    while (t_end - t) * direction > LOOP_EPSILON:
+        h = direction * min(dt, abs(t_end - t))
         y = y + h * f(t, y)
         t = t + h
         t_vals.append(t)
@@ -92,16 +99,20 @@ def rk4(
         f: right-hand side function f(t, y)
         t0: initial time
         y0: initial value y(t0)
-        t_end: end time
-        dt: time step
+        t_end: end time (may be less than ``t0`` for backward integration)
+        dt: time step (always positive; direction follows the sign of ``t_end - t0``)
     """
+    # See ``euler_method`` for why direction is derived from the sign of
+    # ``t_end - t0`` rather than reading ``dt``'s sign: it keeps ``dt`` an
+    # unambiguous magnitude and makes backward integration actually progress.
+    direction = math.copysign(1.0, t_end - t0)
     t_vals = [t0]
     y_vals = [y0]
     t, y = t0, y0
     steps = 0
 
-    while t < t_end - LOOP_EPSILON:
-        h = min(dt, t_end - t)
+    while (t_end - t) * direction > LOOP_EPSILON:
+        h = direction * min(dt, abs(t_end - t))
         k1 = f(t, y)
         k2 = f(t + h / 2, y + h * k1 / 2)
         k3 = f(t + h / 2, y + h * k2 / 2)
@@ -130,16 +141,17 @@ def midpoint_method(
         f: right-hand side function f(t, y)
         t0: initial time
         y0: initial value y(t0)
-        t_end: end time
-        dt: time step
+        t_end: end time (may be less than ``t0`` for backward integration)
+        dt: time step (always positive; direction follows the sign of ``t_end - t0``)
     """
+    direction = math.copysign(1.0, t_end - t0)
     t_vals = [t0]
     y_vals = [y0]
     t, y = t0, y0
     steps = 0
 
-    while t < t_end - LOOP_EPSILON:
-        h = min(dt, t_end - t)
+    while (t_end - t) * direction > LOOP_EPSILON:
+        h = direction * min(dt, abs(t_end - t))
         k1 = f(t, y)
         k2 = f(t + h / 2, y + h * k1 / 2)
         y = y + h * k2
@@ -169,8 +181,8 @@ def rk45(
         f: right-hand side f(t, y)
         t0: initial time
         y0: initial value
-        t_end: end time
-        dt: initial time step
+        t_end: end time (may be less than ``t0`` for backward integration)
+        dt: initial time step (always positive; direction follows the sign of ``t_end - t0``)
         atol: absolute tolerance
         rtol: relative tolerance
     """
@@ -188,10 +200,15 @@ def rk45(
     c5 = [35 / 384, 0, 500 / 1113, 125 / 192, -2187 / 6784, 11 / 84, 0]
     c4 = [5179 / 57600, 0, 7571 / 16695, 393 / 640, -92097 / 339200, 187 / 2100, 1 / 40]
 
+    # Direction of integration (+1 forward, -1 backward). The step size is
+    # tracked as an always-positive magnitude ``h_mag`` and applied as
+    # ``direction * h_mag`` so the min/max shrink/grow logic below keeps its
+    # forward semantics regardless of integration direction.
+    direction = math.copysign(1.0, t_end - t0)
     t, y = t0, y0
     t_vals = [t]
     y_vals = [y]
-    h = dt
+    h_mag = dt
     steps = 0
 
     # Absolute step-size floor, scaled to the integration span, below which no
@@ -200,9 +217,15 @@ def rk45(
     span = abs(t_end - t0) if t_end != t0 else 1.0
     eps_floor = 16 * sys.float_info.epsilon * max(abs(t), span)
 
-    while t < t_end - LOOP_EPSILON:
-        if t + h > t_end:
+    while (t_end - t) * direction > LOOP_EPSILON:
+        # Signed step for the RK stages and time advancement. Snap the last
+        # step to land exactly on t_end when the remaining span is smaller
+        # than the proposed magnitude (avoids overshooting the endpoint).
+        if abs(t_end - t) < h_mag:
             h = t_end - t
+            h_mag = abs(h)
+        else:
+            h = direction * h_mag
 
         k = [0.0] * 7
         k[0] = f(t, y)
@@ -226,17 +249,19 @@ def rk45(
             y_vals.append(y)
             steps += 1
 
-        # Adjust step size
+        # Adjust step size (operates on the magnitude only, preserving direction)
         if error > 0:
-            h_opt = h * (tolerance / error) ** 0.2
-            h = min(max(RK45_STEP_SHRINK * h, RK45_STEP_SAFETY * h_opt), RK45_STEP_GROW * h)
+            h_opt = h_mag * (tolerance / error) ** 0.2
+            h_mag = min(
+                max(RK45_STEP_SHRINK * h_mag, RK45_STEP_SAFETY * h_opt), RK45_STEP_GROW * h_mag
+            )
         else:
-            h *= 10.0  # Error is zero, aggressively increase step up to max scale
+            h_mag *= 10.0  # Error is zero, aggressively increase step up to max scale
 
         # Precision floor to prevent infinite loop: either the step size has
         # shrunk below the span-scaled epsilon floor, or it has become so small
         # that adding it to t makes no progress (t + h == t).
-        if h < eps_floor or t + h == t:
+        if h_mag < eps_floor or t + direction * h_mag == t:
             raise RuntimeError("Step size h reached machine precision floor.")
 
     return ODESolution(t=t_vals, y=y_vals, method="rk45", steps=steps)
@@ -255,20 +280,21 @@ def solve_system(
         f: right-hand side f(t, y) returning a list of derivatives
         t0: initial time
         y0: initial state vector
-        t_end: end time
-        dt: time step
+        t_end: end time (may be less than ``t0`` for backward integration)
+        dt: time step (always positive; direction follows the sign of ``t_end - t0``)
 
     Returns:
         (t_values, y_values) where y_values[i] is the state vector at t_values[i]
     """
+    direction = math.copysign(1.0, t_end - t0)
     n = len(y0)
     t_vals = [t0]
     y_vals = [list(y0)]
     t = t0
     y = list(y0)
 
-    while t < t_end - LOOP_EPSILON:
-        h = min(dt, t_end - t)
+    while (t_end - t) * direction > LOOP_EPSILON:
+        h = direction * min(dt, abs(t_end - t))
 
         k1 = f(t, y)
         y_tmp = [y[i] + h * k1[i] / 2 for i in range(n)]

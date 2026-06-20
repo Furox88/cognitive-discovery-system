@@ -121,3 +121,66 @@ class TestSolveSystem:
             dt=0.1,
         )
         assert y_vals[0] == [3.0, 7.0]
+
+
+class TestBackwardIntegration:
+    """Regression guards for backward integration (``t_end < t0``).
+
+    Previously the ``while t < t_end - LOOP_EPSILON`` loop guard was never
+    satisfied when integrating toward decreasing ``t``, so every fixed-step
+    solver silently returned only the initial value instead of integrating
+    backward. These tests pin the corrected direction-aware behavior.
+    """
+
+    def test_euler_backward(self) -> None:
+        # dy/dt = 1, y(0) = 0, integrate to t = -1  =>  y(-1) = -1
+        sol = euler_method(lambda t, y: 1.0, 0, 0.0, -1.0, dt=0.01)
+        assert abs(sol.y[-1] - (-1.0)) < 0.02
+        # Must actually have taken steps, not just returned the initial value.
+        assert sol.steps > 0
+        assert sol.t[-1] < 0
+
+    def test_rk4_backward(self) -> None:
+        # dy/dt = -y, y(0) = 1, integrate to t = -1  =>  y(-1) = e^1
+        sol = rk4(lambda t, y: -y, 0, 1.0, -1.0, dt=0.01)
+        assert abs(sol.y[-1] - math.exp(1.0)) < 1e-8
+        assert sol.steps > 0
+        assert sol.t[-1] < 0
+
+    def test_midpoint_backward(self) -> None:
+        # dy/dt = -y, y(0) = 1, integrate to t = -1  =>  y(-1) = e^1
+        sol = midpoint_method(lambda t, y: -y, 0, 1.0, -1.0, dt=0.01)
+        assert abs(sol.y[-1] - math.exp(1.0)) < 1e-4
+        assert sol.steps > 0
+
+    def test_rk45_backward(self) -> None:
+        # dy/dt = -y, y(0) = 1, integrate to t = -2  =>  y(-2) = e^2
+        sol = rk45(lambda t, y: -y, 0.0, 1.0, -2.0, dt=0.1, atol=1e-8, rtol=1e-8)
+        assert abs(sol.y[-1] - math.exp(2.0)) / math.exp(2.0) < 1e-6
+        assert sol.steps > 0
+        # The time grid must be monotonically decreasing toward t_end.
+        assert all(sol.t[i] > sol.t[i + 1] for i in range(len(sol.t) - 1))
+
+    def test_solve_system_backward(self) -> None:
+        # y1' = -y1, y1(0) = 1  =>  y1(-1) = e^1
+        def f(t: float, y: list[float]) -> list[float]:
+            return [-y[0], -2 * y[1]]
+
+        t_vals, y_vals = solve_system(f, 0, [1.0, 1.0], -1.0, dt=0.01)
+        assert abs(y_vals[-1][0] - math.exp(1.0)) < 1e-6
+        assert t_vals[-1] < 0
+
+    def test_backward_uses_same_step_count_as_forward(self) -> None:
+        # Direction should not change the number of steps: integrating
+        # [0, 1] and [0, -1] with the same dt is symmetric in step count.
+        sol_fwd = rk4(lambda t, y: -y, 0, 1.0, 1.0, dt=0.01)
+        sol_bwd = rk4(lambda t, y: -y, 0, 1.0, -1.0, dt=0.01)
+        assert sol_fwd.steps == sol_bwd.steps
+
+    def test_zero_span_returns_just_initial_condition(self) -> None:
+        # t_end == t0 must still return a single-element solution (no steps),
+        # not raise or integrate. Guards the direction-aware loop guard.
+        sol = rk4(lambda t, y: -y, 0, 1.0, 0.0, dt=0.01)
+        assert sol.steps == 0
+        assert sol.t == [0]
+        assert sol.y == [1.0]

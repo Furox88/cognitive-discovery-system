@@ -435,8 +435,6 @@ src/cds/
 examples/           # Runnable demo scripts
 tests/              # full test suite (see CI badge for the live count)
 docs/               # MkDocs documentation, tutorials, benchmarks
-```
-
 .github/workflows/  # Automation for PRs (labels + checklist), releases, and dependency updates
 ```
 
@@ -454,13 +452,15 @@ Run `cds modules` after installation to explore the current modules.
 
 ## Recent improvements
 
-Recent updates have aimed to make it simpler to generate and explore ideas within the platform:
+Recent releases (v1.1.x) focused on reliability, type-safety, and a hardened release pipeline rather than new modules:
 
-- New CLI commands for browsing available modules and experimenting with hypothesis generation
-- A dedicated example showing how to use the hypothesis features end-to-end
-- Automation around pull requests, dependency management, and releases to free up time for core scientific work
+- **100% blended coverage gate** (v1.1.5) — CI now fails unless both statement and branch coverage reach 100%; property-based invariant tests and shared fixtures were added.
+- **Python 3.13 support** (v1.1.5) — the full suite is green on 3.10–3.13.
+- **Automated release pipeline** (v1.1.6) — pushing a `v*` tag now builds, publishes to PyPI via a scoped API token, cuts a GitHub Release, and attests build provenance (sigstore). `release.yml` is the sole publish authority.
+- **PEP 639 SPDX license metadata** (v1.1.7) — the license declaration is now a valid SPDX expression recognized on both PyPI and GitHub.
+- **Tutorials & architecture docs** (v1.1.5) — guided walkthroughs for optimization, signals, ML, statistics, and an architecture section in `CONTRIBUTING.md`.
 
-The goal is to lower the barrier for using the discovery-oriented parts of the project and reduce time spent on routine tasks.
+See [`CHANGELOG.md`](CHANGELOG.md) for the full release history.
 
 ## Contributing
 
@@ -505,9 +505,4 @@ Found a vulnerability? **Please do not open a public issue.** Report it privatel
 Acknowledgement target: **48 hours** · Fix SLA: **7 days**. Full threat model,
 supported versions, and out-of-scope items are in [SECURITY.md](SECURITY.md).
 
-
-## Why These Automations Exist
-
-The project is maintained by a small team (often solo). The workflows above exist so that routine tasks (labeling PRs, running checks, cutting releases, keeping dependencies fresh) take as little time as possible. This frees hours for actual research work: improving the hypothesis tools, adding new scientific modules, writing better examples, and exploring new discovery workflows.
-
-If you're a researcher or educator using CDS, these automations mean you can focus on the science instead of repo housekeeping.
+> **Why all the automation?** CDS is maintained solo. The workflows above (PR labeling, checklists, releases, dependency rotation) exist so routine housekeeping takes minutes, leaving the bulk of maintainer time for the actual science — improving the hypothesis tools, adding modules, and writing better examples.

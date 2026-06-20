@@ -30,6 +30,13 @@ class _Trackable(Protocol):
     """
 
     requires_grad: bool
+    # ``set[Any]`` is intentional, not an escape hatch: this module cannot
+    # name ``Tensor`` (not even as a forward-ref string in a Protocol
+    # attribute annotation, which is not evaluated lazily) without
+    # reintroducing the ``tensor -> _grad -> tensor`` import cycle. The
+    # runtime members are always ``Tensor`` instances; ``_track`` is
+    # parametric over ``_T`` (bound to this Protocol) so callers keep
+    # full ``Tensor`` typing on their side.
     _prev: set[Any]
     _backward: Callable[[], None] | None
 

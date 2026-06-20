@@ -4,12 +4,11 @@
 
 | Version | Supported          | Notes |
 |---------|--------------------|-------|
-| 1.0.x   | Yes                | Stable; current release line |
-| 0.9.x   | Yes                | Last beta; security fixes only |
-| 0.8.x   | Yes (until 1.1.0)  | Last alpha; security fixes only |
-| < 0.8   | No                 | EOL |
+| 1.1.x   | Yes                | Stable; current release line |
+| 1.0.x   | Yes                | Stable; previous minor line, security fixes only |
+| < 1.0   | No                 | EOL (0.9.x beta, 0.8.x alpha, and earlier are unsupported) |
 
-Stable releases (1.0.0+) follow a stricter support window: the current minor version plus the 2 previous minor versions.
+Stable releases (1.0.0+) follow a stricter support window: the current minor version plus the 1 previous minor version.
 
 ## Reporting a Vulnerability
 
@@ -30,8 +29,8 @@ The threat model below describes what we consider in scope and out of scope.
 | Threat | Mitigation |
 |--------|------------|
 | **Supply chain: malicious dependency** | `requirements.lock` and `requirements-dev.lock` pin exact versions; CI builds run on every push and PR; Dependabot opens weekly PRs for outdated dependencies. |
-| **Supply chain: malicious release artifact** | PyPI releases uploaded via local `scripts/publish.py` only; each release attaches the sdist + wheel to a GitHub Release; GitHub Actions `attest-build-provenance@v2` produces a sigstore attestation that any consumer can verify. |
-| **Code execution from package install** | Build backend is `hatchling` (no setup.py execution); `setuptools_scm` is used for version derivation only (no runtime code execution on install). |
+| **Supply chain: malicious release artifact** | PyPI releases uploaded solely via the `release.yml` GitHub Actions workflow (the sole publish authority), triggered by a `v*` tag push; `scripts/publish.py` builds, tests, verifies, and pushes the tag locally but never touches PyPI directly. Each release attaches the sdist + wheel to a GitHub Release; GitHub Actions `attest-build-provenance@v2` produces a sigstore attestation that any consumer can verify. |
+| **Code execution from package install** | Build backend is `hatchling` (no setup.py execution); versioning is static (`version` in `pyproject.toml`, mirrored in `src/cds/_version.py`), so no runtime version derivation executes on install. |
 | **Untrusted input in scientific functions** | All numerical kernels are pure-Python implementations; no `eval`/`exec` of user input; CLI (`cds` command) uses Typer with strict parsing. |
 | **Dependency confusion** | PyPI project name `cognitive-discovery-system` is unique; the import name `cds` is short enough to be susceptible but we document it in the README. |
 
