@@ -151,3 +151,66 @@ def test_evaluator_goodness_of_fit_with_explicit_expected() -> None:
     result = evaluator.goodness_of_fit(h, observed=[10, 20, 30], expected=[20, 20, 20])
     assert result.hypothesis_id == "gof-1"
     assert "Chi-square goodness-of-fit" in result.test_name
+
+
+def test_generate_large_n_does_not_overflow_confidence() -> None:
+    # Regression: confidence was computed as 0.45 + i*0.05, which exceeded
+    # Hypothesis's le=1.0 constraint once i >= 12 (n >= 12), raising a
+    # Pydantic ValidationError. Confidence must stay in [0, 1] for any n.
+    hypos = generate_hypotheses("broad question", domain=Domain.GENERAL_SCIENCE, n=20)
+    assert len(hypos) == 20
+    for h in hypos:
+        assert 0.0 <= h.confidence <= 1.0
+
+
+def test_generate_does_not_duplicate_statements() -> None:
+    # When more hypotheses are requested than built-in templates exist, the
+    # generator previously repeated the SAME generic statement via list
+    # multiplication. Returned statements must all be distinct so the output
+    # is usable as a starting point rather than obvious duplication.
+    hypos = generate_hypotheses("quantum gravity", domain=Domain.PHYSICS, n=8)
+    assert len(hypos) == 8
+    statements = [h.statement for h in hypos]
+    assert len(set(statements)) == len(statements), "Duplicate statements found"
+
+
+def test_generate_n_one_returns_single_hypothesis() -> None:
+    # Edge: n=1 must return exactly one hypothesis without error (previously
+    # worked, but now guarded against confidence floor bugs).
+    hypos = generate_hypotheses("lone question", domain=Domain.COSMOLOGY, n=1)
+    assert len(hypos) == 1
+    assert hypos[0].confidence >= 0.0
+
+
+def test_offline_generator_string_domain_case_insensitive() -> None:
+    # Passing a string domain (not a Domain enum) exercises the
+    # case-insensitive str -> Domain mapping in the generator.
+    gen = SimpleOfflineGenerator()
+    hypos = gen.generate("q", domain="Cosmology", n=2)
+    assert len(hypos) == 2
+    assert all(h.domain == Domain.COSMOLOGY for h in hypos)
+
+
+def test_offline_generator_invalid_string_falls_back_to_general() -> None:
+    # An unrecognized domain string must fall back to GENERAL_SCIENCE, not
+    # raise, so callers cannot accidentally crash the pipeline.
+    gen = SimpleOfflineGenerator()
+    hypos = gen.generate("q", domain="not_a_real_domain_xyz", n=2)
+    assert len(hypos) == 2
+    assert all(h.domain == Domain.GENERAL_SCIENCE for h in hypos)
+
+
+def test_generated_hypotheses_carry_distinct_ids() -> None:
+    # Each hypothesis should have a unique id, even when many are requested.
+    hypos = generate_hypotheses("ids must be unique", domain=Domain.BIOLOGY, n=6)
+    ids = [h.id for h in hypos]
+    assert len(set(ids)) == len(ids)
+
+
+def test_generated_hypotheses_assumptions_nonempty() -> None:
+    # Quality guard: every generated hypothesis must carry at least one
+    # assumption and one prediction (a falsifiable hypothesis needs them).
+    hypos = generate_hypotheses("rich question", domain=Domain.CHEMISTRY, n=4)
+    for h in hypos:
+        assert len(h.assumptions) >= 1, f"No assumptions on {h.id}"
+        assert len(h.predictions) >= 1, f"No predictions on {h.id}"
