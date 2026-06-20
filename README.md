@@ -479,7 +479,7 @@ A few GitHub Actions handle repetitive aspects of keeping the project running:
 
 - Dependabot for regular updates to dependencies and GitHub Actions
 - Automatic labeling and review checklists for pull requests
-- An automated release pipeline: pushing a version tag builds, publishes to PyPI via Trusted Publishing (OIDC), cuts a GitHub Release with artifacts, and attests build provenance (sigstore)
+- An automated release pipeline: pushing a version tag builds, publishes to PyPI via a scoped API token, cuts a GitHub Release with artifacts, and attests build provenance (sigstore)
 
 These help ensure that time spent on the project goes more toward developing new modules, improving hypothesis tools, and supporting research use cases rather than manual upkeep.
 

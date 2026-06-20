@@ -27,14 +27,19 @@ pytest tests/
 
 ## Publishing to PyPI
 
-CDS uses **GitHub Actions** with **Trusted Publishers** (OIDC) to automate releases.
+CDS publishes to PyPI automatically via **GitHub Actions** (`.github/workflows/release.yml`) using a scoped **PyPI API token** stored as the `PYPI_API_TOKEN` repository secret. The release pipeline is the **sole** publish authority — `scripts/publish.py` only builds, verifies, runs tests, pushes the tag (which triggers CI), and deploys docs; it never uploads to PyPI directly.
+
+### 0. One-time setup
+Create a PyPI API token scoped to `cognitive-discovery-system` (Account → API tokens) and add it as a repo secret:
+```bash
+gh secret set PYPI_API_TOKEN < ~/.pypi-token
+```
 
 ### 1. Update Version
-Update the `version` field in `pyproject.toml` and `src/cds/__init__.py`.
+Update the `version` field in `pyproject.toml` and mirror it in `src/cds/_version.py` (kept in lockstep).
 
 ### 2. Commit and Tag
 Commit your changes and push a new version tag:
-
 ```bash
 git add .
 git commit -m "chore: bump version to vX.Y.Z"
@@ -45,9 +50,11 @@ git push origin vX.Y.Z
 ```
 
 ### 3. Automated Release
-The `PyPI Publish` workflow will trigger automatically on the tag push. It will:
+The `release.yml` workflow triggers automatically on the tag push. It will:
 - Build the source and wheel distributions.
-- Securely upload them to PyPI using the OIDC token.
+- Upload them to PyPI using the `PYPI_API_TOKEN` secret.
+- Create a GitHub Release with the artifacts attached.
+The `attest.yml` workflow then fires on `release: published` to sign the artifacts (sigstore build provenance).
 
 ## Documentation Deployment
 
