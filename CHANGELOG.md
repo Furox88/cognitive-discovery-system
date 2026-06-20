@@ -5,6 +5,68 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.5] - 2026-06-20
+
+### Patch — quality, type-safety, test depth, and a 100% coverage gate
+
+A patch release: no API changes, no behavior changes. A coordinated sweep
+of refactoring (type-safety, code deduplication), deeper testing
+(property-based invariants, shared fixtures), expanded documentation
+(tutorials, architecture guide), and a hardening of CI to enforce full
+blended coverage. The result is the cleanest, most thoroughly verified
+release to date — **17 modules, 1230 tests, and 100% code coverage
+(statement + branch)**.
+
+### Added
+
+- **Python 3.13 support** — added 3.13 to the CI test matrix and the
+  `pyproject.toml` classifiers; the full suite is now green on 3.10–3.13.
+- **Shared test fixtures** — `tests/conftest.py` plus `tests/test_core.py`
+  centralize reusable fixtures and core invariants, reducing duplication
+  across the suite.
+- **Property-based invariant suite (B5)** — a Hypothesis-driven test set
+  that exercises numerical invariants (associativity, identity,
+  round-trip) over generated inputs, catching edge cases that
+  example-based tests miss.
+- **Tutorials for optimization, signals, ML, and statistics (B3)** — new
+  guided walkthroughs under `docs/tutorials/` covering the four most-used
+  subsystems.
+- **Contributing architecture section (B4)** — `CONTRIBUTING.md` now
+  documents the module layout and the data flow between subsystems, with
+  stale cross-references fixed.
+- **`examples/modeling_demo.py`** — a new end-to-end example demonstrating
+  the modeling workflow referenced by the tutorials.
+
+### Changed
+
+- **Closed remaining `Any` type escapes** — the last untyped boundaries in
+  the core and hypothesis modules now carry concrete types; `mypy --strict`
+  stays green.
+- **Generic `OptResult`** — the optimization result type is now generic
+  over its scalar type, and the narrowing casts that worked around the old
+  concrete signature have been removed.
+- **Deduplicated scalar central-difference** — the scalar central-
+  difference implementation that existed in both `calculus` and
+  `optimization` is now shared from a single source.
+- **Version bump `1.1.4` → `1.1.5`** in `pyproject.toml`,
+  `src/cds/_version.py`, and `CITATION.cff`.
+
+### CI
+
+- **100% blended coverage gate** — CI now fails unless both statement and
+  branch coverage reach 100%, locking in the coverage level as a
+  non-regression boundary.
+- **Regenerated benchmark report** — the benchmark report and
+  `results.json` were regenerated against the current codebase.
+
+### Documentation
+
+- **Synced stale test count and coverage** — corrected the documented test
+  count (1165 → 1230) and coverage figure (~99.6% → 100%) to match CI.
+- **Roadmap items shipped** — roadmap entries #2 (modeling) and #3
+  (knowledge organization) are marked released; the corresponding issues
+  are closed.
+
 ## [v1.1.4] - 2026-06-19
 
 ### Patch — documentation, CI, and housekeeping cleanup

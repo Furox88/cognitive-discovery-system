@@ -21,12 +21,12 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The system also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> **v1.1.4 stable release.** Contributions welcome!
+> **v1.1.5 stable release.** Contributions welcome!
 
 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-**Latest Update:** **v1.1.4** — documentation, CI, and housekeeping cleanup. No API or behavior changes: removed cosmetic distractions from issue templates/docs, fixed CI workflow schemas, deleted ~3 500 lines of no-op autograd shim code never exercised at runtime, and aligned the PyPI distribution name (`cognitive-discovery-system`) with the repository name. The system spans **17 modules**, **1230 tests**, and **100%** code coverage (statement + branch), all in readable pure Python.
+**Latest Update:** **v1.1.5** — quality, type-safety, and a 100% coverage gate. No API or behavior changes: closed remaining `Any` type escapes, deduped scalar central-difference, added a property-based invariant suite (Hypothesis), new optimization/signals/ml/stats tutorials, a CONTRIBUTING architecture section, and enforced 100% blended coverage (statement + branch). The system spans **17 modules**, **1230 tests**, and **100%** code coverage (statement + branch), all in readable pure Python.
 ---
 
 ## Contents
