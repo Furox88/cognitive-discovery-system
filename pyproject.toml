@@ -224,15 +224,20 @@ strict = true
 # Local pre-commit hook still skips mypy to keep the commit loop fast; CI is the
 # gate for test-code type safety.
 
-# Property-based tests under tests/test_property_invariants.py lean on the
-# `hypothesis` library. Hypothesis ships its own py.typed marker (PEP 561),
-# so it resolves cleanly under strict mypy — no `ignore_missing_imports`
-# needed. The one friction point is `@given`: it rewraps the test callable
-# and mypy cannot always prove the decorated wrapper preserves the original
-# signature, which surfaces as spurious `arg-type` / `no-any-return` noise
-# that has nothing to do with the invariant under test. We scope a narrow
-# relaxation to that single file rather than weakening the global strict
-# stance; everything outside the property suite still type-checks strictly.
-[[tool.mypy.overrides]]
-module = "tests.test_property_invariants"
-strict = false
+# Property-based tests under tests/test_property_invariants.py depend on the
+# `hypothesis` library, which lives in the optional `[property]` extra. The
+# main CI matrix installs only `[test,dev,docs]` — no hypothesis — so running
+# `mypy tests/` there would fail with `import-not-found` on the hypothesis
+# imports and, because the missing imports degrade to `Any`, a cascade of
+# `untyped-decorator` / `no-any-return` errors on every `@given` site. None of
+# that reflects a real type defect; it is purely the cost of mypy seeing a
+# module the environment chose not to install.
+#
+# Rather than weaken the global strict stance (e.g. `ignore_missing_imports`),
+# we exclude the file from the default `mypy tests/` run. The file is type-
+# checked properly in the dedicated `property-tests` CI job, where
+# `pip install ".[property,test]"` makes hypothesis resolvable and `strict`
+# mypy runs against it there. See .github/workflows/tests.yml.
+exclude = [
+    "tests/test_property_invariants\\.py",
+]

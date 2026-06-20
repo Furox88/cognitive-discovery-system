@@ -112,8 +112,13 @@ jobs:
     #      the invariants are platform-independent. One Linux + 3.12 cell is
     #      the reference cell, matching the coverage-gating job's choice.
     # The suite itself (tests/test_property_invariants.py) skips gracefully via
-    # pytest.importorskip when hypothesis is absent, so the main matrix is
-    # unaffected even if it somehow imports the file.
+    # pytest.importorskip when hypothesis is absent, so the main matrix's
+    # `pytest tests/` run is unaffected even though it collects the file.
+    #
+    # Mypy note: the main matrix excludes this file from `mypy tests/` (see
+    # pyproject.toml [tool.mypy].exclude) because hypothesis is absent there
+    # and the missing-import noise is not a real defect. This job installs
+    # hypothesis, so it owns the strict type-check for this file.
     name: property tests on Linux with Python 3.12
     runs-on: ubuntu-latest
     steps:
@@ -125,9 +130,19 @@ jobs:
         python-version: "3.12"
 
     - name: Install dependencies
+      # `[property,test]` — hypothesis (the point of this job) plus pytest
+      # (the runner). `[property]` alone does not pull in pytest, which is
+      # why the previous incarnation failed with `pytest: command not found`.
       run: |
         python -m pip install --upgrade pip
-        pip install ".[property]"
+        pip install ".[property,test]"
+
+    - name: Type check with Mypy (property suite)
+      # Strict mypy against the property file. This is the *only* place that
+      # type-checks it, because the main matrix excludes it (hypothesis
+      # absent). `--strict` is explicit so the check does not silently relax
+      # if the global config ever changes.
+      run: mypy --strict tests/test_property_invariants.py
 
     - name: Run property-based tests
       # Run ONLY the property suite here — the main matrix already covers the
