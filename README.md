@@ -21,12 +21,12 @@ CDS brings together quantum computing simulation, statistical analysis, signal p
 
 The system also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
 
-> **v1.1.6 stable release.** Contributions welcome!
+> **Stable release** — see the PyPI version badge above for the latest tag. Contributions welcome!
 
 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-**Latest Update:** **v1.1.6** — maintenance release fixing the automated publish pipeline (OIDC → scoped PyPI API token; `release.yml` is now the sole publish authority). No API or behavior changes. The system spans **17 modules**, **1230 tests**, and **100%** code coverage (statement + branch), all in readable pure Python.
+**Latest Update:** maintenance release fixing the automated publish pipeline (OIDC → scoped PyPI API token; `release.yml` is now the sole publish authority). No API or behavior changes. The current version is shown in the PyPI badge at the top of this README; see the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges for the live test count and coverage, all in readable pure Python.
 ---
 
 ## Contents
@@ -56,8 +56,8 @@ The system also includes built-in support for structured hypothesis generation, 
 - **Zero heavy dependencies** — pure Python implementations you can read and learn from
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
-- **Broad scope** — 17 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
-- **1230 tests** (see CI) — thoroughly tested with **100% code coverage (statement + branch)**
+- **Broad scope** — the module catalog below covers math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
+- **Thoroughly tested** — the full suite runs on every push; see the [CI badge](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) for the live test count and the [codecov badge](https://codecov.io/gh/Furox88/cognitive-discovery-system) for **100% code coverage (statement + branch)**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 - **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
@@ -433,7 +433,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 1230 tests (see CI)
+tests/              # full test suite (see CI badge for the live count)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 
