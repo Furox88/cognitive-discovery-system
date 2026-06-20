@@ -107,3 +107,34 @@ jobs:
             gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
               --generate-notes --title "$tag" dist/*
           fi
+
+  sync-about:
+    # Keeps the repo "About" description in lockstep with each release so
+    # the version + test count on the GitHub sidebar never drifts stale.
+    # Counts tests from the working tree (no deps install needed for --co)
+    # and reads the version straight out of the checked-out package.
+    name: Sync repo About (version + test count)
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compute version + test count, update description
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          pip install --quiet pytest  # only the collector, no project deps
+          VERSION=$(python -c "import re, pathlib; \
+              print(re.search(r'__version__ = \"([^\"]+)\"', \
+              pathlib.Path('src/cds/_version.py').read_text()).group(1))")
+          TESTS=$(pytest --co -q 2>/dev/null | grep -oE '[0-9]+ tests collected' \
+              | grep -oE '^[0-9]+' || echo 0)
+          DESC="Cognitive Discovery System — pure Python scientific computing. 17 modules: quantum, ML, NLP, graph theory, Monte Carlo, ODE solvers, FFT, optimization, probability, statistics, symbolic math, knowledge graph. ${TESTS} tests, 100% coverage, v${VERSION}."
+          echo "New description: $DESC"
+          gh repo edit "$GITHUB_REPOSITORY" --description "$DESC"
