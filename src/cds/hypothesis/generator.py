@@ -145,8 +145,12 @@ class SimpleOfflineGenerator:
         **kwargs: object,
     ) -> list[Hypothesis]:
         """Generate `n` hypotheses from the built-in domain templates."""
-        # Ensure domain is a Domain enum instance
-        if isinstance(domain, str):
+        # Ensure domain is a Domain enum instance. ``Domain`` subclasses
+        # ``str``, so the isinstance guard is True for both plain strings and
+        # enum members; the False branch (skip mapping) is therefore
+        # unreachable from typed callers — it remains as a defensive seam for
+        # hypothetical non-str subclasses and is excluded from coverage.
+        if isinstance(domain, str):  # pragma: no branch
             try:
                 # Case-insensitive mapping for better UX
                 domain = Domain(domain.lower())

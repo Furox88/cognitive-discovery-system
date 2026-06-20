@@ -49,6 +49,27 @@ def test_normalize() -> None:
     assert abs(total - 1.0) < 1e-9
 
 
+def test_normalize_zero_norm_is_noop() -> None:
+    # norm == 0 → the `if norm > 0` guard skips the in-place divide.
+    # A zero-amplitude register stays zero rather than raising.
+    reg = QuantumRegister(n_qubits=1, amplitudes=[0 + 0j, 0 + 0j])
+    reg.normalize()
+    assert reg.amplitudes == [0, 0]
+
+
+def test_measure_shots_falls_through_to_last_state() -> None:
+    # In measure_shots the inner loop only `break`s when `r < cumulative`.
+    # The probabilities come from `abs(a)**2`, so an *un-normalised* register
+    # whose total mass is < 1 leaves the final cumulative bucket strictly below
+    # 1.0 — a draw `r` above it never satisfies the break predicate and the
+    # loop exhausts, keeping the `len(probs) - 1` default (the 84 -> 89 edge).
+    # We craft tiny amplitudes so `cumulative` stays ≈ 0 across all buckets.
+    reg = QuantumRegister(n_qubits=1, amplitudes=[1e-12 + 0j, 1e-12 + 0j])
+    counts = reg.measure_shots(shots=50, seed=1)
+    # The fall-through pins every shot to the last index (|1>), regardless of r.
+    assert counts == {"1": 50}
+
+
 def test_measure_deterministic() -> None:
     reg = QuantumRegister.zeros(2)
     result = reg.measure(seed=42)

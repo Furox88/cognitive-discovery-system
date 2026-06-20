@@ -47,11 +47,12 @@ jobs:
       shell: bash
       run: |
         set -e
-        # Reference cell (Linux + Python 3.12) enforces the coverage gate.
-        # Other cells run the test suite for cross-platform coverage but
-        # don't enforce the gate; --no-cov-on-fail keeps a single 1-line
-        # branch miss from breaking the whole matrix. The gate is set in
-        # pyproject.toml [tool.coverage.report] fail_under = 99.
+        # Reference cell (Linux + Python 3.12) enforces the blended coverage
+        # gate (statement + branch). Other cells run the test suite for
+        # cross-platform coverage but don't enforce the gate; --no-cov-on-fail
+        # keeps a single 1-line branch miss on a non-reference platform from
+        # breaking the whole matrix. The gate is set in pyproject.toml
+        # [tool.coverage.report] fail_under = 100.
         if [ "$RUNNER_OS" = "Linux" ] && [ "${{ matrix.python-version }}" = "3.12" ]; then
           pytest tests/ --cov=cds --cov-branch --cov-report=xml --cov-report=term
         else

@@ -124,3 +124,49 @@ class TestMiniGPT:
             losses.append(loss)
         # The loss should trend downward even on 15 steps.
         assert losses[-1] < losses[0]
+
+
+# ---------------------------------------------------------------------- #
+# Internal helper coverage
+# ---------------------------------------------------------------------- #
+
+
+class TestLayerNormGuard:
+    """The private ``_layer_norm`` raises when gamma/beta length ≠ row width."""
+
+    def test_gamma_beta_length_mismatch_raises(self) -> None:
+        # _layer_norm checks `len(gamma) != d or len(beta) != d` and raises
+        # ValueError (model.py 260 -> 261 edge). Build a 2-wide row and pass
+        # 3-wide gamma/beta so both sides of the `or` are exercised.
+        from cds.nlp.autograd import Parameter, Tensor
+        from cds.nlp.model import _layer_norm
+
+        x = [[Tensor(data=1.0), Tensor(data=2.0)]]
+        gamma = [Parameter(0.1) for _ in range(3)]
+        beta = [Parameter(0.0) for _ in range(3)]
+        with pytest.raises(ValueError, match="gamma/beta length mismatch"):
+            _layer_norm(x, gamma, beta)
+
+
+class TestScaledDotProductMaskNone:
+    """``_scaled_dot_product`` must accept ``mask=None`` and skip masking."""
+
+    def test_mask_none_skips_masking_branch(self) -> None:
+        # Passing mask=None leaves the `if mask is not None` guard False, so
+        # the score rows are returned unmodified (model.py 372 -> 381 edge).
+        from cds.nlp.autograd import Tensor
+        from cds.nlp.model import _scaled_dot_product
+
+        # Single-head, n=2, d_k=2 score computation with a tiny Q/K/V.
+        # Use IDENTICAL Q rows so the softmax weights coincide and we can
+        # assert the two context rows are equal — proving no masking happened.
+        q = [[Tensor(data=1.0), Tensor(data=0.0)], [Tensor(data=1.0), Tensor(data=0.0)]]
+        k = [[Tensor(data=1.0), Tensor(data=0.0)], [Tensor(data=0.0), Tensor(data=1.0)]]
+        v = [[Tensor(data=1.0), Tensor(data=2.0)], [Tensor(data=3.0), Tensor(data=4.0)]]
+        out = _scaled_dot_product(q, k, v, mask=None)
+        # Output shape: n rows × d_v cols.
+        assert len(out) == 2
+        assert all(len(row) == 2 for row in out)
+        # Identical query rows ⇒ identical softmax weights ⇒ identical context.
+        for j in range(2):
+            assert abs(out[0][j].data - out[1][j].data) < 1e-9

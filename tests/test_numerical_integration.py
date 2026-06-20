@@ -110,6 +110,15 @@ class TestRomberg:
         with pytest.raises(ValueError):
             romberg(lambda x: x, 0, 1, max_iter=0)
 
+    def test_max_iter_one_skips_refinement_loop(self) -> None:
+        # max_iter=1 → range(1, 1) is empty, so the refinement loop body never
+        # executes and the single trapezoid R[0][0] is returned as-is (the
+        # `break` at line 197 is never reached because the loop never starts).
+        result = romberg(lambda x: x * x, 0, 1, max_iter=1)
+        # Single trapezoid of x² over [0,1] = 0.5*(0+1) = 0.5 (exact is 1/3).
+        assert abs(result.value - 0.5) < 1e-12
+        assert result.n_eval == 1
+
 
 class TestGaussianQuadrature:
     def test_constant(self) -> None:

@@ -81,6 +81,15 @@ def test_qubit_normalize() -> None:
     assert abs(p0 + p1 - 1.0) < 1e-9
 
 
+def test_qubit_normalize_zero_norm_is_noop() -> None:
+    # norm == 0 → the `if norm > 0` guard skips the in-place divide.
+    # A zero-amplitude qubit must stay zero rather than raise (no division).
+    q = Qubit(alpha=0 + 0j, beta=0 + 0j)
+    q.normalize()
+    assert q.alpha == 0
+    assert q.beta == 0
+
+
 def test_double_pauli_x_is_identity() -> None:
     circuit = QuantumCircuit().add(pauli_x()).add(pauli_x())
     q = circuit.run()

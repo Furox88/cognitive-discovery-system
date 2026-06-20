@@ -57,7 +57,7 @@ The system also includes built-in support for structured hypothesis generation, 
 - **Quantum simulation** — single & multi-qubit circuits with entanglement
 - **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
 - **Broad scope** — 17 modules covering math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
-- **1165 tests** (see CI) — thoroughly tested with **~99% code coverage**
+- **1230 tests** (see CI) — thoroughly tested with **100% code coverage (statement + branch)**
 - **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
 - **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
 
