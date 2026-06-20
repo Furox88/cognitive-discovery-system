@@ -122,3 +122,32 @@ def test_generate_general_science() -> None:
     hypos = generate_hypotheses("climate", domain=Domain.GENERAL_SCIENCE, n=2)
     assert len(hypos) == 2
     assert hypos[0].domain == Domain.GENERAL_SCIENCE
+
+
+def test_generate_with_domain_enum_instance_skips_str_mapping() -> None:
+    # Passing a Domain enum instance (not a str) leaves the `isinstance(domain, str)`
+    # guard False, so the try/except str→Domain mapping is skipped entirely
+    # (generator.py 149 -> 156 edge). The returned hypotheses carry that domain.
+    gen = SimpleOfflineGenerator()
+    hypos = gen.generate("neutrino mass ordering", domain=Domain.PHYSICS, n=2)
+    assert len(hypos) == 2
+    assert all(h.domain == Domain.PHYSICS for h in hypos)
+
+
+def test_evaluator_goodness_of_fit_with_explicit_expected() -> None:
+    # Supplying a non-None `expected` list skips the uniform-distribution
+    # fallback (evaluator.py 164 -> 168 edge) and feeds the caller's counts
+    # straight into chi_square_gof.
+    from cds.hypothesis.evaluator import HypothesisEvaluator
+
+    h = Hypothesis(
+        id="gof-1",
+        statement="Loaded die is fair",
+        domain=Domain.MATHEMATICS,
+        research_question="die fairness",
+        confidence=0.5,
+    )
+    evaluator = HypothesisEvaluator()
+    result = evaluator.goodness_of_fit(h, observed=[10, 20, 30], expected=[20, 20, 20])
+    assert result.hypothesis_id == "gof-1"
+    assert "Chi-square goodness-of-fit" in result.test_name

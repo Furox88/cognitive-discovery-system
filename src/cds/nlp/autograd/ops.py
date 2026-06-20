@@ -35,7 +35,11 @@ def log(a: Tensor) -> Tensor:
     """
 
     def _backward() -> None:
-        if a.data == 0.0:
+        # Unreachable: the forward guard below rejects ``a.data <= 0`` before
+        # any backward is queued, so ``a.data`` can never be 0 here. The check
+        # is kept as a defensive assertion against future callers that bypass
+        # the public ``log`` entrypoint.
+        if a.data == 0.0:  # pragma: no cover
             raise ValueError("log(0) gradient is undefined")
         a.grad += out.grad / a.data
 

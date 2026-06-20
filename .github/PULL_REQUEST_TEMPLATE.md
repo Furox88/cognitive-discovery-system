@@ -17,7 +17,7 @@
 ## Checklist
 
 <!-- Required before requesting review -->
-- [ ] Tests pass locally (`pytest`) — current count: **1165**
+- [ ] Tests pass locally (`pytest`) — current count: **1230**
 - [ ] Lint + format pass (`ruff check src/ tests/` && `ruff format --check src/ tests/`)
 - [ ] New code has tests covering it
 - [ ] Public API additions are documented (docstrings + `docs/`)

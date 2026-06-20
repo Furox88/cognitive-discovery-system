@@ -112,3 +112,13 @@ def test_cli_calc_invalid() -> None:
     result = runner.invoke(app, ["calc", "unknown"])
     assert result.exit_code == 0
     assert "Unknown formula" in result.stdout
+
+
+def test_cli_hypothesis_zero_num_omits_detail_panel() -> None:
+    # --num 0 makes generate() return an empty list, so the `if hypos:` guard
+    # is False and the "Detailed view of first hypothesis" panel is skipped
+    # (cli.py 130 -> 134 edge). The command still succeeds and prints the
+    # (empty) table title.
+    result = runner.invoke(app, ["hypothesis", "anything", "--num", "0"])
+    assert result.exit_code == 0
+    assert "Detailed view" not in result.stdout

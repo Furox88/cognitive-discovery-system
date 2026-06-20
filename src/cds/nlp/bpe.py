@@ -407,7 +407,10 @@ def train_bpe(
     vocab: dict[str, int] = {tok: idx for idx, tok in enumerate(SPECIAL_TOKENS)}
     next_id = len(SPECIAL_TOKENS)
     for ch in base_chars:
-        if ch not in vocab:
+        # SPECIAL_TOKENS are all multi-char strings, so a single ``ch`` can
+        # never collide with them — the False branch is unreachable. Kept as a
+        # defensive guard against a future single-char special token.
+        if ch not in vocab:  # pragma: no branch
             vocab[ch] = next_id
             next_id += 1
 
@@ -430,7 +433,10 @@ def train_bpe(
             break
 
         new_token = best_pair[0] + best_pair[1]
-        if new_token not in vocab:
+        # A merged token can never already be in vocab: stats only counts pairs
+        # of currently-unmerged symbols, so a previously-merged token is not a
+        # candidate. The False branch is unreachable; kept defensively.
+        if new_token not in vocab:  # pragma: no branch
             vocab[new_token] = next_id
             next_id += 1
         merges.append(BPEMerge(pair=best_pair, rank=len(merges), new_token=new_token))

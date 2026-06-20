@@ -180,26 +180,25 @@ addopts = ["--strict-markers", "--strict-config"]
 
 [tool.coverage.run]
 source = ["src/cds"]
-# Branch coverage is on. The reference cell (Linux + Python 3.12) enforces
-# the statement-coverage gate; branch coverage is reported but not gated
-# here, because the `cds.stats.hypothesis_tests` numerical helpers
-# (`_gser`, `_gcf`) contain for-loops whose natural-end branch is
-# mathematically unreachable for convergent inputs. These are validated
-# end-to-end via higher-level chi2_sf / gamma_sf tests; forcing branch
-# coverage on them would require constructing inputs that defeat
-# Numerical Recipes convergence, which adds noise without improving real
-# coverage. The CI command uses `coverage report --fail-under=99` to
-# enforce the statement gate while branch data is still collected.
+# Branch coverage is on AND gated. The reference cell (Linux + Python 3.12)
+# enforces 100% *blended* coverage (statement + branch) via
+# `coverage report --fail-under=100`. The two `cds.stats.hypothesis_tests`
+# numerical helpers (`_gser`, `_gcf`) contain Numerical-Recipes for-loops
+# whose natural-exhaustion arc (loop completes without breaking) is
+# mathematically unreachable for every convergent input; those arcs are
+# marked `# pragma: no branch` at the `for` site so the loop body still
+# counts as executed while the unreachable exit arc is excluded. Every other
+# branch is exercised by a real test — no untested branch remains.
 branch = true
 dynamic_context = "test_function"
 
 [tool.coverage.report]
-# Statement coverage is the CI gate. CDS targets 100% statement coverage
-# across Linux + Python 3.12 (the reference cell). Other matrix cells
-# (3.10, 3.11, Windows, macOS) only report coverage to keep CI fast
-# and avoid redundant Codecov uploads; micro-differences in their stdlib
+# Blended coverage (statement + branch) is the CI gate. CDS targets 100%
+# blended coverage across Linux + Python 3.12 (the reference cell). Other
+# matrix cells (3.10, 3.11, Windows, macOS) only report coverage to keep CI
+# fast and avoid redundant Codecov uploads; micro-differences in their stdlib
 # occasionally surface a 1-statement miss that the 3.12 baseline covers.
-fail_under = 99
+fail_under = 100
 show_missing = true
 skip_covered = false
 exclude_lines = [

@@ -430,3 +430,34 @@ class TestTrainEdgeCases:
         tk = train_bpe(corpus, vocab_size=200)
         for ch in set(corpus):
             assert ch in tk.vocab
+
+
+# ---------------------------------------------------------------------- #
+# encode() special-token fallback coverage
+# ---------------------------------------------------------------------- #
+
+
+class TestEncodeSpecialsMissing:
+    """Cover the ``add_specials`` branches that fire when BOS/EOS are absent
+    from a hand-built vocabulary (unreachable from ``train_bpe``, which always
+    seeds all four specials)."""
+
+    def test_encode_add_specials_without_bos_skips_prefix(self) -> None:
+        # A vocab missing BOS forces ``vocab.get(BOS)`` to None, so the
+        # `if bos_id is not None` guard is False and no prefix id is prepended
+        # (bpe.py 229 -> 232 edge).
+        tk = BPETokenizer(vocab={"a": 0, "b": 1, EOS: 2}, merges=[])
+        ids = tk.encode("ab", add_specials=True)
+        # BOS skipped → ids begin with the content, end with EOS.
+        assert tk.vocab[EOS] == ids[-1]
+        assert ids[0] != tk.vocab.get(BOS)  # no BOS prefix
+
+    def test_encode_add_specials_without_eos_skips_suffix(self) -> None:
+        # A vocab missing EOS forces ``vocab.get(EOS)`` to None, so the
+        # `if eos_id is not None` guard is False and no suffix id is appended
+        # (bpe.py 237 -> 239 edge).
+        tk = BPETokenizer(vocab={"a": 0, "b": 1, BOS: 2}, merges=[])
+        ids = tk.encode("ab", add_specials=True)
+        # BOS prepended, EOS skipped → ids begin with BOS, no EOS suffix.
+        assert tk.vocab[BOS] == ids[0]
+        assert ids[-1] != tk.vocab.get(EOS)  # no EOS suffix

@@ -66,7 +66,11 @@ def _gser(a: float, x: float) -> float:
     ap = a
     total = 1.0 / a
     delta = total
-    for _ in range(_MAXIT):
+    # NR §6.2 series expansion converges within _MAXIT for every valid
+    # (a>0, x≥0) input, so the loop always exits via the ``break`` below —
+    # the natural-exhaustion arc (loop completes without breaking) is
+    # mathematically unreachable and excluded as a branch arc.
+    for _ in range(_MAXIT):  # pragma: no branch
         ap += 1.0
         delta *= x / ap
         total += delta
@@ -84,7 +88,11 @@ def _gcf(a: float, x: float) -> float:
     c = 1.0 / _FPMIN
     d = 1.0 / b
     h = d
-    for i in range(1, _MAXIT + 1):
+    # NR §6.2 continued fraction (Lentz's algorithm) converges within _MAXIT
+    # for every valid (a>0, x≥0) input, so the loop always exits via the
+    # ``break`` below — the natural-exhaustion arc is mathematically
+    # unreachable and excluded as a branch arc.
+    for i in range(1, _MAXIT + 1):  # pragma: no branch
         an = -i * (i - a)
         b += 2.0
         d = an * d + b

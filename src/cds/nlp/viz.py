@@ -246,6 +246,9 @@ def render_embedding_projection(
     pad = max(0, width - len(left) - len(f"{xhi:.3g}"))
     lines.append(f"{left}{'':>{pad}}{xhi:.3g}")
     # Mark→label legend so caller-supplied ``labels`` are actually surfaced.
-    if legend:
+    # ``legend`` gets one entry per plotted point, and ``indexed`` is always
+    # non-empty (top_n falls back to len(embeddings) ≥ 1), so the False branch
+    # is unreachable — kept defensively against a future top_n==0 path.
+    if legend:  # pragma: no branch
         lines.append("  legend: " + "  ".join(legend))
     return "\n".join(lines) + "\n"

@@ -116,6 +116,18 @@ class TestKruskalMST:
         edges, total = kruskal_mst(g)
         assert total == 16.0  # 2+3+5+6
 
+    def test_disconnected_graph_partial_mst(self) -> None:
+        # Two connected components with no edge between them: the sorted-edge
+        # loop exhausts without ever reaching len(mst) == n_vertices - 1, so
+        # the `break` is skipped and the partial (per-component) forest returns.
+        g = Graph(n_vertices=4, directed=False)
+        g.add_edge(0, 1, 1.0)  # component {0,1}
+        g.add_edge(2, 3, 2.0)  # component {2,3}
+        edges, total = kruskal_mst(g)
+        # A spanning forest of 2 components → 4 - 2 = 2 edges.
+        assert len(edges) == 2
+        assert total == 3.0
+
 
 class TestTopologicalSort:
     def test_topological_order(self) -> None:

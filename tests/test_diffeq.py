@@ -78,6 +78,19 @@ class TestRK45:
         sol = rk45(lambda t, y: 0, 0, 0, 1, dt=0.1)
         assert sol.method == "rk45"
 
+    def test_step_rejected_when_error_exceeds_tolerance(self) -> None:
+        # A steep ODE with a tight tolerance forces at least one step to be
+        # rejected: the `if error <= tolerance` branch is False, so the
+        # candidate (t, y5) is discarded (221 -> 230 edge) and h shrinks before
+        # the loop re-attempts the same t. We assert the solver still lands on
+        # the analytic answer and reports strictly more attempts than accepted
+        # steps is impossible from the public API, so we instead check that a
+        # near-singular initial slope is integrated without raising.
+        # dy/dt = 100*y is explosively stiff at the start of [0, 0.1].
+        sol = rk45(lambda t, y: 100.0 * y, 0.0, 1.0, 0.1, dt=0.1, atol=1e-12, rtol=1e-12)
+        # y(0.1) = e^10 ≈ 22026.47
+        assert abs(sol.y[-1] - math.exp(10.0)) / math.exp(10.0) < 1e-3
+
 
 class TestSolveSystem:
     def test_harmonic_oscillator(self) -> None:
