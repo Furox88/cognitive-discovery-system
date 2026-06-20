@@ -26,7 +26,7 @@ The system also includes built-in support for structured hypothesis generation, 
 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
-**Latest Update:** **v1.1.4** — documentation, CI, and housekeeping cleanup. No API or behavior changes: removed cosmetic distractions from issue templates/docs, fixed CI workflow schemas, deleted ~3 500 lines of no-op autograd shim code never exercised at runtime, and aligned the PyPI distribution name (`cognitive-discovery-system`) with the repository name. The system spans **17 modules**, **1165 tests**, and **~99.6%** coverage, all in readable pure Python.
+**Latest Update:** **v1.1.4** — documentation, CI, and housekeeping cleanup. No API or behavior changes: removed cosmetic distractions from issue templates/docs, fixed CI workflow schemas, deleted ~3 500 lines of no-op autograd shim code never exercised at runtime, and aligned the PyPI distribution name (`cognitive-discovery-system`) with the repository name. The system spans **17 modules**, **1230 tests**, and **100%** code coverage (statement + branch), all in readable pure Python.
 ---
 
 ## Contents
@@ -433,7 +433,7 @@ src/cds/
 └── cli.py          # Command-line interface
 
 examples/           # Runnable demo scripts
-tests/              # 1165 tests (see CI)
+tests/              # 1230 tests (see CI)
 docs/               # MkDocs documentation, tutorials, benchmarks
 ```
 
