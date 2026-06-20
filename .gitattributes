@@ -1,0 +1,8 @@
+# Linguist overrides for GitHub language statistics.
+#
+# `scripts/render_promo.mjs` is a local build/render helper (generates the
+# promo image), not part of the published package. Marking it as
+# `linguist-generated` keeps the repository listed as pure Python, which
+# matches the project's "pure Python scientific computing" positioning.
+
+scripts/render_promo.mjs linguist-generated=true
