@@ -75,9 +75,7 @@ with tabs[0]:
         if cached_hypos:
             st.caption(f"Showing {len(cached_hypos)} hypothesis(ies).")
             for h in cached_hypos:
-                with st.expander(
-                    f"ID: {h.id} - {h.statement[:50]}...", expanded=True
-                ):
+                with st.expander(f"ID: {h.id} - {h.statement[:50]}...", expanded=True):
                     st.markdown(h.to_markdown())
 
     with col2:
@@ -180,7 +178,13 @@ with tabs[3]:
 
         mu1 = st.slider("Mean 1", 50.0, 100.0, 70.0)
         mu2 = st.slider("Mean 2", 50.0, 100.0, 75.0)
-        seed = st.slider("Random Seed", 0, 100, 42, help="Pin the seed so tweaking the means doesn't redraw the samples.")
+        seed = st.slider(
+            "Random Seed",
+            0,
+            100,
+            42,
+            help="Pin the seed so tweaking the means doesn't redraw the samples.",
+        )
 
         # Seeded RNG: without this, every slider movement regenerated fresh
         # samples and the p-value jittered even when only the seed-irrelevant

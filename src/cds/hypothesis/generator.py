@@ -235,9 +235,7 @@ class SimpleOfflineGenerator:
             # (see ``_generic_statement``) so the output stays a usable
             # starting point without obvious duplication.
             deficit = n - len(ideas)
-            ideas += [
-                self._generic_statement(research_question, v) for v in range(deficit)
-            ]
+            ideas += [self._generic_statement(research_question, v) for v in range(deficit)]
 
         hypos: list[Hypothesis] = []
         for i, idea in enumerate(ideas[:n]):

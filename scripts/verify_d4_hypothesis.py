@@ -12,7 +12,6 @@ Generator ve evaluator modüllerinin:
 from __future__ import annotations
 
 import sys
-from collections import Counter
 
 from cds.core.models import Domain, Hypothesis, HypothesisStatus
 from cds.hypothesis.generator import (
@@ -209,7 +208,10 @@ def test_hypothesis_model() -> None:
     check("research_question propagates", hs[0].research_question == "test rq")
 
     # tags domain içeriyor
-    check("tags include domain value", "cosmology" in hs[0].tags or Domain.COSMOLOGY.value in hs[0].tags)
+    check(
+        "tags include domain value",
+        "cosmology" in hs[0].tags or Domain.COSMOLOGY.value in hs[0].tags,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -229,7 +231,10 @@ def test_prompt_template() -> None:
     check("no unfilled {placeholder}", "{" not in p and "}" not in p)
 
     # SYSTEM prompt statik ve hazır
-    check("SYSTEM is non-empty string", isinstance(PromptTemplate.SYSTEM, str) and len(PromptTemplate.SYSTEM) > 20)
+    check(
+        "SYSTEM is non-empty string",
+        isinstance(PromptTemplate.SYSTEM, str) and len(PromptTemplate.SYSTEM) > 20,
+    )
 
 
 # ---------------------------------------------------------------------------

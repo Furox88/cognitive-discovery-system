@@ -252,7 +252,9 @@ def rk45(
         # Adjust step size (operates on the magnitude only, preserving direction)
         if error > 0:
             h_opt = h_mag * (tolerance / error) ** 0.2
-            h_mag = min(max(RK45_STEP_SHRINK * h_mag, RK45_STEP_SAFETY * h_opt), RK45_STEP_GROW * h_mag)
+            h_mag = min(
+                max(RK45_STEP_SHRINK * h_mag, RK45_STEP_SAFETY * h_opt), RK45_STEP_GROW * h_mag
+            )
         else:
             h_mag *= 10.0  # Error is zero, aggressively increase step up to max scale
 

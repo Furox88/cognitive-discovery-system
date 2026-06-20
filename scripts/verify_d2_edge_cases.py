@@ -30,7 +30,7 @@ from cds.math_utils.linalg import (
     solve_linear,
     transpose,
 )
-from cds.signals.processing import dft, fft, fft2, fft_radix2, idft, ifft, ifft2
+from cds.signals.processing import dft, fft, fft2, fft_radix2, ifft, ifft2
 
 FAIL = "\033[91m"
 PASS = "\033[92m"
@@ -262,7 +262,10 @@ def test_eigen_orthonormal_edges() -> None:
 
     # Gram-Schmidt: tek vektör
     ortho = gram_schmidt([[3.0, 4.0]])
-    check("gram_schmidt single vector normalized", abs(ortho[0][0] - 0.6) < 1e-9 and abs(ortho[0][1] - 0.8) < 1e-9)
+    check(
+        "gram_schmidt single vector normalized",
+        abs(ortho[0][0] - 0.6) < 1e-9 and abs(ortho[0][1] - 0.8) < 1e-9,
+    )
 
     # Gram-Schmidt: boş input
     ortho = gram_schmidt([])
@@ -389,7 +392,11 @@ def test_big_o_sanity() -> None:
         d = determinant(m)
         dt = time.perf_counter() - t0
         times.append(dt)
-        check(f"determinant N={n} returns finite", math.isfinite(d), f"d={d:.3e}, time={dt*1000:.1f}ms")
+        check(
+            f"determinant N={n} returns finite",
+            math.isfinite(d),
+            f"d={d:.3e}, time={dt * 1000:.1f}ms",
+        )
 
     # O(N^3) için N 2 katına çıkınca zaman ~8 kat olmalı. Use the largest two
     # sizes (least contaminated by fixed overhead) for the scaling assertion.

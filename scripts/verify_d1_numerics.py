@@ -91,7 +91,9 @@ def test_gauss_legendre_nodes() -> None:
     max_node_err = max(abs(a[0] - b[0]) for a, b in zip(nodes5, ref5, strict=True))
     max_weight_err = max(abs(a[1] - b[1]) for a, b in zip(nodes5, ref5, strict=True))
     check("n=5 nodes within 1e-12", max_node_err < 1e-12, f"max node err={max_node_err:.2e}")
-    check("n=5 weights within 1e-12", max_weight_err < 1e-12, f"max weight err={max_weight_err:.2e}")
+    check(
+        "n=5 weights within 1e-12", max_weight_err < 1e-12, f"max weight err={max_weight_err:.2e}"
+    )
 
     # n=4
     nodes4 = sorted(_gauss_legendre_nodes(4), key=lambda t: t[0])
@@ -99,7 +101,9 @@ def test_gauss_legendre_nodes() -> None:
     max_node_err4 = max(abs(a[0] - b[0]) for a, b in zip(nodes4, ref4, strict=True))
     max_weight_err4 = max(abs(a[1] - b[1]) for a, b in zip(nodes4, ref4, strict=True))
     check("n=4 nodes within 1e-12", max_node_err4 < 1e-12, f"max node err={max_node_err4:.2e}")
-    check("n=4 weights within 1e-12", max_weight_err4 < 1e-12, f"max weight err={max_weight_err4:.2e}")
+    check(
+        "n=4 weights within 1e-12", max_weight_err4 < 1e-12, f"max weight err={max_weight_err4:.2e}"
+    )
 
     # Symmetri kontrolü: x_i = -x_{n+1-i}, w_i = w_{n+1-i}
     for n in (2, 3, 5, 8, 16):
@@ -157,25 +161,53 @@ def test_quadrature_reference_values() -> None:
     val_gauss = gaussian_quadrature(f, 0, 1, 10)
     val_adapt = adaptive_simpson(f, 0, 1, tol=1e-12).value
 
-    check("trapezoid  ∫e^x err < 1e-8", abs(val_trap - exact) < 1e-8, f"err={abs(val_trap - exact):.2e}")
+    check(
+        "trapezoid  ∫e^x err < 1e-8",
+        abs(val_trap - exact) < 1e-8,
+        f"err={abs(val_trap - exact):.2e}",
+    )
     # Simpson is O(h^4); at n=100 the expected error is ~1e-10, not 1e-12.
     # The earlier 1e-12 threshold was tighter than the method's order allows
     # for this panel count and produced a spurious FAIL at 9.55e-11.
-    check("simpson    ∫e^x err < 1e-9", abs(val_simp - exact) < 1e-9, f"err={abs(val_simp - exact):.2e}")
-    check("romberg    ∫e^x err < 1e-12", abs(val_rom - exact) < 1e-12, f"err={abs(val_rom - exact):.2e}")
-    check("gauss      ∫e^x err < 1e-12", abs(val_gauss - exact) < 1e-12, f"err={abs(val_gauss - exact):.2e}")
-    check("adaptive   ∫e^x err < 1e-10", abs(val_adapt - exact) < 1e-10, f"err={abs(val_adapt - exact):.2e}")
+    check(
+        "simpson    ∫e^x err < 1e-9",
+        abs(val_simp - exact) < 1e-9,
+        f"err={abs(val_simp - exact):.2e}",
+    )
+    check(
+        "romberg    ∫e^x err < 1e-12",
+        abs(val_rom - exact) < 1e-12,
+        f"err={abs(val_rom - exact):.2e}",
+    )
+    check(
+        "gauss      ∫e^x err < 1e-12",
+        abs(val_gauss - exact) < 1e-12,
+        f"err={abs(val_gauss - exact):.2e}",
+    )
+    check(
+        "adaptive   ∫e^x err < 1e-10",
+        abs(val_adapt - exact) < 1e-10,
+        f"err={abs(val_adapt - exact):.2e}",
+    )
 
     # ∫_0^π sin(x) dx = 2
     sin_exact = 2.0
     val = gaussian_quadrature(math.sin, 0, math.pi, 8)
-    check("gauss n=8  ∫sin err < 1e-12", abs(val - sin_exact) < 1e-12, f"err={abs(val - sin_exact):.2e}")
+    check(
+        "gauss n=8  ∫sin err < 1e-12",
+        abs(val - sin_exact) < 1e-12,
+        f"err={abs(val - sin_exact):.2e}",
+    )
 
     # ∫_{-1}^{1} 1/(1+x²) dx = 2 atan(1) = π/2
     f_runge = lambda x: 1.0 / (1.0 + x * x)  # noqa: E731
     runge_exact = math.pi / 2
     val = romberg(f_runge, -1, 1, tol=1e-12).value
-    check("romberg ∫1/(1+x²) err < 1e-10", abs(val - runge_exact) < 1e-10, f"err={abs(val - runge_exact):.2e}")
+    check(
+        "romberg ∫1/(1+x²) err < 1e-10",
+        abs(val - runge_exact) < 1e-10,
+        f"err={abs(val - runge_exact):.2e}",
+    )
 
     # ∫_0^1 x⁴ dx = 1/5  (Simpson 1/3 is O(h⁴); at n=10 the expected error is
     # ~1e-5, not 1e-6. The earlier 1e-6 threshold was tighter than O(h⁴) at
@@ -189,7 +221,11 @@ def test_quadrature_reference_values() -> None:
 
     # Gaussian bell: ∫_{-∞}^{∞} e^{-x²} = √π. [-4,4] truncation ile ~2e-7 hata.
     val = adaptive_simpson(lambda x: math.exp(-x * x), -4, 4, tol=1e-12).value
-    check("adaptive ∫e^{-x²} [-4,4] ~ √π", abs(val - math.sqrt(math.pi)) < 1e-6, f"err={abs(val - math.sqrt(math.pi)):.2e}")
+    check(
+        "adaptive ∫e^{-x²} [-4,4] ~ √π",
+        abs(val - math.sqrt(math.pi)) < 1e-6,
+        f"err={abs(val - math.sqrt(math.pi)):.2e}",
+    )
 
     # Reversed limits: sign flip
     val = simpson(lambda x: x**2, 1, 0, 10)
@@ -228,10 +264,7 @@ def test_romberg_convergence_order() -> None:
     # ulaşmamış aralıklarda arıyoruz (errs > 1e-13 eşiği).
     MACHINE_PLATEAU = 1e-13
     pre_plateau = [e for e in errs if e > MACHINE_PLATEAU]
-    monotone = all(
-        pre_plateau[i + 1] < pre_plateau[i] * 0.5
-        for i in range(len(pre_plateau) - 1)
-    )
+    monotone = all(pre_plateau[i + 1] < pre_plateau[i] * 0.5 for i in range(len(pre_plateau) - 1))
     check(
         "romberg hatası makine öncesi aralıkta monotone düşer",
         monotone,
@@ -263,7 +296,11 @@ def test_rk45_adaptive() -> None:
     exact_stiff = math.exp(10.0)
     sol = rk45(lambda t, y: 100.0 * y, 0.0, 1.0, 0.1, dt=0.1, atol=1e-12, rtol=1e-12)
     rel_err = abs(sol.y[-1] - exact_stiff) / exact_stiff
-    check("rk45 sert dy/dt=100y rel err < 1e-3", rel_err < 1e-3, f"rel err={rel_err:.2e}, steps={sol.steps}")
+    check(
+        "rk45 sert dy/dt=100y rel err < 1e-3",
+        rel_err < 1e-3,
+        f"rel err={rel_err:.2e}, steps={sol.steps}",
+    )
 
     # 3) Adaptif adım sayısı sabit-adımdan az olmalı (verimlilik)
     sol_adaptive = rk45(lambda t, y: -y, 0.0, 1.0, 1.0, dt=0.1, atol=1e-10, rtol=1e-10)
