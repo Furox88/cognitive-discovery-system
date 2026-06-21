@@ -90,7 +90,7 @@ Y: Paket adı `cognitive-discovery-system` (PyPI için uzun açıklayıcı isim)
 Y: CDS saf Python. Performans için ödün vermeden eğitim ve araştırma için ideal. NumPy tabanlı iş istasyonları için: ileride `cds[numpy]` gibi opsiyonel bir ekstra planlanıyor (ROADMAP).
 
 **S: Üretim ortamında kullanabilir miyim?**
-Y: v1.1.5 stabil sürüm. API kararlı, %100 test coverage (statement + branch), 1230 test, CI multi-OS yeşil. Production/Stable sınıflandırmasıyla yayınlandı.
+Y: v1.1.8 stabil sürüm. API kararlı, %100 test coverage (statement + branch), 1244 test, CI multi-OS yeşil. Production/Stable sınıflandırmasıyla yayınlandı.
 
 ## Topluluk
 
