@@ -26,6 +26,10 @@ The system also includes built-in support for structured hypothesis generation, 
 **[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
 
 ---
+
+> Stars, forks, and issues are what keep small open-source projects going. If something here is useful to you, that visibility means a lot.
+
+---
 **Latest Update:** maintenance release fixing the automated publish pipeline (OIDC → scoped PyPI API token; `release.yml` is now the sole publish authority). No API or behavior changes. The current version is shown in the PyPI badge at the top of this README; see the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges for the live test count and coverage, all in readable pure Python.
 ---
 
