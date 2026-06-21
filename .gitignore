@@ -192,3 +192,7 @@ _demo_*.json
 
 # Windows NUL device accidentally materialized as a file
 nul
+
+# One-off research artifacts (API dumps captured while debugging the
+# Deployments page; not tracked, regenerated on demand)
+deployments_raw.json
