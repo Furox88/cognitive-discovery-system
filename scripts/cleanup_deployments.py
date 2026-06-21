@@ -50,8 +50,9 @@ def gh(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     return run(["gh", *args], check=check)
 
 
-def gh_api(method: str, endpoint: str, *, fields: list[str] | None = None,
-           check: bool = True) -> Any:
+def gh_api(
+    method: str, endpoint: str, *, fields: list[str] | None = None, check: bool = True
+) -> Any:
     """Call ``gh api`` with the given HTTP method and endpoint."""
     cmd = ["gh", "api", "--method", method, endpoint]
     if fields:
@@ -68,8 +69,13 @@ def gh_api(method: str, endpoint: str, *, fields: list[str] | None = None,
 
 def list_deployments(env: str) -> list[dict[str, Any]]:
     """Return all deployments for ``env`` (paginated)."""
-    out = gh("api", f"repos/{REPO}/deployments", "--paginate",
-             "-q", f"[.[] | select(.environment == \"{env}\")]")
+    out = gh(
+        "api",
+        f"repos/{REPO}/deployments",
+        "--paginate",
+        "-q",
+        f'[.[] | select(.environment == "{env}")]',
+    )
     try:
         return json.loads(out.stdout)
     except json.JSONDecodeError as exc:
@@ -78,35 +84,41 @@ def list_deployments(env: str) -> list[dict[str, Any]]:
 
 def latest_status(deployment_id: int) -> str:
     """Return the latest status state for a deployment, or 'none'."""
-    cp = gh("api", f"repos/{REPO}/deployments/{deployment_id}/statuses",
-            "-q", ".[0].state", check=False)
+    cp = gh(
+        "api", f"repos/{REPO}/deployments/{deployment_id}/statuses", "-q", ".[0].state", check=False
+    )
     state = cp.stdout.strip()
     return state if state else "none"
 
 
 def mark_inactive(deployment_id: int) -> bool:
     """POST an ``inactive`` status so the deployment can be deleted."""
-    res = gh_api("POST", f"repos/{REPO}/deployments/{deployment_id}/statuses",
-                 fields=["state=inactive"], check=False)
+    res = gh_api(
+        "POST",
+        f"repos/{REPO}/deployments/{deployment_id}/statuses",
+        fields=["state=inactive"],
+        check=False,
+    )
     return isinstance(res, dict)
 
 
 def delete_deployment(deployment_id: int) -> bool:
     """DELETE a deployment by id. Returns True on success."""
-    cp = gh("api", "--method", "DELETE",
-            f"repos/{REPO}/deployments/{deployment_id}", check=False)
+    cp = gh("api", "--method", "DELETE", f"repos/{REPO}/deployments/{deployment_id}", check=False)
     return cp.returncode == 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Delete stale pypi deployment records from GitHub.")
-    parser.add_argument("--env", default="pypi",
-                        help="environment to clean (default: pypi)")
-    parser.add_argument("--apply", action="store_true",
-                        help="actually delete (default: dry-run, list only)")
-    parser.add_argument("--repo", default=DEFAULT_REPO,
-                        help=f"owner/repo (default: {DEFAULT_REPO})")
+        description="Delete stale pypi deployment records from GitHub."
+    )
+    parser.add_argument("--env", default="pypi", help="environment to clean (default: pypi)")
+    parser.add_argument(
+        "--apply", action="store_true", help="actually delete (default: dry-run, list only)"
+    )
+    parser.add_argument(
+        "--repo", default=DEFAULT_REPO, help=f"owner/repo (default: {DEFAULT_REPO})"
+    )
     args = parser.parse_args()
 
     global REPO
