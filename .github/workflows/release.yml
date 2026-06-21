@@ -24,6 +24,7 @@ on:
 
 permissions:
   contents: write   # create the GitHub Release + upload artifacts
+  deployments: write   # create + status the pypi deployment record
 
 concurrency:
   group: release-${{ github.ref }}
@@ -82,8 +83,33 @@ jobs:
     name: Publish to PyPI + GitHub Release
     needs: build
     runs-on: ubuntu-latest
-    environment: pypi   # Creates the pypi deployment record (green on next release)
+    # NOTE: we intentionally do NOT use `environment: pypi` here. That key
+    # makes GitHub auto-create a deployment record on every release, but
+    # neither `pypa/gh-action-pypi-publish` nor `gh release create` emits a
+    # deployment_status event, so the record is never closed and eventually
+    # shows up as "failed" on the Deployments page. Instead we create the
+    # deployment explicitly below and mark it success/failure with
+    # `if: always()`, so each release produces exactly one green (or red)
+    # pypi deployment entry.
     steps:
+      - name: Create pypi deployment record
+        id: deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              environment: "pypi",
+              transient_environment: false,
+              production_environment: false,
+              auto_merge: false,
+              required_contexts: []
+            });
+            core.info(`Created deployment #${deployment.data.id} for ${context.ref}`);
+            core.setOutput("id", deployment.data.id);
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -107,6 +133,22 @@ jobs:
             gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
               --generate-notes --title "$tag" dist/*
           fi
+
+      - name: Set pypi deployment status
+        if: always() && steps.deployment.outputs.id != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const state = "${{ job.status }}" === "success" ? "success" : "failure";
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.id }},
+              state,
+              environment_url: "https://pypi.org/project/cognitive-discovery-system/",
+              description: `PyPI publish ${state}`
+            });
+            core.info(`Deployment #${{ steps.deployment.outputs.id }} marked ${state}`);
 
   sync-about:
     # Keeps the repo "About" description in lockstep with each release so
