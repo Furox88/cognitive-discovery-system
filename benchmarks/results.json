@@ -1,35 +1,35 @@
 {
-  "timestamp_utc": "2026-06-19T15:06:13+00:00",
-  "git_sha": "1a7b915",
+  "timestamp_utc": "2026-06-20T23:47:02+00:00",
+  "git_sha": "385cfa3",
   "metrics": {
     "Linear Algebra (Approaching C-Speed)": {
-      "CDS Matrix Mul (100x100)": 0.0696,
-      "CDS LU Decomp (100x100)": 0.0234,
-      "NumPy Matrix Mul (Baseline)": 5.9e-05,
-      "Speed Status": "CDS is 1178.1x slower than NumPy (pure Python vs C)"
+      "CDS Matrix Mul (100x100)": 0.0688,
+      "CDS LU Decomp (100x100)": 0.0237,
+      "NumPy Matrix Mul (Baseline)": 5.1e-05,
+      "Speed Status": "CDS is 1351.4x slower than NumPy (pure Python vs C)"
     },
     "Linear Algebra Intelligence (Determinant Scaling)": {
-      "Determinant @ N=50": 0.004281,
-      "Determinant @ N=100": 0.027942,
-      "Ratio (doubling N)": 6.5,
+      "Determinant @ N=50": 0.004602,
+      "Determinant @ N=100": 0.029143,
+      "Ratio (doubling N)": 6.3,
       "Expected for O(N^3)": 8.0,
       "Complexity": "O(N^3) PLU"
     },
     "Monte Carlo (Hardware Saturation)": {
-      "Parallel Pi (100k samples)": 0.0349,
+      "Parallel Pi (100k samples)": 0.0287,
       "CPU Cores Saturated": 4.0,
       "Estimate error vs \u03c0": 0.00791
     },
     "Quantum (Algorithmic Intelligence)": {
-      "Intelligent O(1) Sampling": 0.0153,
-      "Naive Brute Force (Est.)": 0.83,
-      "Intelligence Speedup": "54.2x Faster"
+      "Intelligent O(1) Sampling": 0.0156,
+      "Naive Brute Force (Est.)": 0.9,
+      "Intelligence Speedup": "57.8x Faster"
     },
     "Signal Processing (FFT vs DFT)": {
       "Signal length": "1024 samples",
-      "CDS FFT (radix-2, O(N log N))": 0.00275,
-      "Naive DFT (O(N^2))": 0.32983,
-      "Algorithmic speedup": 120.0
+      "CDS FFT (radix-2, O(N log N))": 0.002798,
+      "Naive DFT (O(N^2))": 0.345309,
+      "Algorithmic speedup": 123.0
     },
     "Numerical Integration (Convergence)": {
       "Integral": "\u222b_0^1 e^x dx = e - 1",
