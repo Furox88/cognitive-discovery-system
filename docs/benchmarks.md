@@ -1,47 +1,47 @@
 # CDS Performance & Intelligence Report
 
-> **Last measured:** `385cfa3` on 2026-06-20 23:47 UTC. Regenerated automatically by the `benchmarks` GitHub Actions workflow (weekly + on release tags). Raw data: `benchmarks/results.json`.
+> **Last measured:** `f13253c` on 2026-06-22 08:49 UTC. Regenerated automatically by the `benchmarks` GitHub Actions workflow (weekly + on release tags). Raw data: `benchmarks/results.json`.
 
 This report measures both raw speed and algorithmic scaling. Pure Python is slower than C-extensions for dense numerics, so rather than only racing NumPy, the comparisons below also check that the implemented algorithms scale with their theoretical complexity (e.g. O(N log N) FFT, O(N^3) PLU determinant) and converge to machine precision where expected.
 
 ### Linear Algebra (Approaching C-Speed)
 | Metric | Value |
 |--------|-------|
-| CDS Matrix Mul (100x100) | 0.0688s |
-| CDS LU Decomp (100x100) | 0.0237s |
+| CDS Matrix Mul (100x100) | 0.0690s |
+| CDS LU Decomp (100x100) | 0.0242s |
 | NumPy Matrix Mul (Baseline) | 0.000051s |
-| Speed Status | CDS is 1351.4x slower than NumPy (pure Python vs C) |
+| Speed Status | CDS is 1358.5x slower than NumPy (pure Python vs C) |
 
 ### Linear Algebra Intelligence (Determinant Scaling)
 | Metric | Value |
 |--------|-------|
-| Determinant @ N=50 | 0.004602s |
-| Determinant @ N=100 | 0.029143s |
-| Ratio (doubling N) | 6.3x |
+| Determinant @ N=50 | 0.004545s |
+| Determinant @ N=100 | 0.029101s |
+| Ratio (doubling N) | 6.4x |
 | Expected for O(N^3) | 8.0x |
 | Complexity | O(N^3) PLU |
 
 ### Monte Carlo (Hardware Saturation)
 | Metric | Value |
 |--------|-------|
-| Parallel Pi (100k samples) | 0.0287s |
+| Parallel Pi (100k samples) | 0.0358s |
 | CPU Cores Saturated | 4 |
 | Estimate error vs π | 0.00791 |
 
 ### Quantum (Algorithmic Intelligence)
 | Metric | Value |
 |--------|-------|
-| Intelligent O(1) Sampling | 0.0156s |
-| Naive Brute Force (Est.) | 0.90s |
-| Intelligence Speedup | 57.8x Faster |
+| Intelligent O(1) Sampling | 0.0152s |
+| Naive Brute Force (Est.) | 0.89s |
+| Intelligence Speedup | 58.6x Faster |
 
 ### Signal Processing (FFT vs DFT)
 | Metric | Value |
 |--------|-------|
 | Signal length | 1024 samples |
-| CDS FFT (radix-2, O(N log N)) | 0.002798s |
-| Naive DFT (O(N^2)) | 0.345309s |
-| Algorithmic speedup | 123x |
+| CDS FFT (radix-2, O(N log N)) | 0.002743s |
+| Naive DFT (O(N^2)) | 0.334084s |
+| Algorithmic speedup | 122x |
 
 ### Numerical Integration (Convergence)
 | Metric | Value |
@@ -55,8 +55,8 @@ This report measures both raw speed and algorithmic scaling. Pure Python is slow
 
 ## Visual Proof: Quantum Intelligence
 ```text
-Naive Brute Force: ######################################## (0.90s)
-CDS O(1) Sampling: # (0.0156s)
+Naive Brute Force: ######################################## (0.89s)
+CDS O(1) Sampling: # (0.0152s)
 
-Conclusion: CDS is 57.7 times faster via O(1) probabilistic sampling vs running the circuit shot-by-shot.
+Conclusion: CDS is 58.6 times faster via O(1) probabilistic sampling vs running the circuit shot-by-shot.
 ```
