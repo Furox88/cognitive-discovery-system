@@ -67,15 +67,15 @@ class OptResult(Generic[_T]):
 
 
 @overload
-def _compute_gradient(
-    f: Callable[..., float], x: float, h_base: float = DEFAULT_FD_STEP
-) -> float: ...
+def _compute_gradient(f: Callable[..., float], x: float, h_base: float = DEFAULT_FD_STEP) -> float:
+    """Scalar overload: central-difference derivative at a single point."""
 
 
 @overload
 def _compute_gradient(
     f: Callable[..., float], x: list[float], h_base: float = DEFAULT_FD_STEP
-) -> list[float]: ...
+) -> list[float]:
+    """Vector overload: coordinate-wise gradient via finite differences."""
 
 
 def _compute_gradient(
@@ -105,11 +105,13 @@ def _compute_gradient(
 
 
 @overload
-def _update_x(x: float, grad: float, step: float) -> float: ...
+def _update_x(x: float, grad: float, step: float) -> float:
+    """Scalar overload: return the next iterate ``x - step * grad``."""
 
 
 @overload
-def _update_x(x: list[float], grad: list[float], step: float) -> list[float]: ...
+def _update_x(x: list[float], grad: list[float], step: float) -> list[float]:
+    """Vector overload: element-wise gradient step applied to each coordinate."""
 
 
 def _update_x(
@@ -139,7 +141,8 @@ def gradient_descent(
     tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 10000,
     h: float = DEFAULT_FD_STEP,
-) -> OptResult[float]: ...
+) -> OptResult[float]:
+    """Scalar overload: minimize a 1-D function from a scalar start."""
 
 
 @overload
@@ -150,7 +153,8 @@ def gradient_descent(
     tol: float = DEFAULT_TOLERANCE,
     max_iter: int = 10000,
     h: float = DEFAULT_FD_STEP,
-) -> OptResult[list[float]]: ...
+) -> OptResult[list[float]]:
+    """Vector overload: minimize a multivariate function from a vector start."""
 
 
 def gradient_descent(
@@ -245,7 +249,8 @@ def adam(
     h: float = DEFAULT_FD_STEP,
     state: AdamState | None = None,
     grad_f: Callable[..., float | list[float]] | None = None,
-) -> OptResult[float]: ...
+) -> OptResult[float]:
+    """Scalar overload: adapt the learning rate per-iteration for a scalar x0."""
 
 
 @overload
@@ -261,7 +266,8 @@ def adam(
     h: float = DEFAULT_FD_STEP,
     state: AdamState | None = None,
     grad_f: Callable[..., float | list[float]] | None = None,
-) -> OptResult[list[float]]: ...
+) -> OptResult[list[float]]:
+    """Vector overload: coordinate-wise adaptive moments for a vector x0."""
 
 
 def adam(
