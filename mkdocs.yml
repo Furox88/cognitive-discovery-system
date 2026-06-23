@@ -54,6 +54,7 @@ nav:
       - Core Data Models: tutorials/core_demo.md
       - Scientific Formulas: tutorials/scientific_demo.md
       - Math Utilities: tutorials/math_utils_demo.md
+      - Linear Algebra: tutorials/linalg_demo.md
       - Numerical Integration: tutorials/numerical_integration_demo.md
       - Differential Equations: tutorials/diffeq_demo.md
       - Monte Carlo: tutorials/montecarlo_demo.md
@@ -63,12 +64,19 @@ nav:
       - Knowledge Organization: tutorials/knowledge_demo.md
       - Data Analysis: tutorials/data_analysis_demo.md
       - Hypothesis Engine: tutorials/hypothesis_demo.md
+      - Hypothesis + Stats: tutorials/hypothesis_with_stats_demo.md
+      - Hypothesis Testing: tutorials/hypothesis_tests_demo.md
       - Quantum Lab: tutorials/quantum_demo.md
-      - NLP Visualisation: tutorials/nlp_viz.md
-      - Optimization: tutorials/optimization_demo.md
       - Signal Processing: tutorials/signals_demo.md
+      - 2-D FFT: tutorials/fft2_demo.md
+      - Machine Learning + Viz: tutorials/ml_and_viz_demo.md
       - Machine Learning: tutorials/ml_demo.md
       - Statistics: tutorials/stats_demo.md
+      - Optimization: tutorials/optimization_demo.md
+      - NLP — BPE & Embeddings: tutorials/nlp_bpe_demo.md
+      - NLP — Attention: tutorials/nlp_attention_demo.md
+      - NLP — MiniGPT: tutorials/nlp_mini_gpt_demo.md
+      - NLP Visualisation: tutorials/nlp_viz.md
   - API Reference: api.md
   - Case Studies:
       - Hubble Tension: CASE_STUDY_HUBBLE.md
