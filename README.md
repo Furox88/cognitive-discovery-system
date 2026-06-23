@@ -18,7 +18,12 @@
 </p>
 
 <p align="center">
+  <a href="https://mybinder.org/v2/gh/Furox88/cognitive-discovery-system/main?urlpath=lab/tree/examples/tour_of_numerical_methods.ipynb"><img src="https://img.shields.io/badge/try%20it-on%20Binder-orange.svg?logo=jupyter" alt="Launch on Binder"></a>
+</p>
+
+<p align="center">
   <a href="https://Furox88.github.io/cognitive-discovery-system/">📖 Documentation</a> &nbsp;·&nbsp;
+  <a href="https://Furox88.github.io/cognitive-discovery-system/tour_of_numerical_methods/">🧭 Tour of Numerical Methods</a> &nbsp;·&nbsp;
   <a href="docs/tutorials/">🎓 Tutorials</a> &nbsp;·&nbsp;
   <a href="#quick-start">⚡ Quick Start</a> &nbsp;·&nbsp;
   <a href="docs/CASE_STUDY_HUBBLE.md">🔬 Case Studies</a>
