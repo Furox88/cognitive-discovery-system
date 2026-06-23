@@ -166,3 +166,34 @@ jobs:
       env:
         # Skip mypy in CI hook (already covered by the test job).
         SKIP: mypy
+
+  # Aggregate "required" check. Branch protection requires a single status
+  # check named `CI`, but the jobs above each report under their own matrix
+  # names (e.g. "3.12 on ubuntu-latest", "pre-commit on Linux with Python 3.12").
+  # This gate job runs after every other job and turns green only when all of
+  # them succeed, exposing exactly one context for branch protection to gate on.
+  # That lets merges happen via the normal flow instead of temporarily disabling
+  # branch protection on every PR.
+  CI:
+    name: CI
+    if: always()
+    needs: [test, audit, property-tests, pre-commit]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report overall result
+        run: |
+          echo "Aggregated results:"
+          echo "  test.result           = ${{ needs.test.result }}"
+          echo "  audit.result          = ${{ needs.audit.result }}"
+          echo "  property-tests.result = ${{ needs.property-tests.result }}"
+          echo "  pre-commit.result     = ${{ needs.pre-commit.result }}"
+          # Fail unless every dependency succeeded. `needs.*.result` is one of
+          # "success" | "failure" | "cancelled" | "skipped"; we only accept success.
+          if [ "${{ needs.test.result }}" != "success" ] \
+             || [ "${{ needs.audit.result }}" != "success" ] \
+             || [ "${{ needs.property-tests.result }}" != "success" ] \
+             || [ "${{ needs.pre-commit.result }}" != "success" ]; then
+            echo "::error::One or more required jobs did not succeed."
+            exit 1
+          fi
+          echo "All required jobs succeeded."
