@@ -2,32 +2,35 @@
   <img src="assets/logo.svg" alt="cognitive-discovery-system" width="640">
 </p>
 
-# cognitive-discovery-system
+<h1 align="center">cognitive-discovery-system</h1>
 
-[![PyPI version](https://img.shields.io/pypi/v/cognitive-discovery-system.svg)](https://pypi.org/project/cognitive-discovery-system/)
-[![PyPI downloads](https://img.shields.io/pypi/dm/cognitive-discovery-system.svg)](https://pypi.org/project/cognitive-discovery-system/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/downloads/)
-[![Typed](https://img.shields.io/badge/typed-PEP%20561-success.svg)](https://peps.python.org/pep-0561/)
-[![codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg)](https://codecov.io/gh/Furox88/cognitive-discovery-system)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
-[![CodeQL](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/codeql.yml/badge.svg)](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/codeql.yml)
-[![Docs](https://img.shields.io/badge/docs-mkdocs-teal.svg)](https://furox88.github.io/cognitive-discovery-system/)
-[![GitHub stars](https://img.shields.io/github/stars/Furox88/cognitive-discovery-system.svg?style=social)](https://github.com/Furox88/cognitive-discovery-system)
+<p align="center"><b>An open-source computational science platform — quantum, stats, signals, optimization &amp; hypothesis generation, in one pure-Python package.</b></p>
 
-**Open-source computational science platform for research, simulation, and discovery.**
+<p align="center">
+  <a href="https://pypi.org/project/cognitive-discovery-system/"><img src="https://img.shields.io/pypi/v/cognitive-discovery-system.svg" alt="PyPI version"></a>
+  <a href="https://pypi.org/project/cognitive-discovery-system/"><img src="https://img.shields.io/pypi/dm/cognitive-discovery-system.svg" alt="PyPI downloads"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-green.svg" alt="Python 3.10+"></a>
+  <a href="https://codecov.io/gh/Furox88/cognitive-discovery-system"><img src="https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg" alt="codecov"></a>
+  <a href="https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml"><img src="https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://Furox88.github.io/cognitive-discovery-system/"><img src="https://img.shields.io/badge/docs-mkdocs-teal.svg" alt="Docs"></a>
+  <a href="https://github.com/Furox88/cognitive-discovery-system"><img src="https://img.shields.io/github/stars/Furox88/cognitive-discovery-system.svg?style=social" alt="GitHub stars"></a>
+</p>
 
-CDS brings together quantum computing simulation, statistical analysis, signal processing, optimization, probability, and scientific computing in a single, dependency-light Python package. Every module is pure Python — no NumPy or SciPy required.
-
-The system also includes built-in support for structured hypothesis generation, making it easier to explore ideas and connect them to simulation or analysis tools.
-
-> **Stable release** — see the PyPI version badge above for the latest tag. Contributions welcome!
-
-**[Documentation](https://Furox88.github.io/cognitive-discovery-system/)** | **[Tutorials](docs/tutorials/)** | **[Quick Start](docs/tutorials/quick_start.md)**
+<p align="center">
+  <a href="https://Furox88.github.io/cognitive-discovery-system/">📖 Documentation</a> &nbsp;·&nbsp;
+  <a href="docs/tutorials/">🎓 Tutorials</a> &nbsp;·&nbsp;
+  <a href="#quick-start">⚡ Quick Start</a> &nbsp;·&nbsp;
+  <a href="docs/CASE_STUDY_HUBBLE.md">🔬 Case Studies</a>
+</p>
 
 ---
 
-> Stars, forks, and issues are what keep small open-source projects going. If something here is useful to you, that visibility means a lot.
+> **One package, no heavy dependencies.** CDS brings together quantum circuit simulation, statistical analysis, signal processing, optimization, probability, ODE/numerical solvers, symbolic modeling, knowledge graphs, educational NLP, and **structured hypothesis generation** — all in readable pure Python. **No NumPy. No SciPy. No compiled extensions.** Just `pip install` and you can read every line of source.
+
+**Why CDS exists** — for teaching, prototyping, scientific exploration, and edge deployments where a single, dependency-light, fully-readable Python package beats juggling six libraries. Every algorithm is implemented from scratch so you can *learn how it works*, not just call it.
+
+> ⭐ **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
 **Latest Update:** maintenance release fixing the automated publish pipeline (OIDC → scoped PyPI API token; `release.yml` is now the sole publish authority). No API or behavior changes. The current version is shown in the PyPI badge at the top of this README; see the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges for the live test count and coverage, all in readable pure Python.
@@ -110,6 +113,18 @@ If CDS is useful in your research or publications, please cite it using the info
 
 ## Quick Start
 
+The fastest way in is from PyPI — no clone, no download needed:
+
+```bash
+pip install cognitive-discovery-system
+cds --help
+cds hypothesis "What causes the Hubble tension?"
+```
+
+### From source
+
+**macOS / Linux**
+
 ```bash
 git clone https://github.com/Furox88/cognitive-discovery-system.git
 cd cognitive-discovery-system
@@ -117,16 +132,37 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests
-pytest
-
-# CLI usage
-cds --help
-cds constants
-cds calc ke
-cds modules
+pytest            # run the test suite
+cds --help        # CLI
+cds constants     # physical constants
+cds calc ke       # kinetic-energy calculator
+cds modules       # list all modules
 cds hypothesis "What causes the Hubble tension?"
 ```
+
+**Windows (PowerShell)**
+
+```powershell
+git clone https://github.com/Furox88/cognitive-discovery-system.git
+cd cognitive-discovery-system
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+
+pytest
+cds --help
+cds hypothesis "What causes the Hubble tension?"
+```
+
+> 💡 **On Windows you don't need to download anything manually.**
+> Just `git clone` (or copy the repo folder) and the commands above set everything up.
+> No `.zip` to extract — clone gives you the live, up-to-date source that you can `git pull` anytime.
+> If you prefer not to use Git, you can also click **Code → Download ZIP** on GitHub,
+> but **cloning is recommended** so updates are a single `git pull`.
+
+> ⚠️ **Execution policy:** if `Activate.ps1` is blocked, run
+> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or use `cmd.exe`
+> with `.venv\Scripts\activate.bat` instead.
 
 ## Intelligence over Brute Force
 
@@ -169,8 +205,18 @@ Explore how CDS is used to solve real-world research problems:
 
 ## Examples
 
+CDS ships **25 runnable demo scripts** in [`examples/`](examples/) — one per module.
+Each is a self-contained `.py` you can run directly:
 
-See the [`examples/`](examples/) directory for runnable demos and `docs/research-workflows.md` for guidance on embedding CDS in research pipelines.
+```bash
+python examples/quantum_demo.py       # quantum circuits & entanglement
+python examples/signals_demo.py       # FFT, convolution, power spectrum
+python examples/ml_xor_demo.py        # neural network training
+python examples/montecarlo_demo.py    # π estimation & integration
+python examples/hypothesis_demo.py    # structured hypothesis generation
+```
+
+See `docs/research-workflows.md` for guidance on embedding CDS in research pipelines.
 
 ### Hypothesis Generation (cognitive discovery)
 
@@ -511,3 +557,16 @@ Acknowledgement target: **48 hours** · Fix SLA: **7 days**. Full threat model,
 supported versions, and out-of-scope items are in [SECURITY.md](SECURITY.md).
 
 > **Why all the automation?** CDS is maintained solo. The workflows above (PR labeling, checklists, releases, dependency rotation) exist so routine housekeeping takes minutes, leaving the bulk of maintainer time for the actual science — improving the hypothesis tools, adding modules, and writing better examples.
+
+---
+
+## ⭐ Support the project
+
+CDS is built and maintained solo, for free. If it helped your research, teaching, or prototyping:
+
+- **Star the repo** — [⭐ github.com/Furox88/cognitive-discovery-system](https://github.com/Furox88/cognitive-discovery-system) — it costs nothing and is the single biggest signal that helps others discover CDS.
+- **Share it** — a post on X, Reddit, or with a colleague who'd find it useful.
+- **Cite it** — see [CITATION.cff](CITATION.cff) if CDS appears in your work.
+- **Contribute** — new modules, docs, examples, and issue triage are all welcome. See [Contributing](#contributing).
+
+Thank you for using CDS. 🧭

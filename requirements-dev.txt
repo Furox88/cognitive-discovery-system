@@ -1,0 +1,34 @@
+# Development dependencies for cognitive-discovery-system.
+#
+# The source of truth is pyproject.toml ([project.optional-dependencies] ->
+# dev + test + docs + property). This file is a convenience mirror so that:
+#
+#   pip install -r requirements-dev.txt
+#
+# sets up a complete local dev environment in one command. Keep the two in
+# sync when you change pyproject.toml. To install the package in editable mode
+# alongside these, prefer:
+#
+#   pip install -e ".[all]"
+#
+# which is the canonical path used in CONTRIBUTING.md.
+
+-r requirements.txt
+
+# Tooling (maps to the `dev` extra)
+ruff>=0.4
+mypy>=1.10
+pre-commit
+build
+ipykernel
+notebook
+
+# Testing (maps to the `test` + `property` extras)
+pytest>=8.0
+pytest-cov
+hypothesis>=6.100
+
+# Docs site (maps to the `docs` extra)
+mkdocs>=1.5.0
+mkdocs-material>=9.0.0
+mkdocstrings[python]>=0.24.0
