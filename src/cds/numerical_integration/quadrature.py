@@ -391,8 +391,10 @@ def simpson_2d(
 
     Args:
         f: bivariate integrand.
-        ax, bx: ``x``-limits (``bx`` may be less than ``ax``).
-        ay, by: ``y``-limits (``by`` may be less than ``ay``).
+        ax: lower ``x``-limit.
+        bx: upper ``x``-limit (may be less than ``ax``).
+        ay: lower ``y``-limit.
+        by: upper ``y``-limit (may be less than ``ay``).
         nx: number of ``x``-panels (must be even and ``>= 2``).
         ny: number of ``y``-panels (must be even and ``>= 2``).
 
@@ -446,8 +448,10 @@ def gaussian_quadrature_2d(
 
     Args:
         f: bivariate integrand.
-        ax, bx: ``x``-limits (``bx`` may be less than ``ax``).
-        ay, by: ``y``-limits (``by`` may be less than ``ay``).
+        ax: lower ``x``-limit.
+        bx: upper ``x``-limit (may be less than ``ax``).
+        ay: lower ``y``-limit.
+        by: upper ``y``-limit (may be less than ``ay``).
         n: number of nodes per axis (``>= 1``).
 
     Returns:

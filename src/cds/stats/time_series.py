@@ -89,9 +89,7 @@ def autocorrelation(data: list[float], lag: int = 1) -> float:
     return max(-1.0, min(1.0, r))
 
 
-def autocorrelation_function(
-    data: list[float], max_lag: int | None = None
-) -> list[float]:
+def autocorrelation_function(data: list[float], max_lag: int | None = None) -> list[float]:
     """Sample ACF for lags ``0..max_lag`` inclusive.
 
     Args:
@@ -237,9 +235,7 @@ def difference(data: list[float], lag: int = 1, order: int = 1) -> list[float]:
     return series
 
 
-def kpss_statistic(
-    data: list[float], lags: int | None = None
-) -> StationarityResult:
+def kpss_statistic(data: list[float], lags: int | None = None) -> StationarityResult:
     """KPSS-style stationarity test (null: the series is stationary).
 
     Computes the LM statistic from detrended (level) residuals using a
@@ -345,9 +341,7 @@ def seasonal_decompose(
         s = i % period
         seasonal_idx[s] += detrended[i]
         counts[s] += 1
-    seasonal_idx = [
-        (seasonal_idx[s] / counts[s]) if counts[s] > 0 else 0.0 for s in range(period)
-    ]
+    seasonal_idx = [(seasonal_idx[s] / counts[s]) if counts[s] > 0 else 0.0 for s in range(period)]
     # Normalize seasonal pattern to sum to zero (additive model).
     seasonal_mean = sum(seasonal_idx) / period
     seasonal_idx = [s - seasonal_mean for s in seasonal_idx]

@@ -229,9 +229,30 @@ def test_difference_invalid_params() -> None:
 def test_kpss_stationary_white_noise() -> None:
     # A simple oscillating-around-mean series should be flagged stationary.
     data = [
-        0.1, -0.2, 0.15, -0.1, 0.2, -0.15, 0.05, -0.1,
-        0.1, -0.2, 0.15, -0.1, 0.2, -0.15, 0.05, -0.1,
-        0.1, -0.2, 0.15, -0.1, 0.2, -0.15, 0.05, -0.1,
+        0.1,
+        -0.2,
+        0.15,
+        -0.1,
+        0.2,
+        -0.15,
+        0.05,
+        -0.1,
+        0.1,
+        -0.2,
+        0.15,
+        -0.1,
+        0.2,
+        -0.15,
+        0.05,
+        -0.1,
+        0.1,
+        -0.2,
+        0.15,
+        -0.1,
+        0.2,
+        -0.15,
+        0.05,
+        -0.1,
     ]
     res = kpss_statistic(data)
     assert isinstance(res, StationarityResult)

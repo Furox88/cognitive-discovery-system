@@ -65,9 +65,7 @@ def to_dataframe(ds: DataSet) -> pd.DataFrame:
     columns = ds.columns
     # The DataFrame constructor is typed as returning Any in the stubs; assign
     # to an annotated local so the return type is pinned without a cast.
-    df: pd.DataFrame = pandas_module.DataFrame(
-        rows, columns=columns if columns else None
-    )
+    df: pd.DataFrame = pandas_module.DataFrame(rows, columns=columns if columns else None)
     return df
 
 
@@ -99,7 +97,11 @@ def from_dataframe(df: pd.DataFrame) -> DataSet:
             # Values here are scalars from a DataFrame cell.
             try:
                 is_na = bool(pandas_module.isna(value))
-            except (TypeError, ValueError):
+            except (TypeError, ValueError):  # pragma: no cover - defensive
+                # pd.isna raises only on array-like inputs. DataSet's Row
+                # contract restricts cells to scalars (int|float|str|bool|None),
+                # so this branch is unreachable for conforming data; kept as a
+                # guard against malformed/foreign rows slipping through.
                 is_na = value is None
             row[str(key)] = None if is_na else value
         rows.append(row)
