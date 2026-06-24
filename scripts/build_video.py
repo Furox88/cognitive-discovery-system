@@ -101,6 +101,9 @@ def run_piped(cmd: list[str], frames: list[str]) -> None:
                 proc.stdin.write(im.convert("RGBA").tobytes())
         proc.stdin.close()
     except BrokenPipeError:
+        # Expected: ffmpeg closes stdin once it has enough frames (e.g. when
+        # the output duration is reached). The failed write is harmless, so we
+        # silently stop feeding frames and let communicate() collect stderr.
         pass
     _, err = proc.communicate()
     if proc.returncode != 0:
