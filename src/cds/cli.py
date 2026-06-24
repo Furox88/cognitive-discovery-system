@@ -129,7 +129,7 @@ def _format_table(title: str, headers: list[str], rows: list[list[str]]) -> str:
     def _border(left: str, fill: str, right: str) -> str:
         return left + fill + right
 
-    sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
+    sep = _border("+", "+".join("-" * (w + 2) for w in widths), "+")
 
     lines: list[str] = []
     if title:

@@ -177,10 +177,9 @@ class HypothesisEvaluator:
             try:
                 eff = cohens_d(groups[0], groups[1])
                 eff_label = "Cohen's d"
-            except ValueError:
-                # Zero pooled variance (constant groups) — cohens_d raises; no
-                # effect size is reportable. The t-test itself already raised
-                # above in that case, so this branch is defensive only.
+            except ValueError:  # pragma: no cover - unreachable: two_sample_ttest
+                # above raises on the same zero-variance / short-sample inputs
+                # that cohens_d would, so control never reaches this handler.
                 eff, eff_label = None, None
         else:
             res = one_way_anova(*groups)
@@ -212,7 +211,8 @@ class HypothesisEvaluator:
             s = _stdev(sample, ddof=1)
             eff = (_mean(sample) - popmean) / s if s > 0 else None
             eff_label = "Cohen's d" if eff is not None else None
-        except ValueError:
+        except ValueError:  # pragma: no cover - unreachable: len(sample)>=2 guard
+            # above guarantees _stdev has enough points, so it never raises here.
             eff, eff_label = None, None
         return self._build_result(
             hypothesis, "One-sample t-test", res.statistic, res.p_value, eff, eff_label
@@ -258,7 +258,9 @@ class HypothesisEvaluator:
         try:
             eff = cramers_v(table)
             eff_label = "Cramer's V"
-        except ValueError:
+        except ValueError:  # pragma: no cover - unreachable: the 2x2/rectangular
+            # guard above and chi_square_independence's grand-total check cover
+            # every input cramers_v would reject, so this handler never runs.
             eff, eff_label = None, None
         return self._build_result(
             hypothesis, "Chi-square independence", res.statistic, res.p_value, eff, eff_label

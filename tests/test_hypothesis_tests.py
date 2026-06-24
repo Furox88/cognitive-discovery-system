@@ -241,6 +241,16 @@ class TestCramersV:
         with pytest.raises(ValueError):
             cramers_v([[1.0, 2.0]])
 
+    def test_too_few_columns_raises(self) -> None:
+        # 2 rows but only 1 column -> cols < 2 branch (line 507).
+        with pytest.raises(ValueError):
+            cramers_v([[1.0], [2.0]])
+
+    def test_non_rectangular_table_raises(self) -> None:
+        # Ragged rows -> any(len(r) != cols) branch (line 507).
+        with pytest.raises(ValueError):
+            cramers_v([[1.0, 2.0], [3.0]])
+
     def test_zero_total_raises(self) -> None:
         with pytest.raises(ValueError):
             cramers_v([[0.0, 0.0], [0.0, 0.0]])
