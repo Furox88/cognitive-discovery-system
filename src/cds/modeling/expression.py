@@ -396,6 +396,10 @@ class Div(_Binary):
         left = self.left.simplify()
         right = self.right.simplify()
         if isinstance(left, Constant) and isinstance(right, Constant):
+            # A zero divisor is undefined: leave it as a Div so the
+            # ZeroDivisionError surfaces at evaluation time, not here.
+            if right.value == 0.0:
+                return Div(left, right)
             return Constant(left.value / right.value)
         if isinstance(left, Constant) and left.value == 0.0:
             return Constant(0.0)
@@ -454,11 +458,20 @@ class Pow(_Binary):
 
     def simplify(self) -> Expression:
         """Fold ``c ** c``, and apply the exponent identities ``x ** 0 -> 1``
-        and ``x ** 1 -> x`` once the base and exponent are simplified."""
+        and ``x ** 1 -> x`` once the base and exponent are simplified.
+
+        A constant fold that would yield a complex result (a negative base to a
+        fractional exponent) is left in place so the error surfaces at
+        evaluation time rather than as a ``TypeError`` here."""
         base = self.left.simplify()
         exp = self.right.simplify()
         if isinstance(base, Constant) and isinstance(exp, Constant):
-            return Constant(base.value**exp.value)
+            result = base.value**exp.value
+            # A negative base raised to a fractional exponent is complex; leave
+            # it as a Pow so the (real) evaluation surfaces the error.
+            if isinstance(result, complex):
+                return Pow(base, exp)
+            return Constant(result)
         if isinstance(exp, Constant):
             if exp.value == 0.0:
                 return Constant(1.0)
@@ -579,7 +592,7 @@ class Log(_Unary):
         at evaluation time rather than being silently hidden.
         """
         inner = self.operand.simplify()
-        if isinstance(inner, Constant):
+        if isinstance(inner, Constant) and inner.value > 0.0:
             return Constant(math.log(inner.value))
         return Log(inner)
 
@@ -604,9 +617,12 @@ class Sqrt(_Unary):
         )
 
     def simplify(self) -> Expression:
-        """Fold ``sqrt(c)`` to a :class:`Constant`; otherwise simplify the operand."""
+        """Fold ``sqrt(c)`` to a :class:`Constant`; otherwise simplify the operand.
+
+        A negative operand is left untouched so the domain error surfaces at
+        evaluation time rather than being silently hidden."""
         inner = self.operand.simplify()
-        if isinstance(inner, Constant):
+        if isinstance(inner, Constant) and inner.value >= 0.0:
             return Constant(math.sqrt(inner.value))
         return Sqrt(inner)
 

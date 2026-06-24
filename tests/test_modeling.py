@@ -334,6 +334,52 @@ class TestSimplification:
         base = Expression()
         assert base.simplify() is base
 
+    # ------------------------------------------------------------------ #
+    # simplify() is a pure rewrite: it never raises. A constant fold that
+    # would be undefined at evaluation time is left in place so the error
+    # surfaces when the expression is actually evaluated, not during the
+    # (side-effect-free) simplification pass.
+    # ------------------------------------------------------------------ #
+
+    def test_div_zero_constant_divisor_is_left_in_place(self) -> None:
+        # 5 / 0 must not fold: left as a Div, error deferred to evaluate().
+        s = (Constant(5.0) / Constant(0.0)).simplify()
+        assert isinstance(s, Div)
+
+    def test_div_zero_constant_divisor_surfaces_at_evaluate(self) -> None:
+        expr = (Constant(5.0) / Constant(0.0)).simplify()
+        with pytest.raises(ZeroDivisionError):
+            expr.evaluate({})
+
+    def test_log_nonpositive_constant_is_left_in_place(self) -> None:
+        # log(0) and log(-1) must not fold: left as a Log.
+        assert isinstance(Log(Constant(0.0)).simplify(), Log)
+        assert isinstance(Log(Constant(-1.0)).simplify(), Log)
+
+    def test_log_negative_constant_surfaces_at_evaluate(self) -> None:
+        expr = Log(Constant(-1.0)).simplify()
+        with pytest.raises(ValueError):
+            expr.evaluate({})
+
+    def test_sqrt_negative_constant_is_left_in_place(self) -> None:
+        # sqrt(-4) is undefined over the reals: left as a Sqrt.
+        assert isinstance(Sqrt(Constant(-4.0)).simplify(), Sqrt)
+
+    def test_sqrt_negative_constant_surfaces_at_evaluate(self) -> None:
+        expr = Sqrt(Constant(-4.0)).simplify()
+        with pytest.raises(ValueError):
+            expr.evaluate({})
+
+    def test_pow_negative_base_fractional_exp_is_left_in_place(self) -> None:
+        # (-8) ** (1/3) is complex over the reals: left as a Pow.
+        s = (Constant(-8.0) ** Constant(1.0 / 3.0)).simplify()
+        assert isinstance(s, Pow)
+
+    def test_pow_negative_base_fractional_exp_surfaces_at_evaluate(self) -> None:
+        expr = (Constant(-8.0) ** Constant(1.0 / 3.0)).simplify()
+        with pytest.raises((ValueError, TypeError)):
+            expr.evaluate({})
+
 
 # ---------------------------------------------------------------------- #
 # Substitution & variables
