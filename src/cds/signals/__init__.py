@@ -1,5 +1,15 @@
 """Signal processing tools."""
 
+from cds.signals.filters import (
+    BandFilterCoefficients,
+    FilterCoefficients,
+    apply_filter,
+    butter_bandpass,
+    butter_bandstop,
+    butter_highpass,
+    butter_lowpass,
+    moving_median,
+)
 from cds.signals.processing import (
     convolve,
     dft,
@@ -12,6 +22,7 @@ from cds.signals.processing import (
 )
 
 __all__ = [
+    # Fourier toolkit (processing.py)
     "dft",
     "idft",
     "fft_radix2",
@@ -20,4 +31,13 @@ __all__ = [
     "convolve",
     "power_spectrum",
     "low_pass_filter",
+    # Digital filter design + application (filters.py)
+    "FilterCoefficients",
+    "BandFilterCoefficients",
+    "butter_lowpass",
+    "butter_highpass",
+    "butter_bandpass",
+    "butter_bandstop",
+    "apply_filter",
+    "moving_median",
 ]

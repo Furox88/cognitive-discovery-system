@@ -64,7 +64,11 @@ Pure-Python neural networks: an MLP with Adam-based training.
 
 ## Signal Processing
 
-DFT, radix-2 FFT/IFFT, convolution, and digital filters.
+A from-scratch Fourier toolkit (DFT/FFT/IFFT, convolution, power spectrum,
+frequency-domain low-pass) plus a classical digital-filter *design* suite —
+Butterworth low/high/band-pass/band-stop via the analog-prototype + bilinear-
+transform recipe, applied in the time domain through a direct-form II
+difference equation — and a robust moving-median denoiser.
 
 ::: cds.signals
 
