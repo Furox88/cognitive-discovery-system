@@ -57,6 +57,11 @@ print(binomial_pmf(3, 5, 0.5))  # 0.3125
 from cds.stats import mean, linear_regression
 print(mean([1, 2, 3, 4, 5]))  # 3.0
 
+# Effect-size measures (companion to the significance tests above)
+from cds.stats import cohens_d, cramers_v
+print(cohens_d([20.0, 22.0, 19.0], [28.0, 31.0, 26.0]))  # standardized mean difference
+print(cramers_v([[10.0, 20.0], [30.0, 40.0]]))  # association strength for a contingency table
+
 # Scientific computing
 from cds.scientific import kinetic_energy, get_constant
 print(get_constant("c"))  # 299792458.0

@@ -5,6 +5,38 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.9] - 2026-06-24
+
+### Minor — effect-size measures for the statistics & hypothesis stack
+
+A backward-compatible feature release. Adds standardized **effect-size**
+measures to `cds.stats` so users can report the *magnitude* of an effect
+alongside its significance — closing the long-standing gap where a
+hypothesis test answered *"is there an effect?"* but not *"how large?"*.
+No existing API or behavior changes; all prior tests remain green.
+
+### Added
+
+- **`cds.stats` — effect-size measures** (`src/cds/stats/hypothesis_tests.py`):
+  - `cohens_d(group_a, group_b)` — Cohen's *d* standardized mean difference
+    between two samples (pooled-SD denominator).
+  - `eta_squared_from_f(f, df1, df2)` — η² proportion of variance explained
+    by group membership, derived from a one-way ANOVA *F* statistic.
+  - `cramers_v(contingency_table)` — Cramér's *V* association strength for
+    an *r* × *c* contingency table (χ²-based, normalized to `[0, 1]`).
+  All three functions are exported from the top-level `cds.stats` namespace and
+  documented in the tutorial (`docs/tutorials/hypothesis_tests_demo.md`).
+- **Tutorial section** — *"Effect sizes"* walkthrough in
+  `hypothesis_tests_demo.md` showing how `cohens_d` / `cramers_v` pair with
+  the existing `t_test` / `chi_square_independence` tests.
+- **Getting-started snippets** (EN + TR) and `docs/index.md` now surface the
+  effect-size functions in the Python-API quick-start and module table.
+
+### Documentation
+
+- README module table, `docs/index.md` Key Features & module description,
+  and the EN/TR getting-started guides now mention effect-size support.
+
 ## [v1.1.8] - 2026-06-21
 
 ### Patch — ODE backward integration bug fix
