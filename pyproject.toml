@@ -208,11 +208,11 @@ python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 strict = true
-# No `ignore_missing_imports` here: CDS only depends on PEP 561 typed
-# runtime libs (typer, pydantic, rich), all of which ship inline type
-# annotations and resolve cleanly under strict mypy. Dropping the global
-# escape hatch means a future un-stubbed dependency will surface a real
-# error instead of being silently typed as Any.
+# No `ignore_missing_imports` here: CDS has zero runtime dependencies — the
+# core package is pure stdlib (dataclasses + argparse), so every name mypy
+# resolves is either from the standard library (all typed) or from `cds`
+# itself. Dropping the global escape hatch means a future un-stubbed
+# dependency will surface a real error instead of being silently typed as Any.
 # Mypy is run on both `src/` and `tests/` in CI (see .github/workflows/tests.yml).
 # Local pre-commit hook still skips mypy to keep the commit loop fast; CI is the
 # gate for test-code type safety.

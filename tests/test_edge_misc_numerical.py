@@ -494,9 +494,7 @@ class TestGeneratorInvalidDomainString:
 class TestCLIEnvVars:
     """Cover the PYTHONPATH-already-set branch in the dashboard command."""
 
-    def test_dashboard_with_existing_pythonpath(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_dashboard_with_existing_pythonpath(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # Drive the dashboard command with PYTHONPATH already in the
         # environment, so the "if PYTHONPATH in env" branch in _cmd_dashboard
         # fires. subprocess.run is mocked so streamlit is never launched; a
@@ -507,10 +505,13 @@ class TestCLIEnvVars:
 
         captured_env: dict[str, str] = {}
 
-        def fake_run(cmd: list[str], **kwargs: object) -> None:
+        def fake_run(
+            cmd: list[str], *, env: dict[str, str] | None = None, **kwargs: object
+        ) -> None:
             # Snapshot the environment passed to subprocess so we can assert
             # that the existing PYTHONPATH was preserved and prepended-to.
-            captured_env.update(kwargs.get("env", {}))  # type: ignore[arg-type]
+            if env is not None:
+                captured_env.update(env)
             raise KeyboardInterrupt()
 
         monkeypatch.setattr(subprocess, "run", fake_run)

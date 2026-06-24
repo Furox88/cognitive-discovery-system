@@ -64,7 +64,7 @@ def test_cli_prompt(capsys: pytest.CaptureFixture[str]) -> None:
 def test_cli_hypothesize_output(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     output_file = tmp_path / "hypo.json"
     rc = main(["hypothesis", "Test", "--num", "1", "--output", str(output_file)])
-    out = capsys.readouterr().out
+    capsys.readouterr()
     assert rc == 0
     assert output_file.exists()
 
@@ -100,7 +100,9 @@ def test_cli_hypothesis_basic(capsys: pytest.CaptureFixture[str]) -> None:
     assert "H-" in out  # Table row contains H-ID
 
 
-def test_cli_calc_gravity(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_calc_gravity(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     inputs = iter(["5.97e24", "7.35e22", "3.84e8"])
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     rc = main(["calc", "gravity"])

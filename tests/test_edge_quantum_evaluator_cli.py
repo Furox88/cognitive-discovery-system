@@ -392,7 +392,9 @@ def test_cli_constants(capsys: pytest.CaptureFixture[str]) -> None:
     assert "Physical Constants" in out
 
 
-def test_cli_dashboard_missing_file(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_dashboard_missing_file(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     """Dashboard command reports an error when the app file is absent."""
     monkeypatch.setattr(Path, "exists", lambda self: False)
     rc = main(["dashboard"])
@@ -424,7 +426,9 @@ def test_cli_hypothesis_show_prompt(capsys: pytest.CaptureFixture[str]) -> None:
     assert "Test question" in out
 
 
-def test_cli_calc_input_error(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_calc_input_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     """calc command with non-numeric input prints error."""
     monkeypatch.setattr("builtins.input", lambda _: "not_a_number")
     rc = main(["calc", "ke"])
@@ -433,7 +437,9 @@ def test_cli_calc_input_error(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Ca
     assert "Error" in out
 
 
-def test_cli_calc_generic_exception(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_calc_generic_exception(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     """calc command with an unexpected exception prints error."""
 
     def bad_prompt(_: str) -> None:
@@ -446,7 +452,9 @@ def test_cli_calc_generic_exception(monkeypatch: pytest.MonkeyPatch, capsys: pyt
     assert "Error" in out
 
 
-def test_cli_dashboard_launch(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_dashboard_launch(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     """Dashboard command: mock subprocess so streamlit is not actually launched."""
 
     def fake_run(cmd: list[str], **kwargs: object) -> None:
@@ -456,10 +464,13 @@ def test_cli_dashboard_launch(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Ca
     monkeypatch.setattr(Path, "exists", lambda self: True)
     rc = main(["dashboard"])
     out = capsys.readouterr().out
+    assert rc == 0
     assert "Dashboard stopped" in out
 
 
-def test_cli_dashboard_streamlit_missing(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_dashboard_streamlit_missing(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     """Dashboard command: FileNotFoundError when streamlit is not installed."""
 
     def fake_run(cmd: list[str], **kwargs: object) -> None:
@@ -469,6 +480,7 @@ def test_cli_dashboard_streamlit_missing(monkeypatch: pytest.MonkeyPatch, capsys
     monkeypatch.setattr(Path, "exists", lambda self: True)
     rc = main(["dashboard"])
     out = capsys.readouterr().out
+    assert rc == 1
     assert "Streamlit not found" in out
 
 
