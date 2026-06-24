@@ -34,7 +34,7 @@ Calculus (derivative, integral, gradient) and a compact linear-algebra toolkit (
 
 ## Numerical Integration
 
-Deterministic quadrature rules: trapezoid, Simpson 1/3 and 3/8, Gauss–Legendre, Romberg, and adaptive Simpson.
+Deterministic quadrature rules: trapezoid, Simpson 1/3 and 3/8, Gauss–Legendre, Romberg, adaptive Simpson, and 2-D tensor-product rules (composite Simpson 2-D and tensor-product Gauss–Legendre) over rectangular domains.
 
 ::: cds.numerical_integration
 
