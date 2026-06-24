@@ -17,7 +17,6 @@ from collections.abc import Callable
 from datetime import timezone
 
 import pytest
-from pydantic import ValidationError
 
 from cds.core import Domain, Hypothesis, HypothesisStatus
 
@@ -61,17 +60,17 @@ class TestHypothesisStatusEnum:
 # --------------------------------------------------------------------------- #
 class TestHypothesisValidation:
     def test_required_fields_enforced(self) -> None:
-        """Missing a required field must raise a pydantic ValidationError."""
+        """Missing a required field must raise a TypeError (dataclass contract)."""
         # Mypy can't see that this is intentionally malformed; the whole
-        # point is that pydantic rejects the missing required fields at
+        # point is that the dataclass rejects the missing required fields at
         # runtime. ``call-arg`` is the expected, signal-bearing error here.
-        with pytest.raises(ValidationError):
+        with pytest.raises(TypeError):
             Hypothesis(  # no statement / domain / research_question
                 id="h-1",
             )  # type: ignore[call-arg]
 
     def test_confidence_below_zero_rejected(self) -> None:
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValueError):
             Hypothesis(
                 id="h-1",
                 statement="s",
@@ -81,7 +80,7 @@ class TestHypothesisValidation:
             )
 
     def test_confidence_above_one_rejected(self) -> None:
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValueError):
             Hypothesis(
                 id="h-1",
                 statement="s",
@@ -103,7 +102,7 @@ class TestHypothesisValidation:
         assert h.confidence == confidence
 
     def test_invalid_domain_rejected(self) -> None:
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValueError):
             Hypothesis(
                 id="h-1",
                 statement="s",
@@ -138,8 +137,8 @@ class TestHypothesisDefaults:
     def test_list_defaults_are_not_shared(self, make_hypothesis: Callable[..., Hypothesis]) -> None:
         """``default_factory`` must give each instance its own list.
 
-        A common pydantic footgun is ``default=[]`` (shared mutable default);
-        ``Field(default_factory=list)`` avoids it. This test guards against a
+        A common footgun is ``default=[]`` (shared mutable default);
+        ``field(default_factory=list)`` avoids it. This test guards against a
         regression that would silently cross-contaminate instances.
         """
         a = make_hypothesis(id="a", assumptions=[])

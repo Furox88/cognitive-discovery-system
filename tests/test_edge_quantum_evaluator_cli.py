@@ -13,10 +13,9 @@ from pathlib import Path
 from typing import cast
 
 import pytest
-from typer.testing import CliRunner
 
 from cds import __version__
-from cds.cli import app
+from cds.cli import main
 from cds.core.models import Hypothesis
 from cds.hypothesis import (
     Domain,
@@ -30,8 +29,6 @@ from cds.montecarlo.methods import _pi_worker
 from cds.quantum import QuantumCircuit, hadamard, pauli_x
 from cds.quantum.circuit import Qubit
 from cds.quantum.simulator import measure, simulate
-
-_runner = CliRunner()
 
 
 # ---------------------------------------------------------------------------
@@ -374,71 +371,82 @@ def test_evaluator_batch_empty_raises() -> None:
 # ---------------------------------------------------------------------------
 # CLI commands: plot, constants, dashboard error path
 # ---------------------------------------------------------------------------
-def test_cli_plot_valid() -> None:
-    result = _runner.invoke(app, ["plot", "1,5,3,8", "--title", "Data"])
-    assert result.exit_code == 0
-    assert "Data" in result.stdout
+def test_cli_plot_valid(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = main(["plot", "1,5,3,8", "--title", "Data"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Data" in out
 
 
-def test_cli_plot_invalid() -> None:
-    result = _runner.invoke(app, ["plot", "1,abc,3"])
-    assert result.exit_code == 0  # CLI catches the error, prints message
-    assert "Error" in result.stdout
+def test_cli_plot_invalid(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = main(["plot", "1,abc,3"])
+    out = capsys.readouterr().out
+    assert rc == 1  # CLI catches the ValueError and returns non-zero
+    assert "Error" in out
 
 
-def test_cli_constants() -> None:
-    result = _runner.invoke(app, ["constants"])
-    assert result.exit_code == 0
-    assert "Physical Constants" in result.stdout
+def test_cli_constants(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = main(["constants"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Physical Constants" in out
 
 
-def test_cli_dashboard_missing_file(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_dashboard_missing_file(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     """Dashboard command reports an error when the app file is absent."""
     monkeypatch.setattr(Path, "exists", lambda self: False)
-    result = _runner.invoke(app, ["dashboard"])
-    assert result.exit_code == 0
-    assert "not found" in result.stdout.lower()
+    rc = main(["dashboard"])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "not found" in out.lower()
 
 
-def test_cli_calc_unknown_formula() -> None:
-    result = _runner.invoke(app, ["calc", "unknown"])
-    assert result.exit_code == 0
-    assert "Unknown formula" in result.stdout
+def test_cli_calc_unknown_formula(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = main(["calc", "unknown"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Unknown formula" in out
 
 
-def test_cli_no_command_shows_help() -> None:
+def test_cli_no_command_shows_help(capsys: pytest.CaptureFixture[str]) -> None:
     """Invoking the CLI with no subcommand prints help."""
-    result = _runner.invoke(app, [])
-    assert "help" in result.stdout.lower() or "Usage" in result.stdout
+    rc = main([])
+    out = capsys.readouterr().out
+    assert "help" in out.lower() or "Usage" in out
+    assert rc == 0
 
 
-def test_cli_hypothesis_show_prompt() -> None:
-    result = _runner.invoke(app, ["hypothesis", "Test question", "--show-prompt"])
-    assert result.exit_code == 0
-    assert "Prompt Template" in result.stdout
+def test_cli_hypothesis_show_prompt(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = main(["hypothesis", "Test question", "--show-prompt"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    # The prompt template text (not a "Prompt Template" panel title anymore) is printed.
+    assert "Test question" in out
 
 
-def test_cli_calc_input_error(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_calc_input_error(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     """calc command with non-numeric input prints error."""
-    monkeypatch.setattr("typer.prompt", lambda _: "not_a_number")
-    result = _runner.invoke(app, ["calc", "ke"])
-    assert result.exit_code == 0
-    assert "Error" in result.stdout
+    monkeypatch.setattr("builtins.input", lambda _: "not_a_number")
+    rc = main(["calc", "ke"])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Error" in out
 
 
-def test_cli_calc_generic_exception(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_calc_generic_exception(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     """calc command with an unexpected exception prints error."""
 
     def bad_prompt(_: str) -> None:
         raise RuntimeError("surprise")
 
-    monkeypatch.setattr("typer.prompt", bad_prompt)
-    result = _runner.invoke(app, ["calc", "ke"])
-    assert result.exit_code == 0
-    assert "Error" in result.stdout
+    monkeypatch.setattr("builtins.input", bad_prompt)
+    rc = main(["calc", "ke"])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Error" in out
 
 
-def test_cli_dashboard_launch(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_dashboard_launch(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     """Dashboard command: mock subprocess so streamlit is not actually launched."""
 
     def fake_run(cmd: list[str], **kwargs: object) -> None:
@@ -446,11 +454,12 @@ def test_cli_dashboard_launch(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     monkeypatch.setattr(Path, "exists", lambda self: True)
-    result = _runner.invoke(app, ["dashboard"])
-    assert "Dashboard stopped" in result.stdout
+    rc = main(["dashboard"])
+    out = capsys.readouterr().out
+    assert "Dashboard stopped" in out
 
 
-def test_cli_dashboard_streamlit_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_dashboard_streamlit_missing(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     """Dashboard command: FileNotFoundError when streamlit is not installed."""
 
     def fake_run(cmd: list[str], **kwargs: object) -> None:
@@ -458,15 +467,17 @@ def test_cli_dashboard_streamlit_missing(monkeypatch: pytest.MonkeyPatch) -> Non
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     monkeypatch.setattr(Path, "exists", lambda self: True)
-    result = _runner.invoke(app, ["dashboard"])
-    assert "Streamlit not found" in result.stdout
+    rc = main(["dashboard"])
+    out = capsys.readouterr().out
+    assert "Streamlit not found" in out
 
 
-def test_cli_modules_end_line() -> None:
+def test_cli_modules_end_line(capsys: pytest.CaptureFixture[str]) -> None:
     """modules command: verify the final lines are printed."""
-    result = _runner.invoke(app, ["modules"])
-    assert result.exit_code == 0
-    assert "See examples/" in result.stdout
+    rc = main(["modules"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "See examples/" in out
 
 
 def test_import_main() -> None:

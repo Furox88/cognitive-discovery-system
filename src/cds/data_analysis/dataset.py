@@ -21,6 +21,7 @@ class DataSet:
     """
 
     def __init__(self, data: list[Row]):
+        """Store ``data`` and derive column names from the first row's keys."""
         self.data = data
         self._columns = list(data[0].keys()) if data else []
 
@@ -35,9 +36,11 @@ class DataSet:
         return len(self.data), len(self._columns)
 
     def __len__(self) -> int:
+        """Return the number of rows."""
         return len(self.data)
 
     def __getitem__(self, idx: int) -> Row:
+        """Return the row at integer index ``idx``."""
         return self.data[idx]
 
     def column(self, name: str) -> list[Scalar]:
@@ -87,6 +90,7 @@ class DataSet:
         return [row.copy() for row in self.data]
 
     def __repr__(self) -> str:
+        """Return a compact ``DataSet(rows=..., cols=...)`` summary."""
         if not self.data:
             return "DataSet(empty)"
         return f"DataSet(rows={len(self.data)}, cols={len(self._columns)})"
@@ -96,6 +100,7 @@ class DataGroup:
     """Helper class for grouped data aggregations."""
 
     def __init__(self, groups: dict[Scalar, list[Row]], group_col: str):
+        """Store the grouped rows and the name of the grouping column."""
         self.groups = groups
         self.group_col = group_col
 

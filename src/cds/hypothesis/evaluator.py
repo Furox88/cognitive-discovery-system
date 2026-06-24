@@ -99,6 +99,12 @@ class HypothesisEvaluator:
     """Autonomous evaluator that matches hypotheses with statistical tests."""
 
     def __init__(self, alpha: float = 0.05):
+        """Store the significance threshold ``alpha`` used to flag results.
+
+        Args:
+            alpha: Two-sided significance level (default ``0.05``). A test
+                with ``p < alpha`` is reported as significant.
+        """
         self.alpha = alpha
 
     def _build_result(
@@ -186,9 +192,7 @@ class HypothesisEvaluator:
             eff = eta_squared_from_f(res.statistic, df1, df2)
             eff_label = "eta-squared"
 
-        return self._build_result(
-            hypothesis, test_name, res.statistic, res.p_value, eff, eff_label
-        )
+        return self._build_result(hypothesis, test_name, res.statistic, res.p_value, eff, eff_label)
 
     def compare_to_reference(
         self,
@@ -339,9 +343,7 @@ class HypothesisEvaluator:
         # First pass: per-hypothesis results at the uncorrected alpha. We need
         # the raw (statistic, p_value, effect size) so we can re-judge without
         # re-running the tests.
-        raw_results = [
-            self.evaluate(h, d) for h, d in zip(hypotheses, data_items)
-        ]
+        raw_results = [self.evaluate(h, d) for h, d in zip(hypotheses, data_items)]
 
         # Bonferroni-corrected per-test alpha for this family of k tests.
         corrected_alpha = bonferroni_corrected_alpha(self.alpha, len(hypotheses))

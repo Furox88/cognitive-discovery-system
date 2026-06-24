@@ -23,11 +23,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 
-dependencies = [
-    "typer[all]>=0.9.0",
-    "pydantic>=2.0",
-    "rich>=13.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
 # Meta-package: every extras group in one install.

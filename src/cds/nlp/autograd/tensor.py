@@ -42,44 +42,58 @@ class Tensor:
     _prev: set[Tensor] = field(default_factory=set, repr=False)
 
     def __repr__(self) -> str:
+        """Return ``Tensor(data=..., grad=...)`` (``grad`` only when tracking)."""
         grad_str = f", grad={self.grad}" if self.requires_grad else ""
         return f"Tensor(data={self.data}{grad_str})"
 
     # ------------------------------------------------------------------ #
     # Operator overloads — implemented inline so mypy strict sees them.
+    # Each dispatches to :func:`_binop` (or :func:`neg`) so a graph node
+    # carrying a ``_backward`` closure is returned and grads flow.
     # ------------------------------------------------------------------ #
 
     def __add__(self, other: Tensor | float | int) -> Tensor:
+        """Return ``self + other`` as a tracked sum node."""
         return _binop("+", self, other)
 
     def __radd__(self, other: float | int) -> Tensor:
+        """Return ``other + self`` (``other`` is a number) as a tracked sum node."""
         return _binop("+", other, self)
 
     def __sub__(self, other: Tensor | float | int) -> Tensor:
+        """Return ``self - other`` as a tracked difference node."""
         return _binop("-", self, other)
 
     def __rsub__(self, other: float | int) -> Tensor:
+        """Return ``other - self`` (``other`` is a number) as a tracked difference node."""
         return _binop("-", other, self)
 
     def __mul__(self, other: Tensor | float | int) -> Tensor:
+        """Return ``self * other`` as a tracked product node."""
         return _binop("*", self, other)
 
     def __rmul__(self, other: float | int) -> Tensor:
+        """Return ``other * self`` (``other`` is a number) as a tracked product node."""
         return _binop("*", other, self)
 
     def __truediv__(self, other: Tensor | float | int) -> Tensor:
+        """Return ``self / other`` as a tracked quotient node."""
         return _binop("/", self, other)
 
     def __rtruediv__(self, other: float | int) -> Tensor:
+        """Return ``other / self`` (``other`` is a number) as a tracked quotient node."""
         return _binop("/", other, self)
 
     def __neg__(self) -> Tensor:
+        """Return the negation ``-self`` as a tracked node."""
         return neg(self)
 
     def __pos__(self) -> Tensor:
+        """Return ``+self`` (a no-op copy of this node)."""
         return self
 
     def __pow__(self, exponent: float) -> Tensor:
+        """Return ``self ** exponent`` (constant power) as a tracked node."""
         # Return ``NotImplemented`` for unsupported operand types instead of
         # raising — this is the Pythonic contract for arithmetic dunders
         # (lets Python try the reflected ``__rpow__`` and only raise a real
@@ -196,6 +210,7 @@ class Parameter(Tensor):
     """
 
     def __init__(self, value: Scalar) -> None:
+        """Store ``value`` as a leaf with ``requires_grad=True``."""
         super().__init__(data=float(value), requires_grad=True)
 
 

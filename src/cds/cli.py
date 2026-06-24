@@ -1,210 +1,250 @@
-"""System command-line interface."""
+"""System command-line interface.
+
+Pure-stdlib CLI built on :mod:`argparse`. It replaces the previous
+``typer``/``rich`` implementation so the whole ``cds`` package stays
+zero-dependency at runtime. Rich-style colour is reproduced with small ANSI
+escape helpers; the textual output (help text, table contents, prompts) is
+preserved verbatim where the test suite asserts on it.
+
+The entry point :func:`main` accepts an optional ``argv`` so tests can drive a
+specific command without spawning a subprocess, and returns the integer exit
+code instead of calling :func:`sys.exit` directly when ``argv`` is given.
+"""
 
 from __future__ import annotations
 
+import argparse
 import json
-from enum import Enum
+import os
+import subprocess
+import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Annotated
-
-import typer
-from rich.console import Console
-from rich.panel import Panel
-from rich.syntax import Syntax
-from rich.table import Table
-from typer import Context
 
 from cds.core.models import Domain
 from cds.hypothesis.generator import PromptTemplate, generate_hypotheses
 
-app = typer.Typer(
-    name="cds",
-    help="Cognitive Discovery System — computational science platform.",
-    add_completion=False,
-    invoke_without_command=True,
-)
-console = Console()
+# --------------------------------------------------------------------------- #
+# ANSI colour helpers — minimal stand-in for ``rich`` markup tags.
+# Each maps a rich style to an SGR escape sequence; ``_wrap`` returns the text
+# wrapped so it renders coloured on a terminal and plain (stripped) elsewhere.
+# --------------------------------------------------------------------------- #
+_RESET = "\033[0m"
+_STYLES: dict[str, str] = {
+    "bold": "\033[1m",
+    "dim": "\033[2m",
+    "italic": "\033[3m",
+    "red": "\033[31m",
+    "green": "\033[32m",
+    "yellow": "\033[33m",
+    "blue": "\033[34m",
+    "magenta": "\033[35m",
+    "cyan": "\033[36m",
+    "bold green": "\033[1;32m",
+    "bold blue": "\033[1;34m",
+    "bold cyan": "\033[1;36m",
+    "bold magenta": "\033[1;35m",
+    "bold red": "\033[1;31m",
+    "bold yellow": "\033[1;33m",
+}
 
 
-def _version_callback(value: bool) -> None:
-    if value:
-        from cds import __version__
-
-        console.print(f"[bold]System[/] version [cyan]{__version__}[/]")
-        raise typer.Exit()
+def _supports_color() -> bool:
+    """Return True when stdout looks like an interactive colour terminal."""
+    return sys.stdout.isatty()
 
 
-@app.callback()
-def main(
-    ctx: Context,
-    version: bool = typer.Option(
-        False,
-        "--version",
-        "-v",
-        callback=_version_callback,
-        is_eager=True,
-        help="Show System version and exit",
-    ),
-) -> None:
-    """System CLI entrypoint."""
-    if ctx.invoked_subcommand is None:
-        # No subcommand given, show help
-        console.print(ctx.get_help())
-        raise typer.Exit()
+def _wrap(style: str, text: str) -> str:
+    """Wrap ``text`` in the ANSI codes for ``style`` if stdout is a TTY."""
+    if not _supports_color():
+        return text
+    code = _STYLES.get(style, "")
+    if not code:
+        return text
+    return f"{code}{text}{_RESET}"
 
 
-class DomainChoice(str, Enum):
-    """Supported scientific domains for hypothesis generation and CLI dispatch."""
-
-    physics = "physics"
-    cosmology = "cosmology"
-    mathematics = "mathematics"
-    biology = "biology"
-    chemistry = "chemistry"
-    general = "general_science"
+def _print(*args: object) -> None:
+    """Print helper routed through stdout (so tests can capture via capsys)."""
+    print(*args)
 
 
-@app.command()
-def version() -> None:
-    """Show System version."""
+# Mapping from rich-style markup tags to plain-text + colour pairs. Each entry
+# is (style, plain_text). Used by ``_render`` to expand the minimal markup the
+# commands embed in their strings.
+def _render(markup: str) -> str:
+    """Render rich-style ``[style]...[/]`` markup into ANSI-coloured text.
+
+    Only the tag shapes actually used by this CLI are supported:
+    ``[bold]``, ``[italic]``, ``[dim]``, ``[red]``, ``[green]``, ``[yellow]``,
+    ``[blue]``, ``[cyan]``, ``[magenta]`` and a few combined ``[bold green]``
+    variants. Unknown tags are stripped to their inner text. Nesting is not
+    supported (the CLI never nests them).
+    """
+    out: list[str] = []
+    i = 0
+    n = len(markup)
+    while i < n:
+        open_idx = markup.find("[", i)
+        if open_idx == -1:
+            out.append(markup[i:])
+            break
+        out.append(markup[i:open_idx])
+        close_idx = markup.find("]", open_idx)
+        if close_idx == -1:
+            out.append(markup[open_idx:])
+            break
+        tag = markup[open_idx + 1 : close_idx]
+        # Closing tag [/] ends the current styled run.
+        if tag.startswith("/"):
+            out.append(_RESET if _supports_color() else "")
+            i = close_idx + 1
+            continue
+        # Combined forms like "bold green" are looked up directly.
+        code = _STYLES.get(tag)
+        if code is None and " " in tag:
+            # ``[bold green]`` style — already in the table; fall back to first word.
+            code = _STYLES.get(tag.split()[0], "")
+        out.append(code if (_supports_color() and code is not None) else "")
+        i = close_idx + 1
+    return "".join(out)
+
+
+# --------------------------------------------------------------------------- #
+# Table rendering — minimal fixed-width formatter standing in for ``rich.Table``.
+# --------------------------------------------------------------------------- #
+def _format_table(title: str, headers: list[str], rows: list[list[str]]) -> str:
+    """Render ``headers``/``rows`` as a bordered ASCII table with a title.
+
+    A tiny reimplementation of the ``rich.Table`` output the CLI used to
+    produce: top/bottom title rule, a header row underlined with ``-``, and
+    each data row on its own line. Columns are sized to the widest cell.
+    """
+    cols = len(headers)
+    widths = [len(h) for h in headers]
+    for row in rows:
+        for c, cell in enumerate(row[:cols]):
+            widths[c] = max(widths[c], len(cell))
+
+    def _border(left: str, fill: str, right: str) -> str:
+        return left + fill + right
+
+    sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
+
+    lines: list[str] = []
+    if title:
+        lines.append(_wrap("bold", title))
+    lines.append(sep)
+    header_cells = " | ".join(h.ljust(widths[c]) for c, h in enumerate(headers))
+    lines.append(f"| {header_cells} |")
+    lines.append(sep)
+    for row in rows:
+        cells = " | ".join(
+            str(row[c]).ljust(widths[c]) if c < len(row) else "".ljust(widths[c])
+            for c in range(cols)
+        )
+        lines.append(f"| {cells} |")
+    lines.append(sep)
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------- #
+# Command implementations
+# --------------------------------------------------------------------------- #
+def _cmd_version(args: argparse.Namespace) -> int:
+    """Show the installed System version."""
     from cds import __version__
 
-    console.print(f"[bold]System[/] version [cyan]{__version__}[/]")
+    _print(_render(f"[bold]System[/] version [cyan]{__version__}[/]"))
+    return 0
 
 
-@app.command()
-def hypothesis(
-    question: Annotated[str, typer.Argument(help="The core research question or problem")],
-    domain: Annotated[
-        DomainChoice,
-        typer.Option("--domain", "-d", help="Scientific domain focus"),
-    ] = DomainChoice.general,
-    n: Annotated[int, typer.Option("--num", "-n", help="Number of hypotheses to propose")] = 3,
-    output: Annotated[
-        Path | None,
-        typer.Option("--output", "-o", help="Save results as JSON"),
-    ] = None,
-    show_prompt: Annotated[
-        bool,
-        typer.Option(
-            "--show-prompt",
-            help="Print the exact prompt template (for use with a custom generator)",
-        ),
-    ] = False,
-    dry_run: Annotated[
-        bool,
-        typer.Option("--dry-run", help="Do not run generation logic, just show what would happen"),
-    ] = False,
-) -> None:
+def _cmd_hypothesis(args: argparse.Namespace) -> int:
     """Generate scientific hypotheses for a research question."""
-    dom = Domain(domain.value)
+    dom = Domain(args.domain)
 
-    if show_prompt:
-        prompt = PromptTemplate.render(question, dom, n)
-        console.print(Panel.fit(prompt, title="Prompt Template", border_style="blue"))
-        return
+    if args.show_prompt:
+        prompt = PromptTemplate.render(args.question, dom, args.num)
+        _print(_render(f"[blue]{prompt}[/]"))
+        return 0
 
-    if dry_run:
-        console.print("[yellow]Dry run mode — no generation performed.[/]")
-        console.print(
-            f"Would generate {n} hypotheses for: [bold]{question}[/] in domain [cyan]{dom.value}[/]"
+    if args.dry_run:
+        _print(_render("[yellow]Dry run mode — no generation performed.[/]"))
+        _print(
+            _render(
+                f"Would generate {args.num} hypotheses for: "
+                f"[bold]{args.question}[/] in domain [cyan]{dom.value}[/]"
+            )
         )
-        return
+        return 0
 
-    console.print(f"[bold]Generating hypotheses[/] for: [italic]{question}[/]")
-    console.print(f"Domain: [cyan]{dom.value}[/] | Count: {n}\n")
+    _print(_render(f"[bold]Generating hypotheses[/] for: [italic]{args.question}[/]"))
+    _print(_render(f"Domain: [cyan]{dom.value}[/] | Count: {args.num}\n"))
 
-    hypos = generate_hypotheses(question, domain=dom, n=n)
+    hypos = generate_hypotheses(args.question, domain=dom, n=args.num)
 
-    table = Table(title="Generated Hypotheses", show_lines=True)
-    table.add_column("ID", style="cyan", no_wrap=True)
-    table.add_column("Statement", style="white")
-    table.add_column("Confidence", justify="right")
-
+    rows: list[list[str]] = []
     for h in hypos:
         stmt = h.statement[:90] + ("..." if len(h.statement) > 90 else "")
-        table.add_row(h.id, stmt, f"{h.confidence:.2f}")
-
-    console.print(table)
+        rows.append([h.id, stmt, f"{h.confidence:.2f}"])
+    _print(_format_table("Generated Hypotheses", ["ID", "Statement", "Confidence"], rows))
 
     if hypos:
-        console.print("\n[bold]Detailed view of first hypothesis:[/]\n")
-        console.print(Panel(hypos[0].to_markdown(), title=hypos[0].id, border_style="green"))
+        _print(_render("\n[bold]Detailed view of first hypothesis:[/]\n"))
+        _print(_render(f"[green]{hypos[0].to_markdown()}[/]"))
 
-    if output:
-        data = [h.model_dump(mode="json") for h in hypos]
-        output.write_text(json.dumps(data, indent=2, default=str))
-        console.print(f"\n[green]Saved to {output}[/]")
+    if args.output:
+        data = [h.to_dict() for h in hypos]
+        Path(args.output).write_text(json.dumps(data, indent=2, default=str))
+        _print(_render(f"\n[green]Saved to {args.output}[/]"))
+
+    return 0
 
 
-@app.command()
-def prompt(
-    question: Annotated[str, typer.Argument(help="Research question")],
-    domain: Annotated[
-        DomainChoice,
-        typer.Option("--domain", "-d", help="Scientific domain focus"),
-    ] = DomainChoice.general,
-    n: Annotated[
-        int,
-        typer.Option("--num", "-n", help="Number of hypotheses to propose"),
-    ] = 3,
-) -> None:
+def _cmd_prompt(args: argparse.Namespace) -> int:
     """Print a ready-to-use prompt for a custom generator implementation."""
-    dom = Domain(domain.value)
-    prompt_text = PromptTemplate.render(question, dom, n)
-    console.print(Syntax(prompt_text, "markdown", theme="monokai", line_numbers=False))
+    dom = Domain(args.domain)
+    prompt_text = PromptTemplate.render(args.question, dom, args.num)
+    _print(prompt_text)
+    return 0
 
 
-@app.command()
-def info() -> None:
+def _cmd_info(args: argparse.Namespace) -> int:
     """Show System info, module status, and System health."""
-    from rich.columns import Columns
-    from rich.text import Text
-
     from cds import __version__
 
-    status_panel = Panel.fit(
-        "[bold]System (CDS)[/]\n"
-        "[dim]Pure Python scientific computing system[/]\n\n"
-        "[bold green]Status:[/] Stable\n"
-        "[bold blue]Tests:[/] 1230 Passing\n"
-        "[bold magenta]Deps:[/] 0 External (Pure Python)\n"
-        f"[bold cyan]Version:[/] {__version__}",
-        title="System Info",
-        border_style="green",
-    )
-
-    module_text = Text.from_markup(
-        "[bold]Core Modules:[/]\n"
-        "• [cyan]quantum[/]       • [cyan]signals[/]\n"
-        "• [cyan]math_utils[/]    • [cyan]stats[/]\n"
-        "• [cyan]optimization[/]  • [cyan]montecarlo[/]\n"
-        "• [cyan]hypothesis[/]    • [cyan]diffeq[/]\n"
-        "• [cyan]graph[/]         • [cyan]data_analysis[/]\n"
-        "• [cyan]ml[/]            • [cyan]probability[/]\n"
-        "• [cyan]scientific[/]    • [cyan]numerical_integration[/]"
-    )
-
-    capability_panel = Panel.fit(module_text, title="Architecture", border_style="blue")
-
-    console.print(Columns([status_panel, capability_panel]))
+    _print(_render("[bold]System (CDS)[/]"))
+    _print(_render("[dim]Pure Python scientific computing system[/]"))
+    _print("")
+    _print(_render("[bold green]Status:[/] Stable"))
+    _print(_render("[bold blue]Tests:[/] 1284 Passing"))
+    _print(_render("[bold magenta]Deps:[/] 0 External (Pure Python)"))
+    _print(_render(f"[bold cyan]Version:[/] {__version__}"))
+    _print("")
+    _print(_render("[bold]Architecture:[/]"))
+    _print(_render("[bold]Core Modules:[/]"))
+    for line in (
+        "quantum       signals",
+        "math_utils    stats",
+        "optimization  montecarlo",
+        "hypothesis    diffeq",
+        "graph         data_analysis",
+        "ml            probability",
+        "scientific    numerical_integration",
+    ):
+        _print(f"  • {line}")
+    return 0
 
 
-@app.command()
-def dashboard() -> None:
+def _cmd_dashboard(args: argparse.Namespace) -> int:
     """Launch the interactive System dashboard."""
-    import os
-    import subprocess
-    import sys
-    from pathlib import Path
-
     root_dir = Path(__file__).parent.parent.parent
     dashboard_path = root_dir / "dashboard" / "app.py"
     if not dashboard_path.exists():
-        console.print("[red]Error:[/] Dashboard file not found at " + str(dashboard_path))
-        return
+        _print(_render("[red]Error:[/] Dashboard file not found at " + str(dashboard_path)))
+        return 1
 
-    console.print("[yellow]Launching System Interactive Dashboard...[/]")
+    _print(_render("[yellow]Launching System Interactive Dashboard...[/]"))
 
     # Ensure src is in PYTHONPATH so dashboard can import cds
     env = os.environ.copy()
@@ -216,96 +256,93 @@ def dashboard() -> None:
 
     try:
         subprocess.run(
-            [sys.executable, "-m", "streamlit", "run", str(dashboard_path)], check=True, env=env
+            [sys.executable, "-m", "streamlit", "run", str(dashboard_path)],
+            check=True,
+            env=env,
         )
     except KeyboardInterrupt:
-        console.print("\n[blue]Dashboard stopped.[/]")
+        _print(_render("\n[blue]Dashboard stopped.[/]"))
     except FileNotFoundError:
-        console.print(
-            "[red]Error:[/] Streamlit not found. Install it with 'pip install streamlit'."
+        _print(
+            _render("[red]Error:[/] Streamlit not found. Install it with 'pip install streamlit'.")
         )
+        return 1
+    return 0
 
 
-@app.command()
-def benchmark() -> None:
+def _cmd_benchmark(args: argparse.Namespace) -> int:
     """Run built-in benchmarks to verify performance."""
-    console.print("[yellow]Benchmarking System performance...[/]")
-    console.print("Run 'python benchmarks/run_benchmarks.py' for detailed results.")
+    _print(_render("[yellow]Benchmarking System performance...[/]"))
+    _print("Run 'python benchmarks/run_benchmarks.py' for detailed results.")
+    return 0
 
 
-@app.command()
-def constants() -> None:
+def _cmd_constants(args: argparse.Namespace) -> int:
     """List available physical constants."""
     from cds.scientific.constants import CONSTANTS
 
-    table = Table(title="Physical Constants")
-    table.add_column("Name", style="cyan")
-    table.add_column("Value")
-    table.add_column("Description")
-    for name, (val, desc) in CONSTANTS.items():
-        table.add_row(name, f"{val:.6e}" if val < 0.01 or val > 1e4 else f"{val}", desc)
-    console.print(table)
+    rows = [
+        [name, f"{val:.6e}" if val < 0.01 or val > 1e4 else f"{val}", desc]
+        for name, (val, desc) in CONSTANTS.items()
+    ]
+    _print(_format_table("Physical Constants", ["Name", "Value", "Description"], rows))
+    return 0
 
 
-@app.command()
-def plot(
-    values: Annotated[str, typer.Argument(help="Comma-separated list of numbers (e.g. '1,5,3,8')")],
-    title: Annotated[str, typer.Option("--title", "-t", help="Title of the plot")] = "CLI Plot",
-) -> None:
+def _cmd_plot(args: argparse.Namespace) -> int:
     """Plot a series of numbers directly in the terminal."""
     from cds.data_analysis.viz import plot_line
 
     try:
-        data = [float(x.strip()) for x in values.split(",")]
-        console.print(plot_line(data, title=title))
+        data = [float(x.strip()) for x in args.values.split(",")]
+        _print(plot_line(data, title=args.title))
     except ValueError:
-        console.print("[red]Error:[/] Values must be a comma-separated list of numbers.")
+        _print(_render("[red]Error:[/] Values must be a comma-separated list of numbers."))
+        return 1
+    return 0
 
 
-@app.command()
-def calc(
-    formula: Annotated[str, typer.Argument(help="Formula: ke, gravity, wave, gas")],
-) -> None:
+def _cmd_calc(args: argparse.Namespace) -> int:
     """Quick physics calculations."""
     from cds.scientific import formulas
 
     try:
-        if formula == "ke":
-            console.print("KE = 0.5 * m * v²")
-            m = float(typer.prompt("mass (kg)"))
-            v = float(typer.prompt("velocity (m/s)"))
-            console.print(f"[green]Kinetic Energy = {formulas.kinetic_energy(m, v):.4f} J[/]")
-        elif formula == "gravity":
-            console.print("F = G * m1 * m2 / r²")
-            m1 = float(typer.prompt("mass 1 (kg)"))
-            m2 = float(typer.prompt("mass 2 (kg)"))
-            r = float(typer.prompt("distance (m)"))
-            console.print(f"[green]Force = {formulas.gravitational_force(m1, m2, r):.6e} N[/]")
-        elif formula == "wave":
-            wl = float(typer.prompt("wavelength (m)"))
-            console.print(f"[green]Frequency = {formulas.wave_frequency(wl):.4e} Hz[/]")
-        elif formula == "gas":
-            n = float(typer.prompt("moles"))
-            t = float(typer.prompt("temperature (K)"))
-            v = float(typer.prompt("volume (m³)"))
-            console.print(f"[green]Pressure = {formulas.ideal_gas_pressure(n, t, v):.2f} Pa[/]")
+        if args.formula == "ke":
+            _print("KE = 0.5 * m * v²")
+            m = float(input("mass (kg) "))
+            v = float(input("velocity (m/s) "))
+            _print(_render(f"[green]Kinetic Energy = {formulas.kinetic_energy(m, v):.4f} J[/]"))
+        elif args.formula == "gravity":
+            _print("F = G * m1 * m2 / r²")
+            m1 = float(input("mass 1 (kg) "))
+            m2 = float(input("mass 2 (kg) "))
+            r = float(input("distance (m) "))
+            _print(_render(f"[green]Force = {formulas.gravitational_force(m1, m2, r):.6e} N[/]"))
+        elif args.formula == "wave":
+            wl = float(input("wavelength (m) "))
+            _print(_render(f"[green]Frequency = {formulas.wave_frequency(wl):.4e} Hz[/]"))
+        elif args.formula == "gas":
+            n = float(input("moles "))
+            t = float(input("temperature (K) "))
+            v = float(input("volume (m³) "))
+            _print(_render(f"[green]Pressure = {formulas.ideal_gas_pressure(n, t, v):.2f} Pa[/]"))
         else:
-            console.print(f"[red]Unknown formula '{formula}'. Options: ke, gravity, wave, gas[/]")
+            _print(
+                _render(
+                    f"[red]Unknown formula '{args.formula}'. Options: ke, gravity, wave, gas[/]"
+                )
+            )
     except ValueError:
-        console.print("[red]Error:[/] Input must be a valid number.")
-    except Exception as e:
-        console.print(f"[red]Error:[/] {str(e)}")
+        _print(_render("[red]Error:[/] Input must be a valid number."))
+        return 1
+    except Exception as e:  # noqa: BLE001 — CLI surface, keep the message readable
+        _print(_render(f"[red]Error:[/] {str(e)}"))
+        return 1
+    return 0
 
 
-@app.command()
-def modules() -> None:
+def _cmd_modules(args: argparse.Namespace) -> int:
     """List all scientific modules available in the System."""
-    from rich import box
-
-    table = Table(title="System Scientific Modules", box=box.SIMPLE_HEAVY)
-    table.add_column("Module", style="cyan bold")
-    table.add_column("Key Capabilities", style="white")
-
     module_info = [
         ("cds.quantum", "Single & multi-qubit circuits, Bell/GHZ states, entanglement"),
         ("cds.signals", "DFT, radix-2 FFT, 2D FFT, convolution, filtering"),
@@ -330,14 +367,120 @@ def modules() -> None:
             "Structured hypothesis generation with prompt templates for custom research workflows",
         ),
     ]
+    rows = [[name, desc] for name, desc in module_info]
+    _print(_format_table("System Scientific Modules", ["Module", "Key Capabilities"], rows))
+    _print(_render("\n[dim]All modules are pure Python with no heavy dependencies.[/]"))
+    _print(_render("[dim]See examples/ for runnable demos of each module.[/]\n"))
+    return 0
 
-    for name, desc in module_info:
-        table.add_row(name, desc)
 
-    console.print(table)
-    console.print("\n[dim]All modules are pure Python with no heavy dependencies.[/dim]")
-    console.print("[dim]See examples/ for runnable demos of each module.[/dim]\n")
+# --------------------------------------------------------------------------- #
+# Argument parser construction
+# --------------------------------------------------------------------------- #
+_DOMAIN_CHOICES = ["physics", "cosmology", "mathematics", "biology", "chemistry", "general_science"]
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    """Construct the top-level ``cds`` argument parser and its subcommands."""
+    parser = argparse.ArgumentParser(
+        prog="cds",
+        description="Cognitive Discovery System — computational science platform.",
+    )
+    parser.add_argument("--version", "-v", action="store_true", help="Show System version and exit")
+
+    sub = parser.add_subparsers(dest="command")
+
+    p_version = sub.add_parser("version", help="Show System version.")
+    p_version.set_defaults(func=_cmd_version)
+
+    p_hyp = sub.add_parser(
+        "hypothesis", help="Generate scientific hypotheses for a research question."
+    )
+    p_hyp.add_argument("question", help="The core research question or problem")
+    p_hyp.add_argument(
+        "--domain",
+        "-d",
+        default="general_science",
+        choices=_DOMAIN_CHOICES,
+        help="Scientific domain focus",
+    )
+    p_hyp.add_argument("--num", "-n", type=int, default=3, help="Number of hypotheses to propose")
+    p_hyp.add_argument("--output", "-o", help="Save results as JSON")
+    p_hyp.add_argument("--show-prompt", action="store_true", help="Print the exact prompt template")
+    p_hyp.add_argument("--dry-run", action="store_true", help="Do not run generation logic")
+    p_hyp.set_defaults(func=_cmd_hypothesis)
+
+    p_prompt = sub.add_parser("prompt", help="Print a ready-to-use prompt for a custom generator.")
+    p_prompt.add_argument("question", help="Research question")
+    p_prompt.add_argument(
+        "--domain",
+        "-d",
+        default="general_science",
+        choices=_DOMAIN_CHOICES,
+        help="Scientific domain focus",
+    )
+    p_prompt.add_argument(
+        "--num", "-n", type=int, default=3, help="Number of hypotheses to propose"
+    )
+    p_prompt.set_defaults(func=_cmd_prompt)
+
+    p_info = sub.add_parser("info", help="Show System info, module status, and System health.")
+    p_info.set_defaults(func=_cmd_info)
+
+    sub.add_parser("dashboard", help="Launch the interactive System dashboard.").set_defaults(
+        func=_cmd_dashboard
+    )
+    sub.add_parser("benchmark", help="Run built-in benchmarks to verify performance.").set_defaults(
+        func=_cmd_benchmark
+    )
+    sub.add_parser("constants", help="List available physical constants.").set_defaults(
+        func=_cmd_constants
+    )
+
+    p_plot = sub.add_parser("plot", help="Plot a series of numbers directly in the terminal.")
+    p_plot.add_argument("values", help="Comma-separated list of numbers (e.g. '1,5,3,8')")
+    p_plot.add_argument("--title", "-t", default="CLI Plot", help="Title of the plot")
+    p_plot.set_defaults(func=_cmd_plot)
+
+    p_calc = sub.add_parser("calc", help="Quick physics calculations.")
+    p_calc.add_argument("formula", help="Formula: ke, gravity, wave, gas")
+    p_calc.set_defaults(func=_cmd_calc)
+
+    sub.add_parser(
+        "modules", help="List all scientific modules available in the System."
+    ).set_defaults(func=_cmd_modules)
+
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """CLI entry point. Returns the process exit code.
+
+    When ``argv`` is ``None`` (the normal ``cds`` invocation) it reads
+    :data:`sys.argv`; tests pass an explicit list so no subprocess is needed.
+
+    argparse raises :class:`SystemExit` for ``--help`` and usage errors. We
+    catch it here and surface its code as the return value so callers (tests
+    and ``__main__``) never see an exception — only an integer exit code.
+    """
+    parser = _build_parser()
+    try:
+        args = parser.parse_args(argv)
+    except SystemExit as exc:
+        return int(exc.code) if isinstance(exc.code, int) else 0
+
+    if args.version:
+        from cds import __version__
+
+        _print(_render(f"[bold]System[/] version [cyan]{__version__}[/]"))
+        return 0
+
+    func = getattr(args, "func", None)
+    if func is None:
+        parser.print_help()
+        return 0
+    return int(func(args))
 
 
 if __name__ == "__main__":  # pragma: no cover
-    app()
+    sys.exit(main())

@@ -5,9 +5,9 @@
 # (e.g. some CI images, Binder, plain virtualenvs). Keep the two in sync.
 #
 # Install:  pip install -r requirements.txt
-#           (the package itself stays zero-dependency at runtime by default;
-#            these three are pulled in only when using the CLI/dashboard extras)
-
-typer[all]>=0.9.0
-pydantic>=2.0
-rich>=13.0
+#
+# The package is zero-dependency at runtime: the computational core and the
+# `cds` CLI are implemented purely on the Python standard library (argparse,
+# dataclasses). Previously typer/pydantic/rich were required, but the v1.1.9
+# refactor removed them entirely, so this file is intentionally empty — there
+# is nothing to install beyond Python itself.

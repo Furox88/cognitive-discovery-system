@@ -77,6 +77,10 @@ class MiniGPT:
         max_len: int = 64,
         seed: int = 0xC0DE,
     ) -> None:
+        """Validate dimensions and build the embedding/encoder/head sub-layers.
+
+        See the class docstring for the meaning of each argument.
+        """
         if d_model % n_heads != 0:
             raise ValueError(f"d_model {d_model} must be divisible by n_heads {n_heads}")
         if d_ff < 1:

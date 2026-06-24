@@ -118,44 +118,59 @@ class Expression:
 
     # ------------------------------------------------------------------ #
     # Operator overloads — promote numbers to Constant so math reads naturally.
+    # Each dunder coerces the plain-number operand to a :class:`Constant` and
+    # returns the matching AST node; no mutation, no evaluation.
     # ------------------------------------------------------------------ #
     def __add__(self, other: Expression | float | int) -> Expression:
+        """Return ``self + other`` as an :class:`Add` node."""
         return Add(self, _coerce(other))
 
     def __radd__(self, other: float | int) -> Expression:
+        """Return ``other + self`` (``other`` is a number) as an :class:`Add` node."""
         return Add(_coerce(other), self)
 
     def __sub__(self, other: Expression | float | int) -> Expression:
+        """Return ``self - other`` as a :class:`Sub` node."""
         return Sub(self, _coerce(other))
 
     def __rsub__(self, other: float | int) -> Expression:
+        """Return ``other - self`` (``other`` is a number) as a :class:`Sub` node."""
         return Sub(_coerce(other), self)
 
     def __mul__(self, other: Expression | float | int) -> Expression:
+        """Return ``self * other`` as a :class:`Mul` node."""
         return Mul(self, _coerce(other))
 
     def __rmul__(self, other: float | int) -> Expression:
+        """Return ``other * self`` (``other`` is a number) as a :class:`Mul` node."""
         return Mul(_coerce(other), self)
 
     def __truediv__(self, other: Expression | float | int) -> Expression:
+        """Return ``self / other`` as a :class:`Div` node."""
         return Div(self, _coerce(other))
 
     def __rtruediv__(self, other: float | int) -> Expression:
+        """Return ``other / self`` (``other`` is a number) as a :class:`Div` node."""
         return Div(_coerce(other), self)
 
     def __pow__(self, exponent: Expression | float | int) -> Expression:
+        """Return ``self ** exponent`` as a :class:`Pow` node."""
         return Pow(self, _coerce(exponent))
 
     def __rpow__(self, base: float | int) -> Expression:
+        """Return ``base ** self`` (``base`` is a number) as a :class:`Pow` node."""
         return Pow(_coerce(base), self)
 
     def __neg__(self) -> Expression:
+        """Return the unary negation ``-self`` as ``(-1) * self``."""
         return Mul(Constant(-1.0), self)
 
     def __pos__(self) -> Expression:
+        """Return ``+self`` (a no-op copy of this node)."""
         return self
 
     def __repr__(self) -> str:
+        """Return a developer-facing ``ClassName(<expr>)`` rendering."""
         return f"{self.__class__.__name__}({self.to_str()})"
 
 
@@ -197,32 +212,40 @@ class Constant(Expression):
     __slots__ = ("value",)
 
     def __init__(self, value: float) -> None:
+        """Store the literal value, coerced to ``float``."""
         self.value = float(value)
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return the constant's value (independent of ``env``)."""
         return self.value
 
     def diff(self, var: str) -> Expression:
+        """The derivative of a constant is zero."""
         return Constant(0.0)
 
     def variables(self) -> set[str]:
+        """A constant binds no variables."""
         return set()
 
     def to_str(self) -> str:
+        """Render the value, dropping the ``.0`` for whole numbers."""
         # Render integers without a trailing ".0" for readability.
         if self.value == int(self.value):
             return str(int(self.value))
         return repr(self.value)
 
     def to_latex(self) -> str:
+        """Render the value in LaTeX, dropping the ``.0`` for whole numbers."""
         if self.value == int(self.value):
             return str(int(self.value))
         return repr(self.value)
 
     def __eq__(self, other: object) -> bool:
+        """Two constants are equal iff their values are equal."""
         return isinstance(other, Constant) and other.value == self.value
 
     def __hash__(self) -> int:
+        """Hash keyed on the ``Constant`` tag and value (matches ``__eq__``)."""
         return hash(("Constant", self.value))
 
 
@@ -232,29 +255,37 @@ class Variable(Expression):
     __slots__ = ("name",)
 
     def __init__(self, name: str) -> None:
+        """Store the variable's symbolic ``name``."""
         self.name = name
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Look up this variable's value in ``env`` (raises if unbound)."""
         if self.name not in env:
             raise ValueError(f"no value bound for variable {self.name!r}")
         return env[self.name]
 
     def diff(self, var: str) -> Expression:
+        """Derivative is ``1`` w.r.t. itself, ``0`` otherwise."""
         return Constant(1.0) if var == self.name else Constant(0.0)
 
     def variables(self) -> set[str]:
+        """This variable's own name."""
         return {self.name}
 
     def to_str(self) -> str:
+        """Render the variable name verbatim."""
         return self.name
 
     def to_latex(self) -> str:
+        """Render the variable name verbatim."""
         return self.name
 
     def __eq__(self, other: object) -> bool:
+        """Two variables are equal iff their names match."""
         return isinstance(other, Variable) and other.name == self.name
 
     def __hash__(self) -> int:
+        """Hash keyed on the ``Variable`` tag and name (matches ``__eq__``)."""
         return hash(("Variable", self.name))
 
 
@@ -280,9 +311,11 @@ class Add(_Binary):
     """``left + right``."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return the numeric sum of both operands under ``env``."""
         return self.left.evaluate(env) + self.right.evaluate(env)
 
     def diff(self, var: str) -> Expression:
+        """Sum rule: ``d/dx (u + v) = u' + v'``."""
         return Add(self.left.diff(var), self.right.diff(var))
 
     def simplify(self) -> Expression:
@@ -298,9 +331,11 @@ class Add(_Binary):
         return Add(left, right)
 
     def to_str(self) -> str:
+        """Render the sum as ``(left + right)``."""
         return f"({self.left.to_str()} + {self.right.to_str()})"
 
     def to_latex(self) -> str:
+        """Render the sum in LaTeX as ``left + right``."""
         return f"{self.left.to_latex()} + {self.right.to_latex()}"
 
 
@@ -308,9 +343,11 @@ class Sub(_Binary):
     """``left - right``."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return the numeric difference of both operands under ``env``."""
         return self.left.evaluate(env) - self.right.evaluate(env)
 
     def diff(self, var: str) -> Expression:
+        """Difference rule: ``d/dx (u - v) = u' - v'``."""
         return Sub(self.left.diff(var), self.right.diff(var))
 
     def simplify(self) -> Expression:
@@ -328,9 +365,11 @@ class Sub(_Binary):
         return Sub(left, right)
 
     def to_str(self) -> str:
+        """Render the difference as ``(left - right)``."""
         return f"({self.left.to_str()} - {self.right.to_str()})"
 
     def to_latex(self) -> str:
+        """Render the difference in LaTeX as ``left - right``."""
         return f"{self.left.to_latex()} - {self.right.to_latex()}"
 
 
@@ -338,9 +377,11 @@ class Mul(_Binary):
     """``left * right`` (product rule for differentiation)."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return the numeric product of both operands under ``env``."""
         return self.left.evaluate(env) * self.right.evaluate(env)
 
     def diff(self, var: str) -> Expression:
+        """Product rule: ``d/dx (u * v) = u'*v + u*v'``."""
         # Product rule: d(uv) = u'v + uv'
         return Add(
             Mul(self.left.diff(var), self.right),
@@ -367,9 +408,11 @@ class Mul(_Binary):
         return Mul(left, right)
 
     def to_str(self) -> str:
+        """Render the product as ``(left * right)``."""
         return f"({self.left.to_str()} * {self.right.to_str()})"
 
     def to_latex(self) -> str:
+        """Render the product in LaTeX as ``left \\cdot right``."""
         return f"{self.left.to_latex()} \\cdot {self.right.to_latex()}"
 
 
@@ -377,9 +420,11 @@ class Div(_Binary):
     """``left / right`` (quotient rule for differentiation)."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return the numeric quotient of both operands under ``env``."""
         return self.left.evaluate(env) / self.right.evaluate(env)
 
     def diff(self, var: str) -> Expression:
+        """Quotient rule: ``d/dx (u / v) = (u'*v - u*v') / v^2``."""
         # Quotient rule: d(u/v) = (u'v - uv') / v^2
         return Div(
             Sub(
@@ -408,9 +453,11 @@ class Div(_Binary):
         return Div(left, right)
 
     def to_str(self) -> str:
+        """Render the quotient as ``(left / right)``."""
         return f"({self.left.to_str()} / {self.right.to_str()})"
 
     def to_latex(self) -> str:
+        """Render the quotient in LaTeX as ``\\frac{left}{right}``."""
         return f"\\frac{{{self.left.to_latex()}}}{{{self.right.to_latex()}}}"
 
 
@@ -425,9 +472,15 @@ class Pow(_Binary):
     """
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return the numeric ``left ** right`` under ``env`` (as ``float``)."""
         return float(self.left.evaluate(env) ** self.right.evaluate(env))
 
     def diff(self, var: str) -> Expression:
+        """Differentiate ``u ** v``, dispatching on which side depends on ``var``.
+
+        Covers constant-exponent (power rule), constant-base (exponential
+        rule), and the general logarithmic-differentiation case ``u ** v``.
+        """
         base = self.left
         exp = self.right
         base_has = var in base.variables()
@@ -480,9 +533,11 @@ class Pow(_Binary):
         return Pow(base, exp)
 
     def to_str(self) -> str:
+        """Render the power as ``(left ** right)``."""
         return f"({self.left.to_str()} ** {self.right.to_str()})"
 
     def to_latex(self) -> str:
+        """Render the power in LaTeX as ``left^{right}``."""
         return f"{self.left.to_latex()}^{{{self.right.to_latex()}}}"
 
 
@@ -507,9 +562,11 @@ class Sin(_Unary):
     """``sin(operand)``."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return ``math.sin(operand)`` evaluated under ``env``."""
         return math.sin(self.operand.evaluate(env))
 
     def diff(self, var: str) -> Expression:
+        """Chain rule: ``d/dx sin(u) = cos(u) * u'``."""
         # Chain rule: d/dx sin(u) = cos(u) * u'
         return Mul(Cos(self.operand), self.operand.diff(var))
 
@@ -521,9 +578,11 @@ class Sin(_Unary):
         return Sin(inner)
 
     def to_str(self) -> str:
+        """Render as ``sin(operand)``."""
         return f"sin({self.operand.to_str()})"
 
     def to_latex(self) -> str:
+        """Render in LaTeX as ``\\sin\\left(operand\\right)``."""
         return f"\\sin\\left({self.operand.to_latex()}\\right)"
 
 
@@ -531,9 +590,11 @@ class Cos(_Unary):
     """``cos(operand)``."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return ``math.cos(operand)`` evaluated under ``env``."""
         return math.cos(self.operand.evaluate(env))
 
     def diff(self, var: str) -> Expression:
+        """Chain rule: ``d/dx cos(u) = -sin(u) * u'``."""
         # Chain rule: d/dx cos(u) = -sin(u) * u'
         return Mul(Mul(Constant(-1.0), Sin(self.operand)), self.operand.diff(var))
 
@@ -545,9 +606,11 @@ class Cos(_Unary):
         return Cos(inner)
 
     def to_str(self) -> str:
+        """Render as ``cos(operand)``."""
         return f"cos({self.operand.to_str()})"
 
     def to_latex(self) -> str:
+        """Render in LaTeX as ``\\cos\\left(operand\\right)``."""
         return f"\\cos\\left({self.operand.to_latex()}\\right)"
 
 
@@ -555,9 +618,11 @@ class Exp(_Unary):
     """``e ** operand`` (the exponential function)."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return ``math.exp(operand)`` evaluated under ``env``."""
         return math.exp(self.operand.evaluate(env))
 
     def diff(self, var: str) -> Expression:
+        """Chain rule: ``d/dx exp(u) = exp(u) * u'``."""
         # Chain rule: d/dx exp(u) = exp(u) * u'
         return Mul(Exp(self.operand), self.operand.diff(var))
 
@@ -569,9 +634,11 @@ class Exp(_Unary):
         return Exp(inner)
 
     def to_str(self) -> str:
+        """Render as ``exp(operand)``."""
         return f"exp({self.operand.to_str()})"
 
     def to_latex(self) -> str:
+        """Render in LaTeX as ``e^{operand}``."""
         return f"e^{{{self.operand.to_latex()}}}"
 
 
@@ -579,9 +646,11 @@ class Log(_Unary):
     """``ln(operand)`` (the natural logarithm, base *e*)."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return ``math.log(operand)`` evaluated under ``env``."""
         return math.log(self.operand.evaluate(env))
 
     def diff(self, var: str) -> Expression:
+        """Chain rule: ``d/dx ln(u) = u' / u``."""
         # Chain rule: d/dx ln(u) = u' / u
         return Div(self.operand.diff(var), self.operand)
 
@@ -597,9 +666,11 @@ class Log(_Unary):
         return Log(inner)
 
     def to_str(self) -> str:
+        """Render as ``log(operand)``."""
         return f"log({self.operand.to_str()})"
 
     def to_latex(self) -> str:
+        """Render in LaTeX as ``\\ln\\left(operand\\right)``."""
         return f"\\ln\\left({self.operand.to_latex()}\\right)"
 
 
@@ -607,9 +678,11 @@ class Sqrt(_Unary):
     """``sqrt(operand)`` (the principal square root)."""
 
     def evaluate(self, env: dict[str, float]) -> float:
+        """Return ``math.sqrt(operand)`` evaluated under ``env``."""
         return math.sqrt(self.operand.evaluate(env))
 
     def diff(self, var: str) -> Expression:
+        """Chain rule: ``d/dx sqrt(u) = u' / (2 * sqrt(u))``."""
         # Chain rule: d/dx sqrt(u) = u' / (2 * sqrt(u))
         return Div(
             self.operand.diff(var),
@@ -627,7 +700,9 @@ class Sqrt(_Unary):
         return Sqrt(inner)
 
     def to_str(self) -> str:
+        """Render as ``sqrt(operand)``."""
         return f"sqrt({self.operand.to_str()})"
 
     def to_latex(self) -> str:
+        """Render in LaTeX as ``\\sqrt{operand}``."""
         return f"\\sqrt{{{self.operand.to_latex()}}}"

@@ -187,6 +187,7 @@ class BPETokenizer:
     eow: str = _END_OF_WORD
 
     def __post_init__(self) -> None:
+        """Build and cache the inverse (id → token) vocabulary for fast decoding."""
         # Build the inverse vocabulary. We keep it cached so decode() is
         # O(N) rather than O(N log V).
         self._id_to_token: dict[int, str] = {i: t for t, i in self.vocab.items()}

@@ -1,6 +1,8 @@
 """Allow running the CLI with `python -m cds`."""
 
-from .cli import app
+import sys
+
+from .cli import main
 
 if __name__ == "__main__":  # pragma: no cover
-    app()
+    sys.exit(main())

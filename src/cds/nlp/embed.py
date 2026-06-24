@@ -56,6 +56,7 @@ class TokenEmbedding:
     matrix: list[list[float]] = field(init=False)
 
     def __post_init__(self) -> None:
+        """Validate dimensions and initialise the matrix with Glorot-uniform noise."""
         if self.vocab_size <= 0:
             raise ValueError(f"vocab_size must be > 0, got {self.vocab_size}")
         if self.d_model <= 0:
@@ -125,6 +126,7 @@ class PositionalEncoding:
     matrix: list[list[float]] = field(init=False)
 
     def __post_init__(self) -> None:
+        """Validate dimensions and precompute the sinusoidal encoding matrix."""
         if self.max_len <= 0:
             raise ValueError(f"max_len must be > 0, got {self.max_len}")
         if self.d_model <= 0:

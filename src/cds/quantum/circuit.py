@@ -88,4 +88,5 @@ class QuantumCircuit:
         return q
 
     def __len__(self) -> int:
+        """Return the number of gates in the circuit."""
         return len(self.gates)
