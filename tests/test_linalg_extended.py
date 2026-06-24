@@ -64,6 +64,40 @@ class TestLUDecomposition:
         assert L[0][0] == 1.0
         assert L[1][1] == 1.0
 
+    def test_small_scale_well_conditioned_factors(self) -> None:
+        # A tiny but well-conditioned matrix (all entries ~1e-20). With the
+        # old *absolute* pivot threshold (NEAR_ZERO = 1e-15) every pivot fell
+        # below it and the matrix was wrongly rejected as singular; the
+        # scale-relative threshold now recognizes it as well-conditioned.
+        A = [[2.0e-20, 1.0e-20], [1.0e-20, 3.0e-20]]
+        P, L, U = lu_decomposition(A)
+        from cds.math_utils.linalg import transpose
+
+        P_inv = transpose(P)
+        product = mat_mul(P_inv, mat_mul(L, U))
+        for i in range(2):
+            for j in range(2):
+                assert abs(product[i][j] - A[i][j]) < 1e-29
+
+    def test_small_scale_solve_recovers_solution(self) -> None:
+        # End-to-end check that the scale-relative threshold lets a real
+        # small-magnitude system be solved accurately.
+        A = [[2.0e-20, 1.0e-20], [1.0e-20, 3.0e-20]]
+        b = [5.0e-20, 8.0e-20]
+        x = solve_linear(A, b)
+        # A x should reproduce b
+        for i in range(2):
+            val = sum(A[i][j] * x[j] for j in range(2))
+            assert abs(val - b[i]) < 1e-29
+
+    def test_genuinely_singular_still_rejected_at_small_scale(self) -> None:
+        # Regression guard: the relative threshold must NOT rubber-stamp a
+        # truly rank-deficient matrix just because its entries are small.
+        # Second row is a multiple of the first -> singular at any scale.
+        A = [[1.0e-20, 2.0e-20], [2.0e-20, 4.0e-20]]
+        with pytest.raises(ValueError):
+            lu_decomposition(A)
+
 
 class TestSolveLinear:
     def test_simple_system(self) -> None:

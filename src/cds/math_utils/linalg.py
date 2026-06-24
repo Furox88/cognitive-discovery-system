@@ -107,6 +107,14 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
     A = P_inv * L * U where P_inv is a permutation matrix,
     L is lower triangular (ones on diagonal) and U is upper triangular.
 
+    Pivoting selects the largest-magnitude entry in each column as the pivot
+    (Gaussian elimination with partial pivoting), and the singular-pivot test
+    is *relative* to the matrix scale: a pivot is rejected only when it falls
+    below ``NEAR_ZERO`` scaled by the largest-magnitude entry of the original
+    matrix. A scale-invariant threshold keeps well-conditioned small-magnitude
+    matrices (e.g. ``1e-20 * I``) from being misclassified as singular, while
+    still flagging genuinely rank-deficient inputs.
+
     Returns:
         P, L, U matrices.
 
@@ -118,6 +126,15 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
     L = [[0.0] * n for _ in range(n)]
     U = [row[:] for row in m]
 
+    # Scale reference: the largest |entry| of A. The relative pivot threshold
+    # is derived from this so the singularity test adapts to the matrix scale
+    # rather than being a fixed absolute cutoff. When scale > 0 the threshold
+    # tracks it (so a well-conditioned 1e-20 matrix is not wrongly rejected);
+    # when the matrix is all zeros we fall back to the absolute NEAR_ZERO so
+    # the zero matrix is still flagged as singular.
+    scale = max((abs(U[i][j]) for i in range(n) for j in range(n)), default=0.0)
+    pivot_tol = NEAR_ZERO * scale if scale > 0 else NEAR_ZERO
+
     for k in range(n):
         # Partial pivoting
         pivot_idx = k
@@ -127,7 +144,7 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
                 max_val = abs(U[i][k])
                 pivot_idx = i
 
-        if max_val < NEAR_ZERO:
+        if max_val < pivot_tol:
             raise ValueError(
                 f"zero pivot at column {k} — the input matrix is singular or nearly singular; try regularizing or checking your data"
             )
@@ -147,17 +164,15 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
     return P, L, U
 
 
-def solve_linear(A: Matrix, b: Vector) -> Vector:
-    """Solve Ax = b using PLU decomposition.
+def _lu_solve(P: Matrix, L: Matrix, U: Matrix, b: Vector) -> Vector:
+    """Solve ``LUx = Pb`` from a factored PLU, shared by solve/inverse.
 
-    Solves LUx = Pb.
-
-    Raises:
-        ValueError: if matrix is singular
+    Forward-substitute ``Ly = Pb`` then back-substitute ``Ux = y``. ``P`` is
+    applied to ``b`` first. Extracted so :func:`solve_linear` and
+    :func:`matrix_inverse` share one substitution implementation instead of
+    duplicating the two triangular solves.
     """
-    n = len(A)
-    P, L, U = lu_decomposition(A)
-
+    n = len(L)
     # Apply permutation: Pb
     pb = [sum(P[i][j] * b[j] for j in range(n)) for i in range(n)]
 
@@ -166,16 +181,36 @@ def solve_linear(A: Matrix, b: Vector) -> Vector:
     for i in range(n):
         y[i] = pb[i] - sum(L[i][j] * y[j] for j in range(i))
 
-    # backward: Ux = y
+    # backward: Ux = y. The diagonal is guarded even though lu_decomposition
+    # already rejects singular inputs: the relative-tolerance rejection there
+    # can still leave a tiny pivot that underflows to 0.0 in U on the backward
+    # pass, so we surface that as a clear singular-matrix error here. The guard
+    # is itself scale-relative (mirroring lu_decomposition): a well-conditioned
+    # matrix whose entries are ~1e-20 has U diagonals of the same magnitude,
+    # which a fixed NEAR_ZERO would wrongly flag as zero.
+    u_scale = max((abs(U[i][i]) for i in range(n)), default=0.0)
+    u_tol = NEAR_ZERO * u_scale if u_scale > 0 else NEAR_ZERO
     x = [0.0] * n
     for i in range(n - 1, -1, -1):
-        if abs(U[i][i]) < NEAR_ZERO:
+        if abs(U[i][i]) < u_tol:
             raise ValueError(
                 f"singular matrix — LU backward substitution failed at row {i}; matrix has no unique inverse"
             )
         x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
 
     return x
+
+
+def solve_linear(A: Matrix, b: Vector) -> Vector:
+    """Solve Ax = b using PLU decomposition.
+
+    Solves LUx = Pb.
+
+    Raises:
+        ValueError: if matrix is singular
+    """
+    P, L, U = lu_decomposition(A)
+    return _lu_solve(P, L, U, b)
 
 
 def matrix_inverse(m: Matrix) -> Matrix:
@@ -195,24 +230,7 @@ def matrix_inverse(m: Matrix) -> Matrix:
         # e is the standard basis vector
         b = [0.0] * n
         b[col] = 1.0
-
-        # Apply permutation: Pb
-        pb = [sum(P[i][j] * b[j] for j in range(n)) for i in range(n)]
-
-        # forward: Ly = Pb
-        y = [0.0] * n
-        for i in range(n):
-            y[i] = pb[i] - sum(L[i][j] * y[j] for j in range(i))
-
-        # backward: Ux = y
-        x = [0.0] * n
-        for i in range(n - 1, -1, -1):
-            if abs(U[i][i]) < NEAR_ZERO:
-                raise ValueError(
-                    f"singular matrix — LU backward substitution failed at row {i} (during inverse computation); matrix has no unique inverse"
-                )
-            x[i] = (y[i] - sum(U[i][j] * x[j] for j in range(i + 1, n))) / U[i][i]
-
+        x = _lu_solve(P, L, U, b)
         for row in range(n):
             inv[row][col] = x[row]
 
