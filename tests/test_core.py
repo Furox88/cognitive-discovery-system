@@ -33,7 +33,7 @@ class TestDomainEnum:
 
     def test_domain_round_trip(self) -> None:
         """``Domain(value)`` must recover the member from its string value."""
-        for d in Domain:
+        for d in list(Domain):
             assert Domain(d.value) is d
 
     def test_domain_is_str_subclass(self) -> None:
@@ -48,7 +48,7 @@ class TestHypothesisStatusEnum:
         assert len(values) == len(set(values))
 
     def test_status_round_trip(self) -> None:
-        for s in HypothesisStatus:
+        for s in list(HypothesisStatus):
             assert HypothesisStatus(s.value) is s
 
     def test_status_is_str_subclass(self) -> None:
