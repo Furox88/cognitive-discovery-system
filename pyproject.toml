@@ -79,6 +79,14 @@ dev = [
     # to type-check the lazy pandas import under `mypy src/`. Lives in [dev]
     # (not the runtime `[pandas]` extra) so end users never pull it in.
     "pandas-stubs>=2.0",
+    # Pin numpy under 2.5: pandas-stubs pulls numpy transitively, and the
+    # numpy 2.5 stub (numpy/__init__.pyi) uses `type` statement syntax that
+    # only parses under a Python 3.13+ target. With python_version = "3.10"
+    # that aborts `mypy --strict` with a [syntax] error before any real type
+    # checking happens. CDS never imports numpy; this pin only bounds the
+    # stub pandas-stubs drags into the dev environment. Drop the cap once
+    # mypy's default target advances to 3.13+.
+    "numpy>=2.0,<2.5",
 ]
 docs = [
     "mkdocs>=1.5.0",
