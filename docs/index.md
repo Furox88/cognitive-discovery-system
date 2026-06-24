@@ -15,7 +15,7 @@ CDS is an open-source computational science platform designed for research, simu
 - **Quantum Simulation:** Full state-vector simulation for single and multi-qubit circuits with entanglement and O(1) sampling.
 - **Advanced Mathematics:** O(N³) Partial Pivoting LU decomposition, vectorized optimizers, and adaptive ODE solvers (RK45).
 - **Hypothesis Engine:** Built-in tools for generating and statistically validating scientific hypotheses.
-- **High Reliability:** 1244 tests with 100% code coverage (statement + branch).
+- **High Reliability:** Comprehensive test suite with 100% code coverage (statement + branch) on the reference CI cell. See the CI and codecov badges in the [README](https://github.com/Furox88/cognitive-discovery-system) for the live test count and coverage.
 - **Interactive Tools:** Beautiful CLI and a Streamlit-based web dashboard.
 
 ## Overview of Modules
@@ -49,4 +49,4 @@ CDS is an open-source computational science platform designed for research, simu
 - [Benchmarks](benchmarks.md)
 
 ---
-*CDS v1.1.7 is stable and actively developed. Contributions are welcome!*
+*CDS v1.1.8 is stable and actively developed. Contributions are welcome!*
