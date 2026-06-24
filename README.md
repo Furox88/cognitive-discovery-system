@@ -38,7 +38,7 @@
 > ⭐ **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update:** maintenance release fixing the automated publish pipeline (OIDC → scoped PyPI API token; `release.yml` is now the sole publish authority). No API or behavior changes. The current version is shown in the PyPI badge at the top of this README; see the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges for the live test count and coverage, all in readable pure Python.
+**Latest Update:** `diffeq.solvers` backward-integration bug fix — the fixed-step (`euler`, `rk4`, `midpoint`) and adaptive (`rk45`) ODE solvers, plus `solve_system`, used a forward-only loop guard and silently returned only `y0` when `t_end < t0`. Integration direction is now derived from `copysign(1.0, t_end - t0)`. Forward integration is byte-identical to the prior release; only the previously-broken backward case changes. No API additions. The current version is shown in the PyPI badge at the top of this README; see the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges for the live test count and coverage, all in readable pure Python.
 ---
 
 ## Contents

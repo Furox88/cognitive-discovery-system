@@ -78,7 +78,12 @@ class Expression:
     # Convenience — built on the abstract methods, so shared by all nodes.
     # ------------------------------------------------------------------ #
     def simplify(self) -> Expression:
-        """Constant-fold and apply algebraic identities to simplify this tree."""
+        """Constant-fold and apply algebraic identities to simplify this tree.
+
+        The base implementation is a no-op (returns ``self``); concrete
+        operator subclasses override it to fold constant subexpressions and
+        apply identities such as ``x + 0 -> x`` or ``x * 1 -> x``.
+        """
         return self
 
     def subs(self, **values: float) -> Expression:
@@ -281,6 +286,7 @@ class Add(_Binary):
         return Add(self.left.diff(var), self.right.diff(var))
 
     def simplify(self) -> Expression:
+        """Fold ``c + c`` and drop additive zeros (``0 + x`` or ``x + 0``)."""
         left = self.left.simplify()
         right = self.right.simplify()
         if isinstance(left, Constant) and isinstance(right, Constant):
@@ -308,6 +314,11 @@ class Sub(_Binary):
         return Sub(self.left.diff(var), self.right.diff(var))
 
     def simplify(self) -> Expression:
+        """Fold ``c - c`` and drop a subtractive zero (``x - 0``).
+
+        Note that ``0 - x`` is *not* rewritten to ``-x`` here — that would
+        need a sign negation not expressible as a plain :class:`Sub`.
+        """
         left = self.left.simplify()
         right = self.right.simplify()
         if isinstance(left, Constant) and isinstance(right, Constant):
@@ -337,6 +348,8 @@ class Mul(_Binary):
         )
 
     def simplify(self) -> Expression:
+        """Fold ``c * c``, collapse a zero factor (``0 * x`` -> ``0``), and drop
+        multiplicative identities (``1 * x`` or ``x * 1`` -> ``x``)."""
         left = self.left.simplify()
         right = self.right.simplify()
         if isinstance(left, Constant) and isinstance(right, Constant):
@@ -377,9 +390,16 @@ class Div(_Binary):
         )
 
     def simplify(self) -> Expression:
+        """Fold ``c / c``, collapse a zero numerator (``0 / x`` -> ``0``), and
+        drop a unit denominator (``x / 1`` -> ``x``). A zero divisor is left
+        in place to surface a real error at evaluation time."""
         left = self.left.simplify()
         right = self.right.simplify()
         if isinstance(left, Constant) and isinstance(right, Constant):
+            # A zero divisor is undefined: leave it as a Div so the
+            # ZeroDivisionError surfaces at evaluation time, not here.
+            if right.value == 0.0:
+                return Div(left, right)
             return Constant(left.value / right.value)
         if isinstance(left, Constant) and left.value == 0.0:
             return Constant(0.0)
@@ -437,10 +457,21 @@ class Pow(_Binary):
         )
 
     def simplify(self) -> Expression:
+        """Fold ``c ** c``, and apply the exponent identities ``x ** 0 -> 1``
+        and ``x ** 1 -> x`` once the base and exponent are simplified.
+
+        A constant fold that would yield a complex result (a negative base to a
+        fractional exponent) is left in place so the error surfaces at
+        evaluation time rather than as a ``TypeError`` here."""
         base = self.left.simplify()
         exp = self.right.simplify()
         if isinstance(base, Constant) and isinstance(exp, Constant):
-            return Constant(base.value**exp.value)
+            result = base.value**exp.value
+            # A negative base raised to a fractional exponent is complex; leave
+            # it as a Pow so the (real) evaluation surfaces the error.
+            if isinstance(result, complex):
+                return Pow(base, exp)
+            return Constant(result)
         if isinstance(exp, Constant):
             if exp.value == 0.0:
                 return Constant(1.0)
@@ -483,6 +514,7 @@ class Sin(_Unary):
         return Mul(Cos(self.operand), self.operand.diff(var))
 
     def simplify(self) -> Expression:
+        """Fold ``sin(c)`` to a :class:`Constant`; otherwise simplify the operand."""
         inner = self.operand.simplify()
         if isinstance(inner, Constant):
             return Constant(math.sin(inner.value))
@@ -506,6 +538,7 @@ class Cos(_Unary):
         return Mul(Mul(Constant(-1.0), Sin(self.operand)), self.operand.diff(var))
 
     def simplify(self) -> Expression:
+        """Fold ``cos(c)`` to a :class:`Constant`; otherwise simplify the operand."""
         inner = self.operand.simplify()
         if isinstance(inner, Constant):
             return Constant(math.cos(inner.value))
@@ -529,6 +562,7 @@ class Exp(_Unary):
         return Mul(Exp(self.operand), self.operand.diff(var))
 
     def simplify(self) -> Expression:
+        """Fold ``exp(c)`` to a :class:`Constant`; otherwise simplify the operand."""
         inner = self.operand.simplify()
         if isinstance(inner, Constant):
             return Constant(math.exp(inner.value))
@@ -552,8 +586,13 @@ class Log(_Unary):
         return Div(self.operand.diff(var), self.operand)
 
     def simplify(self) -> Expression:
+        """Fold ``log(c)`` to a :class:`Constant`; otherwise simplify the operand.
+
+        A non-positive operand is left untouched so the domain error surfaces
+        at evaluation time rather than being silently hidden.
+        """
         inner = self.operand.simplify()
-        if isinstance(inner, Constant):
+        if isinstance(inner, Constant) and inner.value > 0.0:
             return Constant(math.log(inner.value))
         return Log(inner)
 
@@ -578,8 +617,12 @@ class Sqrt(_Unary):
         )
 
     def simplify(self) -> Expression:
+        """Fold ``sqrt(c)`` to a :class:`Constant`; otherwise simplify the operand.
+
+        A negative operand is left untouched so the domain error surfaces at
+        evaluation time rather than being silently hidden."""
         inner = self.operand.simplify()
-        if isinstance(inner, Constant):
+        if isinstance(inner, Constant) and inner.value >= 0.0:
             return Constant(math.sqrt(inner.value))
         return Sqrt(inner)
 
