@@ -27,9 +27,13 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
+      # `[pandas]` is included so the optional pandas_io bridge is exercised
+      # (and covered) on every cell. The *core* package stays zero-dependency
+      # at runtime — pandas only lives in this CI test environment so the
+      # importorskip'd tests actually run and the coverage gate stays honest.
       run: |
         python -m pip install --upgrade pip
-        pip install ".[test,dev,docs]"
+        pip install ".[test,dev,docs,pandas]"
 
     - name: Lint with Ruff
       run: ruff check .
