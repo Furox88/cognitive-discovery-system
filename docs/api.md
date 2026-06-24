@@ -16,7 +16,7 @@ The cognitive-discovery centrepiece: structured hypothesis generation from a res
 
 ## Statistics
 
-Descriptive statistics, regression, and frequentist hypothesis tests (t-test, chi-square, ANOVA, Mann-Whitney, …).
+Descriptive statistics, regression, and frequentist hypothesis tests (t-test, chi-square, ANOVA) with companion effect-size measures (Cohen's d, eta-squared, Cramer's V).
 
 ::: cds.stats
 

@@ -46,11 +46,6 @@ from cds.stats import chi_square_independence, one_way_anova
 sonuc = chi_square_independence([[10, 20], [30, 40]])
 print(sonuc.p_value)
 
-# Etki büyüklüğü (yukarıdaki anlamlılık testlerinin tamamlayıcısı)
-from cds.stats import cohens_d, cramers_v
-print(cohens_d([20.0, 22.0, 19.0], [28.0, 31.0, 26.0]))  # standartlaştırılmış ortalama farkı
-print(cramers_v([[10.0, 20.0], [30.0, 40.0]]))  # tablo için ilişki gücü
-
 # Monte Carlo
 from cds.montecarlo import estimate_pi
 pi_tahmin = estimate_pi(samples=100_000, seed=42)
