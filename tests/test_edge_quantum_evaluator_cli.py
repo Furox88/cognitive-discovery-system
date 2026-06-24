@@ -221,6 +221,157 @@ def test_evaluator_one_sample_too_few_raises() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Evaluator: effect-size reporting on each dispatch path
+# ---------------------------------------------------------------------------
+def test_evaluator_two_sample_reports_cohens_d() -> None:
+    # Large separation between two groups -> significant + Cohen's d reported
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    result = evaluator.evaluate(
+        hypo,
+        {"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]]},
+    )
+    assert result.test_name == "Two-sample t-test"
+    assert result.effect_size is not None
+    assert result.effect_size_label == "Cohen's d"
+    # Separation of 5 units on pooled SD ~1.58 -> |d| ~3.16 (large)
+    assert abs(result.effect_size) > 2.0
+
+
+def test_evaluator_anova_reports_eta_squared() -> None:
+    # Three groups with between-group spread -> ANOVA + eta-squared reported
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    result = evaluator.evaluate(
+        hypo,
+        {"groups": [[1.0, 2.0, 3.0], [2.0, 3.0, 4.0], [4.0, 5.0, 6.0]]},
+    )
+    assert result.test_name == "One-way ANOVA"
+    assert result.effect_size is not None
+    assert result.effect_size_label == "eta-squared"
+    assert 0.0 <= result.effect_size <= 1.0
+
+
+def test_evaluator_one_sample_reports_cohens_d() -> None:
+    # Sample shifted far from the reference mean -> significant + Cohen's d
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    result = evaluator.evaluate(
+        hypo,
+        {"one_sample": [10.2, 10.5, 9.8, 11.0, 10.4], "popmean": 5.0},
+    )
+    assert result.test_name == "One-sample t-test"
+    assert result.effect_size is not None
+    assert result.effect_size_label == "Cohen's d"
+    # Shift of ~5 on sample SD ~0.46 -> |d| ~10 (very large)
+    assert result.effect_size > 5.0
+
+
+def test_evaluator_independence_reports_cramers_v() -> None:
+    # Strong diagonal association -> significant + Cramer's V reported
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    table: list[list[float]] = [[100.0, 10.0], [10.0, 100.0]]
+    result = evaluator.evaluate(hypo, {"chi_square_independence": table})
+    assert result.test_name == "Chi-square independence"
+    assert result.effect_size is not None
+    assert result.effect_size_label == "Cramer's V"
+    assert 0.0 <= result.effect_size <= 1.0
+
+
+def test_evaluator_goodness_of_fit_has_no_effect_size() -> None:
+    # Chi-square GOF has no single accepted effect size -> fields stay None
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    result = evaluator.evaluate(hypo, {"chi_square_gof": {"observed": [50, 10, 10, 30]}})
+    assert result.test_name == "Chi-square goodness-of-fit"
+    assert result.effect_size is None
+    assert result.effect_size_label is None
+
+
+def test_evaluator_conclusion_mentions_effect_size() -> None:
+    # The conclusion string should surface the effect size for readability
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    result = evaluator.evaluate(
+        hypo,
+        {"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]]},
+    )
+    assert "Effect size: Cohen's d" in result.conclusion
+
+
+def test_evaluator_paired_reports_cohens_d() -> None:
+    # Paired path routes through compare_groups -> 2-sample t-test + Cohen's d
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    result = evaluator.evaluate(
+        hypo,
+        {"paired": ([1.0, 2.0, 3.0, 4.0], [10.0, 11.0, 12.0, 13.0])},
+    )
+    assert result.test_name == "Two-sample t-test"
+    assert result.effect_size is not None
+    assert result.effect_size_label == "Cohen's d"
+
+
+# ---------------------------------------------------------------------------
+# Evaluator: evaluate_batch (Bonferroni multiple-comparison correction)
+# ---------------------------------------------------------------------------
+def test_evaluator_batch_applies_bonferroni() -> None:
+    # Family of 3 hypotheses at alpha=0.05. One has a genuinely small p
+    # (well below corrected 0.0167), one is borderline-significant alone
+    # (0.04 < 0.05 but > 0.0167), one is clearly non-significant.
+    h1 = _make_hypothesis()
+    h2 = _make_hypothesis()
+    h3 = _make_hypothesis()
+    evaluator = HypothesisEvaluator(alpha=0.05)
+    results = evaluator.evaluate_batch(
+        [h1, h2, h3],
+        [
+            # Strong effect: p far below 0.05/3 ~= 0.0167
+            {"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [20.0, 21.0, 22.0, 23.0, 24.0]]},
+            # Modest effect: significant alone but not after correction
+            {"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [3.0, 4.0, 5.0, 6.0, 7.0]]},
+            # No effect: clearly non-significant
+            {"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [1.5, 2.5, 3.0, 3.5, 4.5]]},
+        ],
+    )
+    assert len(results) == 3
+    # The corrected alpha should appear in each conclusion
+    for r in results:
+        assert "alpha=0.016" in r.conclusion
+
+
+def test_evaluator_batch_single_comparison_matches_evaluate() -> None:
+    # k=1 -> corrected alpha == uncorrected alpha, so the batch result for a
+    # single hypothesis must agree with evaluate() on is_significant.
+    hypo = _make_hypothesis()
+    evaluator = HypothesisEvaluator()
+    single = evaluator.evaluate(
+        hypo,
+        {"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]]},
+    )
+    # Reset status mutated by the single evaluate, then re-run in batch.
+    hypo2 = _make_hypothesis()
+    batched = evaluator.evaluate_batch(
+        [hypo2],
+        [{"groups": [[1.0, 2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]]}],
+    )
+    assert batched[0].is_significant == single.is_significant
+
+
+def test_evaluator_batch_length_mismatch_raises() -> None:
+    evaluator = HypothesisEvaluator()
+    with pytest.raises(ValueError, match="same length"):
+        evaluator.evaluate_batch([_make_hypothesis()], [])
+
+
+def test_evaluator_batch_empty_raises() -> None:
+    evaluator = HypothesisEvaluator()
+    with pytest.raises(ValueError, match="at least one"):
+        evaluator.evaluate_batch([], [])
+
+
+# ---------------------------------------------------------------------------
 # CLI commands: plot, constants, dashboard error path
 # ---------------------------------------------------------------------------
 def test_cli_plot_valid() -> None:
