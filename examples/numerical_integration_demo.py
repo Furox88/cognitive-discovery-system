@@ -52,7 +52,7 @@ def main() -> None:
     poly = gaussian_quadrature_2d(lambda x, y: x**5 * y**5, 0, 1, 0, 1, 3)
     print(
         f"\nGauss-Legendre 2-D (n=3) on x^5 y^5 = {poly:.12f}"
-        f"  (exact 1/36 = {1/36:.12f}, err {abs(poly - 1/36):.2e})"
+        f"  (exact 1/36 = {1 / 36:.12f}, err {abs(poly - 1 / 36):.2e})"
     )
 
 
