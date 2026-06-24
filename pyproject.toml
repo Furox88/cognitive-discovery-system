@@ -43,10 +43,18 @@ all = [
     "mkdocs-material>=9.0.0",
     "mkdocstrings[python]>=0.24.0",
     "hypothesis>=6.100",
+    "pandas>=2.0",
 ]
 dashboard = [
     "streamlit>=1.30.0",
     "pandas",
+]
+# Optional pandas interoperability. Enables the `cds.data_analysis.pandas_io`
+# bridge (to_dataframe / from_dataframe) for users who already work with
+# pandas. The core package stays zero-dependency; opt in with
+# `pip install ".[pandas]"` or via `[all]`.
+pandas = [
+    "pandas>=2.0",
 ]
 test = [
     "pytest>=8.0",
@@ -66,6 +74,11 @@ dev = [
     "build",
     "ipykernel",
     "notebook",
+    # Type stubs for the optional pandas bridge (cds.data_analysis.pandas_io).
+    # The core package is zero-dependency at runtime; this stub is only needed
+    # to type-check the lazy pandas import under `mypy src/`. Lives in [dev]
+    # (not the runtime `[pandas]` extra) so end users never pull it in.
+    "pandas-stubs>=2.0",
 ]
 docs = [
     "mkdocs>=1.5.0",

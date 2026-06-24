@@ -104,6 +104,14 @@ CSV loading, normalisation, smoothing, and ASCII visualisation.
 
 ::: cds.data_analysis
 
+### Pandas Interoperability (optional)
+
+A lossless bridge between CDS's [`DataSet`](#data-analysis) and a pandas
+`DataFrame` — `to_dataframe` / `from_dataframe`. Install with
+`pip install ".[pandas]"`; the core package stays zero-dependency.
+
+::: cds.data_analysis.pandas_io
+
 ## Educational NLP
 
 From-scratch transformer primitives: BPE tokeniser, sinusoidal embeddings, attention, autograd, MiniGPT.
