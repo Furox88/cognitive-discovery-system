@@ -23,7 +23,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from cds.stats._distributions import (  # noqa: F401  (re-exported for compat)
+from cds.stats._distributions import (  # re-exported for compat, see __all__
     _EPS,
     _FPMIN,
     _MAXIT,
@@ -39,6 +39,43 @@ from cds.stats._distributions import (  # noqa: F401  (re-exported for compat)
     t_sf,
 )
 from cds.stats.descriptive import mean, variance
+
+# Explicit re-export list. mypy in strict mode does not treat a bare
+# ``from x import name`` import (even one suppressed for the unused-import
+# lint rule) as an exported module attribute, so
+# ``from cds.stats.hypothesis_tests import t_sf`` fails its attr-defined check.
+# Declaring ``__all__`` marks these names as the module's public surface and
+# satisfies both mypy and the linter that the imports are intentional
+# re-exports rather than unused. The distribution helpers
+# (``t_sf``/``chi2_sf``/``f_sf``) and the private incomplete-gamma/beta
+# routines are kept re-exported for the long-standing import paths documented
+# in the module docstring.
+__all__ = [
+    "TestResult",
+    "one_sample_ttest",
+    "two_sample_ttest",
+    "chi_square_gof",
+    "chi_square_independence",
+    "one_way_anova",
+    "cohens_d",
+    "eta_squared_from_f",
+    "cramers_v",
+    "bonferroni_corrected_alpha",
+    # Re-exported from cds.stats._distributions for backward compatibility.
+    "t_sf",
+    "chi2_sf",
+    "f_sf",
+    "_EPS",
+    "_FPMIN",
+    "_MAXIT",
+    "_betacf",
+    "_betai",
+    "_gammln",
+    "_gammp",
+    "_gammq",
+    "_gcf",
+    "_gser",
+]
 
 
 @dataclass
