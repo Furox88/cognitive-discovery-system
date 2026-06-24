@@ -132,6 +132,13 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
     # tracks it (so a well-conditioned 1e-20 matrix is not wrongly rejected);
     # when the matrix is all zeros we fall back to the absolute NEAR_ZERO so
     # the zero matrix is still flagged as singular.
+    #
+    # The separate ``max_val == 0.0`` arm guards against sub-normal scales: for
+    # a matrix like 2e-309 the product ``NEAR_ZERO * scale`` underflows to 0.0,
+    # which would make the ``< pivot_tol`` test vacuously false and let an
+    # exact 0.0 pivot slip through into a ZeroDivisionError during elimination.
+    # A column whose largest remaining entry is literally 0.0 is always rank-
+    # deficient, so rejecting it is correct at any scale.
     scale = max((abs(U[i][j]) for i in range(n) for j in range(n)), default=0.0)
     pivot_tol = NEAR_ZERO * scale if scale > 0 else NEAR_ZERO
 
@@ -144,7 +151,12 @@ def lu_decomposition(m: Matrix) -> tuple[Matrix, Matrix, Matrix]:
                 max_val = abs(U[i][k])
                 pivot_idx = i
 
-        if max_val < pivot_tol:
+        # Reject a singular pivot. Two cases: an exact 0.0 column-max is
+        # always rank-deficient and must be caught directly (when the matrix
+        # scale is sub-normal the scaled ``pivot_tol`` can underflow to 0.0,
+        # making the ``<`` test vacuous for a literal-zero pivot); otherwise
+        # use the scale-relative threshold.
+        if max_val == 0.0 or max_val < pivot_tol:
             raise ValueError(
                 f"zero pivot at column {k} — the input matrix is singular or nearly singular; try regularizing or checking your data"
             )
@@ -187,12 +199,14 @@ def _lu_solve(P: Matrix, L: Matrix, U: Matrix, b: Vector) -> Vector:
     # pass, so we surface that as a clear singular-matrix error here. The guard
     # is itself scale-relative (mirroring lu_decomposition): a well-conditioned
     # matrix whose entries are ~1e-20 has U diagonals of the same magnitude,
-    # which a fixed NEAR_ZERO would wrongly flag as zero.
+    # which a fixed NEAR_ZERO would wrongly flag as zero. An exact 0.0 diagonal
+    # is rejected directly so a sub-normal scale (where the scaled tolerance
+    # underflows to 0.0) cannot slip a literal-zero pivot through.
     u_scale = max((abs(U[i][i]) for i in range(n)), default=0.0)
     u_tol = NEAR_ZERO * u_scale if u_scale > 0 else NEAR_ZERO
     x = [0.0] * n
     for i in range(n - 1, -1, -1):
-        if abs(U[i][i]) < u_tol:
+        if U[i][i] == 0.0 or abs(U[i][i]) < u_tol:
             raise ValueError(
                 f"singular matrix — LU backward substitution failed at row {i}; matrix has no unique inverse"
             )
