@@ -13,6 +13,14 @@ class Layer:
     """A basic dense (fully-connected) neural network layer."""
 
     def __init__(self, input_size: int, output_size: int, activation: str = "relu"):
+        """Initialise Xavier/Glorot weights, zero biases, and backprop state buffers.
+
+        Args:
+            input_size: Width of the input vector (number of features).
+            output_size: Number of neurons in this layer.
+            activation: Nonlinearity name — ``"relu"``, ``"sigmoid"``,
+                or ``"identity"`` (passthrough).
+        """
         # Xavier/Glorot initialization for weights
         limit = (6.0 / (input_size + output_size)) ** 0.5
         self.weights = [
@@ -99,6 +107,11 @@ class MLP:
     """Multi-Layer Perceptron (Pure Python)."""
 
     def __init__(self, layers: list[Layer]):
+        """Store the ordered :class:`Layer` stack; optimizer state starts unset.
+
+        Args:
+            layers: The :class:`Layer` instances, input layer first.
+        """
         self.layers = layers
         self.optimizer_state: AdamState | None = None
 

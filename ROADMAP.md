@@ -65,6 +65,23 @@ Backward-compatible patches. Highlights:
 - [x] ~~**v1.1.6** — release pipeline fix~~: switched from Trusted Publishing (OIDC, never configured) to a scoped `PYPI_API_TOKEN`; first release actually published by the automated pipeline
 - [x] ~~**v1.1.7** — PEP 639 SPDX license metadata~~: `license = "MIT"` expression replaces the legacy table form so PyPI/GitHub recognize the license; removed drift-prone hardcoded numbers from README
 
+## v1.1.7 – v1.1.8 — Bug-fix patches (Released 2026-06-20 → 2026-06-21)
+
+- [x] ~~**v1.1.7** — PEP 639 SPDX license metadata~~ (`license = "MIT"` expression; license-files declared; classifier drift removed)
+- [x] ~~**v1.1.8** — ODE backward integration bug fix~~ (see CHANGELOG for full details) + hypothesis confidence overflow clamp
+
+## v1.1.9 — Effect-size measures for stats & hypothesis (Released 2026-06-24)
+
+A backward-compatible **minor** release. Adds standardized effect-size
+measures to `cds.stats` so significance tests can be paired with a
+quantitative magnitude estimate.
+
+- [x] ~~`cds.stats.cohens_d(group_a, group_b)`~~ — Cohen's *d* standardized mean difference (pooled-SD denominator)
+- [x] ~~`cds.stats.eta_squared_from_f(f, df1, df2)`~~ — η² proportion of variance explained by group membership (derived from one-way ANOVA *F*)
+- [x] ~~`cds.stats.cramers_v(contingency_table)`~~ — Cramér's *V* association strength for contingency tables (χ²-based, ∈ `[0, 1]`)
+- [x] ~~Tutorial section in `docs/tutorials/hypothesis_tests_demo.md`~~ — "Effect sizes" walkthrough pairing the measures with the existing `t_test` / `chi_square_independence`
+- [x] ~~Docs sync~~ — README module table, `docs/index.md` Key Features + stats description, EN/TR getting-started Python-API snippets
+
 ## Longer Term
 
 Open ideas — not version-committed. Contributions welcome.

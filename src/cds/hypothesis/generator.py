@@ -99,6 +99,7 @@ class SimpleOfflineGenerator:
     """
 
     def __init__(self) -> None:
+        """Load the built-in hypothesis templates keyed by :class:`Domain`."""
         self.templates = {
             Domain.COSMOLOGY: [
                 (

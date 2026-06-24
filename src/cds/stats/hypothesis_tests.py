@@ -405,3 +405,142 @@ def one_way_anova(*groups: list[float]) -> TestResult:
         df=df_between,
         p_value=f_sf(f, df_between, df_within),
     )
+
+
+def cohens_d(group_a: list[float], group_b: list[float]) -> float:
+    """Cohen's d effect size for the difference of two independent means.
+
+    Standardized mean difference using the pooled standard deviation:
+
+        d = (mean_a - mean_b) / s_pooled
+        s_pooled = sqrt(((n_a - 1) * var_a + (n_b - 1) * var_b) / (n_a + n_b - 2))
+
+    Conventional interpretation (Cohen, 1988): |d| ~ 0.2 small, ~0.5 medium,
+    ~0.8 large. The sign reflects the direction (positive = group_a larger).
+
+    Reference: Cohen, J. (1988). "Statistical Power Analysis for the
+    Behavioral Sciences," 2nd ed., Lawrence Erlbaum, §2.5.
+
+    Args:
+        group_a: first sample (n >= 2)
+        group_b: second sample (n >= 2)
+
+    Returns:
+        Cohen's d (signed). Zero when the group means are equal.
+
+    Raises:
+        ValueError: if either group has fewer than 2 observations, or if both
+            groups are constant (pooled variance is zero).
+    """
+    na, nb = len(group_a), len(group_b)
+    if na < 2 or nb < 2:
+        raise ValueError("each sample needs at least 2 observations")
+    va, vb = variance(group_a, ddof=1), variance(group_b, ddof=1)
+    sp2 = ((na - 1) * va + (nb - 1) * vb) / (na + nb - 2)
+    if sp2 == 0.0:
+        raise ValueError("zero pooled variance; Cohen's d undefined")
+    return (mean(group_a) - mean(group_b)) / math.sqrt(sp2)
+
+
+def eta_squared_from_f(f: float, df1: int, df2: int) -> float:
+    """Eta-squared effect size for a one-way ANOVA from its F statistic.
+
+    Converts the F ratio of a one-way ANOVA into the proportion of variance
+    accounted for by group membership:
+
+        eta^2 = (F * df1) / (F * df1 + df2)
+
+    where df1 = k - 1 (between groups) and df2 = N - k (within groups).
+    Range [0, 1]; 0 when F = 0. Conventional interpretation (Cohen, 1988):
+    ~0.01 small, ~0.06 medium, ~0.14 large.
+
+    Reference: Cohen, J. (1988). "Statistical Power Analysis for the
+    Behavioral Sciences," 2nd ed., Lawrence Erlbaum, §8.2.
+
+    Args:
+        f: the ANOVA F statistic (>= 0)
+        df1: between-groups degrees of freedom (k - 1, >= 1)
+        df2: within-groups degrees of freedom (N - k, >= 1)
+
+    Returns:
+        Eta-squared in [0, 1].
+
+    Raises:
+        ValueError: if f < 0, df1 < 1, or df2 < 1.
+    """
+    if f < 0.0:
+        raise ValueError("F statistic must be non-negative")
+    if df1 < 1 or df2 < 1:
+        raise ValueError("df1 and df2 must be >= 1")
+    return (f * df1) / (f * df1 + df2)
+
+
+def cramers_v(table: list[list[float]]) -> float:
+    """Cramer's V effect size for a chi-square test of independence.
+
+    Normalizes the chi-square statistic of an r x c contingency table to
+    [0, 1] by the sample size and the smaller dimension:
+
+        V = sqrt(chi^2 / (N * min(r - 1, c - 1)))
+
+    0 = no association, 1 = perfect association. Conventional interpretation
+    (Cohen, 1988): ~0.1 small, ~0.3 medium, ~0.5 large.
+
+    Reference: Cramer, H. (1946). "Mathematical Methods of Statistics,"
+    Princeton University Press. Interpretation cutoffs from Cohen (1988).
+
+    Args:
+        table: r x c contingency table of non-negative counts (r, c >= 2).
+
+    Returns:
+        Cramer's V in [0, 1].
+
+    Raises:
+        ValueError: if the table is smaller than 2x2, non-rectangular, or has
+            a non-positive total.
+    """
+    rows = len(table)
+    if rows < 2:
+        raise ValueError("need at least 2 rows")
+    cols = len(table[0])
+    if cols < 2 or any(len(r) != cols for r in table):
+        raise ValueError("need a rectangular table with at least 2 columns")
+    n = sum(sum(r) for r in table)
+    if n <= 0:
+        raise ValueError("table total must be positive")
+    # Reuse chi_square_independence for the statistic rather than recomputing.
+    chi2 = chi_square_independence(table).statistic
+    return math.sqrt(chi2 / (n * min(rows - 1, cols - 1)))
+
+
+def bonferroni_corrected_alpha(alpha: float, k: int) -> float:
+    """Family-wise corrected significance level for k comparisons.
+
+    Returns the Bonferroni-corrected per-test alpha that keeps the
+    family-wise error rate at approximately ``alpha`` across ``k`` tests:
+
+        alpha_corrected = alpha / k
+
+    The corrected level is what each individual comparison must beat. For
+    k = 1 it is a no-op (returns ``alpha``). Use it with ``evaluate_batch``
+    so a single significant p-value among many does not overstate evidence.
+
+    Reference: Bonferroni, C. E. (1936); applied as a multiple-comparison
+    procedure by Dunn, O. J. (1961), "Multiple Comparisons Among Means,"
+    Journal of the American Statistical Association, 56(293), 52-64.
+
+    Args:
+        alpha: desired family-wise error rate (e.g. 0.05), in (0, 1).
+        k: number of comparisons in the family (>= 1).
+
+    Returns:
+        Corrected per-test alpha (= alpha / k).
+
+    Raises:
+        ValueError: if k < 1, or alpha is outside (0, 1).
+    """
+    if k < 1:
+        raise ValueError("number of comparisons k must be >= 1")
+    if not 0.0 < alpha < 1.0:
+        raise ValueError("alpha must be in the open interval (0, 1)")
+    return alpha / k

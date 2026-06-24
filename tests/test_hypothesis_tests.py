@@ -1,9 +1,13 @@
 import pytest
 
 from cds.stats import (
+    bonferroni_corrected_alpha,
     chi2_sf,
     chi_square_gof,
     chi_square_independence,
+    cohens_d,
+    cramers_v,
+    eta_squared_from_f,
     f_sf,
     one_sample_ttest,
     one_way_anova,
@@ -157,3 +161,126 @@ class TestANOVA:
     def test_too_few_groups_raises(self) -> None:
         with pytest.raises(ValueError):
             one_way_anova([1, 2, 3])
+
+
+class TestCohensD:
+    def test_known_value(self) -> None:
+        # a=[1..5] (mean 3), b=[6..10] (mean 8), both var 2.5 -> sp=sqrt(2.5),
+        # d = (3-8)/1.5811 ~= -3.1623
+        d = cohens_d([1, 2, 3, 4, 5], [6, 7, 8, 9, 10])
+        assert abs(d - (-3.1623)) < 1e-3
+
+    def test_identical_groups_zero(self) -> None:
+        # Same values -> mean difference 0 -> d == 0
+        d = cohens_d([1, 2, 3, 4], [1, 2, 3, 4])
+        assert abs(d) < 1e-9
+
+    def test_sign_reflects_direction(self) -> None:
+        # Swapping the groups flips the sign of d
+        d1 = cohens_d([1, 2, 3], [4, 5, 6])
+        d2 = cohens_d([4, 5, 6], [1, 2, 3])
+        assert d1 == -d2
+        assert d1 < 0  # group_a smaller than group_b
+        assert d2 > 0
+
+    def test_too_few_raises(self) -> None:
+        with pytest.raises(ValueError):
+            cohens_d([1.0], [1, 2, 3])
+
+    def test_zero_variance_raises(self) -> None:
+        # Both groups constant -> pooled variance 0 -> undefined
+        with pytest.raises(ValueError):
+            cohens_d([5.0, 5.0, 5.0], [5.0, 5.0, 5.0])
+
+
+class TestEtaSquared:
+    def test_known_value(self) -> None:
+        # F=7.0, df1=2, df2=6 -> eta2 = (7*2)/(7*2+6) = 14/20 = 0.7
+        eta2 = eta_squared_from_f(7.0, 2, 6)
+        assert abs(eta2 - 0.7) < 1e-9
+
+    def test_zero_f_zero_eta(self) -> None:
+        # F=0 -> no variance explained
+        assert eta_squared_from_f(0.0, 2, 6) == 0.0
+
+    def test_range_in_unit_interval(self) -> None:
+        # Large F -> eta2 approaches 1 but never reaches it
+        eta2 = eta_squared_from_f(1000.0, 2, 6)
+        assert 0.0 < eta2 < 1.0
+
+    def test_negative_f_raises(self) -> None:
+        with pytest.raises(ValueError):
+            eta_squared_from_f(-1.0, 2, 6)
+
+    def test_invalid_df_raises(self) -> None:
+        with pytest.raises(ValueError):
+            eta_squared_from_f(7.0, 0, 6)
+        with pytest.raises(ValueError):
+            eta_squared_from_f(7.0, 2, 0)
+
+
+class TestCramersV:
+    def test_perfect_association(self) -> None:
+        # Off-diagonal dominance: strong association, V near 1
+        table: list[list[float]] = [[100.0, 0.0], [0.0, 100.0]]
+        v = cramers_v(table)
+        assert abs(v - 1.0) < 1e-9
+
+    def test_independent_table_zero(self) -> None:
+        # Proportional rows -> chi2 ~ 0 -> V ~ 0
+        table = [[10.0, 20.0], [20.0, 40.0]]
+        v = cramers_v(table)
+        assert v < 1e-9
+
+    def test_range_in_unit_interval(self) -> None:
+        table = [[10.0, 20.0], [30.0, 40.0]]
+        v = cramers_v(table)
+        assert 0.0 <= v <= 1.0
+
+    def test_too_small_table_raises(self) -> None:
+        with pytest.raises(ValueError):
+            cramers_v([[1.0, 2.0]])
+
+    def test_too_few_columns_raises(self) -> None:
+        # 2 rows but only 1 column -> cols < 2 branch (line 507).
+        with pytest.raises(ValueError):
+            cramers_v([[1.0], [2.0]])
+
+    def test_non_rectangular_table_raises(self) -> None:
+        # Ragged rows -> any(len(r) != cols) branch (line 507).
+        with pytest.raises(ValueError):
+            cramers_v([[1.0, 2.0], [3.0]])
+
+    def test_zero_total_raises(self) -> None:
+        with pytest.raises(ValueError):
+            cramers_v([[0.0, 0.0], [0.0, 0.0]])
+
+
+class TestBonferroni:
+    def test_known_correction(self) -> None:
+        # alpha=0.05, k=5 -> 0.01
+        assert abs(bonferroni_corrected_alpha(0.05, 5) - 0.01) < 1e-12
+
+    def test_k_one_is_noop(self) -> None:
+        # Single comparison -> corrected alpha equals original
+        assert bonferroni_corrected_alpha(0.05, 1) == 0.05
+
+    def test_k_zero_raises(self) -> None:
+        with pytest.raises(ValueError):
+            bonferroni_corrected_alpha(0.05, 0)
+
+    def test_k_negative_raises(self) -> None:
+        with pytest.raises(ValueError):
+            bonferroni_corrected_alpha(0.05, -3)
+
+    def test_alpha_out_of_range_raises(self) -> None:
+        with pytest.raises(ValueError):
+            bonferroni_corrected_alpha(0.0, 5)
+        with pytest.raises(ValueError):
+            bonferroni_corrected_alpha(1.0, 5)
+
+    def test_strict_monotone_in_k(self) -> None:
+        # More comparisons -> stricter (smaller) corrected alpha
+        a1 = bonferroni_corrected_alpha(0.05, 2)
+        a2 = bonferroni_corrected_alpha(0.05, 10)
+        assert a2 < a1

@@ -14,7 +14,7 @@ CDS is an open-source computational science platform designed for research, simu
 - **Pure Python:** Every module is implemented from scratch using the Python standard library. No heavy dependencies like NumPy or SciPy required.
 - **Quantum Simulation:** Full state-vector simulation for single and multi-qubit circuits with entanglement and O(1) sampling.
 - **Advanced Mathematics:** O(N³) Partial Pivoting LU decomposition, vectorized optimizers, and adaptive ODE solvers (RK45).
-- **Hypothesis Engine:** Built-in tools for generating and statistically validating scientific hypotheses.
+- **Hypothesis Engine:** Built-in tools for generating and statistically validating scientific hypotheses, complemented by effect-size measures (Cohen's d, Cramér's V) that quantify the magnitude of an effect alongside its significance.
 - **High Reliability:** Comprehensive test suite with 100% code coverage (statement + branch) on the reference CI cell. See the CI and codecov badges in the [README](https://github.com/Furox88/cognitive-discovery-system) for the live test count and coverage.
 - **Interactive Tools:** Beautiful CLI and a Streamlit-based web dashboard.
 
@@ -28,7 +28,7 @@ CDS is an open-source computational science platform designed for research, simu
 | `cds.ml` | Pure Python Neural Networks (MLP, Adam-based training) |
 | `cds.signals` | Fast signal processing (DFT, FFT/IFFT, convolution, filtering) |
 | `cds.probability` | Probability distributions & sampling |
-| `cds.stats` | Statistical analysis, regression & hypothesis testing |
+| `cds.stats` | Statistical analysis, regression, hypothesis testing & effect-size measures (Cohen's d, Cramér's V) |
 | `cds.math_utils` | Numerical calculus, linear algebra, eigenvalues |
 | `cds.data_analysis` | Structured data management and visualization |
 | `cds.scientific` | Physical constants & scientific formulas |

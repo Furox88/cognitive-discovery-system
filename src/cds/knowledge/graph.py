@@ -58,9 +58,11 @@ class Concept:
     metadata: dict[str, str] = field(default_factory=dict)
 
     def __eq__(self, other: object) -> bool:
+        """Two concepts are equal iff their ``name`` fields match."""
         return isinstance(other, Concept) and other.name == self.name
 
     def __hash__(self) -> int:
+        """Hash keyed on the ``Concept`` tag and name (matches ``__eq__``)."""
         return hash(("Concept", self.name))
 
     def to_dict(self) -> dict[str, object]:

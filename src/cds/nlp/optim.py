@@ -62,6 +62,7 @@ class SGD:
     _velocities: list[float] = field(init=False, default_factory=list)
 
     def __post_init__(self) -> None:
+        """Validate hyperparameters and allocate one velocity slot per parameter."""
         if self.lr <= 0:
             raise ValueError(f"lr must be > 0, got {self.lr}")
         if not 0.0 <= self.momentum < 1.0:
@@ -120,6 +121,7 @@ class Adam:
     _v: list[float] = field(init=False, default_factory=list)
 
     def __post_init__(self) -> None:
+        """Validate hyperparameters and zero-initialise the moment estimates."""
         if self.lr <= 0:
             raise ValueError(f"lr must be > 0, got {self.lr}")
         if not (0.0 <= self.betas[0] < 1.0 and 0.0 <= self.betas[1] < 1.0):

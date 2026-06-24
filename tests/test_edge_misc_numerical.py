@@ -21,6 +21,7 @@ Targets the last 61 uncovered lines across 14 files:
 import os
 import subprocess
 import sys
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -491,25 +492,41 @@ class TestGeneratorInvalidDomainString:
 
 
 class TestCLIEnvVars:
-    """Cover PYTHONPATH-existing branch (line 214)."""
+    """Cover the PYTHONPATH-already-set branch in the dashboard command."""
 
-    def test_dashboard_with_existing_pythonpath(self) -> None:
-        from typer.testing import CliRunner
+    def test_dashboard_with_existing_pythonpath(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        # Drive the dashboard command with PYTHONPATH already in the
+        # environment, so the "if PYTHONPATH in env" branch in _cmd_dashboard
+        # fires. subprocess.run is mocked so streamlit is never launched; a
+        # KeyboardInterrupt surfaces as the "Dashboard stopped" message.
+        import argparse
 
-        from cds.cli import app
+        from cds.cli import _cmd_dashboard
 
-        runner = CliRunner()
-        # Set PYTHONPATH so the "if PYTHONPATH in env" branch fires.
-        env = {"PYTHONPATH": "/fake/path"}
-        result = runner.invoke(app, ["dashboard"], env=env)
-        # Dashboard won't actually launch in test; expect an error
-        # about streamlit or just a non-zero exit.
-        # The important thing is line 214 was exercised.
-        assert result.exit_code != 0 or "Dashboard" in result.output or "Error" in result.output
+        captured_env: dict[str, str] = {}
+
+        def fake_run(
+            cmd: list[str], *, env: dict[str, str] | None = None, **kwargs: object
+        ) -> None:
+            # Snapshot the environment passed to subprocess so we can assert
+            # that the existing PYTHONPATH was preserved and prepended-to.
+            if env is not None:
+                captured_env.update(env)
+            raise KeyboardInterrupt()
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+        monkeypatch.setattr(Path, "exists", lambda self: True)
+        monkeypatch.setattr(os, "environ", {"PYTHONPATH": "/fake/path"})
+
+        ns = argparse.Namespace()
+        rc = _cmd_dashboard(ns)
+        # The existing PYTHONPATH value must still be present (prepended).
+        assert "/fake/path" in captured_env["PYTHONPATH"]
+        assert rc == 0
 
 
 class TestCLIMainGuard:
-    """Cover if __name__ == "__main__": app() (line 337)."""
+    """Cover `if __name__ == "__main__"` guard in cli.py."""
 
     def test_cli_main_module_run(self) -> None:
         # Run cli.py as __main__ via subprocess.
