@@ -17,6 +17,19 @@ from cds.stats.hypothesis_tests import (
     two_sample_ttest,
 )
 from cds.stats.regression import RegressionResult, linear_regression
+from cds.stats.time_series import (
+    LjungBoxResult,
+    StationarityResult,
+    autocorrelation,
+    autocorrelation_function,
+    difference,
+    exponential_smoothing,
+    kpss_statistic,
+    ljung_box,
+    moving_average,
+    partial_autocorrelation,
+    seasonal_decompose,
+)
 
 __all__ = [
     "mean",
@@ -39,4 +52,16 @@ __all__ = [
     "eta_squared_from_f",
     "cramers_v",
     "bonferroni_corrected_alpha",
+    # Time-series analysis
+    "autocorrelation",
+    "autocorrelation_function",
+    "partial_autocorrelation",
+    "moving_average",
+    "exponential_smoothing",
+    "difference",
+    "kpss_statistic",
+    "seasonal_decompose",
+    "ljung_box",
+    "LjungBoxResult",
+    "StationarityResult",
 ]
