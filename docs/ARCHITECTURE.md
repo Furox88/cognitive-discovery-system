@@ -86,6 +86,7 @@ graph TD
     math_utils --> core
     stats --> core
     diffeq --> core
+    optimization --> core
     quantum --> core
     ml --> core
     nlp --> core
@@ -240,3 +241,12 @@ src/cds/
 Tests mirror this layout one-to-one under `tests/` (e.g.
 `src/cds/stats/time_series.py` ↔ `tests/test_stats_time_series.py`), so
 finding the coverage for any module is a matter of matching the name.
+
+---
+
+## Where to go next
+
+- **[Cookbook](cookbook.md)** — copy-pasteable recipes for every module.
+- **[Tour of Numerical Methods](tour_of_numerical_methods.md)** — a guided
+  end-to-end walkthrough.
+- **[API Reference](api.md)** — the authoritative signatures and defaults.

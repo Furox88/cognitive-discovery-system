@@ -80,12 +80,14 @@ nav:
       - NLP — Attention: tutorials/nlp_attention_demo.md
       - NLP — MiniGPT: tutorials/nlp_mini_gpt_demo.md
       - NLP Visualisation: tutorials/nlp_viz.md
+  - Cookbook: cookbook.md
   - API Reference: api.md
   - Case Studies:
       - Hubble Tension: CASE_STUDY_HUBBLE.md
       - Quantum-ML: CASE_STUDY_QUANTUM_ML.md
   - Research Workflows: research-workflows.md
   - Performance: benchmarks.md
+  - Architecture: ARCHITECTURE.md
   - Maintenance: maintenance.md
 
 markdown_extensions:

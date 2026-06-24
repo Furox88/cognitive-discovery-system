@@ -82,14 +82,37 @@ quantitative magnitude estimate.
 - [x] ~~Tutorial section in `docs/tutorials/hypothesis_tests_demo.md`~~ — "Effect sizes" walkthrough pairing the measures with the existing `t_test` / `chi_square_independence`
 - [x] ~~Docs sync~~ — README module table, `docs/index.md` Key Features + stats description, EN/TR getting-started Python-API snippets
 
+## v1.2.0 — Multi-module expansion (In progress)
+
+A backward-compatible **minor** release in progress on the
+`feat/v1.2.0-multimodule-expansion` branch. Theme: horizontal expansion of the
+domain toolkits plus a documentation overhaul, with zero-dependency guarantees
+preserved (pandas is an opt-in extra). See `CHANGELOG.md` for full detail.
+
+- [x] ~~**`cds.stats` time-series analysis**~~ — ACF/PACF, KPSS stationarity test,
+      Ljung-Box autocorrelation test, moving average / exponential smoothing /
+      differencing / seasonal decomposition
+- [x] ~~**`cds.signals` filter design**~~ — `butter_lowpass` IIR design +
+      `apply_filter` + `moving_median` denoiser
+- [x] ~~**`cds.numerical_integration` 2-D quadrature**~~ — tensor-product Simpson
+      and Gauss-Legendre rules
+- [x] ~~**`cds[pandas]` optional extra**~~ — `to_dataframe` / `from_dataframe`
+      interop bridge, gated behind the extra so the core stays dependency-free
+- [x] ~~**Refactors**~~ — `modeling/expression.py` split into `_base.py` +
+      `_nodes.py`; stats distribution functions extracted into `_distributions.py`
+- [x] ~~**Numerical-stability fixes**~~ — scale-relative pivoting in `linalg`,
+      exact-zero pivot rejection at sub-normal scales
+- [x] ~~**Documentation**~~ — new Cookbook (`docs/cookbook.md`), Architecture
+      guide (`docs/ARCHITECTURE.md`), expanded Tour of Numerical Methods,
+      README/`index.md` cross-links
+
 ## Longer Term
 
 Open ideas — not version-committed. Contributions welcome.
 
-- Optional lightweight extras: `cds[plot]` for matplotlib integration, `cds[pandas]` for DataFrame interop
+- Optional lightweight extras: `cds[plot]` for matplotlib integration
 - Notebook templates (Jupyter) for non-CLI users
 - Community-contributed domain modules (bioinformatics, finance)
-- Education-focused "tour of numerical methods" guide
 - **CDS Script Templates** — domain-specific scientific workflows (quantum chemistry, signal processing demos)
 
 ### Completed tracks (graduated out of this section)
@@ -97,6 +120,8 @@ Open ideas — not version-committed. Contributions welcome.
 - **Educational NLP track** — shipped across v0.9.0b5 → v1.0.0 (now `cds.nlp`): BPE tokenizer + embeddings, multi-head self-attention, pure-Python autograd with optional `cds[fast-jit]` Numba backend, tiny GPT-from-scratch, attention/embedding visualisations. Scope explicitly excludes production-scale training (PyTorch / JAX / MLX territory).
 - **Mathematical Modeling Framework** ([#2](https://github.com/Furox88/cognitive-discovery-system/issues/2)) — shipped in v1.1.0 as `cds.modeling`.
 - **Knowledge Organization System** ([#3](https://github.com/Furox88/cognitive-discovery-system/issues/3)) — shipped in v1.1.0 as `cds.knowledge`.
+- **Optional pandas interop** — shipped in v1.2.0 as the `cds[pandas]` extra (`to_dataframe` / `from_dataframe`).
+- **"Tour of Numerical Methods" guide** — shipped in v1.0.0 and expanded through v1.2.0 (`docs/tour_of_numerical_methods.md`).
 
 ---
 
