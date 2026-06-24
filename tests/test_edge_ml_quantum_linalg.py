@@ -25,6 +25,7 @@ from cds.math_utils.linalg import (
 )
 from cds.ml.neural import Layer
 from cds.quantum.multi_qubit import QuantumRegister
+from cds.stats import _distributions as dist
 from cds.stats import hypothesis_tests as ht
 
 # ---------------------------------------------------------------------------
@@ -218,14 +219,17 @@ class TestGammaBetaFPMINClamps:
 
     def test_gcf_fpmin_clamps_fire(self) -> None:
         # _gcf path (regime x >= a+1). Raised _FPMIN forces lines 87 & 90.
-        with mock.patch.object(ht, "_FPMIN", 1.0):
+        # Patch _distributions._FPMIN: that is the module _gcf reads, since
+        # the special functions now live in cds.stats._distributions.
+        with mock.patch.object(dist, "_FPMIN", 1.0):
             val = ht._gcf(2.0, 10.0)
         assert math.isfinite(val) and val >= 0.0
 
     def test_betacf_fpmin_clamps_fire(self) -> None:
         # _betacf: raised _FPMIN forces the initial clamp (128) and all four
-        # in-loop clamps (136, 139, 145, 148).
-        with mock.patch.object(ht, "_FPMIN", 1.0):
+        # in-loop clamps (136, 139, 145, 148). Patch _distributions._FPMIN
+        # because _betacf reads its _FPMIN from cds.stats._distributions.
+        with mock.patch.object(dist, "_FPMIN", 1.0):
             val = ht._betacf(2.0, 3.0, 0.5)
         assert math.isfinite(val)
 
