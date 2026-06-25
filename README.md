@@ -39,7 +39,7 @@
 > ⭐ **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update:** `diffeq.solvers` backward-integration bug fix — the fixed-step (`euler`, `rk4`, `midpoint`) and adaptive (`rk45`) ODE solvers, plus `solve_system`, used a forward-only loop guard and silently returned only `y0` when `t_end < t0`. Integration direction is now derived from `copysign(1.0, t_end - t0)`. Forward integration is byte-identical to the prior release; only the previously-broken backward case changes. No API additions. The current version is shown in the PyPI badge at the top of this README; the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges carry the live test count and coverage.
+**Latest Update (v1.2.0):** horizontal expansion + hardening — three new domain features landed in existing modules: **time-series analysis** in `cds.stats` (ACF/PACF, KPSS & Ljung-Box tests, exponential smoothing, seasonal decomposition), **signal-filter design** in `cds.signals` (Butterworth IIR low/high/band, moving-median denoiser), and **2-D tensor-product quadrature** in `cds.numerical_integration` (Simpson + Gauss-Legendre). An optional `cds[pandas]` extra adds `to_dataframe`/`from_dataframe` interop without touching the zero-dependency core. Docs got a new Cookbook (~48 verified recipes), an Architecture guide, and an expanded Tour. No existing public API removed or renamed. The current version is shown in the PyPI badge at the top; the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges carry the live test count and coverage.
 ---
 
 ## Contents
@@ -135,21 +135,22 @@ If CDS is useful in your research or publications, please cite it using the info
 
 | Module | Description |
 |--------|-------------|
+| `cds.core` | Shared data model — `Domain`, `Hypothesis`, `HypothesisStatus` types used across modules |
 | `cds.quantum` | Single & multi-qubit simulation — Hadamard, Pauli, CNOT, SWAP, Toffoli, Bell/GHZ states, entanglement detection |
 | `cds.optimization` | Gradient descent, Newton's method, Adam optimizer, golden section search |
 | `cds.ml` | Pure Python Neural Networks — MLP, dense layers, Adam-based training |
-| `cds.signals` | DFT, radix-2 FFT/IFFT (O(N log N)), 2D FFT/IFFT, convolution, power spectrum, filtering |
+| `cds.signals` | DFT, radix-2 FFT/IFFT (O(N log N)), 2D FFT/IFFT, convolution, power spectrum, **Butterworth IIR filter design** (low/high/band), moving-median denoiser |
 | `cds.probability` | Gaussian, uniform, exponential, binomial, Poisson distributions |
-| `cds.stats` | Descriptive stats, Pearson correlation, linear regression, t-test, chi-square, ANOVA, effect-size measures (Cohen's d, η², Cramér's V), Bonferroni correction |
+| `cds.stats` | Descriptive stats, Pearson correlation, linear regression, t-test, chi-square, ANOVA, effect-size measures (Cohen's d, η², Cramér's V), Bonferroni correction, **time-series analysis** (ACF/PACF, KPSS, Ljung-Box, exponential smoothing, seasonal decomposition) |
 | `cds.math_utils` | Numerical calculus, O(N³) LU / QR / Cholesky, eigenvalue (power iteration), Gram-Schmidt, matrix inverse |
-| `cds.data_analysis` | Mini-Pandas `DataSet` for filtering/grouping, CSV loading, ASCII visualization |
+| `cds.data_analysis` | Mini-Pandas `DataSet` for filtering/grouping, CSV loading, ASCII visualization, optional pandas interop (`to_dataframe` / `from_dataframe` via `cds[pandas]`) |
 | `cds.scientific` | Physical constants, formulas (KE, gravity, gas law, Schwarzschild, de Broglie, escape velocity) |
 | `cds.graph` | BFS, DFS, Dijkstra shortest path, Kruskal MST, topological sort, cycle detection |
 | `cds.modeling` | Symbolic algebra — expressions, symbolic differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
 | `cds.knowledge` | Knowledge organization — concept graph with typed relations, research notes notebook, ranked structured retrieval (JSON persistence) |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, Buffon's needle, random walks (1D/2D) |
 | `cds.diffeq` | Euler method, RK4, midpoint method, ODE system solver |
-| `cds.numerical_integration` | Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson |
+| `cds.numerical_integration` | Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson, **2-D tensor-product quadrature** (Simpson + Gauss-Legendre) |
 | `cds.nlp` | Educational NLP from scratch — BPE tokenizer, sinusoidal embeddings, multi-head attention, Transformer block, scalar autograd (SGD/Adam), MiniGPT demo |
 | `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
 
@@ -542,7 +543,16 @@ Run `cds modules` after installation to explore the current modules.
 
 ## Recent improvements
 
-Recent releases (v1.1.x) focused on reliability, type-safety, and a hardened release pipeline rather than new modules:
+**v1.2.0 (2026-06-25)** — horizontal expansion + hardening:
+
+- **Time-series analysis** (`cds.stats`) — ACF/PACF, KPSS & Ljung-Box tests, exponential smoothing, seasonal decomposition, differencing, moving average.
+- **Signal-filter design** (`cds.signals`) — Butterworth IIR low/high/band-pass coefficient design, direct-form `apply_filter`, edge-preserving `moving_median` denoiser.
+- **2-D quadrature** (`cds.numerical_integration`) — tensor-product Simpson and Gauss-Legendre rules over rectangular domains.
+- **`cds[pandas]` optional extra** — `to_dataframe` / `from_dataframe` round-trip for `DataSet`, guarded so the core stays zero-dependency.
+- **Docs overhaul** — new Cookbook (~48 verified recipes), Architecture guide (`docs/ARCHITECTURE.md`), expanded Tour of Numerical Methods.
+- **Refactors & stability** — `cds.modeling.expression` split into `_base`/`_nodes`; `cds.stats` distribution functions extracted to `_distributions`; numerical-stability fixes; no public API removed or renamed.
+
+Earlier v1.1.x releases focused on reliability, type-safety, and a hardened release pipeline:
 
 - **100% blended coverage gate** (v1.1.5) — CI now fails unless both statement and branch coverage reach 100%; property-based invariant tests and shared fixtures were added.
 - **Python 3.13 support** (v1.1.5) — the full suite is green on 3.10–3.13.

@@ -25,7 +25,12 @@ import sys
 
 import pytest
 
-from cds.data_analysis import pandas_io
+# Use ``import`` (not ``from ... import``) for cds.data_analysis so CodeQL's
+# py/import-and-import-from query stays quiet: the lazy-attribute tests below
+# also reach the package via `import cds.data_analysis as da`, and mixing the
+# two forms is exactly what that query flags. The submodule is accessed as an
+# attribute of the package either way.
+import cds.data_analysis.pandas_io as pandas_io
 
 
 # --------------------------------------------------------------------------- #
