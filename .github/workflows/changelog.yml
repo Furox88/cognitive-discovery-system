@@ -70,11 +70,27 @@ jobs:
       # on this branch (force-push) rather than opening a duplicate, so only
       # one changelog PR is ever open at a time regardless of how many tags
       # are dispatched.
+      #
+      # TOKEN CHOICE — why a GitHub App token, not the default GITHUB_TOKEN:
+      # A PR opened with the built-in GITHUB_TOKEN does NOT trigger the
+      # `pull_request` CI/CodeQL workflows (GitHub blocks GITHUB_TOKEN-sourced
+      # events from spawning new runs to prevent recursion). That left changelog
+      # PRs stuck at `action_required` (0s) under branch protection. A
+      # short-lived GitHub App installation token is exempt, so the required
+      # checks fire and the PR can merge without a manual nudge. The same App
+      # serves benchmarks.yml, changelog.yml, and bot-reviewer.yml.
+      - name: Generate GitHub App token (triggers downstream CI)
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
       - name: Open or update PR with regenerated CHANGELOG
         if: steps.check.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: "docs(changelog): regenerate for ${{ inputs.tag }}"
           title: "docs(changelog): regenerate for ${{ inputs.tag }} (MANUAL — review carefully)"
           body: |

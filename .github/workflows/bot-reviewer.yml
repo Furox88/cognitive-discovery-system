@@ -1,8 +1,8 @@
 name: Bot Reviewer
 
 # Auto-approves Dependabot (and optionally maintainer-authored) PRs using a
-# PAT-backed token so a `required_approving_review_count: 1` branch-protection
-# rule can still be satisfied in a single-maintainer repo.
+# GitHub App installation token so a `required_approving_review_count: 1`
+# branch-protection rule can still be satisfied in a single-maintainer repo.
 #
 # WHY THIS EXISTS:
 #   GitHub forbids a PR's author from approving their own PR, and the default
@@ -12,18 +12,34 @@ name: Bot Reviewer
 #   Dependabot auto-merge (see dependabot-auto-merge.yml history).
 #
 #   Branch protection currently requires 0 approvals, so this workflow is a
-#   DORMANT SCAFFOLD: it only does anything once you (a) add a repository
-#   secret named `REVIEW_BOT_TOKEN` (a fine-grained PAT or a GitHub App
-#   installation token with `pull-requests: write` on this repo) and
-#   (b) raise `required_approving_review_count` back to 1.
+#   DORMANT SCAFFOLD: it only does anything once the shared GitHub App is
+#   configured (secrets BOT_APP_ID + BOT_APP_PRIVATE_KEY, see below) AND you
+#   raise `required_approving_review_count` back to 1.
+#
+# ONE APP, TWO JOBS — shared identity with benchmarks.yml / changelog.yml:
+#   This workflow reuses the SAME GitHub App as benchmarks.yml and changelog.yml
+#   (secrets BOT_APP_ID + BOT_APP_PRIVATE_KEY). A single App installation thus
+#   serves two purposes:
+#     1. Open bot PRs that trigger downstream CI/CodeQL (benchmarks, changelog).
+#     2. Post approving reviews here (bot-reviewer).
+#   The App is a *different* identity than the human PR author (`Furox88`) and
+#   than `dependabot[bot]`, so GitHub accepts its reviews on those PRs.
+#
+#   SELF-APPROVAL GUARD: GitHub rejects an identity approving a PR it authored.
+#   The App opens the benchmark/changelog PRs, so it CANNOT approve them — and
+#   it never tries: the gate below only approves `dependabot[bot]` and
+#   (optionally) `Furox88`, so on an App-authored PR `github.actor` is the bot
+#   identity and the gate yields `approve=false`, no-oping cleanly. No separate
+#   REVIEW_BOT_TOKEN secret is needed anymore.
+#
+#   The App needs `Contents: RW` + `Pull requests: RW` + `Workflows: R` to cover
+#   all three workflows. See CHANGELOG / docs for the one-time App + secret setup.
 #
 # SECURITY NOTES:
 #   * Only auto-approves `dependabot[bot]` PRs by default. Setting
 #     `auto-approve-maintainer` to `true` below broadens this to PRs authored
 #     by `Furox88`; do that only if you accept that the author's own CI is the
 #     sole gate.
-#   * The PAT must be a *different* identity than the PR author for GitHub to
-#     accept the review. A second account, or a GitHub App, satisfies this.
 #   * Never log the token. It is referenced only via the `env` mapping below.
 
 on:
@@ -43,41 +59,58 @@ permissions:
 jobs:
   approve:
     runs-on: ubuntu-latest
-    # NOTE: do NOT gate this job with `if: ${{ secrets.X != '' }}`. The
-    # `secrets` context is *not* reliably evaluable in a job-level `if` and
-    # leaks the secret's existence into control flow. Instead we always run
-    # the job and let the first step no-op cleanly when the token is unset,
-    # so the scaffold is safe to commit before the secret exists.
+    # NOTE: do NOT gate this job with `if: ${{ secrets.X != '' }}`. Putting a
+    # `secrets.*` reference directly in an `if` expression is discouraged (the
+    # expression is evaluated in the runner and its boolean result can surface
+    # in logs). Instead the first step tests the secret's presence inside a
+    # shell `run` and emits a plain boolean output, so the scaffold is safe to
+    # commit before the App exists and bot-reviewer no-ops on every PR until
+    # then instead of hard-failing.
     steps:
+      - name: Check App credentials configured
+        id: cfg
+        env:
+          # Test emptiness in the shell, not in an `if:`, for the reason above.
+          APP_ID: ${{ secrets.BOT_APP_ID }}
+        run: |
+          if [[ -n "$APP_ID" ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::BOT_APP_ID not set — Bot Reviewer inert (dormant scaffold)."
+          fi
+
+      - name: Generate GitHub App token
+        id: app-token
+        if: steps.cfg.outputs.configured == 'true'
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
       - name: Decide whether to approve
         id: gate
+        if: steps.cfg.outputs.configured == 'true'
         env:
           ACTOR: ${{ github.actor }}
           MAINTAINER: "Furox88"
           AUTO_MAINTAINER: ${{ env.auto-approve-maintainer }}
-          # Stash the token in the env so the *shell* (not the `if`) tests it.
-          # An empty string here means the secret is unset → treated as "no".
-          BOT_TOKEN: ${{ secrets.REVIEW_BOT_TOKEN }}
         run: |
           approve="false"
-          # No token configured → this workflow is inert (see header).
-          if [[ -z "$BOT_TOKEN" ]]; then
-            echo "approve=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::REVIEW_BOT_TOKEN not set — Bot Reviewer inert."
-            exit 0
-          fi
           if [[ "$ACTOR" == "dependabot[bot]" ]]; then
             approve="true"
           elif [[ "$AUTO_MAINTAINER" == "true" && "$ACTOR" == "$MAINTAINER" ]]; then
             approve="true"
           fi
+          # On App-authored PRs (benchmarks/changelog) the actor is the bot
+          # identity → approve stays false; the App never approves its own PRs.
           echo "approve=$approve" >> "$GITHUB_OUTPUT"
           echo "::notice::actor=$ACTOR approve=$approve"
 
       - name: Submit approving review
         if: steps.gate.outputs.approve == 'true'
         env:
-          GH_TOKEN: ${{ secrets.REVIEW_BOT_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           gh pr review "$PR_URL" --approve --body \
