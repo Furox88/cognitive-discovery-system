@@ -1,35 +1,35 @@
 {
-  "timestamp_utc": "2026-06-25T14:48:37+00:00",
-  "git_sha": "43fad30",
+  "timestamp_utc": "2026-06-25T16:35:53+00:00",
+  "git_sha": "7213425",
   "metrics": {
     "Linear Algebra (Approaching C-Speed)": {
-      "CDS Matrix Mul (100x100)": 0.0406,
-      "CDS LU Decomp (100x100)": 0.0178,
-      "NumPy Matrix Mul (Baseline)": 0.000217,
-      "Speed Status": "CDS is 186.8x slower than NumPy (pure Python vs C)"
+      "CDS Matrix Mul (100x100)": 0.0696,
+      "CDS LU Decomp (100x100)": 0.0247,
+      "NumPy Matrix Mul (Baseline)": 6e-05,
+      "Speed Status": "CDS is 1154.8x slower than NumPy (pure Python vs C)"
     },
     "Linear Algebra Intelligence (Determinant Scaling)": {
-      "Determinant @ N=50": 0.002709,
-      "Determinant @ N=100": 0.018122,
-      "Ratio (doubling N)": 6.7,
+      "Determinant @ N=50": 0.004818,
+      "Determinant @ N=100": 0.029788,
+      "Ratio (doubling N)": 6.2,
       "Expected for O(N^3)": 8.0,
       "Complexity": "O(N^3) PLU"
     },
     "Monte Carlo (Hardware Saturation)": {
-      "Parallel Pi (100k samples)": 0.8162,
-      "CPU Cores Saturated": 22.0,
-      "Estimate error vs \u03c0": 0.01235
+      "Parallel Pi (100k samples)": 0.0388,
+      "CPU Cores Saturated": 4.0,
+      "Estimate error vs \u03c0": 0.00791
     },
     "Quantum (Algorithmic Intelligence)": {
-      "Intelligent O(1) Sampling": 0.0074,
-      "Naive Brute Force (Est.)": 0.48,
-      "Intelligence Speedup": "64.5x Faster"
+      "Intelligent O(1) Sampling": 0.0152,
+      "Naive Brute Force (Est.)": 0.81,
+      "Intelligence Speedup": "53.2x Faster"
     },
     "Signal Processing (FFT vs DFT)": {
       "Signal length": "1024 samples",
-      "CDS FFT (radix-2, O(N log N))": 0.001794,
-      "Naive DFT (O(N^2))": 0.213775,
-      "Algorithmic speedup": 119.0
+      "CDS FFT (radix-2, O(N log N))": 0.002745,
+      "Naive DFT (O(N^2))": 0.351954,
+      "Algorithmic speedup": 128.0
     },
     "Numerical Integration (Convergence)": {
       "Integral": "\u222b_0^1 e^x dx = e - 1",
