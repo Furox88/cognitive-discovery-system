@@ -5,6 +5,68 @@ All notable changes to **cognitive-discovery-system** will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+A **minor** release in progress on the `feat/v1.2.0-multimodule-expansion`
+branch. The theme is **horizontal expansion + hardening**: three new domain
+features (time-series analysis, signal-filter design, 2-D quadrature), an
+optional pandas interop extra, and a documentation overhaul (Cookbook,
+Architecture guide, expanded Tour). Plus numerical-stability fixes and a
+no-behavior-change refactor of the two largest source files.
+
+No existing public API is removed or renamed; the `cds[pandas]` adapter is
+gated behind an optional extra so the zero-dependency core is untouched.
+
+### Added
+
+- **`cds.stats` — time-series analysis** (`src/cds/stats/time_series.py`):
+  - `moving_average`, `exponential_smoothing`, `difference`, `seasonal_decompose`
+  - `autocorrelation_function` (sample ACF), `partial_autocorrelation_function` (PACF)
+  - `kpss_statistic` (stationarity test) and `ljung_box` (autocorrelation test),
+    both returning result objects with `.statistic` / `.p_value`
+  - Exported from the top-level `cds.stats` namespace.
+- **`cds.signals` — filter design** (`src/cds/signals/filters.py`):
+  - `butter_lowpass(order, cutoff)` — Butterworth IIR low-pass coefficient design
+  - `apply_filter(signal, coeffs)` — direct-form IIR application
+  - `moving_median(signal, window)` — order-statistic denoiser (edge-preserving)
+- **`cds.numerical_integration` — 2-D quadrature** (`src/cds/numerical_integration/`):
+  - `simpson_2d(f, ax, bx, ay, by, nx, ny)` — 2-D tensor-product Simpson rule
+  - `gaussian_quadrature_2d(f, ax, bx, ay, by, n)` — 2-D tensor-product Gauss-Legendre
+- **`cds[pandas]` optional extra** (`src/cds/data_analysis/pandas_io.py`):
+  - `to_dataframe(data_set)` / `from_dataframe(df)` round-trip a `DataSet` to/from
+    a `pandas.DataFrame`, guarded so importing `cds` never requires pandas.
+  - Declared as an optional dependency in `pyproject.toml` (`pandas = {version = ...}`).
+- **Documentation**:
+  - **`docs/cookbook.md`** — a new problem-oriented recipe book (~48 recipes, one
+    per concrete task), verified end-to-end against the real API by
+    `_verify_cookbook.py`.
+  - **`docs/ARCHITECTURE.md`** — layered module dependency graph and data flow.
+  - **Tour of Numerical Methods** expanded with 2-D quadrature, time-series, and
+    filter-design stops.
+  - `docs/index.md` Quick Navigation now links the Cookbook, Tour, and Architecture.
+
+### Changed
+
+- **`cds.modeling` refactor** — `expression.py` (708 lines) split into
+  `_base.py` (AST base classes, visitors) and `_nodes.py` (operator/leaf node
+  types). Pure reorganization; no public symbols moved or renamed.
+- **`cds.stats` refactor** — distribution functions (normal/t/chi²/F CDFs and
+  inverses) extracted from `hypothesis_tests.py` into the private
+  `_distributions.py`, with `__all__` declared so the re-exports pass
+  `mypy --strict`.
+
+### Fixed
+
+- **`cds.math_utils.linalg` — numerical stability of pivoting.** Pivoting now
+  uses a scale-relative threshold (`max(|row|) * epsilon`) instead of a fixed
+  absolute epsilon, and rejects exact-zero pivots at sub-normal matrix scales.
+  Prevents spurious singular-matrix errors and mis-pivoting on
+  small-magnitude matrices. No change to well-scaled inputs.
+- **`cds.stats`** — `__all__` declared so the `_distributions` re-exports are
+  recognized as intentional public surface under `mypy --strict`.
+- **Tests** — stabilized a flaky mean-homogeneity property test by anchoring on
+  an absolute tolerance instead of a relative one.
+
 ## [v1.1.9] - 2026-06-24
 
 ### Minor — effect-size measures for the statistics & hypothesis stack

@@ -24,6 +24,7 @@
 <p align="center">
   <a href="https://Furox88.github.io/cognitive-discovery-system/">📖 Documentation</a> &nbsp;·&nbsp;
   <a href="https://Furox88.github.io/cognitive-discovery-system/tour_of_numerical_methods/">🧭 Tour of Numerical Methods</a> &nbsp;·&nbsp;
+  <a href="https://Furox88.github.io/cognitive-discovery-system/cookbook/">🍳 Cookbook</a> &nbsp;·&nbsp;
   <a href="docs/tutorials/">🎓 Tutorials</a> &nbsp;·&nbsp;
   <a href="#quick-start">⚡ Quick Start</a> &nbsp;·&nbsp;
   <a href="docs/CASE_STUDY_HUBBLE.md">🔬 Case Studies</a>
@@ -38,7 +39,7 @@
 > ⭐ **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update:** `diffeq.solvers` backward-integration bug fix — the fixed-step (`euler`, `rk4`, `midpoint`) and adaptive (`rk45`) ODE solvers, plus `solve_system`, used a forward-only loop guard and silently returned only `y0` when `t_end < t0`. Integration direction is now derived from `copysign(1.0, t_end - t0)`. Forward integration is byte-identical to the prior release; only the previously-broken backward case changes. No API additions. The current version is shown in the PyPI badge at the top of this README; see the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges for the live test count and coverage, all in readable pure Python.
+**Latest Update:** `diffeq.solvers` backward-integration bug fix — the fixed-step (`euler`, `rk4`, `midpoint`) and adaptive (`rk45`) ODE solvers, plus `solve_system`, used a forward-only loop guard and silently returned only `y0` when `t_end < t0`. Integration direction is now derived from `copysign(1.0, t_end - t0)`. Forward integration is byte-identical to the prior release; only the previously-broken backward case changes. No API additions. The current version is shown in the PyPI badge at the top of this README; the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges carry the live test count and coverage.
 ---
 
 ## Contents
@@ -65,13 +66,49 @@
 
 ## Why CDS?
 
-- **Zero heavy dependencies** — pure Python implementations you can read and learn from
-- **Quantum simulation** — single & multi-qubit circuits with entanglement
-- **Built for discovery** — hypothesis generation with structured outputs (assumptions, predictions, confidence) plus a Protocol for custom implementations
-- **Broad scope** — the module catalog below covers math, physics, stats, ML, signals, optimization, graph theory, ODEs, numerical integration, Monte Carlo, knowledge organization, and educational NLP (BPE + embeddings)
-- **Thoroughly tested** — the full suite runs on every push; see the [CI badge](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) for the live test count and the [codecov badge](https://codecov.io/gh/Furox88/cognitive-discovery-system) for **100% code coverage (statement + branch)**
-- **Practical automation** — workflows for PR checklists, dependency updates, and releases to keep maintenance manageable
-- **CLI included** — interactive tools, demos, and ASCII visualization from your terminal
+Most scientific Python stacks are **black boxes**: they work, but you can't see
+*how* an algorithm works without leaving Python for C, Fortran, or CUDA. CDS is
+the opposite trade-off. Every algorithm is written in readable pure Python, so
+the source *is* the documentation. You get a single package that spans quantum
+simulation, statistics, signal processing, optimization, numerical methods,
+symbolic modeling, and structured hypothesis generation, and you can step
+through any of it line by line.
+
+That positioning makes CDS a good fit when one of these matters more than raw
+throughput:
+
+- **You want to understand an algorithm**, not just call it. The FFT, the LU
+  pivot, the RK45 step controller, and the BPE merge loop are all a click away
+  from the function you called.
+- **You need a dependency-light runtime**. No NumPy, no SciPy, no BLAS, no
+  compiled extensions. `pip install` and you're done; it runs the same on a
+  locked-down server or a teaching laptop.
+- **You're crossing domains in one project**. A research workflow that touches
+  stats, signals, and hypothesis generation normally means three or four
+  libraries with three or four sets of conventions. CDS keeps them under one
+  namespace with a shared data model.
+- **You want a falsifiable hypothesis, not a chatbot answer.** `cds.hypothesis`
+  emits structured objects (assumptions, predictions, confidence) that you can
+  then feed straight back into the statistical tests in the same package.
+
+If your priority is heavy numerical performance on arrays of >10⁷ elements,
+CDS is the wrong tool — use NumPy/SciPy. The [comparison table](#cds-vs-other-libraries)
+below spells out exactly where each fits.
+
+<details>
+<summary><b>The reliability floor</b></summary>
+
+These aren't the pitch, but they remove the usual reasons to hesitate:
+
+- The full test suite runs on every push across Linux, Windows, and macOS,
+  Python 3.10–3.13. See the [CI badge](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml)
+  for the live test count.
+- **100% code coverage (statement + branch)** is enforced as a gate — CI fails
+  if either drops. See the [codecov badge](https://codecov.io/gh/Furox88/cognitive-discovery-system).
+- `mypy --strict` passes clean across `src/` and `tests/`.
+- An interactive CLI with ASCII visualization is included, no plotting deps.
+
+</details>
 
 ### CDS vs other libraries
 
@@ -495,13 +532,11 @@ docs/               # MkDocs documentation, tutorials, benchmarks
 
 ## Vision
 
-The long-term goal of CDS is to provide a lightweight, dependency-free platform for scientific exploration and discovery.
+The long-term goal of CDS is a lightweight, dependency-free platform for scientific exploration: numerical foundations (quantum simulation, FFT, linear algebra, statistics, ODE solvers) in the same package as higher-level tools for hypothesis generation and research workflows, all readable end-to-end.
 
-We aim to combine solid numerical foundations (quantum simulation, FFT, linear algebra, statistics, differential equations, etc.) with higher-level tools for hypothesis generation and research workflows.
+A distinctive part is the `cds.hypothesis` module, which generates structured, falsifiable hypotheses with explicit assumptions and predictions. The `cds hypothesis` CLI command and `examples/hypothesis_demo.py` make this side immediately usable.
 
-A distinctive part is the `cds.hypothesis` module, which generates structured, falsifiable hypotheses with explicit assumptions and predictions. The `cds hypothesis` CLI command and `examples/hypothesis_demo.py` make this side immediately usable. Recent work has focused on making the CLI and docs more practical for day-to-day use while keeping everything readable pure Python.
-
-The project is still early but is being actively developed with a focus on code quality, test coverage, documentation, and usability for researchers and students.
+Development is incremental: each release adds a module or hardens an existing one, with the test suite, type checker, and coverage gate kept green throughout. The README "Recent improvements" section and [`CHANGELOG.md`](CHANGELOG.md) track what landed when.
 
 Run `cds modules` after installation to explore the current modules.
 

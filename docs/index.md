@@ -45,6 +45,9 @@ CDS is an open-source computational science platform designed for research, simu
 
 - [Getting Started](getting-started.md)
 - [API Reference](api.md)
+- [Cookbook](cookbook.md) — problem-oriented recipes for every module
+- [Tour of Numerical Methods](tour_of_numerical_methods.md) — guided walkthrough
+- [Architecture](ARCHITECTURE.md) — module dependency graph & data flow
 - [Case Studies](CASE_STUDY_HUBBLE.md)
 - [Benchmarks](benchmarks.md)
 

@@ -366,3 +366,115 @@ def adaptive_simpson(
         n_eval=counter["n"],
         error_estimate=math.nan,
     )
+
+
+# ---------------------------------------------------------------------------
+# Tensor-product quadrature over rectangular domains in 2-D
+# ---------------------------------------------------------------------------
+
+
+def simpson_2d(
+    f: Callable[[float, float], float],
+    ax: float,
+    bx: float,
+    ay: float,
+    by: float,
+    nx: int = 50,
+    ny: int = 50,
+) -> float:
+    """Composite Simpson's 1/3 rule over a rectangular 2-D domain.
+
+    Approximates ``∬_[ax,bx]×[ay,by] f(x, y) dx dy`` as the tensor product of
+    the 1-D 1/3 rule in each direction. Exact for integrands separable into
+    cubics in ``x`` and ``y``; error ``O(h_x^4 + h_y^4)`` for smooth integrands.
+    [Simpson 1743]
+
+    Args:
+        f: bivariate integrand.
+        ax: lower ``x``-limit.
+        bx: upper ``x``-limit (may be less than ``ax``).
+        ay: lower ``y``-limit.
+        by: upper ``y``-limit (may be less than ``ay``).
+        nx: number of ``x``-panels (must be even and ``>= 2``).
+        ny: number of ``y``-panels (must be even and ``>= 2``).
+
+    Returns:
+        Approximation of the double integral.
+
+    Raises:
+        ValueError: if ``nx`` or ``ny`` is not an even integer ``>= 2``.
+    """
+    if nx < 2 or nx % 2 != 0:
+        raise ValueError("nx must be an even integer >= 2")
+    if ny < 2 or ny % 2 != 0:
+        raise ValueError("ny must be an even integer >= 2")
+
+    hx = (bx - ax) / nx
+    hy = (by - ay) / ny
+
+    # Tensor-product Simpson weights: 1, 4, 2, 4, 2, ..., 4, 1 in each axis.
+    wx = [(4.0 if i % 2 == 1 else 2.0) for i in range(1, nx)]
+    wx = [1.0, *wx, 1.0]
+    wy = [(4.0 if j % 2 == 1 else 2.0) for j in range(1, ny)]
+    wy = [1.0, *wy, 1.0]
+
+    total = 0.0
+    for i in range(nx + 1):
+        x = ax + i * hx
+        row = 0.0
+        for j in range(ny + 1):
+            y = ay + j * hy
+            row += wy[j] * f(x, y)
+        total += wx[i] * row
+    return (hx * hy / 9.0) * total
+
+
+def gaussian_quadrature_2d(
+    f: Callable[[float, float], float],
+    ax: float,
+    bx: float,
+    ay: float,
+    by: float,
+    n: int = 5,
+) -> float:
+    """Tensor-product Gauss-Legendre quadrature over a 2-D rectangle.
+
+    Approximates ``∬_[ax,bx]×[ay,by] f(x, y) dx dy`` by evaluating the
+    integrand on the ``n × n`` tensor grid of 1-D Gauss-Legendre nodes. Exact
+    for any integrand that is a polynomial of degree ``<= 2n-1`` in *each*
+    variable, so ``n`` nodes integrate ``x^{2n-1} y^{2n-1}`` exactly. The
+    1-D nodes/weights come from the cached :func:`_gauss_legendre_nodes` table
+    and are reused across calls. [Gauss 1814]
+
+    Args:
+        f: bivariate integrand.
+        ax: lower ``x``-limit.
+        bx: upper ``x``-limit (may be less than ``ax``).
+        ay: lower ``y``-limit.
+        by: upper ``y``-limit (may be less than ``ay``).
+        n: number of nodes per axis (``>= 1``).
+
+    Returns:
+        Approximation of the double integral.
+
+    Raises:
+        ValueError: if ``n < 1``.
+    """
+    if n < 1:
+        raise ValueError("n must be >= 1")
+
+    nodes = _gauss_legendre_nodes(n)
+    half_x = 0.5 * (bx - ax)
+    mid_x = 0.5 * (bx + ax)
+    half_y = 0.5 * (by - ay)
+    mid_y = 0.5 * (ay + by)
+
+    total = 0.0
+    for xi, wi in nodes:
+        x = half_x * xi + mid_x
+        row = 0.0
+        for yj, wj in nodes:
+            y = half_y * yj + mid_y
+            row += wj * f(x, y)
+        total += wi * row
+    return half_x * half_y * total

@@ -34,7 +34,7 @@ Calculus (derivative, integral, gradient) and a compact linear-algebra toolkit (
 
 ## Numerical Integration
 
-Deterministic quadrature rules: trapezoid, Simpson 1/3 and 3/8, Gauss–Legendre, Romberg, and adaptive Simpson.
+Deterministic quadrature rules: trapezoid, Simpson 1/3 and 3/8, Gauss–Legendre, Romberg, adaptive Simpson, and 2-D tensor-product rules (composite Simpson 2-D and tensor-product Gauss–Legendre) over rectangular domains.
 
 ::: cds.numerical_integration
 
@@ -64,7 +64,11 @@ Pure-Python neural networks: an MLP with Adam-based training.
 
 ## Signal Processing
 
-DFT, radix-2 FFT/IFFT, convolution, and digital filters.
+A from-scratch Fourier toolkit (DFT/FFT/IFFT, convolution, power spectrum,
+frequency-domain low-pass) plus a classical digital-filter *design* suite —
+Butterworth low/high/band-pass/band-stop via the analog-prototype + bilinear-
+transform recipe, applied in the time domain through a direct-form II
+difference equation — and a robust moving-median denoiser.
 
 ::: cds.signals
 
@@ -103,6 +107,14 @@ A knowledge graph of named concepts connected by typed, directed relations (`is-
 CSV loading, normalisation, smoothing, and ASCII visualisation.
 
 ::: cds.data_analysis
+
+### Pandas Interoperability (optional)
+
+A lossless bridge between CDS's [`DataSet`](#data-analysis) and a pandas
+`DataFrame` — `to_dataframe` / `from_dataframe`. Install with
+`pip install ".[pandas]"`; the core package stays zero-dependency.
+
+::: cds.data_analysis.pandas_io
 
 ## Educational NLP
 

@@ -1,9 +1,11 @@
 """Classical statistical hypothesis tests in pure Python.
 
 Implements Student's t-test, Pearson's chi-square test, and Fisher's
-one-way ANOVA. The required tail probabilities are computed from the
-regularized incomplete beta and gamma functions, evaluated with the
-series / continued-fraction methods of Numerical Recipes.
+one-way ANOVA. The required tail probabilities are computed by the
+regularized incomplete beta and gamma functions, which live in the sibling
+:mod:`cds.stats._distributions` module and are re-exported here so the
+long-standing ``from cds.stats.hypothesis_tests import t_sf`` (and the
+private ``_gser`` / ``_gcf`` / ... coverage helpers) keep working.
 
 References:
     - Student [W. S. Gosset] (1908). "The probable error of a mean."
@@ -14,11 +16,6 @@ References:
       Magazine, 50(302), 157-175. (chi-square test)
     - Fisher, R. A. (1925). "Statistical Methods for Research Workers."
       Oliver & Boyd. (analysis of variance, F-distribution)
-    - Press, W. H., Teukolsky, S. A., Vetterling, W. T., & Flannery, B. P.
-      (2007). "Numerical Recipes," 3rd ed., §6.2-6.4 (incomplete gamma and
-      beta functions: gammln, gser, gcf, betacf).
-    - Abramowitz, M., & Stegun, I. A. (1964). "Handbook of Mathematical
-      Functions," §6.5, §26.
 """
 
 from __future__ import annotations
@@ -26,199 +23,59 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from cds.stats._distributions import (  # re-exported for compat, see __all__
+    _EPS,
+    _FPMIN,
+    _MAXIT,
+    _betacf,
+    _betai,
+    _gammln,
+    _gammp,
+    _gammq,
+    _gcf,
+    _gser,
+    chi2_sf,
+    f_sf,
+    t_sf,
+)
 from cds.stats.descriptive import mean, variance
 
-_MAXIT = 200
-_EPS = 3.0e-12
-_FPMIN = 1.0e-300
-
-
-def _gammln(x: float) -> float:
-    """Natural log of the gamma function (Lanczos approximation).
-
-    Reference: Numerical Recipes §6.1; Lanczos (1964).
-    """
-    cof = [
-        76.18009172947146,
-        -86.50532032941677,
-        24.01409824083091,
-        -1.231739572450155,
-        0.1208650973866179e-2,
-        -0.5395239384953e-5,
-    ]
-    y = x
-    tmp = x + 5.5
-    tmp -= (x + 0.5) * math.log(tmp)
-    ser = 1.000000000190015
-    for c in cof:
-        y += 1.0
-        ser += c / y
-    return -tmp + math.log(2.5066282746310005 * ser / x)
-
-
-def _gser(a: float, x: float) -> float:
-    """Lower regularized incomplete gamma P(a,x) via series expansion.
-
-    Reference: Numerical Recipes §6.2 (gser).
-    """
-    if x <= 0.0:
-        return 0.0
-    ap = a
-    total = 1.0 / a
-    delta = total
-    # NR §6.2 series expansion converges within _MAXIT for every valid
-    # (a>0, x≥0) input, so the loop always exits via the ``break`` below —
-    # the natural-exhaustion arc (loop completes without breaking) is
-    # mathematically unreachable and excluded as a branch arc.
-    for _ in range(_MAXIT):  # pragma: no branch
-        ap += 1.0
-        delta *= x / ap
-        total += delta
-        if abs(delta) < abs(total) * _EPS:
-            break
-    return total * math.exp(-x + a * math.log(x) - _gammln(a))
-
-
-def _gcf(a: float, x: float) -> float:
-    """Upper regularized incomplete gamma Q(a,x) via continued fraction.
-
-    Reference: Numerical Recipes §6.2 (gcf), Lentz's algorithm.
-    """
-    b = x + 1.0 - a
-    c = 1.0 / _FPMIN
-    d = 1.0 / b
-    h = d
-    # NR §6.2 continued fraction (Lentz's algorithm) converges within _MAXIT
-    # for every valid (a>0, x≥0) input, so the loop always exits via the
-    # ``break`` below — the natural-exhaustion arc is mathematically
-    # unreachable and excluded as a branch arc.
-    for i in range(1, _MAXIT + 1):  # pragma: no branch
-        an = -i * (i - a)
-        b += 2.0
-        d = an * d + b
-        if abs(d) < _FPMIN:  # pragma: no cover — d ≥ |b| - |an*d| stays above FPMIN
-            d = _FPMIN
-        c = b + an / c
-        if abs(c) < _FPMIN:  # pragma: no cover — c stays ≥ |b| - |an/c| > FPMIN
-            c = _FPMIN
-        d = 1.0 / d
-        delta = d * c
-        h *= delta
-        if abs(delta - 1.0) < _EPS:
-            break
-    return math.exp(-x + a * math.log(x) - _gammln(a)) * h
-
-
-def _gammp(a: float, x: float) -> float:
-    """Regularized lower incomplete gamma function P(a, x)."""
-    if x < 0.0 or a <= 0.0:
-        raise ValueError("a must be > 0 and x must be >= 0 (regularized incomplete gamma P(a, x))")
-    if x < a + 1.0:
-        return _gser(a, x)
-    return 1.0 - _gcf(a, x)
-
-
-def _gammq(a: float, x: float) -> float:
-    """Regularized upper incomplete gamma function Q(a, x) = 1 - P(a, x)."""
-    if x < 0.0 or a <= 0.0:
-        raise ValueError("a must be > 0 and x must be >= 0 (regularized incomplete gamma Q(a, x))")
-    if x < a + 1.0:
-        return 1.0 - _gser(a, x)
-    return _gcf(a, x)
-
-
-def _betacf(a: float, b: float, x: float) -> float:
-    """Continued fraction for the incomplete beta function.
-
-    Reference: Numerical Recipes §6.4 (betacf), Lentz's algorithm.
-    """
-    qab = a + b
-    qap = a + 1.0
-    qam = a - 1.0
-    c = 1.0
-    d = 1.0 - qab * x / qap
-    if abs(d) < _FPMIN:
-        d = _FPMIN
-    d = 1.0 / d
-    h = d
-    for m in range(1, _MAXIT + 1):
-        m2 = 2 * m
-        aa = m * (b - m) * x / ((qam + m2) * (a + m2))
-        d = 1.0 + aa * d
-        if abs(d) < _FPMIN:  # pragma: no cover — first-loop aa≥0 keeps d≥1
-            d = _FPMIN
-        c = 1.0 + aa / c
-        if abs(c) < _FPMIN:  # pragma: no cover — first-loop aa≥0 keeps c≥1
-            c = _FPMIN
-        d = 1.0 / d
-        h *= d * c
-        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
-        d = 1.0 + aa * d
-        if abs(d) < _FPMIN:
-            d = _FPMIN
-        c = 1.0 + aa / c
-        if abs(c) < _FPMIN:
-            c = _FPMIN
-        d = 1.0 / d
-        delta = d * c
-        h *= delta
-        if abs(delta - 1.0) < _EPS:
-            break
-    return h
-
-
-def _betai(a: float, b: float, x: float) -> float:
-    """Regularized incomplete beta function I_x(a, b).
-
-    Reference: Numerical Recipes §6.4 (betai).
-    """
-    if x < 0.0 or x > 1.0:
-        raise ValueError("x must be in [0, 1] for the incomplete beta function I_x(a, b)")
-    if x == 0.0 or x == 1.0:
-        return x
-    front = math.exp(
-        _gammln(a + b) - _gammln(a) - _gammln(b) + a * math.log(x) + b * math.log(1.0 - x)
-    )
-    if x < (a + 1.0) / (a + b + 2.0):
-        return front * _betacf(a, b, x) / a
-    return 1.0 - front * _betacf(b, a, 1.0 - x) / b
-
-
-def t_sf(t: float, df: float) -> float:
-    """Two-tailed survival probability for Student's t distribution.
-
-    Returns P(|T| >= |t|) for T ~ t(df), via the incomplete beta function:
-    p = I_{df/(df+t^2)}(df/2, 1/2).
-
-    Reference: Student (1908); Numerical Recipes §6.14.
-    """
-    x = df / (df + t * t)
-    return _betai(df / 2.0, 0.5, x)
-
-
-def chi2_sf(x: float, df: float) -> float:
-    """Upper-tail probability for the chi-square distribution: P(X >= x).
-
-    Equals Q(df/2, x/2) with the regularized upper incomplete gamma.
-
-    Reference: Pearson (1900); Abramowitz & Stegun §26.4.
-    """
-    if x <= 0.0:
-        return 1.0
-    return _gammq(df / 2.0, x / 2.0)
-
-
-def f_sf(f: float, df1: float, df2: float) -> float:
-    """Upper-tail probability for the F distribution: P(F >= f).
-
-    Equals I_{df2/(df2+df1 f)}(df2/2, df1/2).
-
-    Reference: Fisher (1925); Numerical Recipes §6.14.
-    """
-    if f <= 0.0:
-        return 1.0
-    x = df2 / (df2 + df1 * f)
-    return _betai(df2 / 2.0, df1 / 2.0, x)
+# Explicit re-export list. mypy in strict mode does not treat a bare
+# ``from x import name`` import (even one suppressed for the unused-import
+# lint rule) as an exported module attribute, so
+# ``from cds.stats.hypothesis_tests import t_sf`` fails its attr-defined check.
+# Declaring ``__all__`` marks these names as the module's public surface and
+# satisfies both mypy and the linter that the imports are intentional
+# re-exports rather than unused. The distribution helpers
+# (``t_sf``/``chi2_sf``/``f_sf``) and the private incomplete-gamma/beta
+# routines are kept re-exported for the long-standing import paths documented
+# in the module docstring.
+__all__ = [
+    "TestResult",
+    "one_sample_ttest",
+    "two_sample_ttest",
+    "chi_square_gof",
+    "chi_square_independence",
+    "one_way_anova",
+    "cohens_d",
+    "eta_squared_from_f",
+    "cramers_v",
+    "bonferroni_corrected_alpha",
+    # Re-exported from cds.stats._distributions for backward compatibility.
+    "t_sf",
+    "chi2_sf",
+    "f_sf",
+    "_EPS",
+    "_FPMIN",
+    "_MAXIT",
+    "_betacf",
+    "_betai",
+    "_gammln",
+    "_gammp",
+    "_gammq",
+    "_gcf",
+    "_gser",
+]
 
 
 @dataclass

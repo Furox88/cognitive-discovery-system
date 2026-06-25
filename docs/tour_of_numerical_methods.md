@@ -192,6 +192,110 @@ print(simulate(circuit, shots=10000))          # → {0: 5060, 1: 4940}
 
 ---
 
+## Stop 8 — 2-D Integration: tensor products and the curse of dimension
+
+A 1-D rule extends to a rectangle by the *tensor product*: integrate in $x$ with a rule, then integrate *that result* in $y$. The catch is the work multiplies too — an $n \times n$ grid costs $n^2$ evaluations, and in $d$ dimensions a full grid needs $n^d$. So just as in Stop 1, *high-order* rules pay off: a few well-placed points beat many evenly-spaced ones.
+
+```python
+import math
+from cds.numerical_integration import simpson_2d, gaussian_quadrature_2d
+
+# ∬_{[0,1]²} x² y² dx dy = (1/3)·(1/3) = 1/9 ≈ 0.111111 — exact for both rules.
+def poly(x, y):
+    return x * x * y * y
+true_poly = 1.0 / 9.0
+
+# Area of the unit disk ∬_{[-1,1]²} 1_{x²+y²≤1} dx dy should be π ≈ 3.14159.
+def disk(x, y):
+    return 1.0 if x * x + y * y <= 1.0 else 0.0
+
+print(f"Simpson 2-D  poly err = {simpson_2d(poly, 0,1, 0,1, 2,2)            - true_poly:+.2e}")
+print(f"Gauss-3 2-D poly err = {gaussian_quadrature_2d(poly, 0,1, 0,1, n=3) - true_poly:+.2e}")
+print(f"Simpson 2-D  disk    = {simpson_2d(disk, -1,1, -1,1, 100,100):.5f}  (π = 3.14159)")
+```
+
+```
+Simpson 2-D  poly err = +0.00e+00
+Gauss-3 2-D poly err = -6.94e-16
+Simpson 2-D  disk    = 3.14222  (π = 3.14159)
+```
+
+**The lesson.** Both rules hit the polynomial $x^2 y^2$ exactly — Simpson because it is exact through cubics in each axis, 3-point Gauss because it is exact through degree 5 in each axis (the $-10^{-16}$ is just round-off). The real lesson is what this scales to: the *disk* integral is a discontinuous indicator, and a $100 \times 100 = 10{,}000$-point grid still only gets $\pi$ to three decimals because the rule wastes evaluations straddling the edge. As dimensions grow, the tensor-product grid explodes as $n^d$ — the precise pain Monte Carlo (Stop 2) sidesteps. See [`numerical_integration/quadrature.py`](https://github.com/Furox88/cognitive-discovery-system/blob/main/src/cds/numerical_integration/quadrature.py) for both 2-D rules.
+
+---
+
+## Stop 9 — Time-series: structure in the order
+
+Strip away the time index and a series is just numbers. Put it back, and *order* starts to matter: yesterday's value predicts today's. The **autocorrelation function** (ACF) measures exactly how much, at every lag, and the Ljung–Box test asks whether *any* of those correlations are real signal rather than noise.
+
+```python
+import random
+from cds.stats import autocorrelation_function, ljung_box
+
+random.seed(0)
+N = 240
+signal = [random.gauss(0.0, 1.0) for _ in range(N)]        # white-noise base...
+for k in range(4, N):                                       # ...plus a lag-4 echo:
+    signal[k] += 0.6 * signal[k - 4]                        # each value repeats 4 steps back
+
+acf = autocorrelation_function(signal, max_lag=16)
+print(f"r[1]  = {acf[1]:+.3f}   (no lag-1 structure)")
+print(f"r[4]  = {acf[4]:+.3f}   (lag-4 echo peaks here)")
+print(f"r[8]  = {acf[8]:+.3f}   (echo of the echo)")
+lb = ljung_box(signal, lags=12)
+print(f"Ljung–Box p-value = {lb.p_value:.2e}  → autocorrelation present? {lb.has_autocorrelation}")
+```
+
+```
+r[1]  = -0.109   (no lag-1 structure)
+r[4]  = +0.504   (lag-4 echo peaks here)
+r[8]  = +0.222   (echo of the echo)
+Ljung–Box p-value = 8.06e-15  → autocorrelation present? True
+```
+
+**The lesson.** The ACF is flat near zero *except* at lag 4 — exactly where we injected the echo — with a smaller secondary bump at lag 8 (each echo repeats its own predecessor). The *order* of the data is information a plain mean discards. The Ljung–Box test aggregates the first dozen autocorrelations into one statistic and reports overwhelming evidence they are not all zero (the p-value is essentially nil). This is the first step of any Box–Jenkins workflow: detect structure, then model it (ARIMA, exponential smoothing). CDS implements the ACF, the partial ACF (via Durbin–Levinson), KPSS-style stationarity testing, and seasonal decomposition in [`stats/time_series.py`](https://github.com/Furox88/cognitive-discovery-system/blob/main/src/cds/stats/time_series.py).
+
+---
+
+## Stop 10 — Filter Design: maximally flat, from scratch
+
+A filter's job is to pass some frequencies and stop others. The **Butterworth** family does this with the flattest possible passband — no ripple — which is why it's the default "honest" filter. Designing one means placing poles on a circle (analog prototype), warping them to the digital domain (bilinear transform), and reading off difference-equation coefficients. CDS derives all of that from first principles.
+
+```python
+import math
+from cds.signals import butter_lowpass, apply_filter
+
+# A slow 5-cycle sine plus faster 200-cycle interference, sampled at N points.
+# Normalised freq = (cycles) / (N/2): k=5 -> 0.010, k=200 -> 0.391.
+N = 1024
+clean = [math.sin(2*math.pi*5*k/N)   for k in range(N)]
+high  = [0.6*math.sin(2*math.pi*200*k/N) for k in range(N)]
+noisy = [a + b for a, b in zip(clean, high)]
+
+coef = butter_lowpass(order=4, cutoff=0.15)     # keep freqs below 15% of Nyquist
+filtered = apply_filter(noisy, coef)
+
+# Cosine similarity in the steady-state half (phase-robust): 1.0 = perfect recovery.
+half = N // 2
+dot  = sum(clean[i]*filtered[i] for i in range(half, N))
+norm = math.sqrt(sum(c*c for c in clean[half:]) * sum(f*f for f in filtered[half:]))
+print(f"recovery (cos sim vs clean) = {dot/norm:.3f}   (1.000 = perfect)")
+# Attenuation of the interference alone: pass it through and compare amplitudes.
+attenuated = apply_filter([math.sin(2*math.pi*200*k/N) for k in range(N)], coef)
+a_in  = max(abs(x) for x in attenuated[:1] and [math.sin(2*math.pi*200*k/N) for k in range(N)][half:])
+a_out = max(abs(x) for x in attenuated[half:])
+print(f"interference amplitude: {a_in:.3f} -> {a_out:.4f}  ({a_in/max(a_out,1e-12):.0f}x smaller)")
+```
+
+```
+recovery (cos sim vs clean) = 0.986   (1.000 = perfect)
+interference amplitude: 1.000 -> 0.0135  (74x smaller)
+```
+
+**The lesson.** The slow 5-cycle signal passes through almost untouched (cosine similarity 0.986), while the 200-cycle interference is crushed ~74× (−37 dB). That selectivity comes from a 4th-order polynomial whose poles sit on a circle — a design you can re-derive from first principles in [`signals/filters.py`](https://github.com/Furox88/cognitive-discovery-system/blob/main/src/cds/signals/filters.py). The same module adds high-pass, band-pass (cascade), band-stop (parallel), and a `moving_median` denoiser that shrugs off impulsive outliers the way no linear filter can.
+
+---
+
 ## Where to go next
 
 - **Per-module tutorials** — each stop above has a full tutorial in [Tutorials](tutorials/quick_start.md) with deeper examples.

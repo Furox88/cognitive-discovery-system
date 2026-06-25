@@ -8,8 +8,10 @@ from cds.numerical_integration import (
     QuadratureResult,
     adaptive_simpson,
     gaussian_quadrature,
+    gaussian_quadrature_2d,
     romberg,
     simpson,
+    simpson_2d,
     simpson_38,
     trapezoid,
 )
@@ -243,3 +245,130 @@ class TestLegendreEdgeCases:
         val, deriv = self._legendre(1, 0.7)
         assert val == 0.7
         assert deriv == 1.0
+
+
+# ---------------------------------------------------------------------------
+# 2-D tensor-product quadrature
+# ---------------------------------------------------------------------------
+
+
+class TestSimpson2d:
+    def test_constant(self) -> None:
+        # ∬_0^1×0^1 5 dx dy = 5
+        assert abs(simpson_2d(lambda x, y: 5.0, 0, 1, 0, 1, 2, 2) - 5.0) < 1e-12
+
+    def test_separable_cubic_is_exact(self) -> None:
+        # Simpson 1/3 is exact per axis for cubics, so x^3*y^3 integrates exactly.
+        assert abs(simpson_2d(lambda x, y: x**3 * y**3, 0, 1, 0, 1, 2, 2) - 0.0625) < 1e-12
+
+    def test_sin_sin_over_pi_square(self) -> None:
+        # ∬_0^π × _0^π sin(x) sin(y) dx dy = 2 * 2 = 4
+        f = lambda x, y: math.sin(x) * math.sin(y)  # noqa: E731
+        assert abs(simpson_2d(f, 0, math.pi, 0, math.pi, 50, 50) - 4.0) < 1e-5
+
+    def test_error_order_quartic(self) -> None:
+        # O(h^4): doubling the panel count in each axis should cut the error
+        # by roughly 16x for a smooth non-polynomial integrand.
+        f = lambda x, y: math.exp(x + y)  # noqa: E731
+        exact = (math.e - 1) ** 2  # ∬ e^{x+y} = (e-1)^2
+        coarse = abs(simpson_2d(f, 0, 1, 0, 1, 10, 10) - exact)
+        fine = abs(simpson_2d(f, 0, 1, 0, 1, 20, 20) - exact)
+        assert fine < coarse / 10  # well above noise, below the 16x ideal
+
+    def test_reversed_limits(self) -> None:
+        # Reversing both limits flips the sign of the 2-D integral.
+        assert abs(simpson_2d(lambda x, y: x * y, 1, 0, 1, 0, 10, 10) - 0.25) < 1e-12
+
+    def test_one_reversed_axis(self) -> None:
+        # Reversing only the y-axis flips the sign once.
+        assert abs(simpson_2d(lambda x, y: x * y, 0, 1, 1, 0, 10, 10) - (-0.25)) < 1e-12
+
+    def test_non_square_domain(self) -> None:
+        # ∬_0^2 × _1^3 x*y dx dy = (∫_0^2 x)(∫_1^3 y) = 2 * 4 = 8
+        assert abs(simpson_2d(lambda x, y: x * y, 0, 2, 1, 3, 20, 20) - 8.0) < 1e-10
+
+    def test_invalid_nx_odd(self) -> None:
+        with pytest.raises(ValueError, match="nx"):
+            simpson_2d(lambda x, y: 1.0, 0, 1, 0, 1, 3, 2)
+
+    def test_invalid_ny_odd(self) -> None:
+        with pytest.raises(ValueError, match="ny"):
+            simpson_2d(lambda x, y: 1.0, 0, 1, 0, 1, 2, 3)
+
+    def test_invalid_nx_below_two(self) -> None:
+        with pytest.raises(ValueError, match="nx"):
+            simpson_2d(lambda x, y: 1.0, 0, 1, 0, 1, 1, 2)
+
+    def test_invalid_ny_below_two(self) -> None:
+        with pytest.raises(ValueError, match="ny"):
+            simpson_2d(lambda x, y: 1.0, 0, 1, 0, 1, 2, 1)
+
+
+class TestGaussianQuadrature2d:
+    def test_constant(self) -> None:
+        assert abs(gaussian_quadrature_2d(lambda x, y: 5.0, 0, 1, 0, 1, 2) - 5.0) < 1e-12
+
+    def test_exact_for_degree_2n_minus_1_each_axis(self) -> None:
+        # n=3 nodes => exact up to degree 5 in each variable.
+        # x^5 * y^5 over [0,1]^2 = (1/6)^2 = 1/36.
+        assert abs(gaussian_quadrature_2d(lambda x, y: x**5 * y**5, 0, 1, 0, 1, 3) - 1 / 36) < 1e-12
+
+    def test_not_exact_above_degree(self) -> None:
+        # Degree 6 with n=3 (exact only to 5) should NOT be exact.
+        val = gaussian_quadrature_2d(lambda x, y: x**6 * y**6, 0, 1, 0, 1, 3)
+        assert abs(val - 1 / 49) > 1e-6
+
+    def test_separable_matches_1d_product(self) -> None:
+        # A separable integrand g(x)h(y) must equal gaussian_quadrature(g) * (h).
+        g = math.exp
+        h = math.cos
+        prod = gaussian_quadrature(g, 0, 1, 5) * gaussian_quadrature(h, 0, 1, 5)
+        two_d = gaussian_quadrature_2d(lambda x, y: g(x) * h(y), 0, 1, 0, 1, 5)
+        assert abs(two_d - prod) < 1e-12
+
+    def test_gaussian_bell_product(self) -> None:
+        # ∬_{[-2,2]^2} e^{-(x^2+y^2)} dx dy. The full-line value is π, but the
+        # truncated domain and Gauss-Legendre's fixed nodes leave a small
+        # systematic offset. Anchor to the converged Simpson-2D value instead,
+        # and require Gauss to agree with it — this is what we can actually
+        # guarantee without an analytic closed form for the truncated domain.
+        f = lambda x, y: math.exp(-(x * x + y * y))  # noqa: E731
+        val = gaussian_quadrature_2d(f, -2, 2, -2, 2, 8)
+        simpson_ref = simpson_2d(f, -2, 2, -2, 2, 100, 100)
+        assert abs(val - simpson_ref) < 1e-4
+        # Sanity: both rules should still be in the right neighbourhood of π.
+        assert 3.0 < val < 3.2
+
+    def test_reversed_limits(self) -> None:
+        # Reversing both axes flips sign once per axis -> net positive (two flips).
+        assert abs(gaussian_quadrature_2d(lambda x, y: x * y, 1, 0, 1, 0, 3) - 0.25) < 1e-12
+
+    def test_one_reversed_axis(self) -> None:
+        assert abs(gaussian_quadrature_2d(lambda x, y: x * y, 0, 1, 1, 0, 3) - (-0.25)) < 1e-12
+
+    def test_n_equals_one(self) -> None:
+        # 1-point rule evaluates the integrand at the domain midpoint.
+        # ∬_0^2×0^4 (x + y + 1) dx dy = area * f(midpoint) = 8 * (1+2+1) = 32,
+        # and the exact double integral is also 32 (linear in each variable).
+        assert abs(gaussian_quadrature_2d(lambda x, y: x + y + 1, 0, 2, 0, 4, 1) - 32.0) < 1e-12
+
+    def test_non_square_domain(self) -> None:
+        # ∬_0^2 × _1^3 x*y dx dy = 8 (same as the Simpson 2-D test).
+        assert abs(gaussian_quadrature_2d(lambda x, y: x * y, 0, 2, 1, 3, 5) - 8.0) < 1e-10
+
+    def test_invalid_n(self) -> None:
+        with pytest.raises(ValueError):
+            gaussian_quadrature_2d(lambda x, y: 1.0, 0, 1, 0, 1, 0)
+
+    def test_invalid_negative_n(self) -> None:
+        with pytest.raises(ValueError):
+            gaussian_quadrature_2d(lambda x, y: 1.0, 0, 1, 0, 1, -1)
+
+
+class Test2dCrossMethodAgreement:
+    def test_simpson_and_gauss_agree_on_exp(self) -> None:
+        # Both 2-D rules should land near the exact (e-1)^2 on a smooth integrand.
+        exact = (math.e - 1) ** 2
+        f = lambda x, y: math.exp(x + y)  # noqa: E731
+        assert abs(simpson_2d(f, 0, 1, 0, 1, 100, 100) - exact) < 1e-8
+        assert abs(gaussian_quadrature_2d(f, 0, 1, 0, 1, 10) - exact) < 1e-8

@@ -149,7 +149,15 @@ class TestStatsProperties:
         # mean(c·x) = c·mean(x) — linearity of the arithmetic mean under
         # positive scalar scaling. Negative/zero scale would be just as valid
         # but flipping the sign on an odd-length list complicates the bound.
-        assert math.isclose(mean([scale * x for x in data]), scale * mean(data), rel_tol=1e-9)
+        # When mean(x) ≈ 0 (e.g. symmetric data like [342, -342]) the relative
+        # error of c·mean(x) blows up even though the absolute error is at the
+        # round-off floor, so anchor with an abs_tol in addition to rel_tol.
+        assert math.isclose(
+            mean([scale * x for x in data]),
+            scale * mean(data),
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        )
 
 
 # --------------------------------------------------------------------------- #
