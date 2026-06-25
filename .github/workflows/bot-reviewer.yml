@@ -43,10 +43,11 @@ permissions:
 jobs:
   approve:
     runs-on: ubuntu-latest
-    # No token configured → this workflow is inert (see header). Skip cleanly
-    # instead of erroring, so the scaffold is safe to commit before the secret
-    # exists.
-    if: ${{ secrets.REVIEW_BOT_TOKEN != '' }}
+    # NOTE: do NOT gate this job with `if: ${{ secrets.X != '' }}`. The
+    # `secrets` context is *not* reliably evaluable in a job-level `if` and
+    # leaks the secret's existence into control flow. Instead we always run
+    # the job and let the first step no-op cleanly when the token is unset,
+    # so the scaffold is safe to commit before the secret exists.
     steps:
       - name: Decide whether to approve
         id: gate
@@ -54,8 +55,17 @@ jobs:
           ACTOR: ${{ github.actor }}
           MAINTAINER: "Furox88"
           AUTO_MAINTAINER: ${{ env.auto-approve-maintainer }}
+          # Stash the token in the env so the *shell* (not the `if`) tests it.
+          # An empty string here means the secret is unset → treated as "no".
+          BOT_TOKEN: ${{ secrets.REVIEW_BOT_TOKEN }}
         run: |
           approve="false"
+          # No token configured → this workflow is inert (see header).
+          if [[ -z "$BOT_TOKEN" ]]; then
+            echo "approve=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::REVIEW_BOT_TOKEN not set — Bot Reviewer inert."
+            exit 0
+          fi
           if [[ "$ACTOR" == "dependabot[bot]" ]]; then
             approve="true"
           elif [[ "$AUTO_MAINTAINER" == "true" && "$ACTOR" == "$MAINTAINER" ]]; then

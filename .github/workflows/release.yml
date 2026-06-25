@@ -177,6 +177,6 @@ jobs:
               pathlib.Path('src/cds/_version.py').read_text()).group(1))")
           TESTS=$(pytest --co -q 2>/dev/null | grep -oE '[0-9]+ tests collected' \
               | grep -oE '^[0-9]+' || echo 0)
-          DESC="Cognitive Discovery System — pure Python scientific computing. 17 modules: quantum, ML, NLP, graph theory, Monte Carlo, ODE solvers, FFT, optimization, probability, statistics, symbolic math, knowledge graph. ${TESTS} tests, 100% coverage, v${VERSION}."
+          DESC="Cognitive Discovery System — pure Python scientific computing. 18 modules: quantum, ML, NLP, graph theory, Monte Carlo, ODE solvers, FFT & signal filters, optimization, probability, statistics & time-series, symbolic math, numerical integration (1-D/2-D), knowledge graph. ${TESTS} tests, 100% coverage, v${VERSION}."
           echo "New description: $DESC"
           gh repo edit "$GITHUB_REPOSITORY" --description "$DESC"

@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-A **minor** release in progress on the `feat/v1.2.0-multimodule-expansion`
-branch. The theme is **horizontal expansion + hardening**: three new domain
-features (time-series analysis, signal-filter design, 2-D quadrature), an
-optional pandas interop extra, and a documentation overhaul (Cookbook,
-Architecture guide, expanded Tour). Plus numerical-stability fixes and a
-no-behavior-change refactor of the two largest source files.
+No unreleased changes yet. See [v1.2.0](#v120---2026-06-25) below for the
+latest release.
+
+## [v1.2.0] - 2026-06-25
+
+A **minor** release. The theme is **horizontal expansion + hardening**: three
+new domain features (time-series analysis, signal-filter design, 2-D
+quadrature), an optional pandas interop extra, and a documentation overhaul
+(Cookbook, Architecture guide, expanded Tour). Plus numerical-stability fixes
+and a no-behavior-change refactor of the two largest source files.
 
 No existing public API is removed or renamed; the `cds[pandas]` adapter is
 gated behind an optional extra so the zero-dependency core is untouched.

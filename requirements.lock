@@ -4,34 +4,3 @@
 #
 #    pip-compile --output-file=requirements.lock pyproject.toml
 #
-annotated-doc==0.0.4
-    # via typer
-annotated-types==0.7.0
-    # via pydantic
-colorama==0.4.6
-    # via typer
-markdown-it-py==4.2.0
-    # via rich
-mdurl==0.1.2
-    # via markdown-it-py
-pydantic==2.13.4
-    # via cognitive-discovery-system (pyproject.toml)
-pydantic-core==2.46.4
-    # via pydantic
-pygments==2.20.0
-    # via rich
-rich==15.0.0
-    # via
-    #   cognitive-discovery-system (pyproject.toml)
-    #   typer
-shellingham==1.5.4
-    # via typer
-typer[all]==0.26.7
-    # via cognitive-discovery-system (pyproject.toml)
-typing-extensions==4.15.0
-    # via
-    #   pydantic
-    #   pydantic-core
-    #   typing-inspection
-typing-inspection==0.4.2
-    # via pydantic
