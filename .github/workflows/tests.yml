@@ -252,3 +252,51 @@ jobs:
             exit 1
           fi
           echo "All required jobs succeeded."
+
+  # Deploy the MkDocs site to the gh-pages branch (GitHub Pages, legacy build
+  # mode). The repo's Pages setting uses the `gh-pages` branch as its source, so
+  # the modern `actions/deploy-pages` flow does NOT work here (it was tried and
+  # removed in cdcf5d0). `mkdocs gh-deploy --force --no-history` is the same
+  # command `scripts/publish.py` runs locally and is the only deploy path that
+  # is compatible with legacy Pages. This job automates it on every push to main
+  # so the published site never drifts from the docs/ on main again.
+  #
+  # DELIBERATELY NOT in the `CI` gate's `needs:` above — docs deploy must not be
+  # a required status check (a deploy hiccup should never block a merge). It
+  # also only runs on pushes to main, never on PRs, so a PR's docs build is
+  # validated by the `mkdocs build --strict` step in the `test` matrix without
+  # touching the live site.
+  deploy-docs:
+    name: Deploy docs to gh-pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: deploy-docs
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install docs dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[docs]"
+
+      - name: Deploy to gh-pages
+        env:
+          # mkdocs gh-deploy pushes to gh-pages as the GITHUB_TOKEN identity.
+          # The token is injected into the git remote URL so the push is
+          # authenticated without persisting any credential helper.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          mkdocs gh-deploy --force --no-history
