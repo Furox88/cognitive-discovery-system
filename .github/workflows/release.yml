@@ -173,8 +173,9 @@ jobs:
           set -euo pipefail
           pip install --quiet pytest  # only the collector, no project deps
           VERSION=$(python -c "import re, pathlib; \
-              print(re.search(r'__version__ = \"([^\"]+)\"', \
-              pathlib.Path('src/cds/_version.py').read_text()).group(1))")
+              txt = pathlib.Path('src/cds/_version.py').read_text(); \
+              m = re.search(r'__version__\s*=\s*(?:\w+\s*=\s*)?\"([^\"]+)\"', txt); \
+              print(m.group(1) if m else '')")
           TESTS=$(pytest --co -q 2>/dev/null | grep -oE '[0-9]+ tests collected' \
               | grep -oE '^[0-9]+' || echo 0)
           DESC="Cognitive Discovery System — pure Python scientific computing. 18 modules: quantum, ML, NLP, graph theory, Monte Carlo, ODE solvers, FFT & signal filters, optimization, probability, statistics & time-series, symbolic math, numerical integration (1-D/2-D), knowledge graph. ${TESTS} tests, 100% coverage, v${VERSION}."
