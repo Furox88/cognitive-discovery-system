@@ -1,0 +1,75 @@
+name: Bot Reviewer
+
+# Auto-approves Dependabot (and optionally maintainer-authored) PRs using a
+# PAT-backed token so a `required_approving_review_count: 1` branch-protection
+# rule can still be satisfied in a single-maintainer repo.
+#
+# WHY THIS EXISTS:
+#   GitHub forbids a PR's author from approving their own PR, and the default
+#   `GITHUB_TOKEN` cannot post approving reviews under branch protection. In a
+#   one-person repo where the maintainer authors every PR, that makes
+#   `require approvals: 1` un-satisfiable for human PRs, and silently breaks
+#   Dependabot auto-merge (see dependabot-auto-merge.yml history).
+#
+#   Branch protection currently requires 0 approvals, so this workflow is a
+#   DORMANT SCAFFOLD: it only does anything once you (a) add a repository
+#   secret named `REVIEW_BOT_TOKEN` (a fine-grained PAT or a GitHub App
+#   installation token with `pull-requests: write` on this repo) and
+#   (b) raise `required_approving_review_count` back to 1.
+#
+# SECURITY NOTES:
+#   * Only auto-approves `dependabot[bot]` PRs by default. Setting
+#     `auto-approve-maintainer` to `true` below broadens this to PRs authored
+#     by `Furox88`; do that only if you accept that the author's own CI is the
+#     sole gate.
+#   * The PAT must be a *different* identity than the PR author for GitHub to
+#     accept the review. A second account, or a GitHub App, satisfies this.
+#   * Never log the token. It is referenced only via the `env` mapping below.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# ── Toggle ──────────────────────────────────────────────────────────────
+# Flip to true to also auto-approve PRs authored by the maintainer. Off by
+# default so that, out of the box, only Dependabot is touched.
+env:
+  auto-approve-maintainer: "false"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    # No token configured → this workflow is inert (see header). Skip cleanly
+    # instead of erroring, so the scaffold is safe to commit before the secret
+    # exists.
+    if: ${{ secrets.REVIEW_BOT_TOKEN != '' }}
+    steps:
+      - name: Decide whether to approve
+        id: gate
+        env:
+          ACTOR: ${{ github.actor }}
+          MAINTAINER: "Furox88"
+          AUTO_MAINTAINER: ${{ env.auto-approve-maintainer }}
+        run: |
+          approve="false"
+          if [[ "$ACTOR" == "dependabot[bot]" ]]; then
+            approve="true"
+          elif [[ "$AUTO_MAINTAINER" == "true" && "$ACTOR" == "$MAINTAINER" ]]; then
+            approve="true"
+          fi
+          echo "approve=$approve" >> "$GITHUB_OUTPUT"
+          echo "::notice::actor=$ACTOR approve=$approve"
+
+      - name: Submit approving review
+        if: steps.gate.outputs.approve == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.REVIEW_BOT_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr review "$PR_URL" --approve --body \
+            "Automated approval by Bot Reviewer (actor: ${{ github.actor }}). \
+             CI/CodeQL status checks still gate the merge under branch protection."
