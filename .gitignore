@@ -214,3 +214,7 @@ docs/marketing/
 # One-off research artifacts (API dumps captured while debugging the
 # Deployments page; not tracked, regenerated on demand)
 deployments_raw.json
+
+# Playwright CLI verification cache (local link/doc checks; regenerated on
+# demand, never commit)
+.playwright-cli/
