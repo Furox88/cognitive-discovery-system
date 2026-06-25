@@ -17,6 +17,15 @@ name: Bot Reviewer
 #   installation token with `pull-requests: write` on this repo) and
 #   (b) raise `required_approving_review_count` back to 1.
 #
+#   The `REVIEW_BOT_TOKEN` secret MAY be the same GitHub App already used by
+#   benchmarks.yml / changelog.yml (secrets BOT_APP_ID + BOT_APP_PRIVATE_KEY).
+#   If so, you can either reuse those secrets directly here or point this
+#   workflow's `REVIEW_BOT_TOKEN` at an App installation token minted the
+#   same way — a single App satisfies the "different identity than the PR
+#   author" rule for approvals AND opens bot PRs that trigger CI. The App
+#   needs `Contents: RW` + `Pull requests: RW` + `Workflows: R` to cover all
+#   three workflows.
+#
 # SECURITY NOTES:
 #   * Only auto-approves `dependabot[bot]` PRs by default. Setting
 #     `auto-approve-maintainer` to `true` below broadens this to PRs authored
