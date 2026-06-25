@@ -69,6 +69,24 @@ jobs:
       # steps.changed above). base is always the default branch (main)
       # regardless of trigger.
       #
+      # CONFIG GUARD: if the shared App is not configured yet, stop cleanly
+      # with a green job instead of letting create-github-app-token throw
+      # "Input required and not supplied: app-id" and turn every scheduled
+      # / release run red. The guard pattern mirrors bot-reviewer.yml. Once
+      # secrets BOT_APP_ID + BOT_APP_PRIVATE_KEY are added this branch is
+      # always taken.
+      - name: Check App credentials configured
+        id: cfg
+        env:
+          APP_ID: ${{ secrets.BOT_APP_ID }}
+        run: |
+          if [[ -n "$APP_ID" ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::BOT_APP_ID not set — Benchmarks cannot open a PR that triggers CI. Stopping cleanly (see header)."
+          fi
+
       # TOKEN CHOICE — why a GitHub App token, not the default GITHUB_TOKEN:
       # A PR opened with the built-in GITHUB_TOKEN does NOT trigger
       # downstream `pull_request` workflows (CI, CodeQL). GitHub blocks
@@ -81,13 +99,14 @@ jobs:
       # See CHANGELOG / docs for the one-time App + secret setup steps.
       - name: Generate GitHub App token (triggers downstream CI)
         id: app-token
+        if: steps.cfg.outputs.configured == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Open PR with regenerated artifacts
-        if: steps.changed.outputs.changed == 'true'
+        if: steps.changed.outputs.changed == 'true' && steps.cfg.outputs.configured == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.app-token.outputs.token }}

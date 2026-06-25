@@ -71,6 +71,23 @@ jobs:
       # one changelog PR is ever open at a time regardless of how many tags
       # are dispatched.
       #
+      # CONFIG GUARD: if the shared App is not configured yet, stop cleanly
+      # with a green job instead of letting create-github-app-token throw
+      # "Input required and not supplied: app-id". Mirrors the guard in
+      # benchmarks.yml / bot-reviewer.yml; once BOT_APP_ID is set this branch
+      # is always taken.
+      - name: Check App credentials configured
+        id: cfg
+        env:
+          APP_ID: ${{ secrets.BOT_APP_ID }}
+        run: |
+          if [[ -n "$APP_ID" ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::BOT_APP_ID not set — Changelog cannot open a PR that triggers CI. Stopping cleanly (see header)."
+          fi
+
       # TOKEN CHOICE — why a GitHub App token, not the default GITHUB_TOKEN:
       # A PR opened with the built-in GITHUB_TOKEN does NOT trigger the
       # `pull_request` CI/CodeQL workflows (GitHub blocks GITHUB_TOKEN-sourced
@@ -81,13 +98,14 @@ jobs:
       # serves benchmarks.yml, changelog.yml, and bot-reviewer.yml.
       - name: Generate GitHub App token (triggers downstream CI)
         id: app-token
+        if: steps.cfg.outputs.configured == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Open or update PR with regenerated CHANGELOG
-        if: steps.check.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true' && steps.cfg.outputs.configured == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.app-token.outputs.token }}
