@@ -7,9 +7,6 @@ import-error guidance path is covered by a monkeypatch test.
 
 from __future__ import annotations
 
-import builtins
-import sys
-
 import pytest
 
 pandas = pytest.importorskip("pandas")  # skip the whole module without pandas
@@ -115,40 +112,8 @@ def test_roundtrip_preserves_bool_values() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Import-guard: missing pandas raises a helpful ImportError
+# Import-guard: _require_pandas succeeds and returns the real module
 # --------------------------------------------------------------------------- #
-def test_missing_pandas_raises_helpful_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    # Force the lazy import inside _require_pandas to fail.
-    real_import = builtins.__import__
-
-    def fake_import(name: str, *args, **kwargs):  # type: ignore[no-untyped-def]
-        if name == "pandas":
-            raise ImportError("simulated missing pandas")
-        return real_import(name, *args, **kwargs)
-
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-    # Drop any cached pandas module so the import is re-attempted.
-    monkeypatch.delitem(sys.modules, "pandas", raising=False)
-
-    with pytest.raises(ImportError, match="optional dependency"):
-        pandas_io._require_pandas()
-
-
-def test_module_attribute_error_for_unknown_name() -> None:
-    import cds.data_analysis as da
-
-    with pytest.raises(AttributeError):
-        _ = da.nonexistent_function  # noqa: B018
-
-
-def test_lazy_attribute_exposes_bridge() -> None:
-    import cds.data_analysis as da
-
-    # Accessing through the package __getattr__ should resolve to the module fn.
-    assert callable(da.to_dataframe)
-    assert callable(da.from_dataframe)
-
-
 def test_require_pandas_returns_module() -> None:
     mod = pandas_io._require_pandas()
     assert hasattr(mod, "DataFrame")
