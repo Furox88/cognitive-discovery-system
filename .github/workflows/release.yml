@@ -158,6 +158,15 @@ jobs:
     name: Sync repo About (version + test count)
     needs: publish
     runs-on: ubuntu-latest
+    # Job-scoped permission grant. `gh repo edit` (which rewrites the repo
+    # description) requires `administration: write`, which the workflow-level
+    # `permissions:` block does NOT grant. Granting it here — scoped to this
+    # single cosmetic job — keeps the build/publish jobs at least privilege.
+    # Without this, the step fails with
+    # `HTTP 403: Resource not accessible by integration`.
+    permissions:
+      contents: read
+      administration: write
     steps:
       - uses: actions/checkout@v4
 
