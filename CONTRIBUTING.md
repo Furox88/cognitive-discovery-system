@@ -34,7 +34,7 @@ pip install -e ".[dev,test]"
 pip install pre-commit
 pre-commit install
 
-# Run tests (1284 tests, see CI)
+# Run tests (1441 tests, see CI)
 pytest
 
 # Run linter
@@ -59,22 +59,23 @@ the surface readable and the import cost low.
 src/cds/
 ├── __init__.py          # Top-level re-exports (cds.core, cds.stats, …)
 ├── __main__.py          # `python -m cds` entry point
-├── cli.py               # Typer + Rich CLI (cds <command>)
+├── cli.py               # argparse CLI (cds <command>) — pure stdlib, no deps
 ├── core/                # Shared primitives: numeric helpers, models
+├── math_utils/          # Numerical calculus, linear algebra, eigenvalues
 ├── scientific/          # constants.py, formulas.py (physics)
 ├── quantum/             # Single- & multi-qubit simulation, entanglement
-├── signals/             # DFT/FFT, 2-D FFT, convolution, filtering
+├── signals/             # DFT/FFT, 2-D FFT, convolution, Butterworth IIR filters
 ├── optimization/        # gradient_descent, newton, adam, line_search
-├── stats/               # Descriptive stats, regression, hypothesis tests
+├── stats/               # Descriptive stats, regression, hypothesis tests, time-series
 ├── probability/         # Distributions and sampling
 ├── montecarlo/          # Monte Carlo estimation
 ├── diffeq/              # ODE solvers
-├── numerical_integration/  # Quadrature rules
+├── numerical_integration/  # Quadrature rules (1-D + 2-D tensor-product)
 ├── graph/               # Graph algorithms
 ├── ml/                  # Dependency-free MLP (Layer, Adam-based training)
-├── modeling/            # Curve / model fitting
+├── modeling/            # Symbolic algebra — expression trees, differentiation, MathModel
 ├── nlp/                 # Tokenizers, attention, mini GPT
-├── data_analysis/       # DataSet / DataTable containers
+├── data_analysis/       # DataSet / DataTable containers + optional pandas interop
 ├── hypothesis/          # Research hypothesis generation engine
 └── knowledge/           # Knowledge-representation helpers
 ```
@@ -85,11 +86,16 @@ import from `core/` but `core/` does not import domain modules.
 
 ### Dependency contract
 
-- **Runtime dependencies are intentionally minimal:** only `typer`, `pydantic`,
-  and `rich` (for the CLI). The numerical modules are **pure Python** — no NumPy,
-  no SciPy. This is a hard constraint: do not add a heavy dependency to a module
-  in `src/cds/` to make a function "faster". If a feature genuinely needs one,
-  gate it behind an optional extra (see `pyproject.toml` `[project.optional-dependencies]`).
+- **Zero runtime dependencies:** the whole `cds` package — including the CLI —
+  runs on the Python standard library alone (`pyproject.toml` declares
+  `dependencies = []`). The CLI is built on `argparse` with small ANSI helpers
+  replacing the former `typer`/`rich` implementation, and `pydantic` was dropped
+  from the runtime in favour of stdlib `dataclasses`. The numerical modules are
+  **pure Python** — no NumPy, no SciPy. This is a hard constraint: do not add a
+  heavy dependency to a module in `src/cds/` to make a function "faster". If a
+  feature genuinely needs one, gate it behind an optional extra (see
+  `pyproject.toml` `[project.optional-dependencies]`, e.g. `cds[pandas]`).
+  `tests/test_zero_dependencies.py` enforces this claim in CI.
 - **Typed:** `src/cds/py.typed` marks the package as PEP 561 typed. Keep public
   signatures annotated; `mypy` runs in pre-commit and CI.
 

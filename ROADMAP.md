@@ -82,12 +82,12 @@ quantitative magnitude estimate.
 - [x] ~~Tutorial section in `docs/tutorials/hypothesis_tests_demo.md`~~ — "Effect sizes" walkthrough pairing the measures with the existing `t_test` / `chi_square_independence`
 - [x] ~~Docs sync~~ — README module table, `docs/index.md` Key Features + stats description, EN/TR getting-started Python-API snippets
 
-## v1.2.0 — Multi-module expansion (In progress)
+## v1.2.0 — Multi-module expansion (Released 2026-06-25)
 
-A backward-compatible **minor** release in progress on the
-`feat/v1.2.0-multimodule-expansion` branch. Theme: horizontal expansion of the
+A backward-compatible **minor** release. Theme: horizontal expansion of the
 domain toolkits plus a documentation overhaul, with zero-dependency guarantees
-preserved (pandas is an opt-in extra). See `CHANGELOG.md` for full detail.
+preserved (pandas is an opt-in extra). The platform now spans **18 modules**.
+See `CHANGELOG.md` for full detail.
 
 - [x] ~~**`cds.stats` time-series analysis**~~ — ACF/PACF, KPSS stationarity test,
       Ljung-Box autocorrelation test, moving average / exponential smoothing /
@@ -106,12 +106,28 @@ preserved (pandas is an opt-in extra). See `CHANGELOG.md` for full detail.
       guide (`docs/ARCHITECTURE.md`), expanded Tour of Numerical Methods,
       README/`index.md` cross-links
 
+## Next — v1.3.0 (Planned)
+
+A backward-compatible **minor** release focused on **visualization and
+ergonomics**. These are the most-requested items promoted out of the open
+ideas list; the zero-dependency core stays untouched (everything here is an
+opt-in extra or docs/content).
+
+- [ ] **`cds[plot]` optional extra** — matplotlib integration for the existing
+      numerical modules (signals waveforms, stats distributions, time-series
+      ACF/PACF, optimization trajectories). Gated behind an extra like
+      `cds[pandas]`, so importing `cds` still pulls nothing.
+- [ ] **Jupyter notebook templates** — runnable notebook companions for the
+      Cookbook recipes and the Tour of Numerical Methods, mirroring the
+      existing `examples/*.py` demos for non-CLI users.
+- [ ] **Issue #62** — lift the `numpy<2.5` dev-pin once `mypy`'s default
+      `python_version` advances to 3.13+ (tracking issue; dev-only, no runtime
+      impact).
+
 ## Longer Term
 
 Open ideas — not version-committed. Contributions welcome.
 
-- Optional lightweight extras: `cds[plot]` for matplotlib integration
-- Notebook templates (Jupyter) for non-CLI users
 - Community-contributed domain modules (bioinformatics, finance)
 - **CDS Script Templates** — domain-specific scientific workflows (quantum chemistry, signal processing demos)
 

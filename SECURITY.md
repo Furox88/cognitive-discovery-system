@@ -4,8 +4,9 @@
 
 | Version | Supported          | Notes |
 |---------|--------------------|-------|
-| 1.1.x   | Yes                | Stable; current release line |
-| 1.0.x   | Yes                | Stable; previous minor line, security fixes only |
+| 1.2.x   | Yes                | Stable; current release line |
+| 1.1.x   | Yes                | Stable; previous minor line, security fixes only |
+| 1.0.x   | No                 | EOL (previous-previous minor; superseded by the 1.2.x + 1.1.x window) |
 | < 1.0   | No                 | EOL (0.9.x beta, 0.8.x alpha, and earlier are unsupported) |
 
 Stable releases (1.0.0+) follow a stricter support window: the current minor version plus the 1 previous minor version.

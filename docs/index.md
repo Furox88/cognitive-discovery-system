@@ -2,7 +2,7 @@
 
 Welcome to the official documentation for the **Cognitive Discovery System (CDS)**.
 
-CDS is an open-source computational science platform designed for research, simulation, and discovery. It provides a lightweight, dependency-free environment for scientific exploration, featuring 17 modules covering everything from quantum simulation to symbolic math, knowledge organization, educational NLP primitives, and automated hypothesis generation.
+CDS is an open-source computational science platform designed for research, simulation, and discovery. It provides a lightweight, dependency-free environment for scientific exploration, featuring 18 modules covering everything from quantum simulation to symbolic math, knowledge organization, educational NLP primitives, and automated hypothesis generation.
 
 <video controls loop muted autoplay playsinline poster="assets/cds_promo_poster.png" style="max-width:100%;border-radius:12px;border:1px solid rgba(148,163,184,.25)">
   <source src="assets/cds_promo.mp4" type="video/mp4">
@@ -26,18 +26,18 @@ CDS is an open-source computational science platform designed for research, simu
 | `cds.quantum` | Single & multi-qubit quantum circuit simulation |
 | `cds.optimization` | Gradient-based and numerical optimizers |
 | `cds.ml` | Pure Python Neural Networks (MLP, Adam-based training) |
-| `cds.signals` | Fast signal processing (DFT, FFT/IFFT, convolution, filtering) |
+| `cds.signals` | Fast signal processing (DFT, FFT/IFFT, convolution) + Butterworth IIR filter design & moving-median denoiser |
 | `cds.probability` | Probability distributions & sampling |
-| `cds.stats` | Statistical analysis, regression, hypothesis testing & effect-size measures (Cohen's d, Cramér's V) |
+| `cds.stats` | Descriptive stats, regression, hypothesis testing, effect-size measures (Cohen's d, Cramér's V) & time-series analysis (ACF/PACF, KPSS, Ljung-Box, decomposition) |
 | `cds.math_utils` | Numerical calculus, linear algebra, eigenvalues |
-| `cds.data_analysis` | Structured data management and visualization |
+| `cds.data_analysis` | Structured data management, visualization & optional pandas interop (`cds[pandas]`) |
 | `cds.scientific` | Physical constants & scientific formulas |
 | `cds.graph` | Graph algorithms (BFS, DFS, Dijkstra, Kruskal MST) |
 | `cds.modeling` | Symbolic algebra — expressions, differentiation, simplification, LaTeX export, `MathModel` equation systems, root-finding & parameter fitting |
 | `cds.knowledge` | Knowledge organization — concept graph with typed relations, research notes notebook, ranked structured retrieval (JSON persistence) |
 | `cds.montecarlo` | Monte Carlo integration, π estimation, random walks |
 | `cds.diffeq` | ODE solvers (Euler, RK4, midpoint) |
-| `cds.numerical_integration` | Deterministic quadrature (trapezoid, Simpson, Romberg) |
+| `cds.numerical_integration` | Deterministic quadrature (trapezoid, Simpson, Romberg) + 2-D tensor-product rules (Simpson, Gauss-Legendre) |
 | `cds.nlp` | Educational NLP from scratch (BPE, embeddings, attention, autograd, MiniGPT) |
 | `cds.hypothesis` | Cognitive discovery and structured hypothesis generation |
 
@@ -52,4 +52,4 @@ CDS is an open-source computational science platform designed for research, simu
 - [Benchmarks](benchmarks.md)
 
 ---
-*CDS v1.1.8 is stable and actively developed. Contributions are welcome!*
+*CDS v1.2.0 is stable and actively developed. Contributions are welcome!*
