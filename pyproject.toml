@@ -1,7 +1,7 @@
 [project]
 name = "cognitive-discovery-system"
-version = "1.2.0"
-description = "Pure Python computational science system — quantum simulation, FFT, optimization, probability, statistics, and more."
+version = "1.2.1"
+description = "An 18-module pure-Python computational science platform — quantum circuits, ML, NLP, signal processing, optimization, statistics & time-series, ODE solvers, Monte Carlo, symbolic math, knowledge graphs and hypothesis generation. Zero runtime dependencies."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -9,7 +9,7 @@ requires-python = ">=3.10"
 authors = [
     {name = "Furox88", email = "furkanarkn1451@gmail.com"}
 ]
-keywords = ["quantum", "fft", "optimization", "probability", "statistics", "scientific-computing", "signal-processing", "pure-python", "graph-theory", "monte-carlo", "differential-equations", "linear-algebra"]
+keywords = ["quantum", "machine-learning", "nlp", "signal-processing", "optimization", "statistics", "probability", "scientific-computing", "numerical-methods", "numerical-integration", "differential-equations", "monte-carlo", "graph-theory", "knowledge-graph", "symbolic-math", "data-analysis", "physics", "linear-algebra", "hypothesis-generation", "pure-python"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",

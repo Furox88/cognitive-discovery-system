@@ -7,8 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.2.0](#v120---2026-06-25) below for the
+No unreleased changes yet. See [v1.2.1](#v121---2026-06-28) below for the
 latest release.
+
+## [v1.2.1] - 2026-06-28
+
+A **patch** release. No code changes — metadata-only refresh to improve
+PyPI discoverability.
+
+### Changed
+
+- **Strengthened PyPI `description`**: the short one-liner now names all 18
+  domain modules (quantum circuits, ML, NLP, signal processing, optimization,
+  statistics & time-series, ODE solvers, Monte Carlo, symbolic math, knowledge
+  graphs, hypothesis generation) and states the zero-runtime-dependency
+  guarantee. Improves search-result relevance on PyPI.
+- **Expanded `keywords`** from 12 to 20 entries, aligning them with the GitHub
+  repository topics (added `machine-learning`, `nlp`, `numerical-integration`,
+  `knowledge-graph`, `symbolic-math`, `data-analysis`, `physics`,
+  `hypothesis-generation`, `numerical-methods`; dropped the redundant `fft`
+  in favour of the broader `signal-processing`).
 
 ## [v1.2.0] - 2026-06-25
 

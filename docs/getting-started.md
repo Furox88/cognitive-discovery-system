@@ -95,7 +95,7 @@ print(x)  # [2.0, 1.0]
 ## Running Tests
 
 ```bash
-pytest           # run all 1284 tests (see CI)
+pytest           # run all 1441 tests (see CI)
 pytest -v        # verbose output
 pytest -x        # stop on first failure
 ```
@@ -151,21 +151,24 @@ src/cds/
 ├── quantum/             # Quantum circuit simulation (single & multi-qubit)
 ├── optimization/        # Gradient descent, Newton, Adam, line search
 ├── ml/                  # Pure Python neural networks (MLP, Adam training)
-├── signals/             # DFT, FFT, convolution, filtering
+├── signals/             # DFT, FFT, convolution, Butterworth IIR filters
 ├── probability/         # Probability distributions & sampling
-├── stats/               # Statistical analysis & regression
+├── stats/               # Descriptive stats, regression, hypothesis tests, time-series
 ├── math_utils/          # Calculus, linear algebra, eigenvalues
-├── data_analysis/       # CSV loading & data transforms
+├── data_analysis/       # DataSet/DataTable + optional pandas interop (cds[pandas])
 ├── scientific/          # Physical constants & formulas
 ├── graph/               # Graph algorithms (Dijkstra, BFS, DFS, Kruskal)
 ├── montecarlo/          # Monte Carlo methods (π, integration, random walks)
 ├── diffeq/              # ODE solvers (Euler, RK4, midpoint)
-├── numerical_integration/ # Deterministic quadrature (trapezoid, Simpson, Romberg)
+├── numerical_integration/ # Quadrature (trapezoid, Simpson, Romberg) + 2-D rules
+├── modeling/            # Symbolic algebra, expression trees, MathModel
+├── knowledge/           # Concept graph, notebook, structured retrieval
+├── nlp/                 # BPE tokenizer, attention, autograd, MiniGPT
 ├── hypothesis/          # Hypothesis generation
 ├── core/                # Shared models, config
-└── cli.py               # Command-line interface
+└── cli.py               # Command-line interface (argparse, zero-dependency)
 
 examples/                # Runnable demo scripts
-tests/                   # 1284 tests (see CI)
+tests/                   # 1441 tests (see CI)
 docs/                    # Documentation, API reference, benchmarks
 ```
