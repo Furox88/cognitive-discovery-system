@@ -1,6 +1,6 @@
 [project]
 name = "cognitive-discovery-system"
-version = "1.2.1"
+version = "1.2.2"
 description = "An 18-module pure-Python computational science platform — quantum circuits, ML, NLP, signal processing, optimization, statistics & time-series, ODE solvers, Monte Carlo, symbolic math, knowledge graphs and hypothesis generation. Zero runtime dependencies."
 readme = "README.md"
 license = "MIT"

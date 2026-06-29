@@ -7,8 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.2.1](#v121---2026-06-28) below for the
+No unreleased changes yet. See [v1.2.2](#v122---2026-06-29) below for the
 latest release.
+
+## [v1.2.2] - 2026-06-29
+
+A **patch** release. No code changes — documentation-only refresh.
+
+### Changed
+
+- **README: removed pictographic emoji** from the top navigation row, the
+  callout blocks, the "Support the project" section heading, and the trailing
+  sign-off. Em dashes are preserved. Brings the README in line with the
+  emoji-free house style already applied to the docs and live PR bodies.
+- **`.gitignore`: ignore local promo-GIF QA scratch** (audit/compare/measure
+  scripts under `scripts/_*.py` and extracted frames under `assets/_qa_*/`),
+  which are one-off diagnostic tooling and were never meant to ship.
 
 ## [v1.2.1] - 2026-06-28
 
