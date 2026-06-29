@@ -218,3 +218,19 @@ deployments_raw.json
 # Playwright CLI verification cache (local link/doc checks; regenerated on
 # demand, never commit)
 .playwright-cli/
+
+# Local promo-GIF QA scratch (audit/compare/measure scripts + extracted
+# frames). One-off diagnostic tooling for eyeballing the promo render; not
+# part of the build or docs site. Do not commit.
+scripts/_compare_gifs.py
+scripts/_gif_audit.py
+scripts/_gif_audit_old.py
+scripts/_gif_inspect.py
+scripts/_layout_compare.py
+scripts/_measure.mjs
+scripts/_old_anatomy.py
+scripts/_old_flow.py
+assets/_qa_frames/
+assets/_qa_old/
+assets/_qa_old_full/
+assets/_qa_view/
