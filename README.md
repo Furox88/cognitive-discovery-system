@@ -22,12 +22,12 @@
 </p>
 
 <p align="center">
-  <a href="https://Furox88.github.io/cognitive-discovery-system/">📖 Documentation</a> &nbsp;·&nbsp;
-  <a href="https://Furox88.github.io/cognitive-discovery-system/tour_of_numerical_methods/">🧭 Tour of Numerical Methods</a> &nbsp;·&nbsp;
-  <a href="https://Furox88.github.io/cognitive-discovery-system/cookbook/">🍳 Cookbook</a> &nbsp;·&nbsp;
-  <a href="docs/tutorials/">🎓 Tutorials</a> &nbsp;·&nbsp;
-  <a href="#quick-start">⚡ Quick Start</a> &nbsp;·&nbsp;
-  <a href="docs/CASE_STUDY_HUBBLE.md">🔬 Case Studies</a>
+  <a href="https://Furox88.github.io/cognitive-discovery-system/">Documentation</a> &nbsp;·&nbsp;
+  <a href="https://Furox88.github.io/cognitive-discovery-system/tour_of_numerical_methods/">Tour of Numerical Methods</a> &nbsp;·&nbsp;
+  <a href="https://Furox88.github.io/cognitive-discovery-system/cookbook/">Cookbook</a> &nbsp;·&nbsp;
+  <a href="docs/tutorials/">Tutorials</a> &nbsp;·&nbsp;
+  <a href="#quick-start">Quick Start</a> &nbsp;·&nbsp;
+  <a href="docs/CASE_STUDY_HUBBLE.md">Case Studies</a>
 </p>
 
 ---
@@ -36,7 +36,7 @@
 
 **Why CDS exists** — for teaching, prototyping, scientific exploration, and edge deployments where a single, dependency-light, fully-readable Python package beats juggling six libraries. Every algorithm is implemented from scratch so you can *learn how it works*, not just call it.
 
-> ⭐ **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
+> **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
 **Latest Update (v1.2.0):** horizontal expansion + hardening — three new domain features landed in existing modules: **time-series analysis** in `cds.stats` (ACF/PACF, KPSS & Ljung-Box tests, exponential smoothing, seasonal decomposition), **signal-filter design** in `cds.signals` (Butterworth IIR low/high/band, moving-median denoiser), and **2-D tensor-product quadrature** in `cds.numerical_integration` (Simpson + Gauss-Legendre). An optional `cds[pandas]` extra adds `to_dataframe`/`from_dataframe` interop without touching the zero-dependency core. Docs got a new Cookbook (~48 verified recipes), an Architecture guide, and an expanded Tour. No existing public API removed or renamed. The current version is shown in the PyPI badge at the top; the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges carry the live test count and coverage.
@@ -197,13 +197,13 @@ cds --help
 cds hypothesis "What causes the Hubble tension?"
 ```
 
-> 💡 **On Windows you don't need to download anything manually.**
+> **On Windows you don't need to download anything manually.**
 > Just `git clone` (or copy the repo folder) and the commands above set everything up.
 > No `.zip` to extract — clone gives you the live, up-to-date source that you can `git pull` anytime.
 > If you prefer not to use Git, you can also click **Code → Download ZIP** on GitHub,
 > but **cloning is recommended** so updates are a single `git pull`.
 
-> ⚠️ **Execution policy:** if `Activate.ps1` is blocked, run
+> **Execution policy:** if `Activate.ps1` is blocked, run
 > `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or use `cmd.exe`
 > with `.venv\Scripts\activate.bat` instead.
 
@@ -610,13 +610,13 @@ supported versions, and out-of-scope items are in [SECURITY.md](SECURITY.md).
 
 ---
 
-## ⭐ Support the project
+## Support the project
 
 CDS is built and maintained solo, for free. If it helped your research, teaching, or prototyping:
 
-- **Star the repo** — [⭐ github.com/Furox88/cognitive-discovery-system](https://github.com/Furox88/cognitive-discovery-system) — it costs nothing and is the single biggest signal that helps others discover CDS.
+- **Star the repo** — [github.com/Furox88/cognitive-discovery-system](https://github.com/Furox88/cognitive-discovery-system) — it costs nothing and is the single biggest signal that helps others discover CDS.
 - **Share it** — a post on X, Reddit, or with a colleague who'd find it useful.
 - **Cite it** — see [CITATION.cff](CITATION.cff) if CDS appears in your work.
 - **Contribute** — new modules, docs, examples, and issue triage are all welcome. See [Contributing](#contributing).
 
-Thank you for using CDS. 🧭
+Thank you for using CDS.
