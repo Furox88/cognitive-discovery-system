@@ -7,8 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.2.2](#v122---2026-06-29) below for the
+No unreleased changes yet. See [v1.2.3](#v123---2026-06-29) below for the
 latest release.
+
+## [v1.2.3] - 2026-06-29
+
+A **patch** release. Fixes the release pipeline that silently broke every
+publish since v1.1.8.
+
+### Fixed
+
+- **Release workflow (`release.yml`)**: removed an invalid
+  `administration: write` entry from the `sync-about` job's `permissions:`
+  block. `administration` is not a valid `permissions:` key, so GitHub
+  rejected the entire workflow file as a "workflow file issue" before any
+  job could start, failing in 0s and leaving v1.1.9 onward without a PyPI
+  upload or GitHub Release. The About-sync step is now best-effort
+  (`continue-on-error: true`) since `gh repo edit` needs an admin REST
+  scope the default `GITHUB_TOKEN` can't grant; the repo description is
+  synced by hand on release.
 
 ## [v1.2.2] - 2026-06-29
 

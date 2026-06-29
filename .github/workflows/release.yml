@@ -158,15 +158,14 @@ jobs:
     name: Sync repo About (version + test count)
     needs: publish
     runs-on: ubuntu-latest
-    # Job-scoped permission grant. `gh repo edit` (which rewrites the repo
-    # description) requires `administration: write`, which the workflow-level
-    # `permissions:` block does NOT grant. Granting it here — scoped to this
-    # single cosmetic job — keeps the build/publish jobs at least privilege.
-    # Without this, the step fails with
-    # `HTTP 403: Resource not accessible by integration`.
-    permissions:
-      contents: read
-      administration: write
+    # `gh repo edit` calls an admin-only REST endpoint that the default
+    # GITHUB_TOKEN cannot satisfy, and `administration` is NOT a valid
+    # `permissions:` key — listing it makes GitHub reject the entire workflow
+    # file with a "workflow file issue" before any job runs (which silently
+    # broke every release since v1.1.8). This job is now best-effort: it
+    # never blocks the release if the token can't rewrite the description;
+    # the About box is synced by hand on release instead.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
