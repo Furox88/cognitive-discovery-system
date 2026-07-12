@@ -2,7 +2,7 @@
 
 A guided walk through the classical numerical algorithms CDS implements from scratch — *readable pure Python, no NumPy/SciPy*. Each stop pairs the **idea** with a tiny **experiment** you can reproduce in a few lines, so you see *why* the algorithm matters before you ever read its source.
 
-> Want to tinker live instead of reading? Open the notebook locally: [`examples/tour_of_numerical_methods.ipynb`](../examples/tour_of_numerical_methods.ipynb) (Binder is unavailable while the repository is private).
+> Want to tinker live instead of reading? [Launch the interactive notebook on Binder](https://mybinder.org/v2/gh/Furox88/cognitive-discovery-system/main?urlpath=lab/tree/examples/tour_of_numerical_methods.ipynb) — no install required.
 
 ---
 
