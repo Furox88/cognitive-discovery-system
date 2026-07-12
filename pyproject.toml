@@ -110,7 +110,7 @@ cds = "cds.cli:app"
 [project.urls]
 Homepage = "https://github.com/Furox88/cognitive-discovery-system"
 Repository = "https://github.com/Furox88/cognitive-discovery-system"
-Documentation = "https://furox88.github.io/cognitive-discovery-system/"
+Documentation = "https://github.com/Furox88/cognitive-discovery-system/tree/main/docs"
 "PyPI" = "https://pypi.org/project/cognitive-discovery-system/"
 Issues = "https://github.com/Furox88/cognitive-discovery-system/issues"
 Changelog = "https://github.com/Furox88/cognitive-discovery-system/releases"

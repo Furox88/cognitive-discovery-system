@@ -13,22 +13,20 @@
   <a href="https://codecov.io/gh/Furox88/cognitive-discovery-system"><img src="https://codecov.io/gh/Furox88/cognitive-discovery-system/branch/main/graph/badge.svg" alt="codecov"></a>
   <a href="https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml"><img src="https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-  <a href="https://Furox88.github.io/cognitive-discovery-system/"><img src="https://img.shields.io/badge/docs-mkdocs-teal.svg" alt="Docs"></a>
-  <a href="https://github.com/Furox88/cognitive-discovery-system"><img src="https://img.shields.io/github/stars/Furox88/cognitive-discovery-system.svg?style=social" alt="GitHub stars"></a>
+  <a href="docs/"><img src="https://img.shields.io/badge/docs-in%20repo-teal.svg" alt="Docs"></a>
+  <a href="https://img.shields.io/badge/visibility-private-red.svg" alt="Private repository"></a>
 </p>
 
 <p align="center">
-  <a href="https://mybinder.org/v2/gh/Furox88/cognitive-discovery-system/main?urlpath=lab/tree/examples/tour_of_numerical_methods.ipynb"><img src="https://img.shields.io/badge/try%20it-on%20Binder-orange.svg?logo=jupyter" alt="Launch on Binder"></a>
-</p>
-
-<p align="center">
-  <a href="https://Furox88.github.io/cognitive-discovery-system/">Documentation</a> &nbsp;·&nbsp;
-  <a href="https://Furox88.github.io/cognitive-discovery-system/tour_of_numerical_methods/">Tour of Numerical Methods</a> &nbsp;·&nbsp;
-  <a href="https://Furox88.github.io/cognitive-discovery-system/cookbook/">Cookbook</a> &nbsp;·&nbsp;
+  <a href="docs/">Documentation</a> &nbsp;·&nbsp;
+  <a href="docs/tour_of_numerical_methods.md">Tour of Numerical Methods</a> &nbsp;·&nbsp;
+  <a href="docs/cookbook.md">Cookbook</a> &nbsp;·&nbsp;
   <a href="docs/tutorials/">Tutorials</a> &nbsp;·&nbsp;
   <a href="#quick-start">Quick Start</a> &nbsp;·&nbsp;
   <a href="docs/CASE_STUDY_HUBBLE.md">Case Studies</a>
 </p>
+
+> **Repository is private.** GitHub Pages and Binder are unavailable on the free plan for private repos. Read docs under [`docs/`](docs/) or serve locally with `mkdocs serve` after `pip install -e ".[docs]"`. The **PyPI package remains public** (`pip install cognitive-discovery-system`).
 
 ---
 

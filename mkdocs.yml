@@ -1,5 +1,6 @@
 site_name: Cognitive Discovery System
-site_url: https://Furox88.github.io/cognitive-discovery-system/
+# GitHub Pages is unavailable for private repos on free plans; serve with `mkdocs serve`.
+site_url: https://github.com/Furox88/cognitive-discovery-system/tree/main/docs
 repo_url: https://github.com/Furox88/cognitive-discovery-system
 repo_name: Furox88/cognitive-discovery-system
 
