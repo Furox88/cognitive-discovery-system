@@ -19,11 +19,13 @@ def require_matplotlib() -> Any:
     ``MPLBACKEND``, so headless CI and servers can still build figures.
     """
     try:
-        import matplotlib
+        # Optional dependency — no types required in the default mypy env.
+        import matplotlib  # type: ignore[import-not-found]
 
         if os.environ.get("MPLBACKEND") is None:
             matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # type: ignore[import-not-found]
     except ImportError as exc:  # pragma: no cover - exercised via monkeypatch
         raise ImportError(_MATPLOTLIB_INSTALL_HINT) from exc
     return plt
+
