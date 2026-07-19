@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import os
 from typing import Any
 
@@ -17,14 +18,15 @@ def require_matplotlib() -> Any:
 
     Selects the non-interactive Agg backend when the user has not set
     ``MPLBACKEND``, so headless CI and servers can still build figures.
+
+    Uses :func:`importlib.import_module` so mypy stays clean both with and
+    without matplotlib installed (no stubs / no unused ``type: ignore``).
     """
     try:
-        # Optional dependency — no types required in the default mypy env.
-        import matplotlib  # type: ignore[import-not-found]
-
+        matplotlib = importlib.import_module("matplotlib")
         if os.environ.get("MPLBACKEND") is None:
-            matplotlib.use("Agg")
-        import matplotlib.pyplot as plt  # type: ignore[import-not-found]
+            use_backend = getattr(matplotlib, "use")
+            use_backend("Agg")
+        return importlib.import_module("matplotlib.pyplot")
     except ImportError as exc:  # pragma: no cover - exercised via monkeypatch
         raise ImportError(_MATPLOTLIB_INSTALL_HINT) from exc
-    return plt
