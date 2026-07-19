@@ -397,6 +397,32 @@ def test_cli_plot_file_png(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -
     assert path.stat().st_size > 0
 
 
+def test_cli_plot_file_success_without_matplotlib(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Happy path for ``--file`` without requiring real matplotlib (minimal-deps CI)."""
+    import cds.plot as plot_mod
+
+    saved: list[str] = []
+
+    class _Fig:
+        def savefig(self, path: str, dpi: int = 120) -> None:
+            saved.append(path)
+            Path(path).write_bytes(b"png")
+
+    def _fake_series(*_args: object, **_kwargs: object) -> _Fig:
+        return _Fig()
+
+    monkeypatch.setattr(plot_mod, "plot_series", _fake_series)
+    path = tmp_path / "mocked.png"
+    rc = main(["plot", "1,2,3,4", "--title", "Mock", "--file", str(path)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Saved" in out
+    assert saved == [str(path)]
+    assert path.is_file()
+
+
 def test_cli_plot_file_missing_matplotlib(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
