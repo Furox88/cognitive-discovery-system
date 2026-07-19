@@ -231,6 +231,7 @@ def _cmd_info(args: argparse.Namespace) -> int:
         "graph         data_analysis",
         "ml            probability",
         "scientific    numerical_integration",
+        "plot          (optional matplotlib extra)",
     ):
         _print(f"  • {line}")
     return 0
@@ -365,6 +366,14 @@ def _cmd_modules(args: argparse.Namespace) -> int:
         (
             "cds.hypothesis",
             "Structured hypothesis generation with prompt templates for custom research workflows",
+        ),
+        (
+            "cds.plot",
+            "Optional matplotlib charts (series, spectrum, ACF/PACF, optimizer paths) — pip install cds[plot]",
+        ),
+        (
+            "cds.numerical_integration",
+            "Trapezoid, Simpson, Romberg, Gauss-Legendre, adaptive + 2-D quadrature",
         ),
     ]
     rows = [[name, desc] for name, desc in module_info]

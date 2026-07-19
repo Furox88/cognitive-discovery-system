@@ -155,6 +155,7 @@ If CDS is useful in your research or publications, please cite it using the info
 | `cds.numerical_integration` | Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson, **2-D tensor-product quadrature** (Simpson + Gauss-Legendre) |
 | `cds.nlp` | Educational NLP from scratch — BPE tokenizer, sinusoidal embeddings, multi-head attention, Transformer block, scalar autograd (SGD/Adam), MiniGPT demo |
 | `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
+| `cds.plot` | Optional matplotlib charts — series, histograms, waveforms, spectra, ACF/PACF, optimization paths (`pip install cognitive-discovery-system[plot]`) |
 
 ## Quick Start
 

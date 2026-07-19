@@ -116,6 +116,14 @@ A lossless bridge between CDS's [`DataSet`](#data-analysis) and a pandas
 
 ::: cds.data_analysis.pandas_io
 
+## Plotting (optional)
+
+Matplotlib helpers for series, histograms, waveforms, spectra, ACF/PACF, and
+optimizer trajectories. Install with `pip install ".[plot]"`; the core package
+stays zero-dependency. Matplotlib is imported lazily on first plot call.
+
+::: cds.plot
+
 ## Educational NLP
 
 From-scratch transformer primitives: BPE tokeniser, sinusoidal embeddings, attention, autograd, MiniGPT.

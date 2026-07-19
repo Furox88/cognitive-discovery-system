@@ -29,6 +29,7 @@ no pandas, no extra installs unless the recipe says so.
 - [Machine learning](#machine-learning)
 - [NLP — tokenization & attention](#nlp)
 - [Data analysis & visualization](#data-analysis)
+- [Matplotlib plotting (optional)](#matplotlib-plotting)
 - [Hypothesis generation](#hypothesis-generation)
 - [Knowledge organization](#knowledge-organization)
 
@@ -708,6 +709,45 @@ df = to_dataframe(ds)        # DataSet -> pandas.DataFrame
 print(df.describe())
 ds2 = from_dataframe(df)     # and back, losslessly
 ```
+
+---
+
+## Matplotlib plotting
+
+Optional extra — core CDS stays zero-dependency.
+
+```bash
+pip install "cognitive-discovery-system[plot]"
+```
+
+### Plot a series, histogram, and ACF
+
+```python
+import math
+from cds.plot import plot_series, plot_histogram, plot_acf
+
+y = [math.sin(2 * math.pi * i / 40) for i in range(100)]
+plot_series(y, title="Sine").savefig("series.png")
+plot_histogram(y, bins=20).savefig("hist.png")
+plot_acf(y, max_lag=20).savefig("acf.png")
+```
+
+### Waveform + spectrum with `cds.signals`
+
+```python
+import math
+from cds.plot import plot_waveform, plot_spectrum
+from cds.signals import power_spectrum
+
+n, fs = 128, 128.0
+signal = [math.sin(2 * math.pi * 8 * t / fs) for t in range(n)]
+plot_waveform(signal, sample_rate=fs).savefig("wave.png")
+power = power_spectrum(signal)
+half = [math.sqrt(max(0.0, p)) for p in power[: n // 2]]
+plot_spectrum(half, sample_rate=fs / 2).savefig("spectrum.png")
+```
+
+See also `examples/plot_demo.py`.
 
 ---
 

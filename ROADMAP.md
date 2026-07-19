@@ -106,20 +106,19 @@ See `CHANGELOG.md` for full detail.
       guide (`docs/ARCHITECTURE.md`), expanded Tour of Numerical Methods,
       README/`index.md` cross-links
 
-## Next — v1.3.0 (Planned)
+## Next — v1.3.0 (In progress)
 
 A backward-compatible **minor** release focused on **visualization and
-ergonomics**. These are the most-requested items promoted out of the open
-ideas list; the zero-dependency core stays untouched (everything here is an
+ergonomics**. The zero-dependency core stays untouched (everything here is an
 opt-in extra or docs/content).
 
-- [ ] **`cds[plot]` optional extra** — matplotlib integration for the existing
-      numerical modules (signals waveforms, stats distributions, time-series
-      ACF/PACF, optimization trajectories). Gated behind an extra like
-      `cds[pandas]`, so importing `cds` still pulls nothing.
-- [ ] **Jupyter notebook templates** — runnable notebook companions for the
-      Cookbook recipes and the Tour of Numerical Methods, mirroring the
-      existing `examples/*.py` demos for non-CLI users.
+- [x] ~~**`cds[plot]` optional extra**~~ — matplotlib helpers for series,
+      histograms, waveforms, spectra, ACF/PACF, and optimization paths
+      (`src/cds/plot/`, `examples/plot_demo.py`). Install with
+      `pip install ".[plot]"`. Core import path still pulls nothing heavy.
+- [~] **Jupyter notebook templates** — first companion notebook shipped as
+      `examples/plotting_notebook.ipynb` (plotting + signals). More Cookbook /
+      Tour notebooks still open.
 - [ ] **Issue #62** — lift the `numpy<2.5` dev-pin once `mypy`'s default
       `python_version` advances to 3.13+ (tracking issue; dev-only, no runtime
       impact).

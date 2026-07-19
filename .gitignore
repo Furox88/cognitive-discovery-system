@@ -234,3 +234,6 @@ assets/_qa_frames/
 assets/_qa_old/
 assets/_qa_old_full/
 assets/_qa_view/
+
+# plot demo output
+examples/_plot_out/
