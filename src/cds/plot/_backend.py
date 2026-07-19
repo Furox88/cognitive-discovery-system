@@ -28,4 +28,3 @@ def require_matplotlib() -> Any:
     except ImportError as exc:  # pragma: no cover - exercised via monkeypatch
         raise ImportError(_MATPLOTLIB_INSTALL_HINT) from exc
     return plt
-
