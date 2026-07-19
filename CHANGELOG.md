@@ -7,8 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.2.3](#v123---2026-06-29) below for the
+No unreleased changes yet. See [v1.3.0](#v130---2026-07-20) below for the
 latest release.
+
+## [v1.3.0] - 2026-07-20
+
+A **minor** release focused on **visualization and ergonomics**. Adds the
+optional ``cds[plot]`` matplotlib extra, a CLI PNG export path, a companion
+notebook, and documentation. The zero-dependency core is unchanged: matplotlib
+is only imported when a plot function runs (or when ``cds plot --file`` is
+used).
+
+### Added
+
+- **`cds.plot` optional package** (`src/cds/plot/`):
+  - `plot_series`, `plot_histogram`, `plot_waveform`, `plot_spectrum`
+  - `plot_acf` / PACF stems via `cds.stats` time-series helpers
+  - `plot_optimization_path` for 2-D optimizer trajectories
+  - Lazy matplotlib backend with install-hint `ImportError`
+- **Extra**: `pip install cognitive-discovery-system[plot]` (also in `[all]`)
+- **CLI**: `cds plot 1,2,3 --file out.png` saves a PNG when matplotlib is
+  installed; without `--file` the existing ASCII terminal plot remains
+- **Examples**: `examples/plot_demo.py`, `examples/plotting_notebook.ipynb`
+- **Docs**: Cookbook matplotlib section, API reference for `cds.plot`, README /
+  module tables, ROADMAP v1.3.0 track
+
+### Changed
+
+- CI main matrix installs `.[pandas,plot]` so optional bridges stay at 100%
+  coverage; minimal-deps job omits `cds/plot/*` like `pandas_io`
+- PyPI description mentions optional matplotlib plotting
 
 ## [v1.2.3] - 2026-06-29
 

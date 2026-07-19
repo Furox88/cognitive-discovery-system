@@ -385,6 +385,44 @@ def test_cli_plot_invalid(capsys: pytest.CaptureFixture[str]) -> None:
     assert "Error" in out
 
 
+def test_cli_plot_file_png(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """``cds plot ... --file`` saves a PNG when matplotlib is available."""
+    pytest.importorskip("matplotlib")
+    path = tmp_path / "cli_plot.png"
+    rc = main(["plot", "1,5,3,8,2", "--title", "PNG", "--file", str(path)])
+    captured = capsys.readouterr().out
+    assert rc == 0
+    assert "Saved" in captured
+    assert path.is_file()
+    assert path.stat().st_size > 0
+
+
+def test_cli_plot_file_missing_matplotlib(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Missing matplotlib yields a clear install hint when --file is used."""
+    import builtins
+    import sys
+
+    real_import = builtins.__import__
+
+    def fake_import(name: str, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if name == "matplotlib" or name.startswith("matplotlib."):
+            raise ImportError("simulated missing matplotlib")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    monkeypatch.delitem(sys.modules, "matplotlib", raising=False)
+    monkeypatch.delitem(sys.modules, "matplotlib.pyplot", raising=False)
+
+    path = tmp_path / "nope.png"
+    rc = main(["plot", "1,2,3", "--file", str(path)])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Error" in out
+    assert "optional dependency" in out or "matplotlib" in out.lower()
+
+
 def test_cli_constants(capsys: pytest.CaptureFixture[str]) -> None:
     rc = main(["constants"])
     out = capsys.readouterr().out

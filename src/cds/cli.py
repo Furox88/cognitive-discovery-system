@@ -291,15 +291,33 @@ def _cmd_constants(args: argparse.Namespace) -> int:
 
 
 def _cmd_plot(args: argparse.Namespace) -> int:
-    """Plot a series of numbers directly in the terminal."""
-    from cds.data_analysis.viz import plot_line
-
+    """Plot a series of numbers (ASCII in terminal, or PNG via optional matplotlib)."""
     try:
         data = [float(x.strip()) for x in args.values.split(",")]
-        _print(plot_line(data, title=args.title))
     except ValueError:
         _print(_render("[red]Error:[/] Values must be a comma-separated list of numbers."))
         return 1
+
+    out_file = getattr(args, "file", None)
+    if out_file:
+        # Optional matplotlib path — requires `pip install cognitive-discovery-system[plot]`.
+        try:
+            from cds.plot import plot_series
+        except ImportError as exc:  # pragma: no cover - package always ships cds.plot
+            _print(_render(f"[red]Error:[/] {exc}"))
+            return 1
+        try:
+            fig = plot_series(data, title=args.title)
+            fig.savefig(out_file, dpi=120)
+        except ImportError as exc:
+            _print(_render(f"[red]Error:[/] {exc}"))
+            return 1
+        _print(_render(f"[green]Saved[/] {out_file}"))
+        return 0
+
+    from cds.data_analysis.viz import plot_line
+
+    _print(plot_line(data, title=args.title))
     return 0
 
 
@@ -446,9 +464,18 @@ def _build_parser() -> argparse.ArgumentParser:
         func=_cmd_constants
     )
 
-    p_plot = sub.add_parser("plot", help="Plot a series of numbers directly in the terminal.")
+    p_plot = sub.add_parser(
+        "plot",
+        help="Plot a series of numbers (ASCII terminal, or PNG with --file if cds[plot] installed).",
+    )
     p_plot.add_argument("values", help="Comma-separated list of numbers (e.g. '1,5,3,8')")
     p_plot.add_argument("--title", "-t", default="CLI Plot", help="Title of the plot")
+    p_plot.add_argument(
+        "--file",
+        "-f",
+        default=None,
+        help="Save a PNG via optional matplotlib (requires cds[plot]); omit for ASCII",
+    )
     p_plot.set_defaults(func=_cmd_plot)
 
     p_calc = sub.add_parser("calc", help="Quick physics calculations.")
