@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata from this file."
 type: software
 title: "cognitive-discovery-system"
-version: 1.3.0
+version: 1.3.1
 authors:
   - name: "Furox88"
     email: "furkanarkn1451@gmail.com"

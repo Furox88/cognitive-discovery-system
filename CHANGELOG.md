@@ -7,8 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.3.0](#v130---2026-07-20) below for the
+No unreleased changes yet. See [v1.3.1](#v131---2026-07-20) below for the
 latest release.
+
+## [v1.3.1] - 2026-07-20
+
+A **patch** release. Fixes the console entry point so `cds` works after a
+plain PyPI install.
+
+### Fixed
+
+- **`[project.scripts]`**: entry point was `cds.cli:app` but the CLI exports
+  `main` (argparse). Installing from PyPI then raised
+  `ImportError: cannot import name 'app' from 'cds.cli'`. Now points to
+  `cds.cli:main`. `python -m cds` was already correct.
 
 ## [v1.3.0] - 2026-07-20
 

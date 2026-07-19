@@ -41,7 +41,7 @@
 > **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update (v1.3.0):** visualization and ergonomics — optional **`cds[plot]`** matplotlib helpers (series, histograms, waveforms, spectra, ACF/PACF, optimization paths) with a lazy install-hint backend so the core stays zero-dependency. CLI gains `cds plot 1,2,3 --file out.png`; without `--file` the ASCII terminal plot is unchanged. Ships `examples/plot_demo.py` and `examples/plotting_notebook.ipynb`, plus Cookbook/API docs. Install with `pip install cognitive-discovery-system[plot]`. No existing public API removed or renamed. The current version is shown in the PyPI badge at the top; the [CI](https://github.com/Furox88/cognitive-discovery-system/actions/workflows/tests.yml) and [codecov](https://codecov.io/gh/Furox88/cognitive-discovery-system) badges carry the live test count and coverage.
+**Latest Update (v1.3.1):** patch — console script entry point fixed (`cds.cli:main`) so the `cds` command works after a PyPI install. **v1.3.0** shipped optional **`cds[plot]`** matplotlib helpers, `cds plot … --file out.png`, demo + notebook. Install: `pip install -U "cognitive-discovery-system[plot]"`. The current version is shown in the PyPI badge at the top.
 ---
 
 ## Contents
