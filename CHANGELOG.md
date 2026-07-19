@@ -7,8 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.3.1](#v131---2026-07-20) below for the
+No unreleased changes yet. See [v1.3.2](#v132---2026-07-20) below for the
 latest release.
+
+## [v1.3.2] - 2026-07-20
+
+A **patch** release expanding the optional ``cds[plot]`` surface.
+
+### Added
+
+- **`cds.plot` charts**: `plot_multi_series`, `plot_scatter`, `plot_regression`
+  (OLS via `cds.stats`), `plot_power_spectrum` (via `cds.signals`),
+  `plot_seasonal_decompose` (4-panel), `plot_heatmap`, `plot_loss`,
+  `save_figure(..., close=)` helper; histogram gains ``density=``
+- **CLI**: `cds plot … --kind series|hist|acf --file out.png`
+
+### Changed
+
+- Docs / Cookbook / demo updated for the expanded plot API
 
 ## [v1.3.1] - 2026-07-20
 

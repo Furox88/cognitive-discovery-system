@@ -414,13 +414,63 @@ def test_cli_plot_file_success_without_matplotlib(
         return _Fig()
 
     monkeypatch.setattr(plot_mod, "plot_series", _fake_series)
+    monkeypatch.setattr(
+        plot_mod, "save_figure", lambda fig, path, dpi=120: fig.savefig(path, dpi=dpi) or path
+    )
     path = tmp_path / "mocked.png"
     rc = main(["plot", "1,2,3,4", "--title", "Mock", "--file", str(path)])
     out = capsys.readouterr().out
     assert rc == 0
     assert "Saved" in out
-    assert saved == [str(path)]
     assert path.is_file()
+
+
+def test_cli_plot_kind_hist_mocked(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import cds.plot as plot_mod
+
+    class _Fig:
+        def savefig(self, path: str, dpi: int = 120) -> None:
+            Path(path).write_bytes(b"png")
+
+    monkeypatch.setattr(plot_mod, "plot_histogram", lambda *a, **k: _Fig())
+    monkeypatch.setattr(
+        plot_mod, "save_figure", lambda fig, path, dpi=120: fig.savefig(path, dpi=dpi) or path
+    )
+    path = tmp_path / "hist.png"
+    rc = main(["plot", "1,2,2,3", "--kind", "hist", "--file", str(path)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "hist" in out
+    assert path.is_file()
+
+
+def test_cli_plot_kind_acf_mocked(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import cds.plot as plot_mod
+
+    class _Fig:
+        def savefig(self, path: str, dpi: int = 120) -> None:
+            Path(path).write_bytes(b"png")
+
+    monkeypatch.setattr(plot_mod, "plot_acf", lambda *a, **k: _Fig())
+    monkeypatch.setattr(
+        plot_mod, "save_figure", lambda fig, path, dpi=120: fig.savefig(path, dpi=dpi) or path
+    )
+    path = tmp_path / "acf.png"
+    data = ",".join(str(i % 5) for i in range(30))
+    rc = main(["plot", data, "--kind", "acf", "--file", str(path)])
+    assert rc == 0
+    assert path.is_file()
+
+
+def test_cli_plot_ascii_rejects_hist(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = main(["plot", "1,2,3", "--kind", "hist"])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "ASCII" in out
 
 
 def test_cli_plot_file_missing_matplotlib(

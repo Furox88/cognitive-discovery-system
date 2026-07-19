@@ -31,10 +31,18 @@ def test_plot_package_exports() -> None:
 
     for name in (
         "plot_series",
+        "plot_multi_series",
+        "plot_scatter",
+        "plot_regression",
         "plot_histogram",
         "plot_waveform",
         "plot_spectrum",
+        "plot_power_spectrum",
         "plot_acf",
+        "plot_seasonal_decompose",
+        "plot_heatmap",
+        "plot_loss",
         "plot_optimization_path",
+        "save_figure",
     ):
         assert callable(getattr(plot, name))

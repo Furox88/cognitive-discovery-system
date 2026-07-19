@@ -16,18 +16,34 @@ from __future__ import annotations
 
 from cds.plot.charts import (
     plot_acf,
+    plot_heatmap,
     plot_histogram,
+    plot_loss,
+    plot_multi_series,
     plot_optimization_path,
+    plot_power_spectrum,
+    plot_regression,
+    plot_scatter,
+    plot_seasonal_decompose,
     plot_series,
     plot_spectrum,
     plot_waveform,
+    save_figure,
 )
 
 __all__ = [
     "plot_series",
+    "plot_multi_series",
+    "plot_scatter",
+    "plot_regression",
     "plot_histogram",
     "plot_waveform",
     "plot_spectrum",
+    "plot_power_spectrum",
     "plot_acf",
+    "plot_seasonal_decompose",
+    "plot_heatmap",
+    "plot_loss",
     "plot_optimization_path",
+    "save_figure",
 ]

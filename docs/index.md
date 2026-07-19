@@ -40,7 +40,7 @@ CDS is an open-source computational science platform designed for research, simu
 | `cds.numerical_integration` | Deterministic quadrature (trapezoid, Simpson, Romberg) + 2-D tensor-product rules (Simpson, Gauss-Legendre) |
 | `cds.nlp` | Educational NLP from scratch (BPE, embeddings, attention, autograd, MiniGPT) |
 | `cds.hypothesis` | Cognitive discovery and structured hypothesis generation |
-| `cds.plot` | Optional matplotlib charts (series, spectrum, ACF/PACF, optimizer paths) via `cds[plot]` |
+| `cds.plot` | Optional matplotlib charts (series, scatter, regression, spectra, ACF, seasonal, heatmaps, …) via `cds[plot]` |
 
 ## Quick Navigation
 

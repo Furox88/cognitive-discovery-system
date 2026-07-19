@@ -41,7 +41,7 @@
 > **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update (v1.3.1):** patch — console script entry point fixed (`cds.cli:main`) so the `cds` command works after a PyPI install. **v1.3.0** shipped optional **`cds[plot]`** matplotlib helpers, `cds plot … --file out.png`, demo + notebook. Install: `pip install -U "cognitive-discovery-system[plot]"`. The current version is shown in the PyPI badge at the top.
+**Latest Update (v1.3.2):** expanded **`cds[plot]`** — multi-series, scatter, OLS regression, power spectrum, seasonal decompose, heatmaps, loss curves, `save_figure`; CLI `cds plot … --kind series|hist|acf --file out.png`. Install: `pip install -U "cognitive-discovery-system[plot]"`. The current version is shown in the PyPI badge at the top.
 ---
 
 ## Contents
@@ -155,7 +155,7 @@ If CDS is useful in your research or publications, please cite it using the info
 | `cds.numerical_integration` | Deterministic quadrature — trapezoid, Simpson 1/3 & 3/8, Romberg, Gauss-Legendre, adaptive Simpson, **2-D tensor-product quadrature** (Simpson + Gauss-Legendre) |
 | `cds.nlp` | Educational NLP from scratch — BPE tokenizer, sinusoidal embeddings, multi-head attention, Transformer block, scalar autograd (SGD/Adam), MiniGPT demo |
 | `cds.hypothesis` | Structured hypothesis generation with prompt templates for custom research workflows |
-| `cds.plot` | Optional matplotlib charts — series, histograms, waveforms, spectra, ACF/PACF, optimization paths (`pip install cognitive-discovery-system[plot]`) |
+| `cds.plot` | Optional matplotlib charts — series/multi-series, scatter, regression, histograms, waveforms, power spectra, ACF/PACF, seasonal decompose, heatmaps, loss curves (`pip install cognitive-discovery-system[plot]`) |
 
 ## Quick Start
 

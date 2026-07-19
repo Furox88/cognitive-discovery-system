@@ -118,9 +118,11 @@ A lossless bridge between CDS's [`DataSet`](#data-analysis) and a pandas
 
 ## Plotting (optional)
 
-Matplotlib helpers for series, histograms, waveforms, spectra, ACF/PACF, and
-optimizer trajectories. Install with `pip install ".[plot]"`; the core package
-stays zero-dependency. Matplotlib is imported lazily on first plot call.
+Matplotlib helpers for series, multi-series, scatter, linear regression,
+histograms, waveforms, spectra / power spectra, ACF/PACF, seasonal
+decomposition, heatmaps, loss curves, and optimizer trajectories. Install with
+`pip install ".[plot]"`; the core package stays zero-dependency. Matplotlib is
+imported lazily on first plot call.
 
 ::: cds.plot
 

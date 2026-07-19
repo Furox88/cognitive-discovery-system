@@ -298,22 +298,45 @@ def _cmd_plot(args: argparse.Namespace) -> int:
         _print(_render("[red]Error:[/] Values must be a comma-separated list of numbers."))
         return 1
 
+    kind = getattr(args, "kind", "series") or "series"
     out_file = getattr(args, "file", None)
     if out_file:
         # Optional matplotlib path — requires `pip install cognitive-discovery-system[plot]`.
         try:
-            from cds.plot import plot_series
+            from cds.plot import plot_acf, plot_histogram, plot_series, save_figure
         except ImportError as exc:  # pragma: no cover - package always ships cds.plot
             _print(_render(f"[red]Error:[/] {exc}"))
             return 1
         try:
-            fig = plot_series(data, title=args.title)
-            fig.savefig(out_file, dpi=120)
+            if kind == "hist":
+                fig = plot_histogram(data, title=args.title)
+            elif kind == "acf":
+                fig = plot_acf(data, title=args.title)
+            elif kind == "series":
+                fig = plot_series(data, title=args.title)
+            else:
+                _print(
+                    _render(f"[red]Error:[/] Unknown --kind {kind!r}. Options: series, hist, acf")
+                )
+                return 1
+            save_figure(fig, out_file)
         except ImportError as exc:
             _print(_render(f"[red]Error:[/] {exc}"))
             return 1
-        _print(_render(f"[green]Saved[/] {out_file}"))
+        except ValueError as exc:
+            _print(_render(f"[red]Error:[/] {exc}"))
+            return 1
+        _print(_render(f"[green]Saved[/] {out_file} ({kind})"))
         return 0
+
+    if kind != "series":
+        _print(
+            _render(
+                "[red]Error:[/] ASCII mode only supports --kind series "
+                "(use --file with cds[plot] for hist/acf)."
+            )
+        )
+        return 1
 
     from cds.data_analysis.viz import plot_line
 
@@ -475,6 +498,13 @@ def _build_parser() -> argparse.ArgumentParser:
         "-f",
         default=None,
         help="Save a PNG via optional matplotlib (requires cds[plot]); omit for ASCII",
+    )
+    p_plot.add_argument(
+        "--kind",
+        "-k",
+        default="series",
+        choices=["series", "hist", "acf"],
+        help="Chart type when using --file (default: series)",
     )
     p_plot.set_defaults(func=_cmd_plot)
 

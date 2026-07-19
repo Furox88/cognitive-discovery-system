@@ -724,27 +724,44 @@ pip install "cognitive-discovery-system[plot]"
 
 ```python
 import math
-from cds.plot import plot_series, plot_histogram, plot_acf
+from cds.plot import plot_series, plot_histogram, plot_acf, save_figure
 
 y = [math.sin(2 * math.pi * i / 40) for i in range(100)]
-plot_series(y, title="Sine").savefig("series.png")
-plot_histogram(y, bins=20).savefig("hist.png")
-plot_acf(y, max_lag=20).savefig("acf.png")
+save_figure(plot_series(y, title="Sine"), "series.png")
+save_figure(plot_histogram(y, bins=20), "hist.png")
+save_figure(plot_acf(y, max_lag=20), "acf.png")
 ```
 
-### Waveform + spectrum with `cds.signals`
+### Regression, multi-series, heatmap
+
+```python
+from cds.plot import plot_regression, plot_multi_series, plot_heatmap, save_figure
+
+x = [1, 2, 3, 4, 5]
+y = [2.1, 3.9, 6.0, 8.2, 9.8]
+save_figure(plot_regression(x, y), "fit.png")
+save_figure(plot_multi_series({"y": y, "2x": [2 * v for v in x]}), "multi.png")
+save_figure(plot_heatmap([[1, 2], [3, 4], [5, 6]]), "heat.png")
+```
+
+### Waveform + power spectrum with `cds.signals`
 
 ```python
 import math
-from cds.plot import plot_waveform, plot_spectrum
-from cds.signals import power_spectrum
+from cds.plot import plot_waveform, plot_power_spectrum, save_figure
 
 n, fs = 128, 128.0
 signal = [math.sin(2 * math.pi * 8 * t / fs) for t in range(n)]
-plot_waveform(signal, sample_rate=fs).savefig("wave.png")
-power = power_spectrum(signal)
-half = [math.sqrt(max(0.0, p)) for p in power[: n // 2]]
-plot_spectrum(half, sample_rate=fs / 2).savefig("spectrum.png")
+save_figure(plot_waveform(signal, sample_rate=fs), "wave.png")
+save_figure(plot_power_spectrum(signal, sample_rate=fs), "power.png")
+```
+
+CLI (with `[plot]` installed):
+
+```bash
+cds plot 1,5,3,8,2 --file out.png
+cds plot 1,2,2,3,5 --kind hist --file hist.png
+cds plot 1,0,1,0,1,0,1,0,1,0 --kind acf --file acf.png
 ```
 
 See also `examples/plot_demo.py`.
