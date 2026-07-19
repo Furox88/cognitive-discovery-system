@@ -103,6 +103,46 @@ def poisson_pmf(k: int, lam: float) -> float:
     return (lam**k) * math.exp(-lam) / math.factorial(k)
 
 
+def geometric_pmf(k: int, p: float) -> float:
+    """Geometric PMF (number of trials until first success, ``k >= 1``).
+
+    ``P(X=k) = (1-p)^{k-1} * p``.
+    """
+    if not (0 < p <= 1):
+        raise ValueError("p must be in (0, 1]")
+    if k < 1:
+        return 0.0
+    return ((1.0 - p) ** (k - 1)) * p
+
+
+def gaussian_cdf(x: float, mu: float = 0.0, sigma: float = 1.0) -> float:
+    """Gaussian CDF via ``math.erf`` (accurate enough for teaching/numerics)."""
+    if sigma <= 0:
+        raise ValueError("sigma must be positive")
+    z = (x - mu) / (sigma * math.sqrt(2.0))
+    return 0.5 * (1.0 + math.erf(z))
+
+
+def uniform_cdf(x: float, a: float = 0.0, b: float = 1.0) -> float:
+    """Uniform CDF on ``[a, b]``."""
+    if a >= b:
+        raise ValueError("a must be less than b")
+    if x < a:
+        return 0.0
+    if x >= b:
+        return 1.0
+    return (x - a) / (b - a)
+
+
+def exponential_cdf(x: float, lam: float = 1.0) -> float:
+    """Exponential CDF: ``1 - exp(-λx)`` for ``x >= 0``."""
+    if lam <= 0:
+        raise ValueError("lambda must be positive")
+    if x < 0:
+        return 0.0
+    return 1.0 - math.exp(-lam * x)
+
+
 def uniform_sample(
     a: float,
     b: float,
@@ -117,5 +157,80 @@ def uniform_sample(
         n: number of samples
         seed: optional random seed
     """
+    if a >= b:
+        raise ValueError("a must be less than b")
+    if n < 0:
+        raise ValueError("n must be non-negative")
     rng = random.Random(seed)
     return [rng.uniform(a, b) for _ in range(n)]
+
+
+def gaussian_sample(
+    n: int,
+    mu: float = 0.0,
+    sigma: float = 1.0,
+    seed: int | None = None,
+) -> list[float]:
+    """Generate ``n`` i.i.d. Gaussian samples (Box–Muller)."""
+    if sigma <= 0:
+        raise ValueError("sigma must be positive")
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    rng = random.Random(seed)
+    out: list[float] = []
+    while len(out) < n:
+        u1 = rng.random()
+        u2 = rng.random()
+        # Avoid log(0)
+        u1 = max(u1, 1e-12)
+        r = math.sqrt(-2.0 * math.log(u1))
+        theta = 2.0 * math.pi * u2
+        out.append(mu + sigma * r * math.cos(theta))
+        if len(out) < n:
+            out.append(mu + sigma * r * math.sin(theta))
+    return out[:n]
+
+
+def exponential_sample(
+    n: int,
+    lam: float = 1.0,
+    seed: int | None = None,
+) -> list[float]:
+    """Generate ``n`` exponential samples via inverse transform."""
+    if lam <= 0:
+        raise ValueError("lambda must be positive")
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    rng = random.Random(seed)
+    out: list[float] = []
+    for _ in range(n):
+        u = max(rng.random(), 1e-12)
+        out.append(-math.log(u) / lam)
+    return out
+
+
+def poisson_sample(
+    n: int,
+    lam: float = 1.0,
+    seed: int | None = None,
+) -> list[int]:
+    """Generate ``n`` Poisson samples (Knuth algorithm)."""
+    if lam < 0:
+        raise ValueError("lambda must be non-negative")
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    rng = random.Random(seed)
+    if lam == 0.0:
+        return [0] * n
+    out: list[int] = []
+    l_exp = math.exp(-lam)
+    for _ in range(n):
+        k = 0
+        p = 1.0
+        while True:
+            k += 1
+            p *= rng.random()
+            if p <= l_exp:
+                out.append(k - 1)
+                break
+    return out

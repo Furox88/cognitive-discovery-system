@@ -108,15 +108,23 @@ See `CHANGELOG.md` for full detail.
 
 ## v1.3.0 — Visualization & Ergonomics (Released 2026-07-20)
 
-A backward-compatible **minor** release. The zero-dependency core stays
-untouched (everything here is an opt-in extra or docs/content).
-
-- [x] ~~**`cds[plot]` optional extra**~~ — matplotlib helpers for series,
-      histograms, waveforms, spectra, ACF/PACF, and optimization paths
-      (`src/cds/plot/`, `examples/plot_demo.py`). Install with
-      `pip install ".[plot]"`. Core import path still pulls nothing heavy.
-- [x] ~~**CLI PNG export**~~ — `cds plot … --file out.png` (ASCII without `--file`)
+- [x] ~~**`cds[plot]` optional extra**~~ (+ v1.3.2 chart expansion)
+- [x] ~~**CLI PNG export**~~ — `cds plot … --file / --kind`
 - [x] ~~**Companion notebook**~~ — `examples/plotting_notebook.ipynb`
+
+## v1.4.0 — Core APIs & CLI (Released 2026-07-20)
+
+Backward-compatible **minor**. Pure-Python core only (no new runtime deps).
+
+- [x] ~~**Probability CDFs & samplers**~~ — gaussian/uniform/exponential CDF,
+      geometric PMF, Box–Muller / inverse-transform / Knuth samplers
+- [x] ~~**Stats ranks & scaling**~~ — Spearman, percentile, z-scores
+- [x] ~~**Scientific formulas**~~ — Coulomb, centripetal, pendulum period, Doppler;
+      constants `g`, `epsilon_0`, `mu_0`
+- [x] ~~**CLI**~~ — `cds stats`, `cds sample`
+
+### Still open
+
 - [ ] **More Jupyter notebook templates** — additional Cookbook / Tour notebooks
 - [ ] **Issue #62** — lift the `numpy<2.5` dev-pin once `mypy`'s default
       `python_version` advances to 3.13+ (tracking issue; dev-only, no runtime

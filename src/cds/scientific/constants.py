@@ -18,6 +18,9 @@ CONSTANTS: dict[str, tuple[float, str]] = {
     "e_math": (math.e, "Euler's number"),
     "m_e": (9.109_383_7015e-31, "electron mass (kg)"),
     "m_p": (1.672_621_923_69e-27, "proton mass (kg)"),
+    "epsilon_0": (8.854_187_8128e-12, "vacuum permittivity (F/m)"),
+    "g": (9.806_65, "standard gravity (m/s^2)"),
+    "mu_0": (1.256_637_062_12e-6, "vacuum permeability (N A^-2)"),
 }
 
 

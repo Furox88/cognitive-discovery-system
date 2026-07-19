@@ -126,3 +126,81 @@ def test_regression_r_squared_range() -> None:
     y = [2.0, 3.5, 3.0, 5.5, 5.0]
     r = linear_regression(x, y)
     assert 0.0 <= r.r_squared <= 1.0
+
+
+def test_spearman_perfect_rank() -> None:
+    from cds.stats.descriptive import spearman_correlation
+
+    x = [1.0, 2.0, 3.0, 4.0]
+    y = [10.0, 20.0, 30.0, 40.0]
+    assert abs(spearman_correlation(x, y) - 1.0) < 1e-9
+
+
+def test_spearman_ties() -> None:
+    from cds.stats.descriptive import spearman_correlation
+
+    x = [1.0, 2.0, 2.0, 3.0]
+    y = [1.0, 2.0, 3.0, 4.0]
+    r = spearman_correlation(x, y)
+    assert -1.0 <= r <= 1.0
+
+
+def test_percentile_quartiles() -> None:
+    from cds.stats.descriptive import percentile
+
+    data = [0.0, 25.0, 50.0, 75.0, 100.0]
+    assert abs(percentile(data, 0) - 0.0) < 1e-12
+    assert abs(percentile(data, 50) - 50.0) < 1e-12
+    assert abs(percentile(data, 100) - 100.0) < 1e-12
+
+
+def test_percentile_invalid() -> None:
+    from cds.stats.descriptive import percentile
+
+    with pytest.raises(ValueError):
+        percentile([], 50)
+    with pytest.raises(ValueError):
+        percentile([1.0], -1)
+
+
+def test_z_scores() -> None:
+    from cds.stats.descriptive import mean, stdev, z_scores
+
+    data = [1.0, 2.0, 3.0, 4.0, 5.0]
+    z = z_scores(data)
+    assert abs(mean(z)) < 1e-9
+    assert abs(stdev(z) - 1.0) < 1e-9
+
+
+def test_z_scores_constant() -> None:
+    from cds.stats.descriptive import z_scores
+
+    with pytest.raises(ValueError):
+        z_scores([2.0, 2.0, 2.0])
+
+
+def test_spearman_errors() -> None:
+    from cds.stats.descriptive import spearman_correlation
+
+    with pytest.raises(ValueError):
+        spearman_correlation([1.0], [1.0, 2.0])
+    with pytest.raises(ValueError):
+        spearman_correlation([1.0], [1.0])
+
+
+def test_percentile_single_and_exact() -> None:
+    from cds.stats.descriptive import percentile
+
+    assert percentile([7.0], 40) == 7.0
+    # exact index (p such that pos is integer)
+    assert abs(percentile([0.0, 10.0], 0) - 0.0) < 1e-12
+    assert abs(percentile([0.0, 10.0], 100) - 10.0) < 1e-12
+    # interpolated (non-integer position)
+    assert abs(percentile([0.0, 10.0], 25) - 2.5) < 1e-12
+
+
+def test_z_scores_empty() -> None:
+    from cds.stats.descriptive import z_scores
+
+    with pytest.raises(ValueError):
+        z_scores([])

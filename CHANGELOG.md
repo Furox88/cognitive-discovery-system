@@ -7,8 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.3.2](#v132---2026-07-20) below for the
+No unreleased changes yet. See [v1.4.0](#v140---2026-07-20) below for the
 latest release.
+
+## [v1.4.0] - 2026-07-20
+
+A **minor** release expanding core scientific APIs and CLI ergonomics.
+Zero runtime dependencies preserved.
+
+### Added
+
+- **`cds.probability`**: CDFs (`gaussian_cdf`, `uniform_cdf`, `exponential_cdf`),
+  `geometric_pmf`, samplers (`gaussian_sample` Box–Muller, `exponential_sample`,
+  `poisson_sample` Knuth)
+- **`cds.stats`**: `spearman_correlation` (midranks), `percentile`, `z_scores`
+- **`cds.scientific`**: constants `epsilon_0`, `g`, `mu_0`; formulas
+  `coulomb_force`, `centripetal_acceleration`, `pendulum_period`, `doppler_frequency`
+- **CLI**: `cds stats <nums>`, `cds sample <dist> -n N --seed …`
+
+### Changed
+
+- `cds info` no longer hardcodes a stale test count; module list includes modeling/knowledge/nlp
 
 ## [v1.3.2] - 2026-07-20
 

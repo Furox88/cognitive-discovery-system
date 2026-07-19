@@ -131,3 +131,55 @@ def test_ideal_gas_room_conditions() -> None:
 def test_wave_frequency_radio() -> None:
     f = wave_frequency(1.0)  # 1 meter wavelength
     assert abs(f - 299792458.0) < 1.0
+
+
+def test_coulomb_force() -> None:
+    from cds.scientific.formulas import coulomb_force
+
+    f = coulomb_force(1e-6, 1e-6, 0.1)
+    assert f > 0
+    with pytest.raises(ValueError):
+        coulomb_force(1.0, 1.0, 0.0)
+
+
+def test_centripetal() -> None:
+    from cds.scientific.formulas import centripetal_acceleration
+
+    assert abs(centripetal_acceleration(10.0, 5.0) - 20.0) < 1e-12
+
+
+def test_pendulum_period() -> None:
+    from cds.scientific.formulas import pendulum_period
+
+    t = pendulum_period(1.0)
+    assert 1.5 < t < 2.5
+
+
+def test_doppler() -> None:
+    from cds.scientific.formulas import doppler_frequency
+
+    f = doppler_frequency(440.0, v_source=0.0, v_observer=0.0)
+    assert abs(f - 440.0) < 1e-9
+    higher = doppler_frequency(440.0, v_observer=10.0)
+    assert higher > 440.0
+
+
+def test_formula_errors() -> None:
+    from cds.scientific.formulas import (
+        centripetal_acceleration,
+        doppler_frequency,
+        pendulum_period,
+    )
+
+    with pytest.raises(ValueError):
+        centripetal_acceleration(1.0, 0.0)
+    with pytest.raises(ValueError):
+        pendulum_period(0.0)
+    with pytest.raises(ValueError):
+        pendulum_period(1.0, g=-1.0)
+    with pytest.raises(ValueError):
+        doppler_frequency(0.0)
+    with pytest.raises(ValueError):
+        doppler_frequency(440.0, v_sound=-1.0)
+    with pytest.raises(ValueError):
+        doppler_frequency(440.0, v_source=-343.0)

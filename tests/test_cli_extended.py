@@ -143,3 +143,72 @@ def test_cli_hypothesis_zero_num_omits_detail_panel(capsys: pytest.CaptureFixtur
     out = capsys.readouterr().out
     assert rc == 0
     assert "Detailed view" not in out
+
+
+def test_cli_stats(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["stats", "1,2,3,4,5"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "mean" in out
+    assert "3" in out
+
+
+def test_cli_sample_gaussian(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["sample", "gaussian", "-n", "3", "--seed", "1"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert len(out.strip().split(",")) == 3
+
+
+def test_cli_sample_invalid(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["sample", "uniform", "-n", "2", "--a", "1", "--b", "0"])
+    assert rc == 1
+
+
+def test_cli_stats_invalid(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["stats", "1,x,3"])
+    assert rc == 1
+
+
+def test_cli_stats_single(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["stats", "5"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "mean" in out
+    assert "stdev" not in out  # n==1 skips stdev rows
+
+
+def test_cli_sample_all_dists(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    for dist in ("uniform", "exponential", "poisson"):
+        rc = main(["sample", dist, "-n", "2", "--seed", "0"])
+        assert rc == 0
+        assert capsys.readouterr().out.strip()
+
+
+def test_cli_plot_file_value_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """--kind acf with too-short series surfaces ValueError."""
+    import cds.plot as plot_mod
+
+    def boom(*_a: object, **_k: object) -> object:
+        raise ValueError("data must have at least 2 observations")
+
+    monkeypatch.setattr(plot_mod, "plot_acf", boom)
+    path = tmp_path / "x.png"
+    rc = main(["plot", "1", "--kind", "acf", "--file", str(path)])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Error" in out

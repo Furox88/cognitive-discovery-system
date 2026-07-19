@@ -167,3 +167,108 @@ def test_uniform_sample_reproducible() -> None:
     s1 = uniform_sample(0, 1, 10, seed=99)
     s2 = uniform_sample(0, 1, 10, seed=99)
     assert s1 == s2
+
+
+# --- CDF / geometric / samples ---
+
+
+def test_gaussian_cdf_median() -> None:
+    from cds.probability.distributions import gaussian_cdf
+
+    assert abs(gaussian_cdf(0.0) - 0.5) < 1e-9
+
+
+def test_uniform_cdf_bounds() -> None:
+    from cds.probability.distributions import uniform_cdf
+
+    assert uniform_cdf(-1.0) == 0.0
+    assert uniform_cdf(2.0) == 1.0
+    assert abs(uniform_cdf(0.5) - 0.5) < 1e-12
+
+
+def test_exponential_cdf() -> None:
+    from cds.probability.distributions import exponential_cdf
+
+    assert exponential_cdf(-1.0) == 0.0
+    assert abs(exponential_cdf(0.0) - 0.0) < 1e-12
+    assert 0.0 < exponential_cdf(1.0, lam=1.0) < 1.0
+
+
+def test_geometric_pmf() -> None:
+    from cds.probability.distributions import geometric_pmf
+
+    assert abs(geometric_pmf(1, 0.3) - 0.3) < 1e-12
+    assert geometric_pmf(0, 0.3) == 0.0
+    with pytest.raises(ValueError):
+        geometric_pmf(1, 0.0)
+
+
+def test_gaussian_sample_seed() -> None:
+    from cds.probability.distributions import gaussian_sample
+    from cds.stats import mean
+
+    s = gaussian_sample(200, mu=5.0, sigma=1.0, seed=42)
+    assert len(s) == 200
+    assert abs(mean(s) - 5.0) < 0.3
+
+
+def test_exponential_sample_positive() -> None:
+    from cds.probability.distributions import exponential_sample
+
+    s = exponential_sample(50, lam=2.0, seed=1)
+    assert all(v >= 0 for v in s)
+
+
+def test_poisson_sample_nonneg() -> None:
+    from cds.probability.distributions import poisson_sample
+
+    s = poisson_sample(30, lam=3.0, seed=7)
+    assert all(v >= 0 for v in s)
+    assert poisson_sample(3, lam=0.0, seed=0) == [0, 0, 0]
+
+
+def test_sample_invalid() -> None:
+    from cds.probability.distributions import (
+        exponential_sample,
+        gaussian_sample,
+        poisson_sample,
+        uniform_sample,
+    )
+
+    with pytest.raises(ValueError):
+        uniform_sample(1, 0, 3)
+    with pytest.raises(ValueError):
+        gaussian_sample(-1)
+    with pytest.raises(ValueError):
+        exponential_sample(1, lam=0)
+    with pytest.raises(ValueError):
+        poisson_sample(1, lam=-1)
+
+
+def test_cdf_invalid_params() -> None:
+    from cds.probability.distributions import exponential_cdf, gaussian_cdf, uniform_cdf
+
+    with pytest.raises(ValueError):
+        gaussian_cdf(0.0, sigma=0.0)
+    with pytest.raises(ValueError):
+        uniform_cdf(0.5, a=1.0, b=0.0)
+    with pytest.raises(ValueError):
+        exponential_cdf(1.0, lam=0.0)
+
+
+def test_sample_n_negative() -> None:
+    from cds.probability.distributions import (
+        exponential_sample,
+        gaussian_sample,
+        poisson_sample,
+        uniform_sample,
+    )
+
+    with pytest.raises(ValueError):
+        uniform_sample(0, 1, -1)
+    with pytest.raises(ValueError):
+        gaussian_sample(1, sigma=0)
+    with pytest.raises(ValueError):
+        exponential_sample(-1, lam=1)
+    with pytest.raises(ValueError):
+        poisson_sample(-1, lam=1)

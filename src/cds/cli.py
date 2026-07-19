@@ -217,8 +217,8 @@ def _cmd_info(args: argparse.Namespace) -> int:
     _print(_render("[dim]Pure Python scientific computing system[/]"))
     _print("")
     _print(_render("[bold green]Status:[/] Stable"))
-    _print(_render("[bold blue]Tests:[/] 1284 Passing"))
-    _print(_render("[bold magenta]Deps:[/] 0 External (Pure Python)"))
+    _print(_render("[bold blue]Tests:[/] full suite green in CI (see badge)"))
+    _print(_render("[bold magenta]Deps:[/] 0 External (Pure Python core)"))
     _print(_render(f"[bold cyan]Version:[/] {__version__}"))
     _print("")
     _print(_render("[bold]Architecture:[/]"))
@@ -231,9 +231,73 @@ def _cmd_info(args: argparse.Namespace) -> int:
         "graph         data_analysis",
         "ml            probability",
         "scientific    numerical_integration",
-        "plot          (optional matplotlib extra)",
+        "modeling      knowledge",
+        "nlp           plot (optional matplotlib)",
     ):
         _print(f"  • {line}")
+    return 0
+
+
+def _cmd_stats(args: argparse.Namespace) -> int:
+    """Descriptive statistics for a comma-separated number list."""
+    from cds.stats import mean, median, percentile, stdev, variance
+
+    try:
+        data = [float(x.strip()) for x in args.values.split(",")]
+    except ValueError:
+        _print(_render("[red]Error:[/] Values must be a comma-separated list of numbers."))
+        return 1
+    if not data:  # pragma: no cover - split always yields at least one token
+        _print(_render("[red]Error:[/] empty list."))
+        return 1
+    rows = [
+        ["n", str(len(data))],
+        ["mean", f"{mean(data):.6g}"],
+        ["median", f"{median(data):.6g}"],
+        ["min", f"{min(data):.6g}"],
+        ["max", f"{max(data):.6g}"],
+        ["p25", f"{percentile(data, 25):.6g}"],
+        ["p75", f"{percentile(data, 75):.6g}"],
+    ]
+    if len(data) > 1:
+        rows.append(["stdev", f"{stdev(data):.6g}"])
+        rows.append(["variance", f"{variance(data):.6g}"])
+    _print(_format_table("Descriptive stats", ["stat", "value"], rows))
+    return 0
+
+
+def _cmd_sample(args: argparse.Namespace) -> int:
+    """Draw samples from a built-in probability distribution."""
+    from cds.probability import (
+        exponential_sample,
+        gaussian_sample,
+        poisson_sample,
+        uniform_sample,
+    )
+
+    n = args.n
+    seed = args.seed
+    dist = args.dist
+    try:
+        if dist == "uniform":
+            samples_f = uniform_sample(args.a, args.b, n, seed=seed)
+            text = ", ".join(f"{v:.6g}" for v in samples_f)
+        elif dist == "gaussian":
+            samples_f = gaussian_sample(n, mu=args.mu, sigma=args.sigma, seed=seed)
+            text = ", ".join(f"{v:.6g}" for v in samples_f)
+        elif dist == "exponential":
+            samples_f = exponential_sample(n, lam=args.lam, seed=seed)
+            text = ", ".join(f"{v:.6g}" for v in samples_f)
+        elif dist == "poisson":
+            samples_i = poisson_sample(n, lam=args.lam, seed=seed)
+            text = ", ".join(str(v) for v in samples_i)
+        else:  # pragma: no cover - argparse choices reject unknown dist
+            _print(_render(f"[red]Error:[/] unknown dist {dist!r}"))
+            return 1
+    except ValueError as exc:
+        _print(_render(f"[red]Error:[/] {exc}"))
+        return 1
+    _print(text)
     return 0
 
 
@@ -314,7 +378,7 @@ def _cmd_plot(args: argparse.Namespace) -> int:
                 fig = plot_acf(data, title=args.title)
             elif kind == "series":
                 fig = plot_series(data, title=args.title)
-            else:
+            else:  # pragma: no cover - argparse choices reject unknown kind
                 _print(
                     _render(f"[red]Error:[/] Unknown --kind {kind!r}. Options: series, hist, acf")
                 )
@@ -511,6 +575,27 @@ def _build_parser() -> argparse.ArgumentParser:
     p_calc = sub.add_parser("calc", help="Quick physics calculations.")
     p_calc.add_argument("formula", help="Formula: ke, gravity, wave, gas")
     p_calc.set_defaults(func=_cmd_calc)
+
+    p_stats = sub.add_parser(
+        "stats", help="Descriptive statistics for a comma-separated number list."
+    )
+    p_stats.add_argument("values", help="Comma-separated numbers (e.g. '1,2,3,4')")
+    p_stats.set_defaults(func=_cmd_stats)
+
+    p_sample = sub.add_parser("sample", help="Draw samples from a probability distribution.")
+    p_sample.add_argument(
+        "dist",
+        choices=["uniform", "gaussian", "exponential", "poisson"],
+        help="Distribution name",
+    )
+    p_sample.add_argument("-n", type=int, default=5, help="Number of samples (default 5)")
+    p_sample.add_argument("--seed", type=int, default=None, help="RNG seed")
+    p_sample.add_argument("--a", type=float, default=0.0, help="uniform lower bound")
+    p_sample.add_argument("--b", type=float, default=1.0, help="uniform upper bound")
+    p_sample.add_argument("--mu", type=float, default=0.0, help="gaussian mean")
+    p_sample.add_argument("--sigma", type=float, default=1.0, help="gaussian stdev")
+    p_sample.add_argument("--lam", type=float, default=1.0, help="rate λ for exponential/poisson")
+    p_sample.set_defaults(func=_cmd_sample)
 
     sub.add_parser(
         "modules", help="List all scientific modules available in the System."

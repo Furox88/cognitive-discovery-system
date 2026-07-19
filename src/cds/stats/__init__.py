@@ -1,6 +1,15 @@
 """Statistical analysis tools."""
 
-from cds.stats.descriptive import correlation, mean, median, stdev, variance
+from cds.stats.descriptive import (
+    correlation,
+    mean,
+    median,
+    percentile,
+    spearman_correlation,
+    stdev,
+    variance,
+    z_scores,
+)
 from cds.stats.hypothesis_tests import (
     TestResult,
     bonferroni_corrected_alpha,
@@ -37,6 +46,9 @@ __all__ = [
     "stdev",
     "variance",
     "correlation",
+    "spearman_correlation",
+    "percentile",
+    "z_scores",
     "linear_regression",
     "RegressionResult",
     "TestResult",

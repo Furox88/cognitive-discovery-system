@@ -41,7 +41,7 @@
 > **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update (v1.3.2):** expanded **`cds[plot]`** — multi-series, scatter, OLS regression, power spectrum, seasonal decompose, heatmaps, loss curves, `save_figure`; CLI `cds plot … --kind series|hist|acf --file out.png`. Install: `pip install -U "cognitive-discovery-system[plot]"`. The current version is shown in the PyPI badge at the top.
+**Latest Update (v1.4.0):** core expansion — probability **CDFs + samplers**, stats **Spearman / percentiles / z-scores**, new physics formulas (Coulomb, Doppler, pendulum, centripetal) and constants (`g`, `ε0`), CLI **`cds stats`** and **`cds sample`**. Plot stack remains from v1.3.x (`cds[plot]`). Install: `pip install -U "cognitive-discovery-system[plot]"`.
 ---
 
 ## Contents
