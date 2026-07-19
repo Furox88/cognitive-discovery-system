@@ -114,14 +114,14 @@ See `CHANGELOG.md` for full detail.
 
 ## v1.4.0 — Core APIs & CLI (Released 2026-07-20)
 
-Backward-compatible **minor**. Pure-Python core only (no new runtime deps).
+- [x] ~~Probability CDFs & samplers, Spearman/percentile/z-scores, physics formulas, CLI stats/sample~~
 
-- [x] ~~**Probability CDFs & samplers**~~ — gaussian/uniform/exponential CDF,
-      geometric PMF, Box–Muller / inverse-transform / Knuth samplers
-- [x] ~~**Stats ranks & scaling**~~ — Spearman, percentile, z-scores
-- [x] ~~**Scientific formulas**~~ — Coulomb, centripetal, pendulum period, Doppler;
-      constants `g`, `epsilon_0`, `mu_0`
-- [x] ~~**CLI**~~ — `cds stats`, `cds sample`
+## v1.5.0 — Algorithms wave (Released 2026-07-20)
+
+- [x] ~~**Graph**~~ — Bellman–Ford, Floyd–Warshall, Prim MST, components, degree
+- [x] ~~**Monte Carlo**~~ — `mc_expectation`, `hit_or_miss`
+- [x] ~~**Linear algebra**~~ — vector / Frobenius norms, matrix trace
+- [x] ~~**CLI**~~ — `cds integrate`
 
 ### Still open
 

@@ -212,3 +212,28 @@ def test_cli_plot_file_value_error(
     out = capsys.readouterr().out
     assert rc == 1
     assert "Error" in out
+
+
+def test_cli_integrate(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["integrate", "x2", "--a", "0", "--b", "1", "-n", "100"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "≈" in out or "0.33" in out
+
+
+def test_cli_integrate_trap(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["integrate", "unit", "--a", "0", "--b", "2", "--method", "trap", "-n", "10"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "2" in out
+
+
+def test_cli_integrate_bad_n(capsys: pytest.CaptureFixture[str]) -> None:
+    from cds.cli import main
+
+    rc = main(["integrate", "sin", "-n", "0"])
+    assert rc == 1

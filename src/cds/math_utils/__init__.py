@@ -5,15 +5,18 @@ from cds.math_utils.linalg import (
     cholesky,
     determinant,
     dot,
+    frobenius_norm,
     gram_schmidt,
     identity,
     lu_decomposition,
     mat_mul,
     matrix_inverse,
+    matrix_trace,
     power_iteration,
     qr_decomposition,
     solve_linear,
     transpose,
+    vector_norm,
 )
 
 __all__ = [
@@ -32,4 +35,7 @@ __all__ = [
     "gram_schmidt",
     "qr_decomposition",
     "cholesky",
+    "vector_norm",
+    "frobenius_norm",
+    "matrix_trace",
 ]

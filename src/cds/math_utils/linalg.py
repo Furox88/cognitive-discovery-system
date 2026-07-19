@@ -390,6 +390,40 @@ def qr_decomposition(m: Matrix) -> tuple[Matrix, Matrix]:
     return Q, R
 
 
+def vector_norm(v: Vector, p: float = 2.0) -> float:
+    """p-norm of a vector. ``p=2`` is Euclidean; ``p`` must be positive.
+
+    For ``p == math.inf`` returns the max absolute entry.
+    """
+    if not v:
+        raise ValueError("vector must be non-empty")
+    if p == math.inf:
+        return max(abs(x) for x in v)
+    if p <= 0:
+        raise ValueError("p must be positive (or math.inf)")
+    if p == 1:
+        return sum(abs(x) for x in v)
+    if p == 2:
+        return math.sqrt(sum(x * x for x in v))
+    total = sum(abs(x) ** p for x in v)
+    return float(total ** (1.0 / p))
+
+
+def frobenius_norm(m: Matrix) -> float:
+    """Frobenius norm ``√(Σ_ij a_ij²)``."""
+    if not m or not m[0]:
+        raise ValueError("matrix must be non-empty")
+    return math.sqrt(sum(x * x for row in m for x in row))
+
+
+def matrix_trace(m: Matrix) -> float:
+    """Trace of a square matrix."""
+    n = len(m)
+    if n == 0 or any(len(row) != n for row in m):
+        raise ValueError("matrix must be square and non-empty")
+    return sum(m[i][i] for i in range(n))
+
+
 def cholesky(m: Matrix) -> Matrix:
     """Cholesky decomposition of a symmetric positive-definite matrix.
 

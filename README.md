@@ -41,7 +41,7 @@
 > **If CDS saves you time, a star helps others find it — and keeps the project maintained.** Thank you!
 
 ---
-**Latest Update (v1.4.0):** core expansion — probability **CDFs + samplers**, stats **Spearman / percentiles / z-scores**, new physics formulas (Coulomb, Doppler, pendulum, centripetal) and constants (`g`, `ε0`), CLI **`cds stats`** and **`cds sample`**. Plot stack remains from v1.3.x (`cds[plot]`). Install: `pip install -U "cognitive-discovery-system[plot]"`.
+**Latest Update (v1.5.0):** algorithms wave — graph **Bellman–Ford / Floyd–Warshall / Prim / components**, Monte Carlo **expectation + hit-or-miss**, matrix **norms/trace**, CLI **`cds integrate`**. Builds on v1.4 probability/stats and v1.3 `cds[plot]`. Install: `pip install -U "cognitive-discovery-system[plot]"`.
 ---
 
 ## Contents

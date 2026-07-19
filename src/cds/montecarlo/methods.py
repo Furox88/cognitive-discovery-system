@@ -207,3 +207,66 @@ def buffon_needle(
     se_p = math.sqrt(p * (1 - p) / n_throws)
     se = (2 * needle_length * se_p) / (line_spacing * p * p) if p > 0 else 0.0
     return MCResult(estimate=estimate, samples=n_throws, std_error=se)
+
+
+def mc_expectation(
+    f: Callable[[float], float],
+    n_samples: int = 10_000,
+    a: float = 0.0,
+    b: float = 1.0,
+    seed: int | None = None,
+) -> MCResult:
+    """Estimate ``E[f(X)]`` for ``X ~ Uniform(a, b)`` by plain MC.
+
+    Differs from :func:`mc_integrate` by **not** multiplying by ``(b-a)`` —
+    this is the expectation, not the integral.
+    """
+    if n_samples <= 0:
+        raise ValueError("n_samples must be positive")
+    if a >= b:
+        raise ValueError("a must be less than b")
+    rng = random.Random(seed)
+    width = b - a
+    total = 0.0
+    total_sq = 0.0
+    for _ in range(n_samples):
+        x = a + rng.random() * width
+        val = f(x)
+        total += val
+        total_sq += val * val
+    mean_val = total / n_samples
+    var = (total_sq / n_samples - mean_val**2) if n_samples > 1 else 0.0
+    se = math.sqrt(max(0.0, var) / n_samples)
+    return MCResult(estimate=mean_val, samples=n_samples, std_error=se)
+
+
+def hit_or_miss(
+    predicate: Callable[[float, float], bool],
+    x_range: tuple[float, float],
+    y_range: tuple[float, float],
+    n_samples: int = 50_000,
+    seed: int | None = None,
+) -> MCResult:
+    """Estimate the area of a 2-D region defined by ``predicate(x, y)``.
+
+    Samples uniformly in the bounding box ``x_range × y_range`` and returns
+    ``area_box * fraction_true``.
+    """
+    if n_samples <= 0:
+        raise ValueError("n_samples must be positive")
+    x0, x1 = x_range
+    y0, y1 = y_range
+    if x0 >= x1 or y0 >= y1:
+        raise ValueError("ranges must be non-empty (lo < hi)")
+    rng = random.Random(seed)
+    hits = 0
+    for _ in range(n_samples):
+        x = x0 + rng.random() * (x1 - x0)
+        y = y0 + rng.random() * (y1 - y0)
+        if predicate(x, y):
+            hits += 1
+    p = hits / n_samples
+    box = (x1 - x0) * (y1 - y0)
+    estimate = box * p
+    se = box * math.sqrt(p * (1 - p) / n_samples) if n_samples > 1 else 0.0
+    return MCResult(estimate=estimate, samples=n_samples, std_error=se)

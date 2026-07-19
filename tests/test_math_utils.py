@@ -2,6 +2,8 @@
 
 import math
 
+import pytest
+
 from cds.math_utils.calculus import derivative, gradient, integral
 from cds.math_utils.linalg import determinant, dot, mat_mul, transpose
 
@@ -128,3 +130,28 @@ def test_determinant_3x3_unit() -> None:
 
 def test_dot_parallel() -> None:
     assert dot([2, 0], [3, 0]) == 6
+
+
+def test_vector_norm() -> None:
+    from cds.math_utils import vector_norm
+
+    assert abs(vector_norm([3.0, 4.0]) - 5.0) < 1e-12
+    assert abs(vector_norm([3.0, 4.0], p=1) - 7.0) < 1e-12
+    assert abs(vector_norm([3.0, -4.0], p=math.inf) - 4.0) < 1e-12
+    assert abs(vector_norm([1.0, 1.0, 1.0], p=3) - (3.0 ** (1.0 / 3.0))) < 1e-12
+    with pytest.raises(ValueError):
+        vector_norm([])
+    with pytest.raises(ValueError):
+        vector_norm([1.0], p=0)
+
+
+def test_frobenius_and_trace() -> None:
+    from cds.math_utils import frobenius_norm, matrix_trace
+
+    m = [[1.0, 0.0], [0.0, 1.0]]
+    assert abs(frobenius_norm(m) - math.sqrt(2.0)) < 1e-12
+    assert matrix_trace(m) == 2.0
+    with pytest.raises(ValueError):
+        matrix_trace([[1.0, 2.0]])
+    with pytest.raises(ValueError):
+        frobenius_norm([])

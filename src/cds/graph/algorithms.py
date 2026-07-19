@@ -9,6 +9,7 @@ References:
 from __future__ import annotations
 
 import heapq
+import math
 from collections import deque
 from dataclasses import dataclass, field
 
@@ -239,3 +240,160 @@ def has_cycle(graph: Graph) -> bool:
         return False
 
     return any(_dfs(v) for v in range(graph.n_vertices) if color[v] == WHITE)
+
+
+def degree(graph: Graph, v: int) -> int:
+    """Degree of vertex ``v`` (out-degree if directed)."""
+    if v < 0 or v >= graph.n_vertices:
+        raise ValueError(f"vertex {v} out of range [0, {graph.n_vertices})")
+    return len(graph.adj.get(v, []))
+
+
+def connected_components(graph: Graph) -> list[list[int]]:
+    """Connected components of an undirected graph (BFS forests).
+
+    For directed graphs, returns weakly connected components (ignores direction).
+    """
+    # Build undirected adjacency for weak connectivity.
+    undirected: dict[int, set[int]] = {i: set() for i in range(graph.n_vertices)}
+    for u, nbrs in graph.adj.items():
+        for v, _ in nbrs:
+            undirected[u].add(v)
+            undirected[v].add(u)
+
+    remaining = set(range(graph.n_vertices))
+    components: list[list[int]] = []
+    while remaining:
+        start = min(remaining)
+        visited: set[int] = set()
+        queue: deque[int] = deque([start])
+        visited.add(start)
+        order: list[int] = []
+        while queue:
+            u = queue.popleft()
+            order.append(u)
+            for v in undirected[u]:
+                if v not in visited:
+                    visited.add(v)
+                    queue.append(v)
+        components.append(sorted(order))
+        remaining -= visited
+    return components
+
+
+def bellman_ford(
+    graph: Graph,
+    start: int,
+) -> tuple[dict[int, float], dict[int, int | None]]:
+    """Bellman–Ford single-source shortest paths (allows negative weights).
+
+    Returns ``(distances, predecessors)``. Unreachable vertices are omitted
+    from ``distances``. Raises ``ValueError`` if a negative cycle is reachable
+    from ``start``.
+    """
+    if start < 0 or start >= graph.n_vertices:
+        raise ValueError(f"start vertex {start} out of range")
+    dist: dict[int, float] = {start: 0.0}
+    prev: dict[int, int | None] = {start: None}
+
+    for _ in range(graph.n_vertices - 1):
+        updated = False
+        for e in graph.edges:
+            if e.src not in dist:
+                continue
+            nd = dist[e.src] + e.weight
+            if e.dst not in dist or nd < dist[e.dst]:
+                dist[e.dst] = nd
+                prev[e.dst] = e.src
+                updated = True
+            if not graph.directed and e.dst in dist:
+                # undirected: edges list stores one direction; relax reverse too
+                nd_r = dist[e.dst] + e.weight
+                if e.src not in dist or nd_r < dist[e.src]:
+                    dist[e.src] = nd_r
+                    prev[e.src] = e.dst
+                    updated = True
+        if not updated:
+            break
+
+    # Negative cycle detection
+    for e in graph.edges:
+        if e.src in dist and (e.dst not in dist or dist[e.src] + e.weight < dist[e.dst]):
+            raise ValueError("negative cycle detected")
+        # Undirected reverse check (usually already caught by the forward test).
+        if (
+            not graph.directed
+            and e.dst in dist
+            and (e.src not in dist or dist[e.dst] + e.weight < dist[e.src])
+        ):  # pragma: no cover
+            raise ValueError("negative cycle detected")
+    return dist, prev
+
+
+def floyd_warshall(graph: Graph) -> list[list[float]]:
+    """All-pairs shortest paths (Floyd–Warshall).
+
+    Returns an ``n x n`` distance matrix. Unreachable pairs are ``math.inf``.
+    Raises ``ValueError`` if a negative cycle exists on the diagonal.
+    """
+    n = graph.n_vertices
+    dist: list[list[float]] = [[math.inf] * n for _ in range(n)]
+    for i in range(n):
+        dist[i][i] = 0.0
+    for e in graph.edges:
+        if e.weight < dist[e.src][e.dst]:
+            dist[e.src][e.dst] = e.weight
+        if not graph.directed and e.weight < dist[e.dst][e.src]:
+            dist[e.dst][e.src] = e.weight
+
+    for k in range(n):
+        for i in range(n):
+            dik = dist[i][k]
+            if dik == math.inf:
+                continue
+            for j in range(n):
+                cand = dik + dist[k][j]
+                if cand < dist[i][j]:
+                    dist[i][j] = cand
+
+    for i in range(n):
+        if dist[i][i] < 0:
+            raise ValueError("negative cycle detected")
+    return dist
+
+
+def prim_mst(graph: Graph, start: int = 0) -> tuple[list[Edge], float]:
+    """Prim's MST algorithm (binary heap), undirected graphs.
+
+    Returns ``(mst_edges, total_weight)``.
+    """
+    if graph.directed:
+        raise ValueError("prim_mst requires an undirected graph")
+    if graph.n_vertices == 0:
+        return [], 0.0
+    if start < 0 or start >= graph.n_vertices:
+        raise ValueError(f"start vertex {start} out of range")
+
+    in_mst = [False] * graph.n_vertices
+    # (weight, u, v) — edge u->v to add v
+    heap: list[tuple[float, int, int]] = [(0.0, start, start)]
+    mst: list[Edge] = []
+    total = 0.0
+    parent: dict[int, int | None] = {start: None}
+    best: dict[int, float] = {start: 0.0}
+
+    while heap and len(mst) < graph.n_vertices:
+        w, u, v = heapq.heappop(heap)
+        if in_mst[v]:
+            continue
+        in_mst[v] = True
+        if u != v:
+            mst.append(Edge(u, v, w))
+            total += w
+        for nbr, wt in graph.adj.get(v, []):
+            if not in_mst[nbr] and (nbr not in best or wt < best[nbr]):
+                best[nbr] = wt
+                parent[nbr] = v
+                heapq.heappush(heap, (wt, v, nbr))
+
+    return mst, total

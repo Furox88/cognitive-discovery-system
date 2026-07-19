@@ -4,9 +4,10 @@
 
 | Version | Supported          | Notes |
 |---------|--------------------|-------|
-| 1.4.x   | Yes                | Stable; current release line |
-| 1.3.x   | Yes                | Stable; previous minor line, security fixes only |
-| 1.2.x   | No                 | EOL (superseded by the 1.4.x + 1.3.x window) |
+| 1.5.x   | Yes                | Stable; current release line |
+| 1.4.x   | Yes                | Stable; previous minor line, security fixes only |
+| 1.3.x   | No                 | EOL (superseded by the 1.5.x + 1.4.x window) |
+| 1.2.x   | No                 | EOL |
 | 1.1.x   | No                 | EOL |
 | 1.0.x   | No                 | EOL |
 | < 1.0   | No                 | EOL (0.9.x beta, 0.8.x alpha, and earlier are unsupported) |

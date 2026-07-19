@@ -7,8 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No unreleased changes yet. See [v1.4.0](#v140---2026-07-20) below for the
+No unreleased changes yet. See [v1.5.0](#v150---2026-07-20) below for the
 latest release.
+
+## [v1.5.0] - 2026-07-20
+
+A **minor** release expanding algorithms across graph theory, Monte Carlo,
+linear algebra, and CLI — still zero runtime dependencies.
+
+### Added
+
+- **`cds.graph`**: `degree`, `connected_components`, `bellman_ford`,
+  `floyd_warshall`, `prim_mst`
+- **`cds.montecarlo`**: `mc_expectation`, `hit_or_miss` (2-D area estimation)
+- **`cds.math_utils`**: `vector_norm`, `frobenius_norm`, `matrix_trace`
+- **CLI**: `cds integrate <sin|cos|exp|x2|unit> --a --b -n --method`
 
 ## [v1.4.0] - 2026-07-20
 

@@ -101,3 +101,49 @@ class TestBuffonNeedle:
         r1 = buffon_needle(n_throws=1000, seed=42)
         r2 = buffon_needle(n_throws=1000, seed=42)
         assert r1.estimate == r2.estimate
+
+
+def test_mc_expectation() -> None:
+    from cds.montecarlo import mc_expectation
+
+    # E[x] on [0,1] ≈ 0.5
+    r = mc_expectation(lambda x: x, n_samples=20_000, a=0.0, b=1.0, seed=1)
+    assert abs(r.estimate - 0.5) < 0.05
+
+
+def test_hit_or_miss_unit_disk() -> None:
+    import math
+
+    from cds.montecarlo import hit_or_miss
+
+    r = hit_or_miss(
+        lambda x, y: x * x + y * y <= 1.0,
+        (-1.0, 1.0),
+        (-1.0, 1.0),
+        n_samples=50_000,
+        seed=2,
+    )
+    assert abs(r.estimate - math.pi) < 0.15
+
+
+def test_mc_new_errors() -> None:
+    from cds.montecarlo import hit_or_miss, mc_expectation
+
+    with pytest.raises(ValueError):
+        mc_expectation(lambda x: x, n_samples=0)
+    with pytest.raises(ValueError):
+        hit_or_miss(lambda x, y: True, (1.0, 0.0), (0.0, 1.0), n_samples=10)
+
+
+def test_mc_expectation_a_ge_b() -> None:
+    from cds.montecarlo import mc_expectation
+
+    with pytest.raises(ValueError):
+        mc_expectation(lambda x: x, n_samples=10, a=1.0, b=0.0)
+
+
+def test_hit_or_miss_n_samples() -> None:
+    from cds.montecarlo import hit_or_miss
+
+    with pytest.raises(ValueError):
+        hit_or_miss(lambda x, y: True, (0.0, 1.0), (0.0, 1.0), n_samples=0)

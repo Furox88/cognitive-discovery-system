@@ -18,7 +18,7 @@ import json
 import os
 import subprocess
 import sys
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from cds.core.models import Domain
@@ -263,6 +263,42 @@ def _cmd_stats(args: argparse.Namespace) -> int:
         rows.append(["stdev", f"{stdev(data):.6g}"])
         rows.append(["variance", f"{variance(data):.6g}"])
     _print(_format_table("Descriptive stats", ["stat", "value"], rows))
+    return 0
+
+
+def _cmd_integrate(args: argparse.Namespace) -> int:
+    """Numerical integration of a built-in integrand over [a, b]."""
+    import math
+
+    from cds.numerical_integration import simpson, trapezoid
+
+    integrands: dict[str, Callable[[float], float]] = {
+        "sin": math.sin,
+        "cos": math.cos,
+        "exp": math.exp,
+        "x2": lambda x: x * x,
+        "unit": lambda _x: 1.0,
+    }
+    name = args.integrand
+    if name not in integrands:  # pragma: no cover - argparse choices
+        _print(
+            _render(
+                f"[red]Error:[/] unknown integrand {name!r}. "
+                f"Options: {', '.join(sorted(integrands))}"
+            )
+        )
+        return 1
+    f = integrands[name]
+    a, b, n = args.a, args.b, args.n
+    try:
+        if args.method == "trap":
+            result = trapezoid(f, a, b, n=n)
+        else:
+            result = simpson(f, a, b, n=n)
+    except ValueError as exc:
+        _print(_render(f"[red]Error:[/] {exc}"))
+        return 1
+    _print(_render(f"[green]∫_{a}^{b} {name}(x) dx ≈ {result:.10g}[/] ({args.method}, n={n})"))
     return 0
 
 
@@ -596,6 +632,25 @@ def _build_parser() -> argparse.ArgumentParser:
     p_sample.add_argument("--sigma", type=float, default=1.0, help="gaussian stdev")
     p_sample.add_argument("--lam", type=float, default=1.0, help="rate λ for exponential/poisson")
     p_sample.set_defaults(func=_cmd_sample)
+
+    p_int = sub.add_parser(
+        "integrate", help="Numerically integrate a built-in function over [a, b]."
+    )
+    p_int.add_argument(
+        "integrand",
+        choices=["sin", "cos", "exp", "x2", "unit"],
+        help="Integrand name",
+    )
+    p_int.add_argument("--a", type=float, default=0.0, help="Lower limit (default 0)")
+    p_int.add_argument("--b", type=float, default=1.0, help="Upper limit (default 1)")
+    p_int.add_argument("-n", type=int, default=1000, help="Number of panels (default 1000)")
+    p_int.add_argument(
+        "--method",
+        choices=["simpson", "trap"],
+        default="simpson",
+        help="Quadrature rule (default simpson)",
+    )
+    p_int.set_defaults(func=_cmd_integrate)
 
     sub.add_parser(
         "modules", help="List all scientific modules available in the System."
